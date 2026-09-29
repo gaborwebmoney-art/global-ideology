@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Global Ideology</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout: situation-room briefing table. Top bar, map + dossier panel, three threat meters and a news wire along the bottom. Single dark look by design. */
+:root {
+  color-scheme: dark;
+  --ink: #0d1820;        /* page ground: night-shift map table */
+  --panel: #13232d;      /* dossier panels */
+  --panel-2: #1a2e3a;
+  --grid: #1c3140;       /* graticule */
+  --line: #36546a;       /* borders, rules */
+  --text: #dce5e3;
+  --muted: #8ba2a9;
+  --you: #f2a541;        /* your movement: signal amber */
+  --you-dim: rgba(242, 165, 65, .18);
+  --wo: #6fc4dc;         /* World Order: committee blue */
+  --wo-dim: rgba(111, 196, 220, .16);
+  --danger: #e5604f;
+  --display: 'Big Shoulders Display', 'Arial Narrow', 'Roboto Condensed', sans-serif;
+  --body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body { background: var(--ink); color: var(--text); font-family: var(--body); font-size: 14px; line-height: 1.45; margin: 0; }
+button { font: inherit; color: inherit; }
+button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--you); outline-offset: 2px; }
+
+#app { display: grid; grid-template-rows: auto 1fr auto; height: 100%; padding-inline: 16px; padding-block: 10px; gap: 10px; max-width: 1400px; margin: 0 auto; }
+
+/* Top bar */
+.bar { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.brand { font-family: var(--display); font-weight: 800; font-size: 26px; letter-spacing: .04em; text-transform: uppercase; line-height: 1; }
+.brand small { display: block; font-family: var(--mono); font-weight: 400; font-size: 10px; letter-spacing: .14em; color: var(--muted); margin-top: 3px; }
+.spacer { flex: 1; }
+.readout { font-family: var(--mono); font-variant-numeric: tabular-nums; display: flex; flex-direction: column; line-height: 1.1; }
+.readout span:first-child { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.readout b { font-size: 20px; font-weight: 500; }
+.readout.clout b { color: var(--you); }
+.speed { display: flex; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+.speed button { background: transparent; border: 0; padding: 6px 11px; font-family: var(--mono); font-size: 13px; cursor: pointer; color: var(--muted); }
+.speed button + button { border-left: 1px solid var(--line); }
+.speed button[aria-pressed="true"] { background: var(--you); color: var(--ink); }
+.btn { background: var(--panel-2); border: 1px solid var(--line); border-radius: 4px; padding: 7px 14px; cursor: pointer; font-weight: 600; }
+.btn:hover:not(:disabled) { border-color: var(--you); }
+.btn.primary { background: var(--you); border-color: var(--you); color: var(--ink); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+
+/* Main */
+.main { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 10px; min-height: 0; }
+.mapwrap { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; min-height: 0; }
+#map { width: 100%; height: 100%; display: block; }
+.map-hint { position: absolute; left: 12px; top: 10px; font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); pointer-events: none; }
+.legend { position: absolute; right: 12px; bottom: 10px; display: flex; gap: 14px; font-family: var(--mono); font-size: 10.5px; color: var(--muted); pointer-events: none; }
+.legend i { display: inline-block; width: 18px; height: 0; border-top: 2px solid var(--line); vertical-align: middle; margin-right: 5px; }
+.legend i.dash { border-top-style: dashed; }
+
+.side { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 14px; overflow-y: auto; min-height: 0; display: flex; flex-direction: column; gap: 12px; }
+.eyebrow { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.cname { font-family: var(--display); font-weight: 800; font-size: 30px; letter-spacing: .02em; line-height: 1; text-transform: uppercase; margin: 2px 0 0; }
+.meta { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.chip { font-size: 11px; padding: 2px 7px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); }
+.chip.wo { border-color: var(--wo); color: var(--wo); }
+.desc { color: var(--text); margin: 0; max-width: 60ch; }
+.supbar { height: 10px; background: var(--ink); border-radius: 2px; position: relative; overflow: hidden; }
+.supbar > div { position: absolute; inset: 0 auto 0 0; background: var(--you); }
+.supbar .tick { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--text); opacity: .5; }
+.res { display: grid; grid-template-columns: 82px 1fr 34px; gap: 6px 8px; align-items: center; font-size: 12px; }
+.res .track { height: 6px; background: var(--ink); border-radius: 2px; overflow: hidden; }
+.res .track div { height: 100%; background: var(--muted); }
+.res .num { font-family: var(--mono); text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); }
+.ops { display: grid; gap: 6px; }
+.op { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; text-align: left; background: var(--panel-2); border: 1px solid var(--line); border-radius: 4px; padding: 8px 10px; cursor: pointer; }
+.op:hover:not(:disabled) { border-color: var(--you); }
+.op:disabled { cursor: not-allowed; }
+.op:disabled .op-name { color: var(--muted); }
+.op-name { font-weight: 600; }
+.op-cost { font-family: var(--mono); color: var(--you); font-size: 12px; }
+.op-text { grid-column: 1 / -1; font-size: 12px; color: var(--muted); }
+.op-why { grid-column: 1 / -1; font-family: var(--mono); font-size: 11px; color: var(--danger); }
+.empty { color: var(--muted); margin: 0; }
+
+/* Bottom HUD */
+.hud { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 1.4fr); gap: 10px; }
+.meter { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 9px 12px; }
+.meter .top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.meter .val { font-family: var(--mono); font-size: 18px; font-variant-numeric: tabular-nums; }
+.meter .track { height: 8px; background: var(--ink); border-radius: 2px; margin-top: 6px; position: relative; overflow: hidden; }
+.meter .fill { position: absolute; inset: 0 auto 0 0; }
+.meter .goal { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--text); }
+.meter .note { font-size: 11.5px; color: var(--muted); margin-top: 5px; }
+.m-you .fill { background: var(--you); } .m-you .val { color: var(--you); }
+.m-noto .fill { background: linear-gradient(90deg, var(--you), var(--danger)); }
+.m-wo .fill { background: var(--wo); } .m-wo .val { color: var(--wo); }
+.wire { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 9px 12px; overflow: hidden; min-width: 0; }
+.wire ul { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 3px; max-height: 64px; overflow-y: auto; }
+.wire li { font-size: 12.5px; display: grid; grid-template-columns: 52px 1fr; gap: 8px; }
+.wire li span { font-family: var(--mono); color: var(--muted); font-size: 11px; padding-top: 1px; }
+.wire li.you { color: var(--you); } .wire li.wo { color: var(--wo); } .wire li.world { color: var(--text); }
+
+/* Map SVG */
+.grat { stroke: var(--grid); stroke-width: 1; fill: none; }
+.edge { stroke: var(--line); stroke-width: 1.4; fill: none; }
+.edge.trade { stroke-dasharray: 5 5; }
+.edge.hot { stroke: var(--you); opacity: .75; }
+.edge.new { stroke: var(--you); }
+.node { cursor: pointer; }
+.node .base { fill: var(--panel-2); stroke: var(--line); stroke-width: 1.5; }
+.node.held .base { stroke: var(--you); stroke-width: 2.5; }
+.node.sel .base { stroke: var(--text); stroke-width: 2.5; }
+.node .inkfill { fill: var(--you); opacity: .85; }
+.node .counter { fill: none; stroke: var(--wo); stroke-width: 2; stroke-dasharray: 3 4; }
+.node text { font-family: var(--mono); font-size: 12px; fill: var(--text); text-anchor: middle; pointer-events: none; }
+.node text.pct { fill: var(--you); font-size: 11px; }
+.node:hover .base { stroke: var(--text); }
+.bubble { cursor: pointer; }
+.bubble circle { fill: var(--you); stroke: var(--ink); stroke-width: 2; }
+.bubble text { font-family: var(--mono); font-size: 11px; font-weight: 500; fill: var(--ink); text-anchor: middle; pointer-events: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .bubble { animation: pop .35s ease-out; }
+  .bubble circle { animation: breathe 1.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+}
+@keyframes pop { from { opacity: 0; } to { opacity: 1; } }
+@keyframes breathe { 50% { transform: scale(1.12); } }
+
+/* Overlays */
+.overlay { position: fixed; inset: 0; background: rgba(8, 14, 18, .78); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 20; }
+.sheet { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; width: min(1180px, 100%); max-height: 100%; overflow: auto; padding: 18px; }
+.sheet-head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+.sheet-head h2 { font-family: var(--display); font-weight: 800; font-size: 32px; text-transform: uppercase; letter-spacing: .03em; margin: 0; line-height: 1; }
+.tree { display: grid; grid-template-columns: repeat(7, minmax(150px, 1fr)); gap: 10px; overflow-x: auto; padding-bottom: 4px; }
+.branch h3 { font-family: var(--display); font-weight: 600; font-size: 19px; text-transform: uppercase; letter-spacing: .04em; margin: 0; }
+.branch p { font-size: 11.5px; color: var(--muted); margin: 2px 0 8px; min-height: 2.9em; }
+.branch ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.up { width: 100%; text-align: left; background: var(--panel-2); border: 1px solid var(--line); border-radius: 4px; padding: 8px; cursor: pointer; display: grid; gap: 3px; }
+.up .n { font-weight: 600; font-size: 12.5px; line-height: 1.25; }
+.up .t { font-size: 11.5px; color: var(--muted); }
+.up .c { font-family: var(--mono); font-size: 12px; color: var(--you); }
+.up.owned { border-color: var(--you); background: var(--you-dim); cursor: default; }
+.up.owned .c { color: var(--text); }
+.up.locked { opacity: .5; cursor: not-allowed; }
+.up.poor { cursor: not-allowed; }
+.up.poor .c { color: var(--danger); }
+.up:hover:not(.owned):not(.locked):not(.poor) { border-color: var(--you); }
+
+.intro { width: min(560px, 100%); }
+.intro h1 { font-family: var(--display); font-weight: 800; font-size: 54px; line-height: .95; text-transform: uppercase; letter-spacing: .02em; margin: 6px 0 12px; text-wrap: balance; }
+.intro ol { padding-left: 20px; margin: 10px 0 16px; display: grid; gap: 6px; }
+.intro .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.pickbar { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); background: var(--panel-2); border: 1px solid var(--you); border-radius: 6px; padding: 10px 14px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; justify-content: center; max-width: calc(100% - 24px); }
+
+@media (max-width: 900px) {
+  #app { height: auto; min-height: 100%; grid-template-rows: auto auto auto; }
+  .main { grid-template-columns: 1fr; }
+  .mapwrap { aspect-ratio: 1000 / 580; }
+  .hud { grid-template-columns: 1fr 1fr 1fr; }
+  .wire { grid-column: 1 / -1; }
+  .tree { grid-template-columns: repeat(7, 190px); }
+}
+@media (max-width: 560px) {
+  .hud { grid-template-columns: 1fr; }
+  .brand { font-size: 22px; }
+  .intro h1 { font-size: 40px; }
+  .legend { display: none; }
+  .mapwrap { aspect-ratio: auto; overflow-x: auto; }
+  #map { width: 760px; height: 441px; }
+  .map-hint { position: sticky; display: block; padding: 8px 12px 0; }
+}
+</style>
+
+</head>
+<body>
+<div id="app">
+  <header class="bar">
+    <div class="brand">Global Ideology<small>Prototype v1</small></div>
+    <div class="spacer"></div>
+    <div class="readout"><span>Week</span><b id="week">0</b></div>
+    <div class="readout clout" title="Spend Clout on upgrades and operations. Click amber bubbles on the map to collect more."><span>Clout</span><b id="clout">0</b></div>
+    <div class="speed" role="group" aria-label="Game speed">
+      <button id="sp0" aria-pressed="true" title="Pause (Space)">II</button>
+      <button id="sp1" aria-pressed="false" title="Normal (1)">1&times;</button>
+      <button id="sp2" aria-pressed="false" title="Fast (2)">2&times;</button>
+      <button id="sp3" aria-pressed="false" title="Fastest (3)">3&times;</button>
+    </div>
+    <button class="btn primary" id="openTree">Upgrades</button>
+  </header>
+
+  <div class="main">
+    <div class="mapwrap">
+      <svg id="map" viewBox="0 0 1000 580" preserveAspectRatio="xMidYMid meet" role="img" aria-label="World map of 15 countries"></svg>
+      <div class="map-hint" id="mapHint">Select a country</div>
+      <div class="legend"><span><i></i>Land border</span><span><i class="dash"></i>Trade route</span></div>
+      <div class="pickbar" id="pickbar" hidden></div>
+    </div>
+    <aside class="side" id="side" aria-live="polite"></aside>
+  </div>
+
+  <footer class="hud">
+    <div class="meter m-you">
+      <div class="top"><span class="eyebrow">World aligned</span><span class="val" id="shareVal">0%</span></div>
+      <div class="track"><div class="fill" id="shareFill"></div><div class="goal" style="left:70%"></div></div>
+      <div class="note">Win at 70% of the world&rsquo;s population</div>
+    </div>
+    <div class="meter m-noto">
+      <div class="top"><span class="eyebrow">Notoriety</span><span class="val" id="notoVal">0</span></div>
+      <div class="track"><div class="fill" id="notoFill"></div><div class="goal" style="left:15%"></div></div>
+      <div class="note" id="notoNote">World Order wakes up at 15</div>
+    </div>
+    <div class="meter m-wo">
+      <div class="top"><span class="eyebrow">Containment Treaty</span><span class="val" id="treatyVal">0%</span></div>
+      <div class="track"><div class="fill" id="treatyFill"></div></div>
+      <div class="note" id="treatyNote">Not started. You lose at 100%</div>
+    </div>
+    <div class="wire"><span class="eyebrow">News wire</span><ul id="news"></ul></div>
+  </footer>
+</div>
+
+<div class="overlay" id="treeOv" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="treeTitle">
+    <div class="sheet-head">
+      <div><div class="eyebrow">Spend Clout</div><h2 id="treeTitle">Upgrades</h2></div>
+      <div class="spacer"></div>
+      <div class="readout clout"><span>Clout</span><b id="clout2">0</b></div>
+      <button class="btn" id="closeTree">Close</button>
+    </div>
+    <p class="empty" style="margin:-4px 0 12px">Each upgrade you own makes the next one 15% dearer. The game keeps running while this is open.</p>
+    <div class="tree" id="tree"></div>
+  </div>
+</div>
+
+<div class="overlay" id="introOv">
+  <div class="sheet intro" role="dialog" aria-modal="true" aria-labelledby="introTitle">
+    <div class="eyebrow">Briefing</div>
+    <h1 id="introTitle">Spread an idea. Beat the paperwork.</h1>
+    <p>You lead a movement that wants the whole world to agree with it. Nobody has to be conquered. They just have to be convinced.</p>
+    <ol>
+      <li>Pick a starting country. Support grows there and spills over land borders and trade routes by itself.</li>
+      <li>Spend Clout on <b>upgrades</b> (they work everywhere) and <b>operations</b> (one country, then a cooldown). Click amber bubbles to collect Clout.</li>
+      <li>The more the world notices you, the faster the <span style="color:var(--wo)">World Order</span> drafts its Containment Treaty. Loud tactics fill the Notoriety meter fast.</li>
+      <li>Win by aligning 70% of the world before the treaty is signed.</li>
+    </ol>
+    <div class="row"><button class="btn primary" id="introGo">Choose a starting country</button><span class="meta">Space pauses. 1, 2, 3 set the speed.</span></div>
+  </div>
+</div>
+
+<div class="overlay" id="endOv" hidden>
+  <div class="sheet intro" role="dialog" aria-modal="true" aria-labelledby="endTitle">
+    <div class="eyebrow" id="endEyebrow"></div>
+    <h1 id="endTitle"></h1>
+    <p id="endText"></p>
+    <div class="row"><button class="btn primary" id="again">New game</button><button class="btn" id="stay">Look at the map</button></div>
+  </div>
+</div>
+
+<script>
+
+// ---------- Global Ideology: simulation core (pure, UI-free) ----------
+const TYPES = ['eco', 'mil', 'dip', 'ideo'];
+const TYPE_LABEL = { eco: 'Economic', mil: 'Military', dip: 'Diplomatic', ideo: 'Ideological' };
+
+const COUNTRIES = [
+  { id: 'borealis',   name: 'Borealis',   pop: 38,   x: 150, y: 105, res: { eco: .40, mil: .40, dip: .50, ideo: .50 }, traits: ['Federal', 'Resource-rich'], desc: 'Vast northern dominion. Polite, decentralised, hard to rally around anything.' },
+  { id: 'aethelgard', name: 'Aethelgard', pop: 330,  x: 205, y: 235, res: { eco: .60, mil: .80, dip: .50, ideo: .30 }, traits: ['Superpower', 'Media-saturated'], desc: 'Loud, rich and armed. Will believe almost anything if it trends.' },
+  { id: 'marisol',    name: 'Marisol',    pop: 210,  x: 285, y: 395, res: { eco: .30, mil: .30, dip: .40, ideo: .40 }, traits: ['Emerging economy'], desc: 'Fast-growing coastal republic with a weakness for grand promises.' },
+  { id: 'isolde',     name: 'Isolde',     pop: 4,    x: 405, y: 65,  res: { eco: .50, mil: .20, dip: .60, ideo: .80 }, traits: ['Island', 'Close-knit'], desc: 'Volcanic island of 4 million people who all know each other.' },
+  { id: 'atlantica',  name: 'Atlantica',  pop: 68,   x: 410, y: 200, res: { eco: .60, mil: .60, dip: .30, ideo: .40 }, traits: ['Island', 'Trade hub'], desc: 'Island financial centre. Neutral in public, available in private.' },
+  { id: 'guldor',     name: 'Guldor',     pop: 84,   x: 525, y: 150, res: { eco: .50, mil: .40, dip: .70, ideo: .40 }, traits: ['Old money'], desc: 'Ancient kingdom run by very old treaties and very old families.' },
+  { id: 'celestia',   name: 'Celestia',   pop: 67,   x: 505, y: 255, res: { eco: .40, mil: .30, dip: .60, ideo: .60 }, traits: ['Cultural power'], desc: 'Philosophers, painters and strikes. Soft power, soft army.' },
+  { id: 'elysia',     name: 'Elysia',     pop: 10,   x: 605, y: 90,  res: { eco: .50, mil: .20, dip: .70, ideo: .70 }, traits: ['Green state'], desc: 'Small, principled and fully recycled.' },
+  { id: 'vesperia',   name: 'Vesperia',   pop: 45,   x: 625, y: 215, res: { eco: .30, mil: .50, dip: .50, ideo: .80 }, traits: ['Tech society'], desc: 'Hyper-educated tech state. Sceptical of everything except its own apps.' },
+  { id: 'uralia',     name: 'Uralia',     pop: 145,  x: 745, y: 130, res: { eco: .40, mil: .80, dip: .30, ideo: .60 }, traits: ['Authoritarian', 'Militarised'], desc: 'Rugged, disciplined, and on permanent military exercise.' },
+  { id: 'kestria',    name: 'Kestria',    pop: 220,  x: 560, y: 410, res: { eco: .30, mil: .40, dip: .30, ideo: .40 }, traits: ['Young population'], desc: 'The youngest population on the map. Ideas spread here fast.', growthMul: 1.25 },
+  { id: 'tavaro',     name: 'Tavaro',     pop: 90,   x: 715, y: 320, res: { eco: .70, mil: .60, dip: .40, ideo: .60 }, traits: ['Resource-rich', 'Crossroads'], desc: 'Desert crossroads sitting on the world’s favourite resource.' },
+  { id: 'koryn',      name: 'Koryn',      pop: 125,  x: 875, y: 165, res: { eco: .50, mil: .70, dip: .50, ideo: .70 }, traits: ['Proud history'], desc: 'Old empire, long memory, suspicious of new ideas.' },
+  { id: 'sinan',      name: 'Sinan',      pop: 900,  x: 860, y: 330, res: { eco: .60, mil: .60, dip: .60, ideo: .80 }, traits: ['Authoritarian', 'Manufacturing giant'], desc: 'The workshop of the world. Nothing enters without paperwork.' },
+  { id: 'pinguinia',  name: 'Pinguinia',  pop: 0.05, x: 470, y: 535, res: { eco: .20, mil: .10, dip: .90, ideo: .90 }, traits: ['Polar', 'Research stations'], desc: 'Fifty thousand scientists and considerably more penguins.' }
+];
+const BORDERS = [
+  ['borealis', 'aethelgard'], ['aethelgard', 'marisol'],
+  ['guldor', 'celestia'], ['guldor', 'elysia'], ['celestia', 'vesperia'], ['elysia', 'vesperia'],
+  ['elysia', 'uralia'], ['vesperia', 'uralia'], ['vesperia', 'tavaro'], ['uralia', 'tavaro'],
+  ['uralia', 'koryn'], ['koryn', 'sinan'], ['tavaro', 'sinan'], ['tavaro', 'kestria'], ['uralia', 'sinan']
+];
+const TRADE = [
+  ['aethelgard', 'atlantica'], ['atlantica', 'guldor'], ['isolde', 'guldor'], ['isolde', 'borealis'],
+  ['marisol', 'kestria'], ['atlantica', 'marisol'], ['celestia', 'kestria'], ['sinan', 'kestria'],
+  ['marisol', 'pinguinia'], ['aethelgard', 'guldor']
+];
+
+// Upgrade effects: add to stats; pen.* reduces that resistance type everywhere.
+const BRANCHES = [
+  { id: 'ideo', name: 'Ideology', blurb: 'Grows support inside countries.' },
+  { id: 'eco', name: 'Economy', blurb: 'Spreads along trade routes. Earns Clout.' },
+  { id: 'dip', name: 'Diplomacy', blurb: 'Spreads across land borders.' },
+  { id: 'faith', name: 'Faith', blurb: 'Crosses oceans and borders on its own.' },
+  { id: 'mil', name: 'Military', blurb: 'Breaks military resistance. Loud.' },
+  { id: 'covert', name: 'Covert Ops', blurb: 'Weakens every defence. Very loud.' },
+  { id: 'spin', name: 'Spin', blurb: 'Keeps the World Order busy.' }
+];
+const UPGRADES = [
+  { id: 'i1', b: 'ideo', name: 'Viral Manifesto', cost: 5, fx: { growth: .025 }, text: 'Internal growth +25%' },
+  { id: 'i2', b: 'ideo', name: 'Podcast Tour', cost: 9, fx: { growth: .025, pen: { ideo: .15 } }, text: 'Internal growth +25%. Ideological resistance −15%' },
+  { id: 'i3', b: 'ideo', name: 'Leader’s Portrait in Every Office', cost: 15, fx: { growth: .035, loud: .03 }, text: 'Internal growth +35%. Slightly louder' },
+  { id: 'i4', b: 'ideo', name: 'Mandatory Birthday Celebrations', cost: 24, fx: { growth: .045, pen: { ideo: .2 }, loud: .05 }, text: 'Internal growth +45%. Ideological resistance −20%. Louder' },
+
+  { id: 'e1', b: 'eco', name: 'Strategic Synergy Alignment', cost: 5, fx: { income: 1, trade: .02 }, text: 'Clout income up. Trade spread up' },
+  { id: 'e2', b: 'eco', name: 'Supply Chain Dependency', cost: 9, fx: { trade: .03, pen: { eco: .2 } }, text: 'Trade spread up. Economic resistance −20%' },
+  { id: 'e3', b: 'eco', name: 'Too Big to Question', cost: 14, fx: { income: 1.5, pen: { eco: .2 } }, text: 'Clout income up a lot. Economic resistance −20%' },
+  { id: 'e4', b: 'eco', name: 'Sovereign Wealth Hug', cost: 22, fx: { trade: .05, income: 1 }, text: 'Trade spread way up. Clout income up' },
+
+  { id: 'd1', b: 'dip', name: 'Embassy Canapés', cost: 4, fx: { border: .02 }, text: 'Border spread up' },
+  { id: 'd2', b: 'dip', name: 'Regional Summit Circuit', cost: 9, fx: { border: .03, pen: { dip: .2 }, summitCd: 12 }, text: 'Border spread up. Diplomatic resistance −20%. Summits recharge faster' },
+  { id: 'd3', b: 'dip', name: 'Photo-Op Handshake Doctrine', cost: 14, fx: { border: .04, vis: -.1 }, text: 'Border spread up. You look harmless: notoriety grows 10% slower' },
+  { id: 'd4', b: 'dip', name: 'Alliance Architecture', cost: 22, fx: { border: .05, pen: { dip: .2 } }, text: 'Border spread way up. Diplomatic resistance −20%' },
+
+  { id: 'f1', b: 'faith', name: 'Missionary Networks', cost: 6, fx: { reach: .004, pen: { ideo: .1 } }, text: 'Can take root in distant countries. Ideological resistance −10%' },
+  { id: 'f2', b: 'faith', name: 'Pilgrimage Routes', cost: 10, fx: { reach: .006, trade: .02 }, text: 'Distant reach up. Trade spread up' },
+  { id: 'f3', b: 'faith', name: 'Shared Holy Days', cost: 15, fx: { growth: .02, pen: { ideo: .15 } }, text: 'Internal growth +20%. Ideological resistance −15%' },
+  { id: 'f4', b: 'faith', name: 'Common Creed', cost: 22, fx: { reach: .01, pen: { ideo: .1, dip: .1 } }, text: 'Distant reach way up. Ideological and diplomatic resistance −10%' },
+
+  { id: 'm1', b: 'mil', name: 'Military Parade', cost: 5, fx: { pen: { mil: .2 }, loud: .03 }, text: 'Military resistance −20%. Louder' },
+  { id: 'm2', b: 'mil', name: 'Snap Exercises', cost: 9, fx: { pen: { mil: .1 }, snapBoost: 1 }, text: 'Snap Exercise operations push 50% harder. Military resistance −10%' },
+  { id: 'm3', b: 'mil', name: 'Security Guarantees', cost: 14, fx: { border: .03, pen: { mil: .2 }, loud: .03 }, text: 'Border spread up. Military resistance −20%. Louder' },
+  { id: 'm4', b: 'mil', name: 'Blockade', cost: 22, fx: { pen: { mil: .15, eco: .15 }, loud: .06 }, text: 'Military and economic resistance −15%. Much louder' },
+
+  { id: 'c1', b: 'covert', name: 'Sleeper Agents', cost: 6, fx: { pen: { eco: .05, mil: .05, dip: .05, ideo: .05 }, loud: .03, seed: 2 }, text: 'Plants support in 2 random countries. All resistances −5%' },
+  { id: 'c2', b: 'covert', name: 'Leaked Dossiers', cost: 10, fx: { pen: { dip: .15 }, loud: .04, dossierDiscount: 4 }, text: 'Diplomatic resistance −15%. Leak operations cost less' },
+  { id: 'c3', b: 'covert', name: 'Orchestrated Unrest', cost: 16, fx: { pen: { eco: .1, mil: .1, dip: .1, ideo: .1 }, loud: .08 }, text: 'All resistances −10%. Much louder' },
+  { id: 'c4', b: 'covert', name: 'Shadow Government', cost: 24, fx: { growth: .03, pen: { eco: .1, mil: .1, dip: .1, ideo: .1 }, loud: .1 }, text: 'Internal growth +30%. All resistances −10%. Very loud' },
+
+  { id: 's1', b: 'spin', name: 'Plausible Deniability', cost: 5, fx: { vis: -.15 }, text: 'Notoriety grows 15% slower' },
+  { id: 's2', b: 'spin', name: 'Friendly Fact-Checkers', cost: 9, fx: { fcRed: .5 }, text: 'World Order counter-campaigns hit half as hard' },
+  { id: 's3', b: 'spin', name: 'Subcommittee on Subcommittees', cost: 14, fx: { treatySlow: .25 }, text: 'Treaty drafting 25% slower' },
+  { id: 's4', b: 'spin', name: 'Lobbyist Weekend Retreat', cost: 20, fx: { treatySlow: .15, treaty: -20 }, text: 'Treaty progress −20 points. Drafting 15% slower' }
+];
+UPGRADES.forEach((u, i) => { const prev = UPGRADES[i - 1]; u.req = prev && prev.b === u.b ? prev.id : null; });
+
+const OPS = [
+  { id: 'summit', name: 'Summit', branch: 'Diplomacy', cost: 6, cd: 30, text: 'All resistances here −40% for 25 weeks. Quiet.' },
+  { id: 'trade', name: 'Trade Deal', branch: 'Economy', cost: 8, cd: 40, text: 'Opens a trade route from your strongest country.' },
+  { id: 'snap', name: 'Snap Exercise', branch: 'Military', cost: 8, cd: 30, text: 'Pushes +10% support next to a country you hold 25%+ of. Loud.' },
+  { id: 'dossier', name: 'Leaked Dossiers', branch: 'Covert Ops', cost: 10, cd: 45, text: 'Diplomatic and ideological resistance here drop to 0 for 20 weeks. Very loud.' }
+];
+
+const WIN_SHARE = 0.70;
+const TUNE = { fxScale: 0.8, treaty: 1.0, noto: 1.5, reachNoto: 0.12, pressure: 8, coalitionAt: 15, costGrow: 0.15, income: 1, shareIncome: 1.5 };
+const CONTROL = 60; // % support at which a country counts as "held"
+
+function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+function createState(startId, seed) {
+  const s = {
+    seed: seed >>> 0, rngCalls: 0, week: 0, clout: 5, startId,
+    inf: {}, mods: [], trade: TRADE.map(t => t.slice()),
+    stats: { growth: .05, border: .02, trade: .015, reach: 0, income: 0, vis: 1, loud: 0, treatySlow: 0, fcRed: 0, summitCd: 0, snapBoost: 0, dossierDiscount: 0, pen: { eco: 0, mil: 0, dip: 0, ideo: 0 } },
+    owned: [], ready: {}, notoriety: 0, treaty: 0, coalition: false, nextCounter: 0,
+    bubbles: [], bubbleSeq: 0, news: [], flags: {}, over: null, peakShare: 0
+  };
+  COUNTRIES.forEach(c => { s.inf[c.id] = 0; });
+  s.inf[startId] = 3;
+  s.flags['seed_' + startId] = true;
+  addNews(s, `Unknown movement stirs in ${byId(startId).name}. Local officials call it “a phase”.`, 'you');
+  return s;
+}
+function rng(s) { const r = mulberry32(s.seed + s.rngCalls * 7919)(); s.rngCalls++; return r; }
+function byId(id) { return COUNTRIES.find(c => c.id === id); }
+function addNews(s, text, kind) { s.news.unshift({ week: s.week, text, kind: kind || 'world' }); if (s.news.length > 40) s.news.pop(); }
+function worldPop() { return COUNTRIES.reduce((a, c) => a + c.pop, 0); }
+function alignedShare(s) { return COUNTRIES.reduce((a, c) => a + c.pop * s.inf[c.id] / 100, 0) / worldPop(); }
+function neighbours(id) { return BORDERS.filter(e => e.includes(id)).map(e => e[0] === id ? e[1] : e[0]); }
+function tradeLinks(s, id) { return s.trade.filter(e => e.includes(id)).map(e => e[0] === id ? e[1] : e[0]); }
+
+function resBreakdown(s, id) {
+  const c = byId(id); const out = {};
+  const active = s.mods.filter(m => m.id === id && m.until > s.week);
+  const mul = active.filter(m => m.kind === 'summit').length ? 0.6 : 1;
+  const add = active.filter(m => m.kind === 'counter').length ? 0.25 : 0;
+  const zero = active.filter(m => m.kind === 'dossier').length ? ['dip', 'ideo'] : [];
+  TYPES.forEach(t => {
+    let v = zero.includes(t) ? 0 : c.res[t] * (1 - Math.min(.85, s.stats.pen[t]));
+    v = Math.min(.95, Math.max(0, v * mul + add));
+    out[t] = v;
+  });
+  return out;
+}
+function effRes(s, id) { const b = resBreakdown(s, id); return (b.eco + b.mil + b.dip + b.ideo) / 4; }
+
+function step(s) {
+  if (s.over) return;
+  s.week++;
+  const R = {}; COUNTRIES.forEach(c => { R[c.id] = effRes(s, c.id); });
+  const d = {}; COUNTRIES.forEach(c => { d[c.id] = 0; });
+  const st = s.stats;
+  // 1. Internal growth (logistic)
+  COUNTRIES.forEach(c => {
+    const v = s.inf[c.id]; if (v <= 0) return;
+    const g = st.growth * (c.growthMul || 1) * (1 - R[c.id]);
+    d[c.id] += g * v * (1 - v / 100) + 0.04 * (1 - R[c.id]);
+  });
+  // 2. Spread over borders and trade routes
+  const spread = (a, b, rate) => {
+    [[a, b], [b, a]].forEach(([src, dst]) => {
+      const sv = s.inf[src]; if (sv < 8) return;
+      const pull = rate * (sv / 100) * (1 - R[dst]);
+      if (s.inf[dst] <= 0) {
+        if (rng(s) < pull * 3) seed(s, dst, 1, src);
+      } else if (s.inf[dst] < sv) {
+        d[dst] += pull * TUNE.pressure;
+      }
+    });
+  };
+  BORDERS.forEach(([a, b]) => spread(a, b, st.border));
+  s.trade.forEach(([a, b]) => spread(a, b, st.trade));
+  // 3. Faith reach: distant seeding
+  if (st.reach > 0) COUNTRIES.forEach(c => {
+    if (s.inf[c.id] <= 0 && rng(s) < st.reach * (1 + 6 * alignedShare(s)) * (1 - R[c.id])) seed(s, c.id, 1, null);
+  });
+  COUNTRIES.forEach(c => { s.inf[c.id] = Math.max(0, Math.min(100, s.inf[c.id] + d[c.id])); });
+
+  const share = alignedShare(s); s.peakShare = Math.max(s.peakShare, share);
+  // 4. Clout income + opportunity bubbles
+  s.clout += TUNE.income * (0.12 + 0.06 * st.income) * (1 + TUNE.shareIncome * share);
+  s.bubbles = s.bubbles.filter(b => b.until > s.week);
+  const held = COUNTRIES.filter(c => s.inf[c.id] > 0);
+  if (held.length && rng(s) < 0.16 + 0.1 * share) {
+    const c = held[Math.floor(rng(s) * held.length)];
+    spawnBubble(s, c.id, 1 + (rng(s) < 0.35 ? 1 : 0));
+  }
+  // 5. Notoriety and the World Order
+  const vis = Math.max(0.2, st.vis);
+  s.notoriety = Math.min(100, s.notoriety + vis * (0.01 + TUNE.noto * share + TUNE.reachNoto * COUNTRIES.filter(c => s.inf[c.id] >= 5).length / COUNTRIES.length) + st.loud);
+  if (!s.coalition && s.notoriety >= TUNE.coalitionAt) {
+    s.coalition = true; s.nextCounter = s.week + 12;
+    addNews(s, 'World Order convenes emergency session. Catering described as “adequate”.', 'wo');
+  }
+  if (s.coalition) {
+    s.treaty = Math.max(0, s.treaty + TUNE.treaty * (0.35 + s.notoriety / 100) * (1 - Math.min(.8, st.treatySlow)));
+    treatyNews(s);
+    if (s.week >= s.nextCounter) counterCampaign(s);
+  }
+  milestoneNews(s, share);
+  s.mods = s.mods.filter(m => m.until > s.week);
+  // 6. End conditions
+  if (share >= WIN_SHARE) { s.over = 'win'; addNews(s, 'The world wakes up aligned. Nobody remembers agreeing to it.', 'you'); }
+  else if (s.treaty >= 100) { s.over = 'treaty'; addNews(s, 'Containment Treaty ratified. Your movement is now a footnote.', 'wo'); }
+  else if (COUNTRIES.every(c => s.inf[c.id] <= 0)) { s.over = 'extinct'; addNews(s, 'Your movement has vanished. Historians shrug.', 'wo'); }
+}
+
+function seed(s, id, amount, src) {
+  s.inf[id] = Math.max(s.inf[id], amount);
+  if (!s.flags['seed_' + id]) {
+    s.flags['seed_' + id] = true;
+    const c = byId(id);
+    addNews(s, src ? `Your ideas reach ${c.name} from ${byId(src).name}.` : `Your ideas appear in ${c.name}. Nobody is sure how.`, 'you');
+    spawnBubble(s, id, 2);
+  }
+}
+function spawnBubble(s, id, value) { s.bubbles.push({ key: ++s.bubbleSeq, id, value, until: s.week + 7 }); }
+function collectBubble(s, key) {
+  const i = s.bubbles.findIndex(b => b.key === key); if (i < 0) return 0;
+  const v = s.bubbles[i].value; s.bubbles.splice(i, 1); s.clout += v; return v;
+}
+
+function counterCampaign(s) {
+  const fc = s.stats.fcRed;
+  const cands = COUNTRIES.filter(c => s.inf[c.id] >= 5 && s.inf[c.id] < 97);
+  s.nextCounter = s.week + Math.max(12, 24 - Math.floor(s.notoriety / 10));
+  if (!cands.length) return;
+  const t = cands.reduce((a, c) => (c.pop * s.inf[c.id] > a.pop * s.inf[a.id] ? c : a));
+  s.inf[t.id] = Math.max(0, s.inf[t.id] - 10 * (1 - fc));
+  s.mods.push({ id: t.id, kind: 'counter', until: s.week + Math.round(25 * (1 - fc / 2)) });
+  const lines = [
+    `World Order launches awareness campaign in ${t.name}. Leaflets feature a stern owl.`,
+    `Fact-checkers descend on ${t.name}. Your slogans rated “mostly vibes”.`,
+    `World Order funds ${t.name} civics classes. Attendance: mandatory, enthusiasm: optional.`,
+    `${t.name} bans your pamphlets, then prints more to explain the ban.`
+  ];
+  addNews(s, lines[Math.floor(rng(s) * lines.length)], 'wo');
+}
+
+function treatyNews(s) {
+  const steps = [
+    [10, 'Treaty working group forms a subcommittee to agree the name of the working group.'],
+    [25, 'Containment Treaty draft reaches 400 pages. Font size under negotiation.'],
+    [50, 'Treaty halfway done. Delegates agree on the coffee; the verbs are next.'],
+    [75, 'Treaty enters final reading. Pens are being ceremonially polished.'],
+    [90, 'Signing ceremony booked. Venue: extremely neutral.']
+  ];
+  steps.forEach(([v, t]) => { if (s.treaty >= v && !s.flags['t' + v]) { s.flags['t' + v] = true; addNews(s, t, 'wo'); } });
+}
+function milestoneNews(s, share) {
+  const steps = [
+    [0.05, 'Pollsters notice your movement. Pollsters also notice lunch.'],
+    [0.15, 'Your slogan is now a popular ringtone in several capitals.'],
+    [0.30, 'Think tanks publish 11 reports on your rise. They disagree on everything but the fonts.'],
+    [0.50, 'Half the world now agrees with you. The other half is typing.'],
+    [0.62, 'Your leader’s face appears on a stamp. Philatelists divided.']
+  ];
+  steps.forEach(([v, t]) => { if (share >= v && !s.flags['m' + v]) { s.flags['m' + v] = true; addNews(s, t, 'you'); } });
+  const nsteps = [[40, 'Notoriety high: foreign ministers now mention you by name.'], [70, 'Notoriety critical: you are the lead story on every channel.']];
+  nsteps.forEach(([v, t]) => { if (s.notoriety >= v && !s.flags['n' + v]) { s.flags['n' + v] = true; addNews(s, t, 'wo'); } });
+}
+
+// ---- Player actions ----
+function upCost(s, u) { return Math.round(u.cost * (1 + TUNE.costGrow * s.owned.length)); }
+function canBuy(s, u) {
+  if (s.owned.includes(u.id)) return { ok: false, why: 'Owned' };
+  if (u.req && !s.owned.includes(u.req)) return { ok: false, why: 'Needs ' + UPGRADES.find(x => x.id === u.req).name };
+  if (s.clout < upCost(s, u)) return { ok: false, why: 'Not enough Clout' };
+  return { ok: true };
+}
+function buyUpgrade(s, id) {
+  const u = UPGRADES.find(x => x.id === id); const chk = canBuy(s, u); if (!chk.ok) return chk;
+  s.clout -= upCost(s, u); s.owned.push(id);
+  const st = s.stats;
+  Object.entries(u.fx).forEach(([k, v]) => {
+    if (k === 'pen') Object.entries(v).forEach(([t, p]) => { st.pen[t] += p; });
+    else if (k === 'treaty') s.treaty = Math.max(0, s.treaty + v);
+    else if (k === 'seed') {
+      const zeros = COUNTRIES.filter(c => s.inf[c.id] <= 0);
+      for (let i = 0; i < v && zeros.length; i++) seed(s, zeros.splice(Math.floor(rng(s) * zeros.length), 1)[0].id, 2, null);
+    } else st[k] += (['growth', 'border', 'trade', 'reach'].includes(k) ? v * TUNE.fxScale : v);
+  });
+  return { ok: true };
+}
+function opCost(s, op) { return op.id === 'dossier' ? op.cost - s.stats.dossierDiscount : op.cost; }
+function opCooldown(s, op) { return op.id === 'summit' ? op.cd - s.stats.summitCd : op.cd; }
+function strongest(s, exclude) {
+  return COUNTRIES.filter(c => c.id !== exclude).reduce((a, c) => (s.inf[c.id] > s.inf[a.id] ? c : a), COUNTRIES.find(c => c.id !== exclude));
+}
+function canOp(s, opId, target) {
+  const op = OPS.find(o => o.id === opId);
+  if (s.over) return { ok: false, why: 'Game over' };
+  if ((s.ready[opId] || 0) > s.week) return { ok: false, why: `Ready in ${s.ready[opId] - s.week} wk` };
+  if (s.clout < opCost(s, op)) return { ok: false, why: 'Not enough Clout' };
+  if (opId === 'trade') {
+    const src = strongest(s, target);
+    if (s.inf[src.id] < 10) return { ok: false, why: 'Need 10%+ somewhere else first' };
+    if (tradeLinks(s, target).includes(src.id)) return { ok: false, why: 'Already trades with ' + src.name };
+  }
+  if (opId === 'snap') {
+    if (!neighbours(target).some(n => s.inf[n] >= 25)) return { ok: false, why: 'Needs a neighbour at 25%+' };
+    if (s.inf[target] >= 90) return { ok: false, why: 'Already yours' };
+  }
+  if (opId === 'summit' && s.mods.some(m => m.id === target && m.kind === 'summit' && m.until > s.week)) return { ok: false, why: 'Summit already running' };
+  return { ok: true };
+}
+function doOp(s, opId, target) {
+  const chk = canOp(s, opId, target); if (!chk.ok) return chk;
+  const op = OPS.find(o => o.id === opId); const c = byId(target);
+  s.clout -= opCost(s, op); s.ready[opId] = s.week + opCooldown(s, op);
+  if (opId === 'summit') { s.mods.push({ id: target, kind: 'summit', until: s.week + 25 }); s.notoriety += 1; addNews(s, `Summit in ${c.name} ends with a handshake that lasts 11 seconds.`, 'you'); }
+  if (opId === 'trade') { const src = strongest(s, target); s.trade.push([src.id, target]); s.notoriety += 1; addNews(s, `${src.name} and ${c.name} sign a trade deal nobody has read.`, 'you'); }
+  if (opId === 'snap') { const push = 10 * (1 + 0.5 * s.stats.snapBoost); if (s.inf[target] <= 0) seed(s, target, 1, null); s.inf[target] = Math.min(100, s.inf[target] + push); s.notoriety += 5; addNews(s, `Snap exercise on the ${c.name} border. Tanks described as “just visiting”.`, 'you'); }
+  if (opId === 'dossier') { s.mods.push({ id: target, kind: 'dossier', until: s.week + 20 }); s.notoriety += 8; addNews(s, `Leaked dossiers embarrass ${c.name}’s cabinet. The PDFs were suspiciously well formatted.`, 'wo'); }
+  s.notoriety = Math.min(100, s.notoriety);
+  return { ok: true };
+}
+
+</script>
+<script>
+(() => {
+  const SPEED_MS = [0, 2400, 1100, 450];
+  const $ = id => document.getElementById(id);
+  const svg = $('map');
+  const NS = 'http://www.w3.org/2000/svg';
+  let S = null, speed = 0, selected = null, picking = false, acc = 0, last = performance.now();
+  const radius = c => 11 + Math.sqrt(c.pop) * 1.05;
+
+  // ---------- static map ----------
+  function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+  const gGrat = el('g', {}, svg), gEdges = el('g', {}, svg), gNodes = el('g', {}, svg), gBubbles = el('g', {}, svg);
+  for (let x = 50; x < 1000; x += 100) el('line', { x1: x, y1: 0, x2: x, y2: 580, class: 'grat' }, gGrat);
+  for (let y = 40; y < 580; y += 100) el('line', { x1: 0, y1: y, x2: 1000, y2: y, class: 'grat' }, gGrat);
+  const nodeEls = {};
+  COUNTRIES.forEach(c => {
+    const g = el('g', { class: 'node', tabindex: 0, role: 'button', 'aria-label': c.name, transform: `translate(${c.x},${c.y})` }, gNodes);
+    const r = radius(c);
+    el('circle', { r, class: 'base' }, g);
+    const ink = el('circle', { r: 0, class: 'inkfill' }, g);
+    const counter = el('circle', { r: r + 5, class: 'counter' }, g);
+    const name = el('text', { y: r + 15 }, g); name.textContent = c.name;
+    const pct = el('text', { y: r + 28, class: 'pct' }, g);
+    g.addEventListener('click', () => select(c.id));
+    g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(c.id); } });
+    nodeEls[c.id] = { g, ink, counter, pct, r };
+  });
+
+  function drawEdges() {
+    gEdges.innerHTML = '';
+    const line = (a, b, cls) => { const A = byId(a), B = byId(b); return el('line', { x1: A.x, y1: A.y, x2: B.x, y2: B.y, class: 'edge ' + cls, 'data-a': a, 'data-b': b }, gEdges); };
+    BORDERS.forEach(([a, b]) => line(a, b, 'border'));
+    (S ? S.trade : TRADE).forEach(([a, b], i) => line(a, b, 'trade' + (i >= TRADE.length ? ' new' : '')));
+  }
+
+  // ---------- rendering ----------
+  function render() {
+    if (!S) { drawEdges(); renderSide(); return; }
+    $('week').textContent = S.week;
+    $('clout').textContent = Math.floor(S.clout);
+    $('clout2').textContent = Math.floor(S.clout);
+    if (gEdges.childElementCount !== BORDERS.length + S.trade.length) drawEdges();
+    gEdges.querySelectorAll('line').forEach(l => {
+      const hot = Math.max(S.inf[l.dataset.a], S.inf[l.dataset.b]) >= 8 && Math.min(S.inf[l.dataset.a], S.inf[l.dataset.b]) < 99;
+      l.classList.toggle('hot', hot);
+    });
+    COUNTRIES.forEach(c => {
+      const n = nodeEls[c.id]; const v = S.inf[c.id];
+      n.ink.setAttribute('r', (n.r * Math.sqrt(v / 100)).toFixed(2));
+      n.pct.textContent = v > 0 ? (v < 1 ? '<1%' : Math.round(v) + '%') : '';
+      n.g.classList.toggle('held', v >= CONTROL);
+      n.g.classList.toggle('sel', selected === c.id);
+      n.counter.style.display = S.mods.some(m => m.id === c.id && m.kind === 'counter') ? '' : 'none';
+    });
+    // bubbles
+    const want = new Set(S.bubbles.map(b => b.key));
+    gBubbles.querySelectorAll('.bubble').forEach(b => { if (!want.has(+b.dataset.key)) b.remove(); });
+    S.bubbles.forEach(b => {
+      if (gBubbles.querySelector(`[data-key="${b.key}"]`)) return;
+      const c = byId(b.id); const r = nodeEls[b.id].r; const ang = (b.key * 137) % 360 * Math.PI / 180;
+      const g = el('g', { class: 'bubble', 'data-key': b.key, tabindex: 0, role: 'button', 'aria-label': `Collect ${b.value} Clout`, transform: `translate(${(c.x + Math.cos(ang) * (r + 8)).toFixed(1)},${(c.y + Math.sin(ang) * (r + 8) - 6).toFixed(1)})` }, gBubbles);
+      el('circle', { r: 12 }, g); const t = el('text', { y: 4 }, g); t.textContent = '+' + b.value;
+      const grab = e => { e.stopPropagation(); collectBubble(S, b.key); g.remove(); render(); };
+      g.addEventListener('pointerdown', grab);
+      g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') grab(e); });
+    });
+    // meters
+    const share = alignedShare(S);
+    $('shareVal').textContent = (share * 100).toFixed(1) + '%';
+    $('shareFill').style.width = Math.min(100, share / 1 * 100) + '%';
+    $('notoVal').textContent = Math.floor(S.notoriety);
+    $('notoFill').style.width = S.notoriety + '%';
+    $('notoNote').textContent = S.coalition ? (S.stats.loud > 0 ? `World Order is active. Loud upgrades add ${(S.stats.loud * 10).toFixed(1)} every 10 weeks` : 'World Order is active and watching') : 'World Order wakes up at 15';
+    $('treatyVal').textContent = Math.floor(S.treaty) + '%';
+    $('treatyFill').style.width = S.treaty + '%';
+    $('treatyNote').textContent = S.coalition ? (S.stats.treatySlow > 0 ? `Drafting slowed ${Math.round(Math.min(.8, S.stats.treatySlow) * 100)}% by your Spin` : 'Drafting. Speeds up with Notoriety') : 'Not started. You lose at 100%';
+    const ul = $('news');
+    const top = S.news.slice(0, 8).map(n => `<li class="${n.kind}"><span>wk ${n.week}</span>${n.text}</li>`).join('');
+    if (ul.dataset.sig !== S.news.length + ':' + S.news[0]?.text) { ul.innerHTML = top; ul.dataset.sig = S.news.length + ':' + S.news[0]?.text; }
+    renderSide();
+    if (!$('treeOv').hidden) renderTree();
+    if (S.over && $('endOv').hidden && !S.endShown) showEnd();
+  }
+
+  function pctRes(v) { return Math.round(v * 100); }
+  function renderSide() {
+    const side = $('side');
+    if (!selected) {
+      side.innerHTML = `<div class="eyebrow">Dossier</div><p class="empty">Click a country on the map to see its resistances and run operations there.</p>
+        <div class="eyebrow">How spread works</div>
+        <p class="empty">Support grows inside a country, then spills over land borders and along trade routes once it passes 8%. Resistances slow both. Upgrades lower resistances everywhere; operations hit one country.</p>`;
+      return;
+    }
+    const c = byId(selected);
+    const v = S ? S.inf[c.id] : 0;
+    const br = S ? resBreakdown(S, c.id) : c.res;
+    const mods = S ? S.mods.filter(m => m.id === c.id) : [];
+    const modChips = mods.map(m => m.kind === 'counter' ? `<span class="chip wo">WO campaign · ${m.until - S.week} wk</span>` : `<span class="chip" style="border-color:var(--you);color:var(--you)">${m.kind === 'summit' ? 'Summit' : 'Dossiers'} · ${m.until - S.week} wk</span>`).join('');
+    const links = S ? tradeLinks(S, c.id) : TRADE.filter(e => e.includes(c.id)).map(e => e[0] === c.id ? e[1] : e[0]);
+    let html = `<div><div class="eyebrow">Dossier</div><h2 class="cname">${c.name}</h2>
+      <div class="meta">${c.pop >= 1 ? c.pop + 'M people' : Math.round(c.pop * 1000) + 'k people'} · ${(c.pop / worldPop() * 100).toFixed(1)}% of world</div></div>
+      <div class="chips">${c.traits.map(t => `<span class="chip">${t}</span>`).join('')}${modChips}</div>
+      <p class="desc">${c.desc}</p>`;
+    if (S) html += `<div><div class="top" style="display:flex;justify-content:space-between"><span class="eyebrow">Support</span><span class="meta" style="color:var(--you)">${v.toFixed(1)}%</span></div>
+      <div class="supbar"><div style="width:${v}%"></div><div class="tick" style="left:${CONTROL}%"></div></div></div>`;
+    html += `<div><div class="eyebrow" style="margin-bottom:6px">Resistance${S ? ' after your upgrades' : ''}</div><div class="res">` +
+      TYPES.map(t => `<span>${TYPE_LABEL[t]}</span><div class="track"><div style="width:${pctRes(br[t])}%"></div></div><span class="num">${pctRes(br[t])}</span>`).join('') + `</div></div>`;
+    html += `<div class="meta">Borders: ${neighbours(c.id).map(n => byId(n).name).join(', ') || 'none (island)'}<br>Trade: ${links.map(n => byId(n).name).join(', ') || 'none'}</div>`;
+    if (S && !picking) {
+      html += `<div class="eyebrow">Operations</div><div class="ops">` + OPS.map(op => {
+        const chk = canOp(S, op.id, c.id);
+        return `<button class="op" data-op="${op.id}" ${chk.ok ? '' : 'disabled'}><span class="op-name">${op.name}</span><span class="op-cost">${opCost(S, op)} Clout</span><span class="op-text">${op.text}</span>${chk.ok ? '' : `<span class="op-why">${chk.why}</span>`}</button>`;
+      }).join('') + `</div>`;
+    }
+    side.innerHTML = html;
+    side.querySelectorAll('.op').forEach(b => b.addEventListener('click', () => { doOp(S, b.dataset.op, c.id); render(); }));
+  }
+
+  function renderTree() {
+    const tree = $('tree');
+    tree.innerHTML = BRANCHES.map(br => `<div class="branch"><h3>${br.name}</h3><p>${br.blurb}</p><ol>` +
+      UPGRADES.filter(u => u.b === br.id).map(u => {
+        const owned = S.owned.includes(u.id); const locked = u.req && !S.owned.includes(u.req);
+        const cost = upCost(S, u); const poor = !owned && !locked && S.clout < cost;
+        const cls = owned ? 'owned' : locked ? 'locked' : poor ? 'poor' : '';
+        return `<li><button class="up ${cls}" data-up="${u.id}" ${owned || locked || poor ? 'aria-disabled="true"' : ''}><span class="n">${u.name}</span><span class="t">${u.text}</span><span class="c">${owned ? 'Owned' : locked ? 'Locked' : cost + ' Clout'}</span></button></li>`;
+      }).join('') + `</ol></div>`).join('');
+    tree.querySelectorAll('.up').forEach(b => b.addEventListener('click', () => { if (buyUpgrade(S, b.dataset.up).ok) render(); }));
+  }
+
+  function select(id) {
+    selected = id;
+    if (picking) {
+      const c = byId(id);
+      $('pickbar').hidden = false;
+      $('pickbar').innerHTML = `<span>Start in <b>${c.name}</b>?</span><button class="btn primary" id="startHere">Start here</button>`;
+      $('startHere').addEventListener('click', () => startGame(id));
+    }
+    COUNTRIES.forEach(c => nodeEls[c.id].g.classList.toggle('sel', c.id === id));
+    renderSide();
+  }
+
+  function startGame(id) {
+    S = createState(id, (Math.random() * 2 ** 31) | 0);
+    picking = false; $('pickbar').hidden = true; $('mapHint').textContent = 'Click a country for its dossier';
+    selected = id; drawEdges(); setSpeed(1); render();
+  }
+
+  function showEnd() {
+    S.endShown = true; setSpeed(0);
+    const win = S.over === 'win';
+    $('endEyebrow').textContent = `Week ${S.week}`;
+    $('endTitle').textContent = win ? 'The world agrees with you' : S.over === 'treaty' ? 'Treaty signed' : 'Movement dissolved';
+    $('endText').textContent = win
+      ? `You aligned ${(alignedShare(S) * 100).toFixed(0)}% of the world in ${S.week} weeks, with the Containment Treaty at ${Math.floor(S.treaty)}% and Notoriety at ${Math.floor(S.notoriety)}. You bought ${S.owned.length} upgrades.`
+      : `The World Order ratified its Containment Treaty in week ${S.week}. At your peak you had ${(S.peakShare * 100).toFixed(0)}% of the world. Next time, stay quieter for longer or invest in Spin.`;
+    $('endOv').hidden = false;
+  }
+
+  function setSpeed(n) { speed = n; [0, 1, 2, 3].forEach(i => $('sp' + i).setAttribute('aria-pressed', String(i === n))); }
+  [0, 1, 2, 3].forEach(i => $('sp' + i).addEventListener('click', () => { if (S && !S.over) setSpeed(i); }));
+  document.addEventListener('keydown', e => {
+    if (e.target.closest && e.target.closest('input,textarea')) return;
+    if (!S || S.over) return;
+    if (e.code === 'Space' && !e.target.closest('button,[role=button]')) { e.preventDefault(); setSpeed(speed ? 0 : 1); }
+    if (['1', '2', '3'].includes(e.key)) setSpeed(+e.key);
+    if (e.key === 'Escape') $('treeOv').hidden = true;
+  });
+  $('openTree').addEventListener('click', () => { if (!S) return; renderTree(); $('treeOv').hidden = false; });
+  $('closeTree').addEventListener('click', () => { $('treeOv').hidden = true; });
+  $('treeOv').addEventListener('click', e => { if (e.target.id === 'treeOv') $('treeOv').hidden = true; });
+  $('introGo').addEventListener('click', () => { $('introOv').hidden = true; picking = true; $('mapHint').textContent = 'Choose your starting country'; });
+  $('again').addEventListener('click', () => { $('endOv').hidden = true; S = null; selected = null; picking = true; $('pickbar').hidden = true; $('mapHint').textContent = 'Choose your starting country'; gBubbles.innerHTML = ''; render(); COUNTRIES.forEach(c => { const n = nodeEls[c.id]; n.ink.setAttribute('r', 0); n.pct.textContent = ''; n.g.classList.remove('held'); n.counter.style.display = 'none'; }); ['week','clout'].forEach(k => $(k).textContent = 0); });
+  $('stay').addEventListener('click', () => { $('endOv').hidden = true; });
+
+  function loop(now) {
+    const dt = Math.min(1000, now - last); last = now;
+    if (S && !S.over && speed) {
+      acc += dt;
+      let ticked = false;
+      while (acc >= SPEED_MS[speed]) { acc -= SPEED_MS[speed]; step(S); ticked = true; if (S.over) break; }
+      if (ticked) render();
+    } else if (S && S.over && !S.endShown) render();
+    requestAnimationFrame(loop);
+  }
+
+  // Keep a running game across live updates of this page.
+  function boot(data) {
+    if (data && data.S) {
+      S = data.S; selected = data.selected || null; $('introOv').hidden = true;
+      $('mapHint').textContent = 'Click a country for its dossier';
+      if (S.over) S.endShown = true;
+    }
+    drawEdges(); COUNTRIES.forEach(c => nodeEls[c.id].counter.style.display = 'none'); render();
+    requestAnimationFrame(loop);
+  }
+  window.claude?.hot?.snapshot?.(() => ({ S, selected }));
+  window.claude?.hot?.ready ? window.claude.hot.ready(boot) : boot(window.claude?.hot?.data ?? {});
+  window.__GI = { get S() { return S; }, startGame, setSpeed };
+})();
+</script>
+
+</body>
+</html>
