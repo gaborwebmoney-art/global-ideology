@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-S7yJXqtD7u5KVQCX95stJrmC3C594oi49CxBcr9s/Lw=' 'sha256-zFT2ff/P4farcRKGR/ceoy6/fqqG71pWJJyjn01AE2w=' 'sha256-yGGn9uf1EDl+IG8wh2qoHOSPZq9RQLMjC1MQ0YvolBc=' https://challenges.cloudflare.com; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
 <title>Global Ideology</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -132,6 +134,43 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--you); 
 @keyframes pop { from { opacity: 0; } to { opacity: 1; } }
 @keyframes breathe { 50% { transform: scale(1.12); } }
 
+/* World Order on the map */
+.edge.blocked { stroke: var(--danger); stroke-dasharray: 2 6; opacity: .9; }
+.node .member { fill: none; stroke: var(--wo); stroke-width: 2; }
+.node .signed { fill: var(--wo-dim); stroke: var(--wo); stroke-width: 3.5; }
+.node.is-signed .base { fill: var(--wo-dim); }
+.node text.stamp { fill: var(--wo); font-size: 9.5px; letter-spacing: .12em; font-weight: 500; }
+.hq rect { fill: var(--wo); }
+.hq text { font-family: var(--mono); font-size: 9px; font-weight: 500; fill: var(--ink); text-anchor: middle; pointer-events: none; }
+.threat { cursor: pointer; }
+.threat circle { fill: var(--ink); stroke: var(--wo); stroke-width: 2; }
+.threat.sign circle { stroke: var(--danger); fill: var(--danger); }
+.threat text { font-family: var(--mono); font-size: 10.5px; font-weight: 500; fill: var(--wo); text-anchor: middle; pointer-events: none; }
+.threat.sign text { fill: var(--ink); }
+.agent { fill: var(--wo); stroke: var(--ink); stroke-width: 1.5; pointer-events: none; }
+.agent.sign { fill: var(--danger); }
+.trail { stroke: var(--wo); stroke-width: 1; stroke-dasharray: 1 4; opacity: .6; fill: none; pointer-events: none; }
+
+/* World Order card */
+.wo-card { border: 1px solid var(--wo); border-radius: 6px; padding: 10px 12px; display: grid; gap: 8px; background: var(--wo-dim); }
+.wo-head { display: flex; align-items: center; gap: 10px; }
+.seal { width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--wo); display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 13px; color: var(--wo); letter-spacing: .02em; flex: none; }
+.wo-head b { display: block; font-size: 13px; color: var(--wo); }
+.wo-head span { font-size: 11.5px; color: var(--muted); }
+.moves { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.moves li button { width: 100%; display: grid; grid-template-columns: 38px 1fr; gap: 8px; align-items: baseline; text-align: left; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 5px 8px; cursor: pointer; font-size: 12px; }
+.moves li button:hover { border-color: var(--wo); }
+.moves .wk { font-family: var(--mono); color: var(--wo); font-variant-numeric: tabular-nums; }
+.moves li.sign .wk { color: var(--danger); }
+.moves .none { font-size: 12px; color: var(--muted); }
+.pips { display: flex; gap: 4px; margin-top: 6px; }
+.pips i { flex: 1; height: 8px; border-radius: 2px; background: var(--ink); border: 1px solid var(--line); }
+.pips i.on { background: var(--wo); border-color: var(--wo); }
+.pips i.cap { border-color: var(--wo); }
+.threat-box { border-left: 3px solid var(--danger); padding: 6px 10px; background: var(--panel-2); font-size: 12.5px; display: grid; gap: 3px; }
+.threat-box.soft { border-left-color: var(--wo); }
+.threat-box b { color: var(--text); }
+
 /* Overlays */
 .overlay { position: fixed; inset: 0; background: rgba(8, 14, 18, .78); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 20; }
 .sheet { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; width: min(1180px, 100%); max-height: 100%; overflow: auto; padding: 18px; }
@@ -139,6 +178,69 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--you); 
 .sheet-head h2 { font-family: var(--display); font-weight: 800; font-size: 32px; text-transform: uppercase; letter-spacing: .03em; margin: 0; line-height: 1; }
 .tree { display: grid; grid-template-columns: repeat(7, minmax(150px, 1fr)); gap: 10px; overflow-x: auto; padding-bottom: 4px; }
 .branch h3 { font-family: var(--display); font-weight: 600; font-size: 19px; text-transform: uppercase; letter-spacing: .04em; margin: 0; }
+.bhead { display: flex; flex-direction: column; gap: 1px; }
+.vs { font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; color: var(--muted); text-transform: uppercase; }
+.branch { border-top: 3px solid var(--line); padding-top: 8px; }
+.branch.pair-a { border-top-color: var(--line); }
+.branch.is-mine { border-top-color: var(--you); }
+.branch.is-closed { border-top-color: var(--panel-2); }
+.branch.is-closed h3, .branch.is-closed > p { opacity: .5; }
+.branch .fine { font-size: 11px; color: var(--muted); margin: 0 0 8px; min-height: 0; }
+.doctrine { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 0 0 6px; }
+.chip.mine { border-color: var(--you); color: var(--you); }
+.chip.closed { color: var(--muted); }
+.rebrand { background: transparent; border: 1px dashed var(--you); color: var(--you); border-radius: 4px; padding: 2px 8px; font-size: 11.5px; cursor: pointer; }
+.rebrand.armed { background: var(--you); color: var(--ink); border-style: solid; }
+.rebrand:disabled { opacity: .45; cursor: not-allowed; }
+.up .bt { font-size: 11px; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 3px; }
+.up .bt.on { color: var(--you); }
+.up .bt.sp { color: var(--wo); border-top-style: solid; }
+.up.cap { border-style: double; border-width: 3px; }
+.branch .fine.syn { color: var(--muted); }
+.branch .fine.syn.on { color: var(--you); }
+.specials { display: grid; gap: 6px; }
+.specials button { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; text-align: left; background: var(--you-dim); border: 1px solid var(--you); border-radius: 4px; padding: 7px 10px; cursor: pointer; }
+.specials button:disabled { background: var(--panel-2); border-color: var(--line); cursor: not-allowed; }
+.specials .sn { font-weight: 600; }
+.specials .sw { grid-column: 1 / -1; font-size: 11.5px; color: var(--muted); }
+.status-chip { font-family: var(--mono); font-size: 11px; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--you); color: var(--you); }
+.status-chip.wo { border-color: var(--wo); color: var(--wo); }
+.wire li.ev { font-weight: 600; }
+.wire li.ev::before { content: none; }
+.wire li.fresh { animation: evflash 2.4s ease-out; }
+@keyframes evflash { 0% { background: color-mix(in srgb, currentColor 22%, transparent); } 100% { background: transparent; } }
+.decision { width: min(560px, 100%); border-color: var(--you); }
+.auth { width: min(420px, 100%); }
+.auth h1 { margin-bottom: 6px; }
+.auth form { display: grid; gap: 10px; margin-top: 12px; }
+.auth label { display: grid; gap: 4px; font-size: 12px; color: var(--muted); font-family: var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+.auth input { font: inherit; font-size: 15px; text-transform: none; letter-spacing: 0; color: var(--text); background: var(--ink); border: 1px solid var(--line); border-radius: 4px; padding: 9px 10px; }
+.auth input:focus { outline: 2px solid var(--you); outline-offset: 1px; border-color: var(--you); }
+.auth .err { color: var(--danger); font-size: 13px; min-height: 18px; margin: 0; }
+.auth .err.ok { color: var(--you); }
+.auth .lead { margin: 0; font-size: 13.5px; }
+#captcha:empty { display: none; }
+.auth .ok { color: var(--you); }
+.auth .alt { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; justify-content: space-between; margin-top: 4px; font-size: 13px; }
+.linkbtn { background: none; border: 0; padding: 0; color: var(--wo); cursor: pointer; font: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.auth .note { font-size: 12px; color: var(--muted); margin: 12px 0 0; }
+.acct { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; color: var(--muted); min-width: 0; }
+.acct b { font-weight: 500; color: var(--text); max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.acct .saved { color: var(--muted); }
+.acct .linkbtn { font-size: 11px; }
+@media (max-width: 560px) { .acct b { max-width: 120px; } }
+.decision h2 { font-family: var(--display); font-weight: 800; font-size: 28px; text-transform: uppercase; letter-spacing: .03em; margin: 4px 0 8px; line-height: 1.05; }
+.decision p { margin: 0 0 14px; }
+.choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.choice { text-align: left; display: grid; gap: 4px; padding: 12px; border-radius: 6px; background: var(--panel-2); border: 1px solid var(--line); cursor: pointer; color: var(--text); font: inherit; }
+.choice:hover:not(:disabled) { border-color: var(--you); }
+.choice:disabled { opacity: .45; cursor: not-allowed; }
+.choice b { font-size: 15px; }
+.choice span { font-size: 12.5px; color: var(--muted); }
+.choice .cost { font-family: var(--mono); color: var(--you); font-size: 11px; }
+.decision .meta { margin-top: 10px; font-size: 12px; color: var(--muted); }
+@media (max-width: 560px) { .choices { grid-template-columns: 1fr; } .decision h2 { font-size: 22px; } }
+.up.shut .n { text-decoration: line-through; text-decoration-color: var(--muted); }
 .branch p { font-size: 11.5px; color: var(--muted); margin: 2px 0 8px; min-height: 2.9em; }
 .branch ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .up { width: 100%; text-align: left; background: var(--panel-2); border: 1px solid var(--line); border-radius: 4px; padding: 8px; cursor: pointer; display: grid; gap: 3px; }
@@ -176,12 +278,12 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--you); 
   .map-hint { position: sticky; display: block; padding: 8px 12px 0; }
 }
 </style>
-
 </head>
 <body>
 <div id="app">
   <header class="bar">
-    <div class="brand">Global Ideology<small>Prototype v1</small></div>
+    <div class="brand">Global Ideology<small>Prototype v6.1</small></div>
+    <div class="acct" id="acct" hidden><b id="acctEmail"></b><span class="saved" id="savedAt"></span><button class="linkbtn" id="logout">Log out</button></div>
     <div class="spacer"></div>
     <div class="readout"><span>Week</span><b id="week">0</b></div>
     <div class="readout clout" title="Spend Clout on upgrades and operations. Click amber bubbles on the map to collect more."><span>Clout</span><b id="clout">0</b></div>
@@ -198,7 +300,7 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--you); 
     <div class="mapwrap">
       <svg id="map" viewBox="0 0 1000 580" preserveAspectRatio="xMidYMid meet" role="img" aria-label="World map of 15 countries"></svg>
       <div class="map-hint" id="mapHint">Select a country</div>
-      <div class="legend"><span><i></i>Land border</span><span><i class="dash"></i>Trade route</span></div>
+      <div class="legend"><span><i></i>Land border</span><span><i class="dash"></i>Trade route</span><span><i style="border-color:var(--wo)"></i>World Order member</span></div>
       <div class="pickbar" id="pickbar" hidden></div>
     </div>
     <aside class="side" id="side" aria-live="polite"></aside>
@@ -212,13 +314,13 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--you); 
     </div>
     <div class="meter m-noto">
       <div class="top"><span class="eyebrow">Notoriety</span><span class="val" id="notoVal">0</span></div>
-      <div class="track"><div class="fill" id="notoFill"></div><div class="goal" style="left:15%"></div></div>
-      <div class="note" id="notoNote">World Order wakes up at 15</div>
+      <div class="track"><div class="fill" id="notoFill"></div><div class="goal" style="left:8%"></div></div>
+      <div class="note" id="notoNote">World Order wakes up at 8</div>
     </div>
     <div class="meter m-wo">
-      <div class="top"><span class="eyebrow">Containment Treaty</span><span class="val" id="treatyVal">0%</span></div>
-      <div class="track"><div class="fill" id="treatyFill"></div></div>
-      <div class="note" id="treatyNote">Not started. You lose at 100%</div>
+      <div class="top"><span class="eyebrow">Treaty signatures</span><span class="val" id="treatyVal">0 / 8</span></div>
+      <div class="pips" id="pips"></div>
+      <div class="note" id="treatyNote">Not started. You lose when 8 countries sign</div>
     </div>
     <div class="wire"><span class="eyebrow">News wire</span><ul id="news"></ul></div>
   </footer>
@@ -232,23 +334,61 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--you); 
       <div class="readout clout"><span>Clout</span><b id="clout2">0</b></div>
       <button class="btn" id="closeTree">Close</button>
     </div>
-    <p class="empty" style="margin:-4px 0 12px">Each upgrade you own makes the next one 15% dearer. The game keeps running while this is open.</p>
+    <p class="empty" style="margin:-4px 0 12px">Choose a doctrine: Ideology or Economy, and Military or Diplomacy. The first upgrade of every branch is open to all; the second one commits you. Partners boost each other: Ideology and Diplomacy, Economy and Military, Faith and Covert Ops. Top-tier upgrades are one-off special actions. Each upgrade you own makes the next one 15% dearer. The game keeps running while this is open.</p>
     <div class="tree" id="tree"></div>
   </div>
 </div>
 
-<div class="overlay" id="introOv">
+<div class="overlay" id="authOv" hidden>
+  <div class="sheet intro auth" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="eyebrow" id="authEyebrow">Account</div>
+    <h1 id="authTitle">Log in</h1>
+    <form id="authForm" novalidate>
+      <p id="authLead" class="lead" hidden></p>
+      <label id="authEmailWrap"><span id="authEmailLbl">Email</span><input id="authEmail" type="email" autocomplete="email" maxlength="254"></label>
+      <label id="authPwWrap"><span id="authPwLbl">Password</span><input id="authPw" type="password" autocomplete="current-password" maxlength="72"></label>
+      <label id="authPw2Wrap" hidden>Repeat password<input id="authPw2" type="password" autocomplete="new-password" maxlength="72"></label>
+      <div id="captcha"></div>
+      <p class="err" id="authErr" role="alert"></p>
+      <button class="btn primary" id="authGo" type="submit">Log in</button>
+    </form>
+    <div class="alt" id="authAltRow"><span><span id="authSwitchText">No account yet?</span> <button class="linkbtn" id="authSwitch" type="button">Register</button></span><button class="linkbtn" id="authForgot" type="button">Forgot password?</button></div>
+    <div class="alt"><button class="linkbtn" id="authGuest" type="button">Play without saving</button><span class="meta">Guest game, nothing is stored</span></div>
+    <p class="note" id="authNote"></p>
+  </div>
+</div>
+
+<div class="overlay" id="resumeOv" hidden>
+  <div class="sheet intro auth" role="dialog" aria-modal="true" aria-labelledby="resumeTitle">
+    <div class="eyebrow">Saved game</div>
+    <h1 id="resumeTitle">Welcome back</h1>
+    <p id="resumeText"></p>
+    <div class="row"><button class="btn primary" id="resumeGo">Continue</button><button class="btn" id="resumeNew">New game</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="introOv" hidden>
   <div class="sheet intro" role="dialog" aria-modal="true" aria-labelledby="introTitle">
     <div class="eyebrow">Briefing</div>
     <h1 id="introTitle">Spread an idea. Beat the paperwork.</h1>
     <p>You lead a movement that wants the whole world to agree with it. Nobody has to be conquered. They just have to be convinced.</p>
     <ol>
       <li>Pick a starting country. Support grows there and spills over land borders and trade routes by itself.</li>
-      <li>Spend Clout on <b>upgrades</b> (they work everywhere) and <b>operations</b> (one country, then a cooldown). Click amber bubbles to collect Clout.</li>
-      <li>The more the world notices you, the faster the <span style="color:var(--wo)">World Order</span> drafts its Containment Treaty. Loud tactics fill the Notoriety meter fast.</li>
-      <li>Win by aligning 70% of the world before the treaty is signed.</li>
+      <li>Spend Clout on <b>upgrades</b> (they work everywhere) and <b>operations</b> (one country, then a cooldown). Click amber bubbles to collect Clout. Upgrades come in opposed pairs: commit to Ideology or Economy, and to Military or Diplomacy. Each branch is boosted by a partner (Ideology with Diplomacy, Economy with Military), and its top upgrade is a one-off special action.</li>
+      <li>Once you are noticed, the <span style="color:var(--wo)">World Order</span> convenes. It recruits member countries, runs campaigns against you, sanctions your trade routes and collects signatures for its Containment Treaty. Every move is announced a few weeks ahead: a Summit in the target country derails it.</li>
+      <li>Win by aligning 70% of the world, or by holding so many countries (60%+ support) that the World Order can never reach 8 signatures for 26 weeks. Lose if 8 countries sign.</li>
     </ol>
     <div class="row"><button class="btn primary" id="introGo">Choose a starting country</button><span class="meta">Space pauses. 1, 2, 3 set the speed.</span></div>
+  </div>
+</div>
+
+<div class="overlay" id="decOv" hidden>
+  <div class="sheet decision" role="dialog" aria-modal="true" aria-labelledby="decTitle">
+    <div class="eyebrow" id="decEyebrow">Decision</div>
+    <h2 id="decTitle"></h2>
+    <p id="decText"></p>
+    <div class="choices"><button class="choice" id="decA"></button><button class="choice" id="decB"></button></div>
+    <div class="meta">The world waits while you decide.</div>
   </div>
 </div>
 
@@ -262,109 +402,133 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--you); 
 </div>
 
 <script>
-
+// SIM-START
 // ---------- Global Ideology: simulation core (pure, UI-free) ----------
 const TYPES = ['eco', 'mil', 'dip', 'ideo'];
 const TYPE_LABEL = { eco: 'Economic', mil: 'Military', dip: 'Diplomatic', ideo: 'Ideological' };
 
+// Countries from Pavel's countries.docx (Sep 2025). Resistances map 100 -> .15, 200 -> .35, 300 -> .55, 400 -> .75.
+// Celestia, Tavaro, Kestria and Pinguinia fill map gaps (Western Europe, Middle East, Africa, the pole).
 const COUNTRIES = [
-  { id: 'borealis',   name: 'Borealis',   pop: 38,   x: 150, y: 105, res: { eco: .40, mil: .40, dip: .50, ideo: .50 }, traits: ['Federal', 'Resource-rich'], desc: 'Vast northern dominion. Polite, decentralised, hard to rally around anything.' },
-  { id: 'aethelgard', name: 'Aethelgard', pop: 330,  x: 205, y: 235, res: { eco: .60, mil: .80, dip: .50, ideo: .30 }, traits: ['Superpower', 'Media-saturated'], desc: 'Loud, rich and armed. Will believe almost anything if it trends.' },
-  { id: 'marisol',    name: 'Marisol',    pop: 210,  x: 285, y: 395, res: { eco: .30, mil: .30, dip: .40, ideo: .40 }, traits: ['Emerging economy'], desc: 'Fast-growing coastal republic with a weakness for grand promises.' },
-  { id: 'isolde',     name: 'Isolde',     pop: 4,    x: 405, y: 65,  res: { eco: .50, mil: .20, dip: .60, ideo: .80 }, traits: ['Island', 'Close-knit'], desc: 'Volcanic island of 4 million people who all know each other.' },
-  { id: 'atlantica',  name: 'Atlantica',  pop: 68,   x: 410, y: 200, res: { eco: .60, mil: .60, dip: .30, ideo: .40 }, traits: ['Island', 'Trade hub'], desc: 'Island financial centre. Neutral in public, available in private.' },
-  { id: 'guldor',     name: 'Guldor',     pop: 84,   x: 525, y: 150, res: { eco: .50, mil: .40, dip: .70, ideo: .40 }, traits: ['Old money'], desc: 'Ancient kingdom run by very old treaties and very old families.' },
-  { id: 'celestia',   name: 'Celestia',   pop: 67,   x: 505, y: 255, res: { eco: .40, mil: .30, dip: .60, ideo: .60 }, traits: ['Cultural power'], desc: 'Philosophers, painters and strikes. Soft power, soft army.' },
-  { id: 'elysia',     name: 'Elysia',     pop: 10,   x: 605, y: 90,  res: { eco: .50, mil: .20, dip: .70, ideo: .70 }, traits: ['Green state'], desc: 'Small, principled and fully recycled.' },
-  { id: 'vesperia',   name: 'Vesperia',   pop: 45,   x: 625, y: 215, res: { eco: .30, mil: .50, dip: .50, ideo: .80 }, traits: ['Tech society'], desc: 'Hyper-educated tech state. Sceptical of everything except its own apps.' },
-  { id: 'uralia',     name: 'Uralia',     pop: 145,  x: 745, y: 130, res: { eco: .40, mil: .80, dip: .30, ideo: .60 }, traits: ['Authoritarian', 'Militarised'], desc: 'Rugged, disciplined, and on permanent military exercise.' },
-  { id: 'kestria',    name: 'Kestria',    pop: 220,  x: 560, y: 410, res: { eco: .30, mil: .40, dip: .30, ideo: .40 }, traits: ['Young population'], desc: 'The youngest population on the map. Ideas spread here fast.', growthMul: 1.25 },
-  { id: 'tavaro',     name: 'Tavaro',     pop: 90,   x: 715, y: 320, res: { eco: .70, mil: .60, dip: .40, ideo: .60 }, traits: ['Resource-rich', 'Crossroads'], desc: 'Desert crossroads sitting on the world’s favourite resource.' },
-  { id: 'koryn',      name: 'Koryn',      pop: 125,  x: 875, y: 165, res: { eco: .50, mil: .70, dip: .50, ideo: .70 }, traits: ['Proud history'], desc: 'Old empire, long memory, suspicious of new ideas.' },
-  { id: 'sinan',      name: 'Sinan',      pop: 900,  x: 860, y: 330, res: { eco: .60, mil: .60, dip: .60, ideo: .80 }, traits: ['Authoritarian', 'Manufacturing giant'], desc: 'The workshop of the world. Nothing enters without paperwork.' },
-  { id: 'pinguinia',  name: 'Pinguinia',  pop: 0.05, x: 470, y: 535, res: { eco: .20, mil: .10, dip: .90, ideo: .90 }, traits: ['Polar', 'Research stations'], desc: 'Fifty thousand scientists and considerably more penguins.' }
+  { id: 'borealis',   name: 'Borealis',   pop: 38,   x: 150, y: 95,  res: { mil: .55, eco: .55, dip: .55, ideo: .55 }, traits: ['Federal', 'Resource-rich'], desc: 'A sprawling northern dominion of vast wilderness. Tolerant, decentralised and hard to influence as a single entity.' },
+  { id: 'aethelgard', name: 'Aethelgard', pop: 330,  x: 205, y: 220, res: { mil: .75, eco: .75, dip: .75, ideo: .15 }, traits: ['Superpower', 'Divided politics'], desc: 'A sprawling federation with a powerful, sometimes divided, government. Strong on every front except ideas: it will try any of them once.' },
+  { id: 'laplata',    name: 'La Plata',   pop: 46,   x: 290, y: 450, res: { mil: .55, eco: .15, dip: .15, ideo: .15 }, traits: ['Agricultural wealth', 'Unstable'], desc: 'Great natural beauty, vast farmland and a long history of political turmoil. Very open to a good economic offer.' },
+  { id: 'isolde',     name: 'Isolde',     pop: 0.4,  x: 395, y: 55,  res: { mil: .15, eco: .55, dip: .35, ideo: .35 }, traits: ['Island', 'Close-knit'], desc: 'A remote island of fire and ice. Small, self-reliant and proud of its heritage.' },
+  { id: 'guldor',     name: 'Guldor',     pop: 68,   x: 455, y: 135, res: { mil: .35, eco: .35, dip: .75, ideo: .35 }, traits: ['Island', 'Old money'], desc: 'An ancient kingdom of trade and exploration. Its power rests on centuries of relationships and very old treaties.' },
+  { id: 'celestia',   name: 'Celestia',   pop: 67,   x: 480, y: 240, res: { mil: .30, eco: .40, dip: .60, ideo: .60 }, traits: ['Cultural power'], desc: 'Philosophers, painters and strikes. Soft power, soft army.' },
+  { id: 'helvetia',   name: 'Helvetia',   pop: 9,    x: 555, y: 205, res: { mil: .15, eco: .75, dip: .55, ideo: .35 }, traits: ['Neutral', 'Financial centre'], desc: 'A neutral, prosperous alpine republic. Its banks are everywhere; its opinions, officially, nowhere.' },
+  { id: 'pannonia',   name: 'Pannonia',   pop: 10,   x: 615, y: 150, res: { mil: .15, eco: .15, dip: .35, ideo: .35 }, traits: ['Landlocked', 'Unpredictable'], desc: 'A landlocked state with a proud history and a distinct identity, often at odds with its own alliances.' },
+  { id: 'koryn',      name: 'Koryn',      pop: 145,  x: 755, y: 95,  res: { mil: .55, eco: .35, dip: .35, ideo: .55 }, traits: ['Authoritarian', 'Resource-rich'], desc: 'A vast, resource-rich nation with a centralised government and a proud military history.' },
+  { id: 'tavaro',     name: 'Tavaro',     pop: 90,   x: 665, y: 310, res: { mil: .60, eco: .70, dip: .40, ideo: .60 }, traits: ['Crossroads', 'Oil'], desc: 'A desert crossroads sitting on the world’s favourite resource.' },
+  { id: 'kestria',    name: 'Kestria',    pop: 220,  x: 545, y: 425, res: { mil: .30, eco: .30, dip: .30, ideo: .40 }, traits: ['Young population'], desc: 'The youngest population on the map. Ideas spread here fast.', growthMul: 1.25 },
+  { id: 'bharat',     name: 'Bharat',     pop: 900,  x: 780, y: 340, res: { mil: .55, eco: .35, dip: .35, ideo: .55 }, traits: ['Colossal democracy', 'Tech boom'], desc: 'A colossal democracy of vibrant cultures and a booming tech sector. Its diversity is both a strength and a way in.' },
+  { id: 'sinopeia',   name: 'Sinopeia',   pop: 900,  x: 860, y: 225, res: { mil: .55, eco: .75, dip: .55, ideo: .55 }, traits: ['Authoritarian', 'Manufacturing giant'], desc: 'A vast, ancient empire with a disciplined, centrally run society. Nothing enters without paperwork.' },
+  { id: 'juche',      name: 'Juche',      pop: 26,   x: 935, y: 120, res: { mil: .15, eco: .15, dip: .15, ideo: .75 }, traits: ['Isolated', 'Personality cult'], desc: 'A fiercely isolated nation built around one leader’s portrait. Unmoved by any idea but the official one.' },
+  { id: 'nippon',     name: 'Nippon',     pop: 125,  x: 950, y: 270, res: { mil: .55, eco: .75, dip: .75, ideo: .55 }, traits: ['Island', 'Hyper-advanced'], desc: 'An island nation with a hyper-advanced economy and a disciplined, ageing society.' },
+  { id: 'pinguinia',  name: 'Pinguinia',  pop: 0.05, x: 470, y: 540, res: { mil: .10, eco: .20, dip: .90, ideo: .90 }, traits: ['Polar', 'Research stations'], desc: 'Fifty thousand scientists and considerably more penguins.' }
 ];
 const BORDERS = [
-  ['borealis', 'aethelgard'], ['aethelgard', 'marisol'],
-  ['guldor', 'celestia'], ['guldor', 'elysia'], ['celestia', 'vesperia'], ['elysia', 'vesperia'],
-  ['elysia', 'uralia'], ['vesperia', 'uralia'], ['vesperia', 'tavaro'], ['uralia', 'tavaro'],
-  ['uralia', 'koryn'], ['koryn', 'sinan'], ['tavaro', 'sinan'], ['tavaro', 'kestria'], ['uralia', 'sinan']
+  ['borealis', 'aethelgard'], ['celestia', 'helvetia'], ['helvetia', 'pannonia'], ['celestia', 'pannonia'],
+  ['pannonia', 'koryn'], ['koryn', 'tavaro'], ['koryn', 'sinopeia'], ['koryn', 'juche'], ['sinopeia', 'juche'],
+  ['sinopeia', 'bharat'], ['bharat', 'tavaro'], ['tavaro', 'kestria']
 ];
 const TRADE = [
-  ['aethelgard', 'atlantica'], ['atlantica', 'guldor'], ['isolde', 'guldor'], ['isolde', 'borealis'],
-  ['marisol', 'kestria'], ['atlantica', 'marisol'], ['celestia', 'kestria'], ['sinan', 'kestria'],
-  ['marisol', 'pinguinia'], ['aethelgard', 'guldor']
+  ['aethelgard', 'guldor'], ['guldor', 'celestia'], ['isolde', 'guldor'], ['isolde', 'borealis'],
+  ['aethelgard', 'laplata'], ['laplata', 'kestria'], ['celestia', 'kestria'], ['bharat', 'kestria'],
+  ['nippon', 'sinopeia'], ['nippon', 'juche'], ['helvetia', 'guldor'], ['laplata', 'pinguinia'], ['tavaro', 'celestia']
 ];
 
-// Upgrade effects: add to stats; pen.* reduces that resistance type everywhere.
+// Pavel's skill tree (skilltree 10092025.xlsx), adapted to the World Order model.
+// Opposed pairs lock at tier 2: Ideology vs Economy, Military vs Diplomacy.
+// Each branch is boosted by the tier-3 upgrade of its partner, and its tier-4 capstone needs it:
+// Ideology <- Diplomacy, Diplomacy <- Ideology, Military <- Economy, Economy <- Military, Faith <-> Covert Ops.
 const BRANCHES = [
-  { id: 'ideo', name: 'Ideology', blurb: 'Grows support inside countries.' },
-  { id: 'eco', name: 'Economy', blurb: 'Spreads along trade routes. Earns Clout.' },
-  { id: 'dip', name: 'Diplomacy', blurb: 'Spreads across land borders.' },
-  { id: 'faith', name: 'Faith', blurb: 'Crosses oceans and borders on its own.' },
-  { id: 'mil', name: 'Military', blurb: 'Breaks military resistance. Loud.' },
-  { id: 'covert', name: 'Covert Ops', blurb: 'Weakens every defence. Very loud.' },
+  { id: 'ideo', name: 'Ideology', blurb: 'Grows support inside countries.', partner: 'dip' },
+  { id: 'eco', name: 'Economy', blurb: 'Spreads along trade routes. Earns Clout.', partner: 'mil' },
+  { id: 'mil', name: 'Military', blurb: 'Breaks resistance and makes countries refuse the World Order. Loud.', partner: 'eco' },
+  { id: 'dip', name: 'Diplomacy', blurb: 'Spreads across land borders. Blunts the World Order.', partner: 'ideo' },
+  { id: 'faith', name: 'Faith', blurb: 'Crosses oceans and borders on its own.', partner: 'covert', unlock: 'reach' },
+  { id: 'covert', name: 'Covert Ops', blurb: 'Weakens every defence. Very loud.', partner: 'faith', unlock: 'wo' },
   { id: 'spin', name: 'Spin', blurb: 'Keeps the World Order busy.' }
 ];
 const UPGRADES = [
-  { id: 'i1', b: 'ideo', name: 'Viral Manifesto', cost: 5, fx: { growth: .025 }, text: 'Internal growth +25%' },
-  { id: 'i2', b: 'ideo', name: 'Podcast Tour', cost: 9, fx: { growth: .025, pen: { ideo: .15 } }, text: 'Internal growth +25%. Ideological resistance −15%' },
-  { id: 'i3', b: 'ideo', name: 'Leader’s Portrait in Every Office', cost: 15, fx: { growth: .035, loud: .03 }, text: 'Internal growth +35%. Slightly louder' },
-  { id: 'i4', b: 'ideo', name: 'Mandatory Birthday Celebrations', cost: 24, fx: { growth: .045, pen: { ideo: .2 }, loud: .05 }, text: 'Internal growth +45%. Ideological resistance −20%. Louder' },
+  { id: 'i1', b: 'ideo', name: 'Charismatic Leadership', cost: 5, fx: { growth: .025 }, boost: { growth: .01 }, text: 'Internal growth +25%', btext: 'another +10%' },
+  { id: 'i2', b: 'ideo', name: 'Doctrinal Purity', cost: 9, fx: { growth: .025, pen: { ideo: .15 } }, boost: { pen: { ideo: .05 } }, text: 'Internal growth +25%. Ideological resistance −15%', btext: 'another −5% ideological' },
+  { id: 'i3', b: 'ideo', name: 'Social Engineering', cost: 15, fx: { growth: .035, income: 1 }, boost: { growth: .025, income: .5 }, text: 'Internal growth +35%. Clout income up', btext: 'more growth and income' },
+  { id: 'i4', b: 'ideo', name: 'Utopia', cost: 16, special: 'utopia', text: 'Special action: for 26 weeks internal growth and Clout income double, but you cannot run operations' },
 
-  { id: 'e1', b: 'eco', name: 'Strategic Synergy Alignment', cost: 5, fx: { income: 1, trade: .02 }, text: 'Clout income up. Trade spread up' },
-  { id: 'e2', b: 'eco', name: 'Supply Chain Dependency', cost: 9, fx: { trade: .03, pen: { eco: .2 } }, text: 'Trade spread up. Economic resistance −20%' },
-  { id: 'e3', b: 'eco', name: 'Too Big to Question', cost: 14, fx: { income: 1.5, pen: { eco: .2 } }, text: 'Clout income up a lot. Economic resistance −20%' },
-  { id: 'e4', b: 'eco', name: 'Sovereign Wealth Hug', cost: 22, fx: { trade: .05, income: 1 }, text: 'Trade spread way up. Clout income up' },
+  { id: 'e1', b: 'eco', name: 'Trade Deals', cost: 5, fx: { income: .7, trade: .02 }, boost: { trade: .015 }, text: 'Clout income up. Trade spread up', btext: 'trade spread up more' },
+  { id: 'e2', b: 'eco', name: 'Resource Leverage', cost: 9, fx: { trade: .03, pen: { eco: .2 } }, boost: { pen: { eco: .1 }, trade: .01 }, text: 'Trade spread up. Economic resistance −20%', btext: 'another −10% economic, more trade spread' },
+  { id: 'e3', b: 'eco', name: 'Monopolization', cost: 14, fx: { income: 1, pen: { eco: .2, dip: .1 } }, boost: { income: .6 }, text: 'Clout income up a lot. Economic resistance −20%, diplomatic −10%', btext: 'more income' },
+  { id: 'e4', b: 'eco', name: 'Government Bribe', cost: 16, special: 'bribe', text: 'Special action: a World Order member of your choice (not the HQ) quits, tears up its signature, and gives you +25% support there' },
 
-  { id: 'd1', b: 'dip', name: 'Embassy Canapés', cost: 4, fx: { border: .02 }, text: 'Border spread up' },
-  { id: 'd2', b: 'dip', name: 'Regional Summit Circuit', cost: 9, fx: { border: .03, pen: { dip: .2 }, summitCd: 12 }, text: 'Border spread up. Diplomatic resistance −20%. Summits recharge faster' },
-  { id: 'd3', b: 'dip', name: 'Photo-Op Handshake Doctrine', cost: 14, fx: { border: .04, vis: -.1 }, text: 'Border spread up. You look harmless: notoriety grows 10% slower' },
-  { id: 'd4', b: 'dip', name: 'Alliance Architecture', cost: 22, fx: { border: .05, pen: { dip: .2 } }, text: 'Border spread way up. Diplomatic resistance −20%' },
+  { id: 'm1', b: 'mil', name: 'Military Parade', cost: 5, fx: { pen: { mil: .2, ideo: .05 }, border: .01, loud: .01 }, boost: { pen: { mil: .1 }, border: .01 }, text: 'Military resistance −20%, ideological −5%. Louder', btext: 'another −10% military, more border spread' },
+  { id: 'm2', b: 'mil', name: 'Cyber Operations', cost: 9, fx: { pen: { dip: .1 }, growth: .03, border: .02, snapBoost: 1 }, boost: { sabotage: .25 }, text: 'Diplomatic resistance −10%. Growth and border spread up. Snap Exercises push 50% harder', btext: '25% of World Order campaigns and sanctions fail' },
+  { id: 'm3', b: 'mil', name: 'Sovereign Intervention', cost: 14, fx: { border: .03, pen: { mil: .2 }, shield: 15, loud: .01 }, boost: { shield: 10 }, text: 'Border spread up. Countries need 15 points less of your support to refuse the World Order. Louder', btext: '10 points more' },
+  { id: 'm4', b: 'mil', name: 'Stoppage Order', cost: 16, special: 'stoppage', text: 'Special action: freezes the World Order for 10 weeks. No drafting, no new moves, and planned moves wait' },
 
-  { id: 'f1', b: 'faith', name: 'Missionary Networks', cost: 6, fx: { reach: .004, pen: { ideo: .1 } }, text: 'Can take root in distant countries. Ideological resistance −10%' },
-  { id: 'f2', b: 'faith', name: 'Pilgrimage Routes', cost: 10, fx: { reach: .006, trade: .02 }, text: 'Distant reach up. Trade spread up' },
-  { id: 'f3', b: 'faith', name: 'Shared Holy Days', cost: 15, fx: { growth: .02, pen: { ideo: .15 } }, text: 'Internal growth +20%. Ideological resistance −15%' },
-  { id: 'f4', b: 'faith', name: 'Common Creed', cost: 22, fx: { reach: .01, pen: { ideo: .1, dip: .1 } }, text: 'Distant reach way up. Ideological and diplomatic resistance −10%' },
+  { id: 'd1', b: 'dip', name: 'Embassy', cost: 4, fx: { border: .02 }, boost: { border: .015 }, text: 'Border spread up', btext: 'more border spread' },
+  { id: 'd2', b: 'dip', name: 'Regional Summit', cost: 9, fx: { border: .03, pen: { dip: .15 }, summitCd: 12 }, boost: { pen: { dip: .1 } }, text: 'Border spread up. Diplomatic resistance −15%. Summits recharge faster', btext: 'another −10% diplomatic' },
+  { id: 'd3', b: 'dip', name: 'Sanctions Hammer', cost: 14, fx: { border: .02, vis: -.1, fcRed: .3 }, boost: { fcRed: .2, border: .01 }, text: 'Border spread up. Notoriety grows 10% slower. World Order campaigns hit 30% softer', btext: '20% softer again' },
+  { id: 'd4', b: 'dip', name: 'Alliance Breaker', cost: 16, special: 'breaker', text: 'Special action: a World Order member of your choice (not the HQ) leaves, and every resistance in the world drops 8% for good' },
 
-  { id: 'm1', b: 'mil', name: 'Military Parade', cost: 5, fx: { pen: { mil: .2 }, loud: .03 }, text: 'Military resistance −20%. Louder' },
-  { id: 'm2', b: 'mil', name: 'Snap Exercises', cost: 9, fx: { pen: { mil: .1 }, snapBoost: 1 }, text: 'Snap Exercise operations push 50% harder. Military resistance −10%' },
-  { id: 'm3', b: 'mil', name: 'Security Guarantees', cost: 14, fx: { border: .03, pen: { mil: .2 }, loud: .03 }, text: 'Border spread up. Military resistance −20%. Louder' },
-  { id: 'm4', b: 'mil', name: 'Blockade', cost: 22, fx: { pen: { mil: .15, eco: .15 }, loud: .06 }, text: 'Military and economic resistance −15%. Much louder' },
+  { id: 'f1', b: 'faith', name: 'Word of God', cost: 6, fx: { reach: .007, pen: { ideo: .1 } }, boost: { reach: .002 }, text: 'Can take root in distant countries. Ideological resistance −10%', btext: 'further reach' },
+  { id: 'f2', b: 'faith', name: 'Congregations', cost: 10, fx: { reach: .008, growth: .01, trade: .02, income: 1 }, boost: { income: .5 }, text: 'Distant reach up. Growth, trade spread and Clout income up a little', btext: 'more income' },
+  { id: 'f3', b: 'faith', name: 'Pilgrim Prophets', cost: 15, fx: { growth: .03, pen: { ideo: .15 }, opDiscount: 1 }, boost: { opDiscount: 1 }, text: 'Internal growth +30%. Ideological resistance −15%. Operations cost 1 Clout less', btext: '1 Clout less again' },
+  { id: 'f4', b: 'faith', name: 'Believe!', cost: 16, special: 'believe', text: 'Special action: the World Order HQ loses its faith in the treaty. It quits, a new HQ takes over, and the draft drops 15%' },
 
-  { id: 'c1', b: 'covert', name: 'Sleeper Agents', cost: 6, fx: { pen: { eco: .05, mil: .05, dip: .05, ideo: .05 }, loud: .03, seed: 2 }, text: 'Plants support in 2 random countries. All resistances −5%' },
-  { id: 'c2', b: 'covert', name: 'Leaked Dossiers', cost: 10, fx: { pen: { dip: .15 }, loud: .04, dossierDiscount: 4 }, text: 'Diplomatic resistance −15%. Leak operations cost less' },
-  { id: 'c3', b: 'covert', name: 'Orchestrated Unrest', cost: 16, fx: { pen: { eco: .1, mil: .1, dip: .1, ideo: .1 }, loud: .08 }, text: 'All resistances −10%. Much louder' },
-  { id: 'c4', b: 'covert', name: 'Shadow Government', cost: 24, fx: { growth: .03, pen: { eco: .1, mil: .1, dip: .1, ideo: .1 }, loud: .1 }, text: 'Internal growth +30%. All resistances −10%. Very loud' },
+  { id: 'c1', b: 'covert', name: 'Sleeper Agents', cost: 6, fx: { pen: { eco: .05, mil: .05, dip: .05, ideo: .05 }, loud: .02 }, once: { seed: 2 }, boost: { pen: { eco: .03, mil: .03, dip: .03, ideo: .03 } }, text: 'Plants support in 2 random countries. All resistances −5%', btext: 'another −3% everywhere' },
+  { id: 'c2', b: 'covert', name: 'Asset Degradation', cost: 10, fx: { hiCut: .1, loud: .03, dossierDiscount: 4 }, boost: { hiCut: .05 }, text: 'Every country’s strongest resistance drops by 10 points. Leaked Dossiers cost less', btext: '5 points more' },
+  { id: 'c3', b: 'covert', name: 'Orchestrated Unrest', cost: 16, fx: { pen: { eco: .08, mil: .08, dip: .08, ideo: .08 }, sabotage: .4, loud: .07 }, boost: { sabotage: .15 }, text: 'All resistances −8%. 40% of World Order campaigns and sanctions fall apart. Much louder', btext: '15% more fall apart' },
+  { id: 'c4', b: 'covert', name: 'Hybrid Threat', cost: 16, special: 'hybrid', text: 'Special action: every sanction is lifted, every planned World Order move is cancelled, and it cannot sanction you for 40 weeks' },
 
   { id: 's1', b: 'spin', name: 'Plausible Deniability', cost: 5, fx: { vis: -.15 }, text: 'Notoriety grows 15% slower' },
   { id: 's2', b: 'spin', name: 'Friendly Fact-Checkers', cost: 9, fx: { fcRed: .5 }, text: 'World Order counter-campaigns hit half as hard' },
   { id: 's3', b: 'spin', name: 'Subcommittee on Subcommittees', cost: 14, fx: { treatySlow: .25 }, text: 'Treaty drafting 25% slower' },
-  { id: 's4', b: 'spin', name: 'Lobbyist Weekend Retreat', cost: 20, fx: { treatySlow: .15, treaty: -20 }, text: 'Treaty progress −20 points. Drafting 15% slower' }
+  { id: 's4', b: 'spin', name: 'Lobbyist Weekend Retreat', cost: 20, fx: { treatySlow: .15 }, once: { treaty: -20 }, text: 'Treaty progress −20 points. Drafting 15% slower' }
 ];
-UPGRADES.forEach((u, i) => { const prev = UPGRADES[i - 1]; u.req = prev && prev.b === u.b ? prev.id : null; });
+UPGRADES.forEach((u, i) => { const prev = UPGRADES[i - 1]; u.req = prev && prev.b === u.b ? prev.id : null; u.tier = UPGRADES.slice(0, i).filter(x => x.b === u.b).length; });
+const OPPOSITE = { ideo: 'eco', eco: 'ideo', mil: 'dip', dip: 'mil' };
+// the tier-3 upgrade that boosts each branch (and gates its capstone)
+const SYNERGY = { ideo: 'd3', dip: 'i3', mil: 'e3', eco: 'm3', faith: 'c3', covert: 'f3' };
+const CAPSTONE_NEEDS = { i4: 'd3', d4: 'i3', m4: 'e3', e4: 'm3' };
+const SPECIALS = {
+  utopia: { name: 'Utopia', target: false },
+  bribe: { name: 'Government Bribe', target: true },
+  stoppage: { name: 'Stoppage Order', target: false },
+  breaker: { name: 'Alliance Breaker', target: true },
+  believe: { name: 'Believe!', target: false },
+  hybrid: { name: 'Hybrid Threat', target: false }
+};
+const REBRAND_COST = 10, REBRAND_NOTORIETY = 15;
+const FAITH_UNLOCK_COUNTRIES = 4;
 
 const OPS = [
-  { id: 'summit', name: 'Summit', branch: 'Diplomacy', cost: 6, cd: 30, text: 'All resistances here −40% for 25 weeks. Quiet.' },
+  { id: 'summit', name: 'Summit', branch: 'Diplomacy', cost: 6, cd: 30, text: 'All resistances here −40% for 25 weeks, and derails any World Order move planned here. Quiet.' },
   { id: 'trade', name: 'Trade Deal', branch: 'Economy', cost: 8, cd: 40, text: 'Opens a trade route from your strongest country.' },
-  { id: 'snap', name: 'Snap Exercise', branch: 'Military', cost: 8, cd: 30, text: 'Pushes +10% support next to a country you hold 25%+ of. Loud.' },
-  { id: 'dossier', name: 'Leaked Dossiers', branch: 'Covert Ops', cost: 10, cd: 45, text: 'Diplomatic and ideological resistance here drop to 0 for 20 weeks. Very loud.' }
+  { id: 'snap', name: 'Snap Exercise', branch: 'Military', cost: 8, cd: 30, text: 'Pushes +10% support next to a country you hold 25%+ of, and cancels any World Order move planned there. Loud.' },
+  { id: 'dossier', name: 'Leaked Dossiers', branch: 'Covert Ops', cost: 10, cd: 45, text: 'Diplomatic and ideological resistance here drop to 0 for 20 weeks. A World Order member walks out and tears up its signature. Very loud.' }
 ];
 
 const WIN_SHARE = 0.70;
-const TUNE = { fxScale: 0.8, treaty: 1.0, noto: 1.5, reachNoto: 0.12, pressure: 8, coalitionAt: 15, costGrow: 0.15, income: 1, shareIncome: 1.5 };
+const SIGNATURES_TO_LOSE = 8;
+const SG = 'Secretary-General Horatio Quorum';
+const TUNE = { evBad: .65, evGap: 12, milNoSummit: true, fxScale: 0.4, treaty: 2.6, memberRes: 0.15, signBelow: 60, joinBelow: 50, withdrawAt: 70, lead: 6, planBase: 6, founders: 2, noto: 1.5, reachNoto: 0.12, pressure: 6, coalitionAt: 8, costGrow: 0.03, income: 3, shareIncome: 1.5 };
 const CONTROL = 60; // % support at which a country counts as "held"
 
 function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 
 function createState(startId, seed) {
   const s = {
-    seed: seed >>> 0, rngCalls: 0, week: 0, clout: 5, startId,
+    v: 5, pending: null, ev: { next: 18, nextDecision: 70, fx: {}, temp: [], seen: {}, log: [], endorsed: null, loudOp: null }, seed: seed >>> 0, rngCalls: 0, week: 0, clout: 5, startId,
     inf: {}, mods: [], trade: TRADE.map(t => t.slice()),
-    stats: { growth: .05, border: .02, trade: .015, reach: 0, income: 0, vis: 1, loud: 0, treatySlow: 0, fcRed: 0, summitCd: 0, snapBoost: 0, dossierDiscount: 0, pen: { eco: 0, mil: 0, dip: 0, ideo: 0 } },
-    owned: [], ready: {}, notoriety: 0, treaty: 0, coalition: false, nextCounter: 0,
+    stats: { growth: .05, border: .02, trade: .015, reach: 0, income: 0, vis: 1, loud: 0, treatySlow: 0, fcRed: 0, summitCd: 0, snapBoost: 0, dossierDiscount: 0, shield: 0, sabotage: 0, hiCut: 0, opDiscount: 0, pen: { eco: 0, mil: 0, dip: 0, ideo: 0 } },
+    specials: {}, utopiaUntil: 0, frozenUntil: 0, noSanctionUntil: 0,
+    owned: [], rebranded: false, ready: {}, notoriety: 0, treaty: 0, coalition: false, nextCounter: 0,
+    wo: { hq: null, members: {}, signed: {}, queue: [], nextPlan: 0, seq: 0 }, blocked: [],
     bubbles: [], bubbleSeq: 0, news: [], flags: {}, over: null, peakShare: 0
   };
+  s.base = JSON.parse(JSON.stringify(s.stats));
   COUNTRIES.forEach(c => { s.inf[c.id] = 0; });
   s.inf[startId] = 3;
   s.flags['seed_' + startId] = true;
@@ -383,10 +547,12 @@ function resBreakdown(s, id) {
   const c = byId(id); const out = {};
   const active = s.mods.filter(m => m.id === id && m.until > s.week);
   const mul = active.filter(m => m.kind === 'summit').length ? 0.6 : 1;
-  const add = active.filter(m => m.kind === 'counter').length ? 0.25 : 0;
+  const add = (active.filter(m => m.kind === 'counter').length ? 0.25 : 0) + (s.wo && s.wo.members[id] ? TUNE.memberRes : 0);
   const zero = active.filter(m => m.kind === 'dossier').length ? ['dip', 'ideo'] : [];
+  const hi = TYPES.reduce((a, t) => (c.res[t] > c.res[a] ? t : a), TYPES[0]);
   TYPES.forEach(t => {
-    let v = zero.includes(t) ? 0 : c.res[t] * (1 - Math.min(.85, s.stats.pen[t]));
+    let v = zero.includes(t) ? 0 : Math.max(0, c.res[t] - (t === hi ? s.stats.hiCut : 0)) * (1 - Math.min(.85, s.stats.pen[t]));
+    active.filter(m => m.kind === 'res' && (!m.types || m.types.includes(t))).forEach(m => { v *= m.mul; });
     v = Math.min(.95, Math.max(0, v * mul + add));
     out[t] = v;
   });
@@ -395,7 +561,7 @@ function resBreakdown(s, id) {
 function effRes(s, id) { const b = resBreakdown(s, id); return (b.eco + b.mil + b.dip + b.ideo) / 4; }
 
 function step(s) {
-  if (s.over) return;
+  if (s.over || s.pending) return;
   s.week++;
   const R = {}; COUNTRIES.forEach(c => { R[c.id] = effRes(s, c.id); });
   const d = {}; COUNTRIES.forEach(c => { d[c.id] = 0; });
@@ -403,14 +569,15 @@ function step(s) {
   // 1. Internal growth (logistic)
   COUNTRIES.forEach(c => {
     const v = s.inf[c.id]; if (v <= 0) return;
-    const g = st.growth * (c.growthMul || 1) * (1 - R[c.id]);
+    const g = st.growth * (c.growthMul || 1) * (1 - R[c.id]) * (s.week < s.utopiaUntil ? 2 : 1) * (fxOn(s, 'growthMul') || 1);
     d[c.id] += g * v * (1 - v / 100) + 0.04 * (1 - R[c.id]);
   });
   // 2. Spread over borders and trade routes
   const spread = (a, b, rate) => {
     [[a, b], [b, a]].forEach(([src, dst]) => {
       const sv = s.inf[src]; if (sv < 8) return;
-      const pull = rate * (sv / 100) * (1 - R[dst]);
+      const inward = s.mods.some(m => m.id === src && m.inward && m.until > s.week) ? .5 : 1;
+      const pull = rate * inward * (sv / 100) * (1 - R[dst]);
       if (s.inf[dst] <= 0) {
         if (rng(s) < pull * 3) seed(s, dst, 1, src);
       } else if (s.inf[dst] < sv) {
@@ -419,7 +586,7 @@ function step(s) {
     });
   };
   BORDERS.forEach(([a, b]) => spread(a, b, st.border));
-  s.trade.forEach(([a, b]) => spread(a, b, st.trade));
+  s.trade.forEach(([a, b]) => { if (!isBlocked(s, a, b)) spread(a, b, st.trade * (fxOn(s, 'tradeMul') || 1)); });
   // 3. Faith reach: distant seeding
   if (st.reach > 0) COUNTRIES.forEach(c => {
     if (s.inf[c.id] <= 0 && rng(s) < st.reach * (1 + 6 * alignedShare(s)) * (1 - R[c.id])) seed(s, c.id, 1, null);
@@ -428,7 +595,7 @@ function step(s) {
 
   const share = alignedShare(s); s.peakShare = Math.max(s.peakShare, share);
   // 4. Clout income + opportunity bubbles
-  s.clout += TUNE.income * (0.12 + 0.06 * st.income) * (1 + TUNE.shareIncome * share);
+  s.clout += TUNE.income * (0.12 + 0.06 * st.income) * (1 + TUNE.shareIncome * share) * (s.week < s.utopiaUntil ? 2 : 1) * (fxOn(s, 'incomeMul') || 1);
   s.bubbles = s.bubbles.filter(b => b.until > s.week);
   const held = COUNTRIES.filter(c => s.inf[c.id] > 0);
   if (held.length && rng(s) < 0.16 + 0.1 * share) {
@@ -438,20 +605,21 @@ function step(s) {
   // 5. Notoriety and the World Order
   const vis = Math.max(0.2, st.vis);
   s.notoriety = Math.min(100, s.notoriety + vis * (0.01 + TUNE.noto * share + TUNE.reachNoto * COUNTRIES.filter(c => s.inf[c.id] >= 5).length / COUNTRIES.length) + st.loud);
-  if (!s.coalition && s.notoriety >= TUNE.coalitionAt) {
-    s.coalition = true; s.nextCounter = s.week + 12;
-    addNews(s, 'World Order convenes emergency session. Catering described as “adequate”.', 'wo');
-  }
-  if (s.coalition) {
-    s.treaty = Math.max(0, s.treaty + TUNE.treaty * (0.35 + s.notoriety / 100) * (1 - Math.min(.8, st.treatySlow)));
+  if (!s.coalition && s.notoriety >= TUNE.coalitionAt) woActivate(s);
+  if (s.coalition && s.week < s.frozenUntil) { s.wo.queue.forEach(q => { q.at++; q.planned++; }); s.wo.nextPlan++; }
+  else if (s.coalition) {
+    s.treaty = Math.min(100, Math.max(0, s.treaty + TUNE.treaty * (0.35 + s.notoriety / 100) * (1 - Math.min(.8, st.treatySlow))));
     treatyNews(s);
-    if (s.week >= s.nextCounter) counterCampaign(s);
+    woTick(s);
   }
   milestoneNews(s, share);
+  eventsTick(s);
   s.mods = s.mods.filter(m => m.until > s.week);
+  s.blocked = s.blocked.filter(b => b.until > s.week);
   // 6. End conditions
   if (share >= WIN_SHARE) { s.over = 'win'; addNews(s, 'The world wakes up aligned. Nobody remembers agreeing to it.', 'you'); }
-  else if (s.treaty >= 100) { s.over = 'treaty'; addNews(s, 'Containment Treaty ratified. Your movement is now a footnote.', 'wo'); }
+  else if (s.coalition && s.wo.hopeless >= 26) { s.over = 'collapse'; addNews(s, 'The Containment Treaty collapses. The World Order rebrands as a book club.', 'you'); }
+  else if (signedCount(s) >= SIGNATURES_TO_LOSE) { s.over = 'treaty'; addNews(s, `Containment Treaty ratified by ${SIGNATURES_TO_LOSE} nations. ${SG} weeps with joy into a fountain pen.`, 'wo'); }
   else if (COUNTRIES.every(c => s.inf[c.id] <= 0)) { s.over = 'extinct'; addNews(s, 'Your movement has vanished. Historians shrug.', 'wo'); }
 }
 
@@ -470,21 +638,99 @@ function collectBubble(s, key) {
   const v = s.bubbles[i].value; s.bubbles.splice(i, 1); s.clout += v; return v;
 }
 
-function counterCampaign(s) {
+function counterCampaign(s, target) {
   const fc = s.stats.fcRed;
-  const cands = COUNTRIES.filter(c => s.inf[c.id] >= 5 && s.inf[c.id] < 97);
-  s.nextCounter = s.week + Math.max(12, 24 - Math.floor(s.notoriety / 10));
-  if (!cands.length) return;
-  const t = cands.reduce((a, c) => (c.pop * s.inf[c.id] > a.pop * s.inf[a.id] ? c : a));
+  const t = byId(target);
   s.inf[t.id] = Math.max(0, s.inf[t.id] - 10 * (1 - fc));
   s.mods.push({ id: t.id, kind: 'counter', until: s.week + Math.round(25 * (1 - fc / 2)) });
   const lines = [
     `World Order launches awareness campaign in ${t.name}. Leaflets feature a stern owl.`,
-    `Fact-checkers descend on ${t.name}. Your slogans rated “mostly vibes”.`,
+    `Fact-checkers descend on ${t.name}. Your slogans rated \u201cmostly vibes\u201d.`,
     `World Order funds ${t.name} civics classes. Attendance: mandatory, enthusiasm: optional.`,
     `${t.name} bans your pamphlets, then prints more to explain the ban.`
   ];
   addNews(s, lines[Math.floor(rng(s) * lines.length)], 'wo');
+}
+
+// ---- The World Order: a visible opponent ----
+function signedCount(s) { return Object.keys(s.wo.signed).length; }
+function memberCount(s) { return Object.keys(s.wo.members).length; }
+function isBlocked(s, a, b) { return s.blocked.some(x => (x.a === a && x.b === b) || (x.a === b && x.b === a)); }
+function signCapacity(s) { return Math.floor(s.treaty / (100 / SIGNATURES_TO_LOSE)); }
+function pendingOn(s, id) { return s.wo.queue.filter(q => q.target === id); }
+function woActivate(s) {
+  s.coalition = true;
+  // HQ: the most diplomatic country far from your start
+  const start = byId(s.startId);
+  const cands = COUNTRIES.filter(c => c.id !== s.startId && c.pop >= 1).map(c => ({ c, score: c.res.dip * 2 + Math.hypot(c.x - start.x, c.y - start.y) / 400 - s.inf[c.id] / 50 }));
+  const hq = cands.sort((a, b) => b.score - a.score)[0].c;
+  s.wo.hq = hq.id; s.wo.members[hq.id] = true; s.wo.nextPlan = s.week + 3;
+  // founding members: the HQ's neighbours and trade partners that resist you most
+  const near = [...new Set([...neighbours(hq.id), ...tradeLinks(s, hq.id)])].filter(id => s.inf[id] < TUNE.joinBelow && byId(id).pop >= 1).sort((a, b) => s.inf[a] - s.inf[b]).slice(0, TUNE.founders);
+  near.forEach(id => { s.wo.members[id] = true; });
+  addNews(s, `The World Order convenes in ${hq.name}${near.length ? ' with ' + near.map(id => byId(id).name).join(' and ') : ''}. ${SG}: \u201cWe are deeply concerned, and have formed a committee to be concerned more efficiently.\u201d`, 'wo');
+}
+function woPlan(s) {
+  const W = s.wo; const lead = TUNE.lead;
+  const busy = new Set(W.queue.map(q => q.target));
+  const members = Object.keys(W.members);
+  const pendingSigns = W.queue.filter(q => q.kind === 'sign').length;
+  const push = (kind, target, extra) => { W.queue.push(Object.assign({ key: ++W.seq, kind, target, at: s.week + lead, planned: s.week }, extra || {})); };
+  // 1. Signatures, as far as the draft allows
+  if (signedCount(s) + pendingSigns < signCapacity(s)) {
+    const c = members.filter(id => !W.signed[id] && !busy.has(id) && s.inf[id] < TUNE.signBelow - s.stats.shield).sort((a, b) => s.inf[a] - s.inf[b])[0];
+    if (c) { push('sign', c); addNews(s, `${SG} schedules a signing ceremony in ${byId(c).name} in ${lead} weeks. Commemorative pens ordered.`, 'wo'); return; }
+  }
+  // 2. Recruit members: biggest country that still resists you
+  const r = rng(s);
+  const recruits = COUNTRIES.filter(c => !W.members[c.id] && !busy.has(c.id) && s.inf[c.id] < TUNE.joinBelow - s.stats.shield - 10 && c.pop >= 1).sort((a, b) => b.pop - a.pop);
+  if (recruits.length && (r < 0.55 || memberCount(s) < SIGNATURES_TO_LOSE)) {
+    const c = recruits[Math.floor(rng(s) * Math.min(3, recruits.length))];
+    push('invite', c.id); addNews(s, `World Order invites ${c.name} to join. RSVP in ${lead} weeks.`, 'wo'); return;
+  }
+  // 3. Sanctions: cut a trade route you are using
+  const routes = s.trade.filter(([a, b]) => !isBlocked(s, a, b) && Math.max(s.inf[a], s.inf[b]) >= 20 && Math.min(s.inf[a], s.inf[b]) < 60);
+  if (routes.length && r < 0.75 && s.week >= s.noSanctionUntil) {
+    const [a, b] = routes[Math.floor(rng(s) * routes.length)];
+    const target = s.inf[a] < s.inf[b] ? a : b;
+    if (!busy.has(target)) { push('sanction', target, { route: [a, b] }); addNews(s, `World Order drafts sanctions on the ${byId(a).name}\u2013${byId(b).name} trade route. Effective in ${lead} weeks.`, 'wo'); return; }
+  }
+  // 4. Awareness campaign on your biggest foothold
+  W.lastCampaign = W.lastCampaign || {};
+  const cc = COUNTRIES.filter(c => s.inf[c.id] >= 5 && s.inf[c.id] < 97 && !busy.has(c.id) && !(W.lastCampaign[c.id] > s.week - 20));
+  if (cc.length) {
+    const t = cc.reduce((a, c) => (c.pop * s.inf[c.id] > a.pop * s.inf[a.id] ? c : a));
+    push('campaign', t.id); addNews(s, `World Order announces an awareness campaign for ${t.name} in ${lead} weeks.`, 'wo');
+  }
+}
+function woExecute(s, q) {
+  const W = s.wo; const c = byId(q.target); const v = s.inf[q.target];
+  if (q.kind === 'sign') {
+    if (W.members[q.target] && v < TUNE.signBelow - s.stats.shield) { W.signed[q.target] = true; addNews(s, `${c.name} signs the Containment Treaty. ${signedCount(s)} of ${SIGNATURES_TO_LOSE} signatures.`, 'wo'); }
+    else addNews(s, `${c.name} refuses to sign. Your supporters there hid the pens.`, 'you');
+  }
+  if (q.kind === 'invite') {
+    if (v < TUNE.joinBelow - s.stats.shield) { W.members[q.target] = true; addNews(s, `${c.name} joins the World Order. Membership includes a lanyard.`, 'wo'); }
+    else addNews(s, `${c.name} declines the World Order\u2019s invitation. Too many of its people agree with you.`, 'you');
+  }
+  if ((q.kind === 'sanction' || q.kind === 'campaign') && s.stats.sabotage && rng(s) < s.stats.sabotage) { addNews(s, `The World Order\u2019s ${q.kind === 'sanction' ? 'sanctions' : 'campaign'} in ${c.name} collapses amid mysterious scheduling conflicts.`, 'you'); return; }
+  if (q.kind === 'sanction') { s.blocked.push({ a: q.route[0], b: q.route[1], until: s.week + 30 }); addNews(s, `Sanctions close the ${byId(q.route[0]).name}\u2013${byId(q.route[1]).name} trade route for 30 weeks.`, 'wo'); }
+  if (q.kind === 'campaign') { counterCampaign(s, q.target); W.lastCampaign = W.lastCampaign || {}; W.lastCampaign[q.target] = s.week; }
+}
+function possibleSignatures(s) { return signedCount(s) + COUNTRIES.filter(c => !s.wo.signed[c.id] && s.inf[c.id] < TUNE.signBelow - s.stats.shield).length; }
+function woTick(s) {
+  const W = s.wo;
+  // Treaty collapse: if the World Order can no longer reach 8 signatures for 26 weeks, it dissolves.
+  if (possibleSignatures(s) < SIGNATURES_TO_LOSE) {
+    W.hopeless = (W.hopeless || 0) + 1;
+    if (W.hopeless === 1) addNews(s, `${SG} counts the remaining undecided nations and asks for a glass of water. Unless 8 signatures become possible within 26 weeks, the treaty collapses.`, 'you');
+  } else if (W.hopeless) { W.hopeless = 0; addNews(s, 'The World Order finds enough undecided nations to keep the treaty alive.', 'wo'); }
+  // withdrawals: signed countries that turned to you
+  Object.keys(W.signed).forEach(id => { if (s.inf[id] >= TUNE.withdrawAt) { delete W.signed[id]; addNews(s, `${byId(id).name} withdraws its treaty signature. ${SG} is \u201cdisappointed, procedurally\u201d.`, 'you'); } });
+  W.queue.filter(q => q.at <= s.week).forEach(q => woExecute(s, q));
+  W.queue = W.queue.filter(q => q.at > s.week);
+  if (fxOn(s, 'woPause')) W.nextPlan = Math.max(W.nextPlan, s.week + 1);
+  else if (s.week >= W.nextPlan) { woPlan(s); W.nextPlan = s.week + Math.max(4, Math.round(TUNE.planBase - s.notoriety / 15)) * (fxOn(s, 'woSlow') ? 2 : 1); }
 }
 
 function treatyNews(s) {
@@ -515,24 +761,63 @@ function upCost(s, u) { return Math.round(u.cost * (1 + TUNE.costGrow * s.owned.
 function canBuy(s, u) {
   if (s.owned.includes(u.id)) return { ok: false, why: 'Owned' };
   if (u.req && !s.owned.includes(u.req)) return { ok: false, why: 'Needs ' + UPGRADES.find(x => x.id === u.req).name };
+  const opp = OPPOSITE[u.b];
+  if (opp && u.tier >= 1 && committed(s, opp)) return { ok: false, why: 'Closed: you chose ' + BRANCHES.find(b => b.id === opp).name };
+  const lock = branchLock(s, u.b); if (lock) return { ok: false, why: lock };
+  if (CAPSTONE_NEEDS[u.id] && !s.owned.includes(CAPSTONE_NEEDS[u.id])) return { ok: false, why: 'Needs ' + UPGRADES.find(x => x.id === CAPSTONE_NEEDS[u.id]).name };
   if (s.clout < upCost(s, u)) return { ok: false, why: 'Not enough Clout' };
   return { ok: true };
+}
+function branchLock(s, b) {
+  const br = BRANCHES.find(x => x.id === b);
+  if (br.unlock === 'reach' && COUNTRIES.filter(c => s.inf[c.id] >= 5).length < FAITH_UNLOCK_COUNTRIES && !s.owned.some(id => id[0] === 'f')) return `Opens when your movement is in ${FAITH_UNLOCK_COUNTRIES} countries`;
+  if (br.unlock === 'wo' && !s.coalition && !s.owned.some(id => id[0] === 'c')) return 'Opens when the World Order convenes';
+  return null;
+}
+function boosted(s, u) { return !!(SYNERGY[u.b] && s.owned.includes(SYNERGY[u.b])); }
+function recomputeStats(s) {
+  const st = JSON.parse(JSON.stringify(s.base));
+  const add = fx => Object.entries(fx || {}).forEach(([k, v]) => {
+    if (k === 'pen') Object.entries(v).forEach(([t, p]) => { st.pen[t] += p; });
+    else st[k] += (['growth', 'border', 'trade', 'reach'].includes(k) ? v * TUNE.fxScale : v);
+  });
+  s.owned.forEach(id => { const u = UPGRADES.find(x => x.id === id); add(u.fx); if (boosted(s, u)) add(u.boost); });
+  s.stats = st;
+}
+function committed(s, b) { return s.owned.some(id => { const u = UPGRADES.find(x => x.id === id); return u.b === b && u.tier >= 1; }); }
+function doctrines(s) { return Object.keys(OPPOSITE).filter(b => committed(s, b)); }
+function canRebrand(s, b) {
+  if (!committed(s, b)) return { ok: false, why: 'Not your doctrine' };
+  if (s.rebranded) return { ok: false, why: 'You can only rebrand once' };
+  if (s.clout < REBRAND_COST) return { ok: false, why: 'Not enough Clout' };
+  return { ok: true };
+}
+function rebrand(s, b) {
+  const chk = canRebrand(s, b); if (!chk.ok) return chk;
+  const drop = UPGRADES.filter(u => u.b === b && u.tier >= 1 && s.owned.includes(u.id));
+  s.owned = s.owned.filter(id => !drop.some(u => u.id === id));
+  drop.forEach(u => { if (u.special && s.specials[u.special] === 'ready') delete s.specials[u.special]; });
+  recomputeStats(s);
+  const refund = Math.round(drop.reduce((a, u) => a + u.cost, 0) * 0.5);
+  s.clout += refund - REBRAND_COST; s.rebranded = true;
+  s.notoriety = Math.min(100, s.notoriety + REBRAND_NOTORIETY);
+  const nb = BRANCHES.find(x => x.id === b).name, ob = BRANCHES.find(x => x.id === OPPOSITE[b]).name;
+  addNews(s, `Your movement announces it has always stood for ${ob}, never ${nb}. Archives are being updated.`, 'you');
+  return { ok: true, refund };
 }
 function buyUpgrade(s, id) {
   const u = UPGRADES.find(x => x.id === id); const chk = canBuy(s, u); if (!chk.ok) return chk;
   s.clout -= upCost(s, u); s.owned.push(id);
-  const st = s.stats;
-  Object.entries(u.fx).forEach(([k, v]) => {
-    if (k === 'pen') Object.entries(v).forEach(([t, p]) => { st.pen[t] += p; });
-    else if (k === 'treaty') s.treaty = Math.max(0, s.treaty + v);
-    else if (k === 'seed') {
-      const zeros = COUNTRIES.filter(c => s.inf[c.id] <= 0);
-      for (let i = 0; i < v && zeros.length; i++) seed(s, zeros.splice(Math.floor(rng(s) * zeros.length), 1)[0].id, 2, null);
-    } else st[k] += (['growth', 'border', 'trade', 'reach'].includes(k) ? v * TUNE.fxScale : v);
-  });
+  if (u.once && u.once.treaty) s.treaty = Math.max(0, s.treaty + u.once.treaty);
+  if (u.once && u.once.seed) { const zeros = COUNTRIES.filter(c => s.inf[c.id] <= 0); for (let i = 0; i < u.once.seed && zeros.length; i++) seed(s, zeros.splice(Math.floor(rng(s) * zeros.length), 1)[0].id, 2, null); }
+  if (u.special) { s.specials[u.special] = 'ready'; addNews(s, `${u.name} is ready. Use it when the moment is right: it works once.`, 'you'); }
+  recomputeStats(s);
+  const partnerOf = Object.keys(SYNERGY).find(b => SYNERGY[b] === id);
+  if (partnerOf && s.owned.some(x => x[0] === partnerOf[0] && UPGRADES.find(y => y.id === x).b === partnerOf)) addNews(s, `${u.name} strengthens your ${BRANCHES.find(b => b.id === partnerOf).name} upgrades.`, 'you');
+  if (u.tier === 1 && OPPOSITE[u.b]) addNews(s, `You commit to ${BRANCHES.find(b => b.id === u.b).name}. ${BRANCHES.find(b => b.id === OPPOSITE[u.b]).name} is off the table.`, 'you');
   return { ok: true };
 }
-function opCost(s, op) { return op.id === 'dossier' ? op.cost - s.stats.dossierDiscount : op.cost; }
+function opCost(s, op) { return Math.max(1, (op.id === 'dossier' ? op.cost - s.stats.dossierDiscount : op.cost) - s.stats.opDiscount); }
 function opCooldown(s, op) { return op.id === 'summit' ? op.cd - s.stats.summitCd : op.cd; }
 function strongest(s, exclude) {
   return COUNTRIES.filter(c => c.id !== exclude).reduce((a, c) => (s.inf[c.id] > s.inf[a.id] ? c : a), COUNTRIES.find(c => c.id !== exclude));
@@ -547,8 +832,11 @@ function canOp(s, opId, target) {
     if (s.inf[src.id] < 10) return { ok: false, why: 'Need 10%+ somewhere else first' };
     if (tradeLinks(s, target).includes(src.id)) return { ok: false, why: 'Already trades with ' + src.name };
   }
-  if (opId === 'snap') {
-    if (!neighbours(target).some(n => s.inf[n] >= 25)) return { ok: false, why: 'Needs a neighbour at 25%+' };
+  if (s.week < s.utopiaUntil) return { ok: false, why: `Utopia: no operations for ${s.utopiaUntil - s.week} wk` };
+  if (opId === 'snap' && committed(s, 'dip')) return { ok: false, why: 'Closed by your Diplomacy doctrine' };
+  if (opId === 'summit' && committed(s, 'mil') && TUNE.milNoSummit) return { ok: false, why: 'Closed by your Military doctrine' };
+  if (opId === 'snap' && !pendingOn(s, target).length) {
+    if (!neighbours(target).some(n => s.inf[n] >= 25)) return { ok: false, why: 'Needs a neighbour at 25%+, or a World Order move planned here' };
     if (s.inf[target] >= 90) return { ok: false, why: 'Already yours' };
   }
   if (opId === 'summit' && s.mods.some(m => m.id === target && m.kind === 'summit' && m.until > s.week)) return { ok: false, why: 'Summit already running' };
@@ -558,13 +846,392 @@ function doOp(s, opId, target) {
   const chk = canOp(s, opId, target); if (!chk.ok) return chk;
   const op = OPS.find(o => o.id === opId); const c = byId(target);
   s.clout -= opCost(s, op); s.ready[opId] = s.week + opCooldown(s, op);
-  if (opId === 'summit') { s.mods.push({ id: target, kind: 'summit', until: s.week + 25 }); s.notoriety += 1; addNews(s, `Summit in ${c.name} ends with a handshake that lasts 11 seconds.`, 'you'); }
+  if (opId === 'summit') {
+    s.mods.push({ id: target, kind: 'summit', until: s.week + 25 }); s.notoriety += 1;
+    const derailed = pendingOn(s, target);
+    if (derailed.length) { s.wo.queue = s.wo.queue.filter(q => q.target !== target); addNews(s, `Your summit in ${c.name} runs long. The World Order\u2019s plans there are postponed indefinitely.`, 'you'); }
+    else addNews(s, `Summit in ${c.name} ends with a handshake that lasts 11 seconds.`, 'you');
+  }
   if (opId === 'trade') { const src = strongest(s, target); s.trade.push([src.id, target]); s.notoriety += 1; addNews(s, `${src.name} and ${c.name} sign a trade deal nobody has read.`, 'you'); }
-  if (opId === 'snap') { const push = 10 * (1 + 0.5 * s.stats.snapBoost); if (s.inf[target] <= 0) seed(s, target, 1, null); s.inf[target] = Math.min(100, s.inf[target] + push); s.notoriety += 5; addNews(s, `Snap exercise on the ${c.name} border. Tanks described as “just visiting”.`, 'you'); }
-  if (opId === 'dossier') { s.mods.push({ id: target, kind: 'dossier', until: s.week + 20 }); s.notoriety += 8; addNews(s, `Leaked dossiers embarrass ${c.name}’s cabinet. The PDFs were suspiciously well formatted.`, 'wo'); }
+  if (opId === 'snap' || opId === 'dossier') s.ev.loudOp = s.week;
+  if (opId === 'snap') {
+    if (pendingOn(s, target).length) { s.wo.queue = s.wo.queue.filter(q => q.target !== target); addNews(s, `Snap exercise in ${c.name}: the World Order delegation cannot get past the tanks. Its plans there are cancelled.`, 'you'); }
+    const push = 10 * (1 + 0.5 * s.stats.snapBoost); if (s.inf[target] <= 0) seed(s, target, 1, null); s.inf[target] = Math.min(100, s.inf[target] + push); s.notoriety += 3; addNews(s, `Snap exercise on the ${c.name} border. Tanks described as “just visiting”.`, 'you'); }
+  if (opId === 'dossier') { s.mods.push({ id: target, kind: 'dossier', until: s.week + 20 }); s.notoriety += 8;
+    if (s.wo.members[target] && target !== s.wo.hq) { delete s.wo.members[target]; delete s.wo.signed[target]; s.wo.queue = s.wo.queue.filter(q => q.target !== target); addNews(s, `${c.name} storms out of the World Order after the leaks.`, 'you'); } addNews(s, `Leaked dossiers embarrass ${c.name}’s cabinet. The PDFs were suspiciously well formatted.`, 'wo'); }
   s.notoriety = Math.min(100, s.notoriety);
   return { ok: true };
 }
+function canSpecial(s, key, target) {
+  if (s.over) return { ok: false, why: 'Game over' };
+  if (s.specials[key] !== 'ready') return { ok: false, why: s.specials[key] === 'used' ? 'Already used' : 'Not owned' };
+  const needsWo = ['bribe', 'breaker', 'believe', 'stoppage', 'hybrid'].includes(key);
+  if (needsWo && !s.coalition) return { ok: false, why: 'The World Order has not convened yet' };
+  if (SPECIALS[key].target) {
+    if (!target) return { ok: false, why: 'Pick a country' };
+    if (!s.wo.members[target]) return { ok: false, why: 'Only works on a World Order member' };
+    if (target === s.wo.hq) return { ok: false, why: 'Not on the HQ' };
+  }
+  if (key === 'believe' && memberCount(s) < 2) return { ok: false, why: 'Needs another member to take over as HQ' };
+  return { ok: true };
+}
+function useSpecial(s, key, target) {
+  const chk = canSpecial(s, key, target); if (!chk.ok) return chk;
+  s.specials[key] = 'used'; const W = s.wo; const c = target ? byId(target) : null;
+  const leave = id => { delete W.members[id]; delete W.signed[id]; W.queue = W.queue.filter(q => q.target !== id); };
+  if (key === 'utopia') { s.utopiaUntil = s.week + 26; addNews(s, 'Utopia declared. Everyone is happy, by law. Growth and income double for 26 weeks.', 'you'); }
+  if (key === 'stoppage') { s.frozenUntil = s.week + 10; addNews(s, `Stoppage Order: ${SG}\u2019s office is surrounded by very polite soldiers. The World Order is frozen for 10 weeks.`, 'you'); s.notoriety = Math.min(100, s.notoriety + 5); }
+  if (key === 'bribe') { leave(target); s.inf[target] = Math.min(100, s.inf[target] + 25); addNews(s, `${c.name}\u2019s cabinet discovers a generous consultancy contract and quits the World Order.`, 'you'); }
+  if (key === 'breaker') { leave(target); ['eco', 'mil', 'dip', 'ideo'].forEach(t => { s.base.pen[t] += .08; }); recomputeStats(s); addNews(s, `${c.name} walks out of the World Order, and the whole alliance system wobbles. Resistance falls everywhere.`, 'you'); }
+  if (key === 'believe') {
+    const old = W.hq; leave(old);
+    const next = Object.keys(W.members).sort((a, b) => s.inf[a] - s.inf[b])[0];
+    W.hq = next; s.treaty = Math.max(0, s.treaty - 15);
+    if (s.owned.includes('c3')) s.clout += 15;
+    addNews(s, `${byId(old).name} loses faith in the treaty and leaves. The World Order moves its HQ to ${byId(next).name}, losing 15% of the draft in the removal van.`, 'you');
+  }
+  if (key === 'hybrid') { s.blocked = []; W.queue = []; s.noSanctionUntil = s.week + 40; if (s.owned.includes('f3')) s.treaty = Math.max(0, s.treaty - 10); addNews(s, 'Hybrid Threat: nobody at the World Order can agree who is threatening whom. Every plan is shelved and sanctions are lifted.', 'you'); s.notoriety = Math.min(100, s.notoriety + 6); }
+  return { ok: true };
+}
+// ---- v5: random world events (background) and decision events ----
+// Pavel's originals are marked [P]; the rest are new. Timers run in game weeks.
+const pick = (s, arr) => arr[Math.floor(rng(s) * arr.length)];
+const nm = id => byId(id).name;
+const yours = (s, min) => COUNTRIES.filter(c => s.inf[c.id] >= (min || 5)).map(c => c.id);
+const biggest = s => COUNTRIES.reduce((a, c) => (c.pop * s.inf[c.id] > a.pop * s.inf[a.id] ? c : a)).id;
+const strongestId = s => COUNTRIES.reduce((a, c) => (s.inf[c.id] > s.inf[a.id] ? c : a)).id;
+const nonMembers = s => COUNTRIES.filter(c => !s.wo.members[c.id] && c.pop >= 1).map(c => c.id);
+const membersNotHq = s => Object.keys(s.wo.members).filter(id => id !== s.wo.hq);
+function resMod(s, id, mul, weeks, types, extra) { s.mods.push(Object.assign({ id, kind: 'res', mul, types: types || null, until: s.week + weeks }, extra || {})); }
+function notoTxt(s, n, pre) { return s.coalition ? `${pre || ' '}+${n} Notoriety.` : ''; }
+function addNoto(s, n) { if (s.coalition) s.notoriety = Math.min(100, s.notoriety + n); }
+function timed(s, key, weeks, value) { s.ev.fx[key] = { until: s.week + weeks, value: value === undefined ? true : value }; }
+function fxOn(s, key) { const f = s.ev && s.ev.fx[key]; return f && f.until > s.week ? f.value : null; }
+function routesOf(s, id) { return s.trade.filter(e => e.includes(id)); }
+function neighboursOrTrade(s, id) { return [...new Set([...neighbours(id), ...tradeLinks(s, id)])]; }
+
+const EVENTS = [
+  // ---- good for you ----
+  { id: 'viral', good: true, name: 'Viral Moment', ok: s => s.inf[strongestId(s)] >= 20,
+    fire: s => { const src = strongestId(s); neighboursOrTrade(s, src).forEach(n => { if (s.inf[n] <= 0) seed(s, n, 1, src); s.inf[n] = Math.min(100, s.inf[n] + 4); }); return `Your slogan becomes a dance craze in ${nm(src)}. Nobody knows the steps; its neighbours all know the words.`; } },
+  { id: 'boom', good: true, name: 'Economic Boom', ok: s => true,
+    fire: s => { const id = pick(s, COUNTRIES).id; resMod(s, id, .75, 20, ['eco']); return `Markets soar in ${nm(id)}. Analysts credit “vibes”. Economic resistance there falls for 20 weeks.`; } },
+  { id: 'aid', good: true, name: 'Foreign Aid', ok: s => true,
+    fire: s => { s.clout += 10; return 'An anonymous donor sends you 10 Clout and a very long letter.'; } },
+  { id: 'gridlock', good: true, name: 'Government Gridlock', ok: s => nonMembers(s).length > 0,
+    fire: s => { const id = pick(s, nonMembers(s)); resMod(s, id, .8, 20); return `${nm(id)}’s parliament fails to agree on lunch, then on everything else. Its resistance drops for 20 weeks.`; } },
+  { id: 'celebrity', good: true, name: 'Celebrity Endorsement', ok: s => yours(s, 5).length > 0,
+    fire: s => { const id = pick(s, yours(s, 5)); s.inf[id] = Math.min(100, s.inf[id] + 8); addNoto(s, 2); s.ev.endorsed = id; return `A pop star in ${nm(id)} wears your badge at an awards show. Support there jumps.`; } },
+  { id: 'typo', good: true, name: 'Treaty Typo', ok: s => s.coalition && s.treaty >= 10,
+    fire: s => { s.treaty = Math.max(0, s.treaty - 8); return 'Translators render “containment” as “container”. Page 212 now regulates shipping. The treaty draft slips back.'; } },
+  { id: 'audit', good: true, name: 'Audit Season', ok: s => s.coalition,
+    fire: s => { timed(s, 'woPause', 6); return 'World Order HQ closes for its annual audit of audits. No new moves for 6 weeks.'; } },
+  { id: 'tourism', good: true, name: 'Tourism Boom', ok: s => yours(s, 20).length >= 2,
+    fire: s => { const ys = yours(s, 20); const a = pick(s, ys); const others = ys.filter(x => x !== a && !tradeLinks(s, a).includes(x)); if (!others.length) { s.clout += 5; return `Tourists flock to ${nm(a)}. The souvenir shops pay you 5 Clout.`; } const b = pick(s, others); s.trade.push([a, b]); s.ev.temp.push({ a, b, until: s.week + 30 }); return `Cheap flights link ${nm(a)} and ${nm(b)} for 30 weeks. So do your pamphlets.`; } },
+  { id: 'upset', good: true, name: 'Snap Election Upset', ok: s => COUNTRIES.some(c => s.inf[c.id] >= 40 && s.inf[c.id] < 60),
+    fire: s => { const id = pick(s, COUNTRIES.filter(c => s.inf[c.id] >= 40 && s.inf[c.id] < 60)).id; s.inf[id] = Math.min(100, s.inf[id] + 15); return `Your candidate wins in ${nm(id)} after the rivals forget the date. Support +15.`; } },
+  { id: 'whistle', good: true, name: 'Whistleblower', ok: s => s.coalition && membersNotHq(s).length > 0,
+    fire: s => { const id = pick(s, membersNotHq(s)); delete s.wo.members[id]; delete s.wo.signed[id]; s.wo.queue = s.wo.queue.filter(q => q.target !== id); return `Leaked minutes show the World Order spent more on lanyards than on ${nm(id)}. ${nm(id)} quits.`; } },
+  { id: 'tech', good: true, name: 'Tech Breakthrough', ok: s => true,
+    fire: s => { timed(s, 'incomeMul', 20, 1.5); return 'Your supporters invent an app. It mostly sends reminders about you. Clout income +50% for 20 weeks.'; } },
+  { id: 'sabbatical', good: true, name: 'Sec-Gen on Sabbatical', ok: s => s.coalition,
+    fire: s => { timed(s, 'woSlow', 15); return `${SG} takes a sabbatical to write his memoirs, in committee. The World Order moves at half speed for 15 weeks.`; } },
+
+  // ---- bad for you ----
+  { id: 'unrest', good: false, name: 'Political Unrest', ok: s => yours(s, 10).length > 0,
+    fire: s => { const id = pick(s, yours(s, 10)); s.inf[id] *= .75; return `Strikes in ${nm(id)}. Everyone blames everyone, including you. Support there falls by a quarter.`; } },
+  { id: 'disaster', good: false, name: 'Natural Disaster', ok: s => true,
+    fire: s => { const id = pick(s, COUNTRIES.filter(c => c.pop >= 1)).id; resMod(s, id, 1.2, 20, null, { inward: true }); return `Floods in ${nm(id)}. Politics postponed: it resists and stops passing ideas on for 20 weeks.`; } },
+  { id: 'crisis', good: false, name: 'Diplomatic Crisis', ok: s => yours(s, 10).length > 0,
+    fire: s => { const id = pick(s, yours(s, 10)); resMod(s, id, 1.2, 20); return `${nm(id)} recalls its ambassadors over a seating plan. Resistance there rises for 20 weeks.`; } },
+  { id: 'alliance', good: false, name: 'Defensive Alliance', ok: s => s.coalition && Object.keys(s.wo.members).some(m => neighbours(m).some(n => !s.wo.members[n] && s.inf[n] < TUNE.joinBelow)),
+    fire: s => { const m = pick(s, Object.keys(s.wo.members).filter(m => neighbours(m).some(n => !s.wo.members[n] && s.inf[n] < TUNE.joinBelow)));
+      const joiners = neighbours(m).filter(n => !s.wo.members[n] && s.inf[n] < TUNE.joinBelow).slice(0, 2); joiners.forEach(n => { s.wo.members[n] = true; });
+      return `${joiners.map(nm).join(' and ')} sign a mutual-concern pact with ${nm(m)} and join the World Order. Concern is mutual.`; } },
+  { id: 'emergency', good: false, name: 'State of Emergency', ok: s => yours(s, 20).length > 0,
+    fire: s => { const id = pick(s, yours(s, 20)); s.inf[id] *= .5; resMod(s, id, 1.25, 30, ['mil']); return `${nm(id)} declares a state of emergency. Your posters are declared “non-essential”. Support there halves.`; } },
+  { id: 'posts', good: false, name: 'Old Posts Resurface', ok: s => s.coalition,
+    fire: s => { addNoto(s, 8); return 'Your spokesperson’s 2009 posts resurface. Several involve fonts. Notoriety +8.'; } },
+  { id: 'factcheck', good: false, name: 'Fact-Check Goes Viral', ok: s => yours(s, 10).length > 0,
+    fire: s => { const id = biggest(s); s.inf[id] = Math.max(0, s.inf[id] - 8); return `A fact-check about you gets more views in ${nm(id)} than you do. Support there −8.`; } },
+  { id: 'crash', good: false, name: 'Market Crash', ok: s => true,
+    fire: s => { timed(s, 'incomeMul', 15, .5); timed(s, 'tradeMul', 15, .5); return 'Markets fall. Analysts blame “vibes”. Clout income and trade spread halve for 15 weeks.'; } },
+  { id: 'customs', good: false, name: 'Customs Strike', ok: s => yours(s, 10).some(id => routesOf(s, id).length),
+    fire: s => { const id = pick(s, yours(s, 10).filter(id => routesOf(s, id).length)); routesOf(s, id).forEach(([a, b]) => s.blocked.push({ a, b, until: s.week + 20 })); return `Customs officers in ${nm(id)} strike over the colour of their stamps. Its trade routes close for 20 weeks.`; } },
+  { id: 'fasttrack', good: false, name: 'Treaty Fast-Track', ok: s => s.coalition,
+    fire: s => { s.treaty = Math.min(100, s.treaty + 8); return `${SG} discovers the “reply all” button. The treaty draft jumps 8 points.`; } },
+  { id: 'splinter', good: false, name: 'Splinter Faction', ok: s => yours(s, 60).length > 0,
+    fire: s => { const id = pick(s, yours(s, 60)); s.inf[id] = Math.max(0, s.inf[id] - 15); return `Your supporters in ${nm(id)} split into the People’s Front and the Front of the People. Support −15.`; } },
+  { id: 'backlash', good: false, name: 'Influencer Backlash', ok: s => yours(s, 10).length > 0,
+    fire: s => { const id = s.ev.endorsed && s.inf[s.ev.endorsed] > 0 ? s.ev.endorsed : pick(s, yours(s, 10)); s.ev.endorsed = null; s.inf[id] = Math.max(0, s.inf[id] - 10); return `The celebrity in ${nm(id)} who wore your badge now says it was “ironic”. Support −10.`; } }
+];
+
+// Decision events: the game pauses; the player picks option A or B.
+const DECISIONS = [
+  { id: 'peace', name: 'Peace Talks', ok: s => s.coalition && s.treaty >= 40,
+    setup: s => ({ text: `${SG} proposes peace talks. Sitting down would slow the treaty, but also you.`,
+      a: ['Accept the talks', 'Treaty draft −8. Your growth −25% for 25 weeks.'], b: ['Stall for advantage', '+8 Clout, +6 Notoriety.'] }),
+    a: s => { s.treaty = Math.max(0, s.treaty - 8); timed(s, 'growthMul', 25, .75); return 'Peace talks begin. Everyone agrees to meet again to agree on the next meeting.'; },
+    b: s => { s.clout += 8; addNoto(s, 6); return 'You stall the talks with a 90-minute opening statement.'; } },
+  { id: 'summit', name: 'Global Summit', ok: s => s.coalition && s.ev.loudOp && s.week - s.ev.loudOp <= 10,
+    setup: s => ({ text: 'Your recent operation has triggered an emergency global summit about you.',
+      a: ['Disrupt the summit', 'Pay 10 Clout. The summit collapses.'], b: ['Ignore it', 'The World Order sanctions 2 of your trade routes for 30 weeks.'], cost: 10 }),
+    a: s => { s.clout -= 10; return 'The summit’s interpreters all call in sick. The summit collapses.'; },
+    b: s => { const routes = s.trade.filter(([a, b]) => Math.max(s.inf[a], s.inf[b]) >= 10 && !isBlocked(s, a, b)).slice(0, 2); routes.forEach(([a, b]) => s.blocked.push({ a, b, until: s.week + 30 })); return `The summit ends in sanctions: ${routes.map(([a, b]) => nm(a) + '–' + nm(b)).join(' and ') || 'nothing left to sanction'}.`; } },
+  { id: 'scandal', name: 'Corruption Scandal', ok: s => s.coalition && membersNotHq(s).length > 0,
+    setup: s => { const id = pick(s, membersNotHq(s)); return { target: id, text: `A senior official of World Order member ${nm(id)} is caught expensing a yacht as “stationery”.`,
+      a: ['Amplify the scandal', `Pay 12 Clout. ${nm(id)} quits the World Order. +4 Notoriety.`], b: ['Stay quiet', '+3 Clout.'], cost: 12 }; },
+    a: (s, d) => { s.clout -= 12; delete s.wo.members[d.target]; delete s.wo.signed[d.target]; s.wo.queue = s.wo.queue.filter(q => q.target !== d.target); addNoto(s, 4); return `The yacht story trends for a week. ${nm(d.target)} leaves the World Order.`; },
+    b: s => { s.clout += 3; return 'You keep the file for a rainy day.'; } },
+  { id: 'election', name: 'Snap Election', ok: s => COUNTRIES.some(c => s.inf[c.id] >= 30 && s.inf[c.id] <= 60),
+    setup: s => { const id = pick(s, COUNTRIES.filter(c => s.inf[c.id] >= 30 && s.inf[c.id] <= 60)).id; return { target: id, text: `${nm(id)} calls a snap election. One candidate quietly shares your views.`,
+      a: ['Back the candidate', `Pay 10 Clout. 55% chance: +12 support. 45% chance: −6 support${s.coalition ? ' and +6 Notoriety' : ''}.`], b: ['Stay out', 'Nothing happens.'], cost: 10 }; },
+    a: (s, d) => { s.clout -= 10; if (rng(s) < .55) { s.inf[d.target] = Math.min(100, s.inf[d.target] + 12); return `Your candidate wins in ${nm(d.target)}. Support +12.`; } s.inf[d.target] = Math.max(0, s.inf[d.target] - 6); addNoto(s, 6); return `Your candidate loses in ${nm(d.target)}, loudly. Support −6.${notoTxt(s, 6)}`; },
+    b: (s, d) => `You watch the ${nm(d.target)} election from a safe distance.` },
+  { id: 'viralcamp', name: 'Viral Campaign', ok: s => s.inf[strongestId(s)] >= 80,
+    setup: s => { const id = strongestId(s); return { target: id, text: `Your campaign in ${nm(id)} is going viral. You can ride the wave or keep it quiet.`,
+      a: ['Ride the wave', `+3 support in every neighbour and trade partner of ${nm(id)}.${notoTxt(s, 5)}`], b: ['Keep it quiet', '+6 Clout.'] }; },
+    a: (s, d) => { neighboursOrTrade(s, d.target).forEach(n => { if (s.inf[n] <= 0) seed(s, n, 1, d.target); s.inf[n] = Math.min(100, s.inf[n] + 3); }); addNoto(s, 5); return 'The wave crosses borders. So does the attention.'; },
+    b: s => { s.clout += 6; return 'You sell the merchandise instead. +6 Clout.'; } },
+  { id: 'defpact', name: 'Defensive Alliance', ok: s => s.coalition && BORDERS.some(([a, b]) => !s.wo.members[a] && !s.wo.members[b] && s.inf[a] < 30 && s.inf[b] < 30 && byId(a).pop >= 1 && byId(b).pop >= 1),
+    setup: s => { const [a, b] = pick(s, BORDERS.filter(([a, b]) => !s.wo.members[a] && !s.wo.members[b] && s.inf[a] < 30 && s.inf[b] < 30 && byId(a).pop >= 1 && byId(b).pop >= 1)); return { pair: [a, b], text: `${nm(a)} and ${nm(b)} are negotiating a defensive pact with the World Order.`,
+      a: ['Counter-offer', 'Pay 12 Clout. They stay out.'], b: ['Let it happen', `${nm(a)} and ${nm(b)} both join the World Order.`], cost: 12 }; },
+    a: (s, d) => { s.clout -= 12; return `Your counter-offer includes better snacks. ${d.pair.map(nm).join(' and ')} stay out.`; },
+    b: (s, d) => { d.pair.forEach(id => { s.wo.members[id] = true; }); return `${d.pair.map(nm).join(' and ')} join the World Order.`; } },
+  { id: 'ultimatum', name: 'Sanctions Ultimatum', ok: s => s.coalition && memberCount(s) >= 4 && yours(s, 15).length > 0,
+    setup: s => { const id = biggest(s); return { target: id, text: `The World Order demands you scale back in ${nm(id)}, or face sanctions.`,
+      a: ['Concede', `−10 support in ${nm(id)}.`], b: ['Defy', 'Half of your trade routes close for 20 weeks.'] }; },
+    a: (s, d) => { s.inf[d.target] = Math.max(0, s.inf[d.target] - 10); return `You scale back in ${nm(d.target)}. ${SG} calls it “a constructive retreat”.`; },
+    b: s => { const mine = s.trade.filter(([a, b]) => Math.max(s.inf[a], s.inf[b]) >= 10 && !isBlocked(s, a, b)); mine.slice(0, Math.ceil(mine.length / 2)).forEach(([a, b]) => s.blocked.push({ a, b, until: s.week + 20 })); return 'You defy the ultimatum. Sanctions close half your trade routes for 20 weeks.'; } },
+  { id: 'defector', name: 'World Order Defector', ok: s => s.coalition && s.treaty >= 12,
+    setup: s => ({ text: 'A junior World Order clerk offers you the treaty’s working drafts, for a price.',
+      a: ['Pay for the secrets', 'Pay 14 Clout. Treaty draft −8.'], b: ['Hand him back', '−5 Notoriety. You look very responsible.'], cost: 14 }),
+    a: s => { s.clout -= 14; s.treaty = Math.max(0, s.treaty - 8); return 'The drafts mysteriously go missing. So does the clerk’s stapler.'; },
+    b: s => { s.notoriety = Math.max(0, s.notoriety - 5); return 'You return the clerk with a thank-you card. Notoriety −5.'; } },
+  { id: 'talkshow', name: 'Talk Show Invitation', ok: s => s.coalition && yours(s, 1).length >= 3,
+    setup: s => ({ text: 'A late-night talk show invites your leader. The host has a reputation.',
+      a: ['Go on air', '+3 support in 3 countries where you are active. +4 Notoriety.'], b: ['Decline', '−2 Notoriety.'] }),
+    a: s => { const ids = yours(s, 1).sort(() => rng(s) - .5).slice(0, 3); ids.forEach(id => { s.inf[id] = Math.min(100, s.inf[id] + 3); }); addNoto(s, 4); return `Your leader’s joke about committees lands in ${ids.map(nm).join(', ')}.`; },
+    b: s => { s.notoriety = Math.max(0, s.notoriety - 2); return 'You decline. Mystery suits you.'; } },
+  { id: 'consultant', name: 'Rebrand Consultant', ok: s => s.notoriety > 50,
+    setup: s => ({ text: 'A consultant offers to make your movement look harmless. She has slides.',
+      a: ['Hire her', 'Pay 15 Clout. −10 Notoriety.'], b: ['Decline', 'Nothing happens.'], cost: 15 }),
+    a: s => { s.clout -= 15; s.notoriety = Math.max(0, s.notoriety - 10); return 'New logo, same ideas. Notoriety −10.'; },
+    b: s => 'You keep your old logo. It has character.' }
+];
+
+function eventsTick(s) {
+  const E = s.ev;
+  E.temp = E.temp.filter(t => { if (t.until > s.week) return true; s.trade = s.trade.filter(([a, b]) => !((a === t.a && b === t.b) || (a === t.b && b === t.a))); return false; });
+  if (s.week >= E.next) {
+    // bad events likelier when you are loud, good ones likelier when the World Order is ahead
+    let pBad = TUNE.evBad + (s.notoriety - 30) / 200 - (s.coalition && (signedCount(s) >= 4 || s.treaty >= 60) ? .12 : 0);
+    pBad = Math.min(.8, Math.max(.3, pBad));
+    const good = rng(s) >= pBad;
+    const pool = EVENTS.filter(e => e.good === good && e.ok(s));
+    if (pool.length) { const e = pick(s, pool); const text = e.fire(s); addNews(s, `${e.name}: ${text}`, good ? 'you' : 'wo'); s.news[0].ev = good ? 'good' : 'bad'; E.log.unshift({ week: s.week, id: e.id, good }); }
+    E.next = s.week + TUNE.evGap + Math.floor(rng(s) * 9);
+  }
+  if (!s.pending && s.week >= E.nextDecision) {
+    const pool = DECISIONS.filter(d => (E.seen[d.id] || 0) < 2 && d.ok(s));
+    if (pool.length) {
+      const d = pick(s, pool); const data = d.setup(s);
+      s.pending = Object.assign({ id: d.id, name: d.name, week: s.week }, data);
+      E.seen[d.id] = (E.seen[d.id] || 0) + 1;
+      E.nextDecision = Infinity; // re-armed when resolved
+    } else E.nextDecision = s.week + 5;
+  }
+}
+function canChoose(s, choice) {
+  const p = s.pending; if (!p) return { ok: false, why: 'Nothing to decide' };
+  if (choice === 'a' && p.cost && s.clout < p.cost) return { ok: false, why: `Needs ${p.cost} Clout` };
+  return { ok: true };
+}
+function resolveDecision(s, choice) {
+  const chk = canChoose(s, choice); if (!chk.ok) return chk;
+  const p = s.pending; const d = DECISIONS.find(x => x.id === p.id);
+  const text = d[choice](s, p);
+  addNews(s, `${p.name}: ${text}`, 'you'); s.news[0].ev = 'dec';
+  s.pending = null; s.ev.nextDecision = s.week + 25 + Math.floor(rng(s) * 11);
+  return { ok: true, text };
+}
+
+
+</script>
+<script>
+// ---------- accounts & saves ----------
+// Online accounts: Supabase project URL + publishable key (public by design; access is enforced by row-level security).
+// Optional: a Cloudflare Turnstile site key, if CAPTCHA protection is switched on in Supabase.
+// With no URL/key, the game offers device profiles instead (no passwords, saves stay in this browser).
+const GI_BACKEND = {"url": "https://zixjzbusaflgvkcjektw.supabase.co", "key": "sb_publishable_AGV4PPdFSlBM2iPWSPA_xA_oVOP3gFU", "turnstile": ""};
+
+window.GIAccounts = (() => {
+  const MIN_PW = 8;
+  const LS = {
+    get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); return true; } catch { return false; } },
+    del(k) { try { localStorage.removeItem(k); } catch { /* storage blocked */ } }
+  };
+  const readJSON = k => { try { return JSON.parse(LS.get(k) || 'null'); } catch { return null; } };
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  const norm = e => String(e || '').trim().toLowerCase();
+  const checkEmail = e => EMAIL_RE.test(e) ? null : 'Enter a valid email address.';
+  const checkPw = pw => { pw = String(pw || ''); return pw.length < MIN_PW ? `Password must be at least ${MIN_PW} characters.` : !/[a-z]/i.test(pw) || !/[0-9]/.test(pw) ? 'Password must contain letters and digits.' : null; };
+  const fail = m => { throw new Error(m); };
+
+  // Device profiles: a name, no password. Anyone using this browser can open them, so the UI says so plainly.
+  const local = {
+    kind: 'local',
+    profiles() { return readJSON('gi.profiles') || []; },
+    async open(name) {
+      name = String(name || '').trim().replace(/\s+/g, ' ');
+      if (name.length < 1 || name.length > 24) fail('Use a profile name of 1 to 24 characters.');
+      const list = this.profiles();
+      if (!list.includes(name)) { list.push(name); if (!LS.set('gi.profiles', JSON.stringify(list))) fail('This browser blocks storage, so profiles cannot be kept here.'); }
+      return { kind: 'local', email: name };
+    },
+    async refresh(s) { return s; },
+    async logout() {},
+    async load(s) { return readJSON('gi.save.' + s.email); },
+    async save(s, rec) { if (!LS.set('gi.save.' + s.email, JSON.stringify(rec))) fail('Browser storage is full or blocked.'); },
+    saveSync(s, rec) { LS.set('gi.save.' + s.email, JSON.stringify(rec)); },
+    async clear(s) { LS.del('gi.save.' + s.email); }
+  };
+
+  // Online accounts: Supabase Auth (email + password, stored by Supabase as bcrypt hashes) and a `saves` table
+  // where row-level security limits every user to their own row.
+  function supabase(cfg) {
+    const H = token => ({ apikey: cfg.key, Authorization: 'Bearer ' + (token || cfg.key), 'Content-Type': 'application/json' });
+    function message(b, status, ctx) {
+      const code = (b && (b.error_code || b.code)) || '';
+      const m = (b && (b.msg || b.error_description || b.message || b.error)) || '';
+      if (ctx === 'register' && (/user_already_exists|email_exists/.test(code) || /already (been )?registered|already exists/i.test(m)))
+        return 'Could not register with these details. If you already have an account, log in or reset your password.';
+      if (/weak_password/.test(code) || /password.*(weak|short|characters|pwned|leaked)/i.test(m)) return 'Choose a stronger password: at least 8 characters, with letters and digits.';
+      if (/invalid_credentials/.test(code) || /invalid login credentials/i.test(m)) return 'Wrong email or password.';
+      if (/captcha/i.test(code + m)) return 'Please complete the “I am human” check and try again.';
+      if (/email not confirmed/i.test(m)) return 'This account still needs email confirmation.';
+      if (/same_password/.test(code)) return 'The new password must differ from the old one.';
+      if (status === 429 || /over_.*rate_limit/.test(code)) return 'Too many attempts. Wait a few minutes and try again.';
+      return m || 'Server error ' + status;
+    }
+    async function call(path, opt, ctx) {
+      let r;
+      try { r = await fetch(cfg.url + path, opt); } catch { fail('Cannot reach the game server. Check your connection.'); }
+      const t = await r.text(); let body = null;
+      try { body = t ? JSON.parse(t) : null; } catch { body = null; }
+      if (!r.ok) { const e = new Error(message(body, r.status, ctx)); e.status = r.status; throw e; }
+      return body;
+    }
+    const withCaptcha = (body, token) => token ? Object.assign(body, { gotrue_meta_security: { captcha_token: token } }) : body;
+    const sess = (d, email) => d && d.access_token ? { kind: 'supabase', email: norm((d.user && d.user.email) || email), uid: d.user && d.user.id, access: d.access_token, refresh: d.refresh_token, exp: Date.now() + (d.expires_in || 3600) * 1000 } : null;
+    const upsert = (s, rec) => ({ method: 'POST', headers: Object.assign(H(s.access), { Prefer: 'resolution=merge-duplicates,return=minimal' }), body: JSON.stringify({ user_id: s.uid, state: rec, week: rec.week, updated_at: new Date().toISOString() }) });
+    return {
+      kind: 'supabase',
+      async ping() {
+        const c = new AbortController(); const t = setTimeout(() => c.abort(), 5000);
+        try { const r = await fetch(cfg.url + '/auth/v1/settings', { headers: { apikey: cfg.key }, signal: c.signal }); return r.ok; }
+        catch { return false; } finally { clearTimeout(t); }
+      },
+      async register(email, pw, captcha) {
+        const d = await call('/auth/v1/signup', { method: 'POST', headers: H(), body: JSON.stringify(withCaptcha({ email, password: pw }, captcha)) }, 'register');
+        const s = sess(d, email);
+        if (s) return s;
+        fail('Could not register with these details. If you already have an account, log in or reset your password.');
+      },
+      async login(email, pw, captcha) { return sess(await call('/auth/v1/token?grant_type=password', { method: 'POST', headers: H(), body: JSON.stringify(withCaptcha({ email, password: pw }, captcha)) }, 'login'), email); },
+      async recover(email, redirectTo, captcha) {
+        await call('/auth/v1/recover?redirect_to=' + encodeURIComponent(redirectTo), { method: 'POST', headers: H(), body: JSON.stringify(withCaptcha({ email }, captcha)) }, 'recover');
+      },
+      async user(access) { return call('/auth/v1/user', { headers: H(access) }); },
+      async setPassword(s, pw) { await call('/auth/v1/user', { method: 'PUT', headers: H(s.access), body: JSON.stringify({ password: pw }) }, 'reset'); },
+      async refresh(s) {
+        if (s.exp - Date.now() > 120000) return s;
+        return sess(await call('/auth/v1/token?grant_type=refresh_token', { method: 'POST', headers: H(), body: JSON.stringify({ refresh_token: s.refresh }) }), s.email);
+      },
+      async logout(s) { try { await call('/auth/v1/logout', { method: 'POST', headers: H(s.access) }); } catch { /* token already gone */ } },
+      async load(s) { const rows = await call('/rest/v1/saves?select=state&user_id=eq.' + encodeURIComponent(s.uid), { headers: H(s.access) }); return rows && rows[0] ? rows[0].state : null; },
+      async save(s, rec) { await call('/rest/v1/saves?on_conflict=user_id', upsert(s, rec)); },
+      saveSync(s, rec) { try { fetch(cfg.url + '/rest/v1/saves?on_conflict=user_id', Object.assign({ keepalive: true }, upsert(s, rec))).catch(() => {}); } catch { /* page closing */ } },
+      async clear(s) { await call('/rest/v1/saves?user_id=eq.' + encodeURIComponent(s.uid), { method: 'DELETE', headers: H(s.access) }); }
+    };
+  }
+
+  // Password-reset links land back on this page with the recovery tokens in the URL fragment.
+  function takeRecoveryFromUrl() {
+    const h = new URLSearchParams(location.hash.replace(/^#/, ''));
+    const q = new URLSearchParams(location.search);
+    const clean = () => { try { history.replaceState(null, '', location.pathname); } catch { /* sandboxed */ } };
+    if (h.get('error_description') || q.get('error_description')) { const m = h.get('error_description') || q.get('error_description'); clean(); return { error: m.replace(/\+/g, ' ') }; }
+    if (h.get('type') === 'recovery' && h.get('access_token')) {
+      const d = { access_token: h.get('access_token'), refresh_token: h.get('refresh_token'), expires_in: +h.get('expires_in') || 3600 };
+      clean(); return { tokens: d };
+    }
+    return null;
+  }
+
+  let backend = local, session = null, recovery = null;
+  const persist = () => { if (session) LS.set('gi.session', JSON.stringify(session)); else LS.del('gi.session'); };
+  async function fresh() {
+    if (!session) fail('Not logged in.');
+    const s = await backend.refresh(session);
+    if (s !== session) { session = s; persist(); }
+    return session;
+  }
+  const isSecretKey = k => /^sb_secret_/.test(k) || (() => { try { return JSON.parse(atob(k.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).role === 'service_role'; } catch { return false; } })();
+
+  return {
+    MIN_PW,
+    captchaSiteKey: () => backend.kind === 'supabase' ? GI_BACKEND.turnstile : '',
+    async init() {
+      let note = 'No online server is set up, so progress is kept as profiles in this browser. Anyone using this browser can open them.';
+      LS.del('gi.users'); // accounts from the earlier browser-only version held password hashes; they are no longer used
+      if (GI_BACKEND.key && isSecretKey(GI_BACKEND.key)) note = 'This page contains a secret server key, which must never be used in a browser. Replace it with the publishable key. Using device profiles for now.';
+      else if (GI_BACKEND.url && GI_BACKEND.key) {
+        const b = supabase({ url: GI_BACKEND.url.replace(/\/+$/, ''), key: GI_BACKEND.key });
+        if (await b.ping()) { backend = b; note = 'Your progress is saved online, so you can continue on any device.'; }
+        else note = 'The online server cannot be reached from here, so progress is kept as profiles in this browser. Anyone using this browser can open them.';
+      }
+      if (backend.kind === 'supabase') {
+        const r = takeRecoveryFromUrl();
+        if (r && r.error) recovery = { error: r.error };
+        else if (r && r.tokens) {
+          try { const u = await backend.user(r.tokens.access_token); recovery = { session: { kind: 'supabase', email: norm(u.email), uid: u.id, access: r.tokens.access_token, refresh: r.tokens.refresh_token, exp: Date.now() + r.tokens.expires_in * 1000 } }; }
+          catch { recovery = { error: 'This password reset link has expired or was already used. Request a new one.' }; }
+        }
+      }
+      const saved = readJSON('gi.session');
+      if (!recovery && saved && saved.kind === backend.kind && saved.email) {
+        session = saved;
+        try { await fresh(); } catch (e) { if (e.status) { session = null; persist(); } }
+      }
+      return { kind: backend.kind, note, session, recovery };
+    },
+    session: () => session,
+    kind: () => backend.kind,
+    async openProfile(name) { session = await local.open(name); persist(); return session; },
+    profiles: () => local.profiles(),
+    async register(email, pw, captcha) { email = norm(email); const v = checkEmail(email) || checkPw(pw); if (v) fail(v); session = await backend.register(email, pw, captcha); persist(); return session; },
+    async login(email, pw, captcha) { email = norm(email); const v = checkEmail(email) || (pw ? null : 'Enter your password.'); if (v) fail(v); session = await backend.login(email, pw, captcha); if (!session) fail('Login failed.'); persist(); return session; },
+    async recover(email, captcha) {
+      email = norm(email); const v = checkEmail(email); if (v) fail(v);
+      const back = location.origin + location.pathname;
+      try { await backend.recover(email, back, captcha); }
+      catch (e) { if (e.status === 429 || /human/.test(e.message)) throw e; /* anything else: same neutral answer */ }
+    },
+    async finishReset(pw) {
+      const v = checkPw(pw); if (v) fail(v);
+      if (!recovery || !recovery.session) fail('This password reset link has expired. Request a new one.');
+      await backend.setPassword(recovery.session, pw);
+      session = recovery.session; recovery = null; persist(); return session;
+    },
+    async logout() { const s = session; session = null; persist(); if (s) await backend.logout(s); },
+    async load() { return backend.load(await fresh()); },
+    async save(rec) { return backend.save(await fresh(), rec); },
+    saveSync(rec) { if (session) backend.saveSync(session, rec); },
+    async clear() { return backend.clear(await fresh()); }
+  };
+})();
 
 </script>
 <script>
@@ -578,21 +1245,24 @@ function doOp(s, opId, target) {
 
   // ---------- static map ----------
   function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
-  const gGrat = el('g', {}, svg), gEdges = el('g', {}, svg), gNodes = el('g', {}, svg), gBubbles = el('g', {}, svg);
+  const gGrat = el('g', {}, svg), gEdges = el('g', {}, svg), gNodes = el('g', {}, svg), gWo = el('g', {}, svg), gBubbles = el('g', {}, svg);
   for (let x = 50; x < 1000; x += 100) el('line', { x1: x, y1: 0, x2: x, y2: 580, class: 'grat' }, gGrat);
   for (let y = 40; y < 580; y += 100) el('line', { x1: 0, y1: y, x2: 1000, y2: y, class: 'grat' }, gGrat);
   const nodeEls = {};
   COUNTRIES.forEach(c => {
     const g = el('g', { class: 'node', tabindex: 0, role: 'button', 'aria-label': c.name, transform: `translate(${c.x},${c.y})` }, gNodes);
     const r = radius(c);
+    const signed = el('circle', { r: r + 4, class: 'signed' }, g);
+    const member = el('circle', { r: r + 4, class: 'member' }, g);
     el('circle', { r, class: 'base' }, g);
     const ink = el('circle', { r: 0, class: 'inkfill' }, g);
+    const stamp = el('text', { y: -r - 8, class: 'stamp' }, g); stamp.textContent = 'SIGNED';
     const counter = el('circle', { r: r + 5, class: 'counter' }, g);
     const name = el('text', { y: r + 15 }, g); name.textContent = c.name;
     const pct = el('text', { y: r + 28, class: 'pct' }, g);
     g.addEventListener('click', () => select(c.id));
     g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(c.id); } });
-    nodeEls[c.id] = { g, ink, counter, pct, r };
+    nodeEls[c.id] = { g, ink, counter, pct, r, member, signed, stamp };
   });
 
   function drawEdges() {
@@ -602,6 +1272,7 @@ function doOp(s, opId, target) {
     (S ? S.trade : TRADE).forEach(([a, b], i) => line(a, b, 'trade' + (i >= TRADE.length ? ' new' : '')));
   }
 
+  const esc = t => String(t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   // ---------- rendering ----------
   function render() {
     if (!S) { drawEdges(); renderSide(); return; }
@@ -612,6 +1283,7 @@ function doOp(s, opId, target) {
     gEdges.querySelectorAll('line').forEach(l => {
       const hot = Math.max(S.inf[l.dataset.a], S.inf[l.dataset.b]) >= 8 && Math.min(S.inf[l.dataset.a], S.inf[l.dataset.b]) < 99;
       l.classList.toggle('hot', hot);
+      l.classList.toggle('blocked', l.classList.contains('trade') && isBlocked(S, l.dataset.a, l.dataset.b));
     });
     COUNTRIES.forEach(c => {
       const n = nodeEls[c.id]; const v = S.inf[c.id];
@@ -620,7 +1292,13 @@ function doOp(s, opId, target) {
       n.g.classList.toggle('held', v >= CONTROL);
       n.g.classList.toggle('sel', selected === c.id);
       n.counter.style.display = S.mods.some(m => m.id === c.id && m.kind === 'counter') ? '' : 'none';
+      const isSigned = !!S.wo.signed[c.id], isMember = !!S.wo.members[c.id];
+      n.member.style.display = isMember && !isSigned ? '' : 'none';
+      n.signed.style.display = isSigned ? '' : 'none';
+      n.stamp.style.display = isSigned ? '' : 'none';
+      n.g.classList.toggle('is-signed', isSigned);
     });
+    renderWo();
     // bubbles
     const want = new Set(S.bubbles.map(b => b.key));
     gBubbles.querySelectorAll('.bubble').forEach(b => { if (!want.has(+b.dataset.key)) b.remove(); });
@@ -639,37 +1317,137 @@ function doOp(s, opId, target) {
     $('shareFill').style.width = Math.min(100, share / 1 * 100) + '%';
     $('notoVal').textContent = Math.floor(S.notoriety);
     $('notoFill').style.width = S.notoriety + '%';
-    $('notoNote').textContent = S.coalition ? (S.stats.loud > 0 ? `World Order is active. Loud upgrades add ${(S.stats.loud * 10).toFixed(1)} every 10 weeks` : 'World Order is active and watching') : 'World Order wakes up at 15';
-    $('treatyVal').textContent = Math.floor(S.treaty) + '%';
-    $('treatyFill').style.width = S.treaty + '%';
-    $('treatyNote').textContent = S.coalition ? (S.stats.treatySlow > 0 ? `Drafting slowed ${Math.round(Math.min(.8, S.stats.treatySlow) * 100)}% by your Spin` : 'Drafting. Speeds up with Notoriety') : 'Not started. You lose at 100%';
+    $('notoNote').textContent = S.coalition ? `World Order moves every ${Math.max(4, Math.round(TUNE.planBase - S.notoriety / 15))} weeks at this Notoriety` : 'World Order wakes up at 8';
+    const sc = signedCount(S), cap = signCapacity(S);
+    $('treatyVal').textContent = `${sc} / ${SIGNATURES_TO_LOSE}`;
+    $('pips').innerHTML = Array.from({ length: SIGNATURES_TO_LOSE }, (_, i) => `<i class="${i < sc ? 'on' : i < cap ? 'cap' : ''}"></i>`).join('');
+    $('treatyNote').textContent = S.coalition
+      ? `Draft ${Math.floor(S.treaty)}%: enough for ${cap} signature${cap === 1 ? '' : 's'}${S.stats.treatySlow > 0 ? `. Your Spin slows it ${Math.round(Math.min(.8, S.stats.treatySlow) * 100)}%` : ''}`
+      : 'Not started. You lose when 8 countries sign';
+    if (S.coalition && S.wo.hopeless) $('treatyNote').textContent = `Only ${possibleSignatures(S)} signatures still possible. The treaty collapses in ${Math.max(0, 26 - S.wo.hopeless)} weeks unless that changes`;
     const ul = $('news');
-    const top = S.news.slice(0, 8).map(n => `<li class="${n.kind}"><span>wk ${n.week}</span>${n.text}</li>`).join('');
+    const top = S.news.slice(0, 8).map((n, i) => `<li class="${n.kind}${n.ev ? ' ev' : ''}${n.ev && n.week >= S.week - 1 && i < 3 ? ' fresh' : ''}"><span>wk ${+n.week}</span>${n.ev === 'good' ? '▲ ' : n.ev === 'bad' ? '▼ ' : ''}${esc(n.text)}</li>`).join('');
     if (ul.dataset.sig !== S.news.length + ':' + S.news[0]?.text) { ul.innerHTML = top; ul.dataset.sig = S.news.length + ':' + S.news[0]?.text; }
     renderSide();
     if (!$('treeOv').hidden) renderTree();
+    renderDecision();
     if (S.over && $('endOv').hidden && !S.endShown) showEnd();
   }
 
+  function renderDecision() {
+    const p = S && !S.over ? S.pending : null;
+    if (!p || !$('authOv').hidden || !$('resumeOv').hidden) { $('decOv').hidden = true; return; }
+    if ($('decOv').hidden || $('decOv').dataset.key !== p.id + ':' + p.week) {
+      $('decOv').dataset.key = p.id + ':' + p.week;
+      $('decEyebrow').textContent = `Decision · week ${p.week}`;
+      $('decTitle').textContent = p.name;
+      $('decText').textContent = p.text;
+      $('treeOv').hidden = true;
+      const t = p.target || (p.pair && p.pair[0]); if (t) selected = t;
+    }
+    ['a', 'b'].forEach(k => {
+      const btn = $('dec' + k.toUpperCase()); const chk = canChoose(S, k);
+      const cost = k === 'a' && p.cost ? `<span class="cost">${p.cost} Clout${chk.ok ? '' : ' · you have ' + Math.floor(S.clout)}</span>` : '';
+      btn.innerHTML = `<b>${esc(p[k][0])}</b><span>${esc(p[k][1])}</span>${cost}`;
+      btn.disabled = !chk.ok;
+    });
+    $('decOv').hidden = false;
+  }
+  function choose(k) {
+    if (!S || !S.pending) return;
+    const r = resolveDecision(S, k);
+    if (r && r.ok) { $('decOv').hidden = true; render(); }
+  }
+  $('decA').addEventListener('click', () => choose('a'));
+  $('decB').addEventListener('click', () => choose('b'));
+
+  const MOVE = {
+    sign: { label: 'Signing ceremony', letter: 'S', text: 'signs the treaty unless you hold 60% there' },
+    invite: { label: 'Membership invitation', letter: 'I', text: 'joins the World Order unless you hold 50% there' },
+    campaign: { label: 'Awareness campaign', letter: 'C', text: 'loses 10 points of support and gains resistance' },
+    sanction: { label: 'Sanctions', letter: '$', text: 'has a trade route closed for 30 weeks' }
+  };
+  function renderWo() {
+    gWo.innerHTML = '';
+    if (!S || !S.coalition) return;
+    const hq = byId(S.wo.hq); const hr = nodeEls[hq.id].r;
+    const hg = el('g', { class: 'hq', transform: `translate(${hq.x - hr - 6},${hq.y - hr - 4})` }, gWo);
+    el('rect', { x: -12, y: -8, width: 24, height: 14, rx: 2 }, hg); const ht = el('text', { y: 3 }, hg); ht.textContent = 'HQ';
+    S.wo.queue.forEach((q, i) => {
+      const c = byId(q.target); const r = nodeEls[q.target].r;
+      // agent travelling from HQ
+      const f = Math.min(1, Math.max(0, (S.week - q.planned) / Math.max(1, q.at - q.planned)));
+      if (q.target !== hq.id) {
+        el('line', { x1: hq.x, y1: hq.y, x2: c.x, y2: c.y, class: 'trail' }, gWo);
+        el('circle', { cx: hq.x + (c.x - hq.x) * f, cy: hq.y + (c.y - hq.y) * f, r: 5, class: 'agent ' + q.kind }, gWo);
+      }
+      const g = el('g', { class: 'threat ' + q.kind, tabindex: 0, role: 'button', 'aria-label': `${MOVE[q.kind].label} in ${c.name} in ${q.at - S.week} weeks`, transform: `translate(${(c.x + r * .75 + 4).toFixed(1)},${(c.y - r * .75 - 4 - i % 2 * 0).toFixed(1)})` }, gWo);
+      el('circle', { r: 10 }, g); const tx = el('text', { y: 4 }, g); tx.textContent = MOVE[q.kind].letter + (q.at - S.week);
+      g.addEventListener('click', e => { e.stopPropagation(); select(q.target); });
+    });
+  }
+  function specialsPanel(targetId) {
+    if (!S) return '';
+    const owned = Object.entries(S.specials);
+    if (!owned.length) return '';
+    const rows = owned.map(([key, st]) => {
+      const sp = SPECIALS[key]; const u = UPGRADES.find(x => x.special === key);
+      if (st === 'used') return `<button disabled><span class="sn">${sp.name}</span><span>used</span></button>`;
+      if (sp.target) {
+        const chk = targetId ? canSpecial(S, key, targetId) : { ok: false, why: 'Open a World Order member’s dossier to use it there' };
+        return `<button data-sp="${key}" data-t="${targetId || ''}" ${chk.ok ? '' : 'disabled'}><span class="sn">${sp.name}${targetId && chk.ok ? ' on ' + byId(targetId).name : ''}</span><span>ready</span><span class="sw">${chk.ok ? u.text.replace('Special action: ', '') : chk.why}</span></button>`;
+      }
+      const chk = canSpecial(S, key);
+      return `<button data-sp="${key}" ${chk.ok ? '' : 'disabled'}><span class="sn">${sp.name}</span><span>ready</span><span class="sw">${chk.ok ? u.text.replace('Special action: ', '') : chk.why}</span></button>`;
+    }).join('');
+    return `<div><div class="eyebrow" style="margin-bottom:6px">Special actions (once each)</div><div class="specials">${rows}</div></div>`;
+  }
+  function statusChips() {
+    if (!S) return '';
+    const c = [];
+    if (S.week < S.utopiaUntil) c.push(`<span class="status-chip">Utopia · ${S.utopiaUntil - S.week} wk</span>`);
+    if (S.week < S.frozenUntil) c.push(`<span class="status-chip wo">World Order frozen · ${S.frozenUntil - S.week} wk</span>`);
+    if (S.week < S.noSanctionUntil) c.push(`<span class="status-chip wo">No sanctions · ${S.noSanctionUntil - S.week} wk</span>`);
+    const FX = { incomeMul: 'Clout income', tradeMul: 'Trade spread', growthMul: 'Growth' };
+    const fx = (S.ev && S.ev.fx) || {};
+    Object.entries(fx).forEach(([k, f]) => {
+      const left = f.until - S.week; if (left <= 0) return;
+      if (FX[k]) c.push(`<span class="status-chip${f.value < 1 ? ' wo' : ''}">${FX[k]} ×${f.value} · ${left} wk</span>`);
+      if (k === 'woPause') c.push(`<span class="status-chip">World Order paused · ${left} wk</span>`);
+      if (k === 'woSlow') c.push(`<span class="status-chip">World Order half speed · ${left} wk</span>`);
+    });
+    return c.length ? `<div class="chips">${c.join('')}</div>` : '';
+  }
+  function woCard() {
+    if (!S) return '';
+    if (!S.coalition) return statusChips() + `<div class="wo-card"><div class="wo-head"><div class="seal">WO</div><div><b>World Order</b><span>Not convened yet. It wakes up at Notoriety 8.</span></div></div></div>`;
+    const moves = S.wo.queue.slice().sort((a, b) => a.at - b.at);
+    return statusChips() + `<div class="wo-card"><div class="wo-head"><div class="seal">WO</div><div><b>${SG}</b><span>HQ ${byId(S.wo.hq).name} · ${memberCount(S)} members · ${signedCount(S)} of ${SIGNATURES_TO_LOSE} signed</span></div></div>
+      <div class="eyebrow">Next moves</div>
+      <ul class="moves">${moves.length ? moves.map(q => `<li class="${q.kind}"><button data-go="${q.target}"><span class="wk">${q.at - S.week} wk</span><span><b>${MOVE[q.kind].label}</b> in ${byId(q.target).name}</span></button></li>`).join('') : `<li class="none">Nothing announced. Next move in ${Math.max(0, S.wo.nextPlan - S.week)} weeks.</li>`}</ul></div>`;
+  }
   function pctRes(v) { return Math.round(v * 100); }
   function renderSide() {
     const side = $('side');
     if (!selected) {
-      side.innerHTML = `<div class="eyebrow">Dossier</div><p class="empty">Click a country on the map to see its resistances and run operations there.</p>
+      side.innerHTML = woCard() + specialsPanel(null) + `<div class="eyebrow">Dossier</div><p class="empty">Click a country on the map to see its resistances and run operations there.</p>
         <div class="eyebrow">How spread works</div>
         <p class="empty">Support grows inside a country, then spills over land borders and along trade routes once it passes 8%. Resistances slow both. Upgrades lower resistances everywhere; operations hit one country.</p>`;
+      bindMoves(side);
       return;
     }
     const c = byId(selected);
     const v = S ? S.inf[c.id] : 0;
     const br = S ? resBreakdown(S, c.id) : c.res;
     const mods = S ? S.mods.filter(m => m.id === c.id) : [];
+    const woChips = S ? (S.wo.signed[c.id] ? '<span class="chip wo">Signed the treaty</span>' : S.wo.members[c.id] ? `<span class="chip wo">World Order ${S.wo.hq === c.id ? 'HQ' : 'member'}</span>` : '') : '';
+    const threats = S ? pendingOn(S, c.id).map(q => `<div class="threat-box ${q.kind === 'sign' ? '' : 'soft'}"><b>${MOVE[q.kind].label} in ${q.at - S.week} week${q.at - S.week === 1 ? '' : 's'}</b><span>${c.name} ${MOVE[q.kind].text}. A Summit here derails it.</span></div>`).join('') : '';
     const modChips = mods.map(m => m.kind === 'counter' ? `<span class="chip wo">WO campaign · ${m.until - S.week} wk</span>` : `<span class="chip" style="border-color:var(--you);color:var(--you)">${m.kind === 'summit' ? 'Summit' : 'Dossiers'} · ${m.until - S.week} wk</span>`).join('');
     const links = S ? tradeLinks(S, c.id) : TRADE.filter(e => e.includes(c.id)).map(e => e[0] === c.id ? e[1] : e[0]);
-    let html = `<div><div class="eyebrow">Dossier</div><h2 class="cname">${c.name}</h2>
+    let html = woCard() + `<div><div class="eyebrow">Dossier</div><h2 class="cname">${c.name}</h2>
       <div class="meta">${c.pop >= 1 ? c.pop + 'M people' : Math.round(c.pop * 1000) + 'k people'} · ${(c.pop / worldPop() * 100).toFixed(1)}% of world</div></div>
-      <div class="chips">${c.traits.map(t => `<span class="chip">${t}</span>`).join('')}${modChips}</div>
-      <p class="desc">${c.desc}</p>`;
+      <div class="chips">${c.traits.map(t => `<span class="chip">${t}</span>`).join('')}${woChips}${modChips}</div>
+      <p class="desc">${c.desc}</p>${threats}`;
     if (S) html += `<div><div class="top" style="display:flex;justify-content:space-between"><span class="eyebrow">Support</span><span class="meta" style="color:var(--you)">${v.toFixed(1)}%</span></div>
       <div class="supbar"><div style="width:${v}%"></div><div class="tick" style="left:${CONTROL}%"></div></div></div>`;
     html += `<div><div class="eyebrow" style="margin-bottom:6px">Resistance${S ? ' after your upgrades' : ''}</div><div class="res">` +
@@ -681,20 +1459,58 @@ function doOp(s, opId, target) {
         return `<button class="op" data-op="${op.id}" ${chk.ok ? '' : 'disabled'}><span class="op-name">${op.name}</span><span class="op-cost">${opCost(S, op)} Clout</span><span class="op-text">${op.text}</span>${chk.ok ? '' : `<span class="op-why">${chk.why}</span>`}</button>`;
       }).join('') + `</div>`;
     }
+    if (S && !picking) html += specialsPanel(c.id);
     side.innerHTML = html;
     side.querySelectorAll('.op').forEach(b => b.addEventListener('click', () => { doOp(S, b.dataset.op, c.id); render(); }));
+    bindMoves(side);
+  }
+  function bindMoves(root) {
+    root.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => select(b.dataset.go)));
+    root.querySelectorAll('[data-sp]').forEach(b => b.addEventListener('click', () => { if (useSpecial(S, b.dataset.sp, b.dataset.t || null).ok) render(); }));
   }
 
+  const TREE_ORDER = ['ideo', 'eco', 'mil', 'dip', 'faith', 'covert', 'spin'];
+  let rebrandArm = null; // two-step confirmation for Rebrand
   function renderTree() {
     const tree = $('tree');
-    tree.innerHTML = BRANCHES.map(br => `<div class="branch"><h3>${br.name}</h3><p>${br.blurb}</p><ol>` +
-      UPGRADES.filter(u => u.b === br.id).map(u => {
-        const owned = S.owned.includes(u.id); const locked = u.req && !S.owned.includes(u.req);
-        const cost = upCost(S, u); const poor = !owned && !locked && S.clout < cost;
-        const cls = owned ? 'owned' : locked ? 'locked' : poor ? 'poor' : '';
-        return `<li><button class="up ${cls}" data-up="${u.id}" ${owned || locked || poor ? 'aria-disabled="true"' : ''}><span class="n">${u.name}</span><span class="t">${u.text}</span><span class="c">${owned ? 'Owned' : locked ? 'Locked' : cost + ' Clout'}</span></button></li>`;
-      }).join('') + `</ol></div>`).join('');
+    const bname = id => BRANCHES.find(b => b.id === id).name;
+    const uname = id => UPGRADES.find(u => u.id === id).name;
+    tree.innerHTML = TREE_ORDER.map((bid, i) => {
+      const br = BRANCHES.find(b => b.id === bid); const opp = OPPOSITE[bid];
+      const mine = opp && committed(S, bid), closed = opp && committed(S, opp);
+      const pairStart = opp && i % 2 === 0;
+      const lock = branchLock(S, bid);
+      const syn = SYNERGY[bid];
+      let head = `<div class="bhead"><h3>${br.name}</h3><span class="vs">${opp ? (pairStart ? 'or ' + bname(opp) + ' →' : '← or ' + bname(opp)) : bid === 'spin' ? 'Open to every doctrine' : 'Open · pairs with ' + bname(br.partner)}</span></div><p>${br.blurb}</p>`;
+      if (syn) head += `<p class="fine syn ${S.owned.includes(syn) ? 'on' : ''}">${S.owned.includes(syn) ? '★ Boosted by ' : 'Boosted by '}${uname(syn)} (${bname(UPGRADES.find(u => u.id === syn).b)} tier 3)</p>`;
+      if (lock) head += `<div class="doctrine"><span class="chip closed">${lock}</span></div>`;
+      if (mine) {
+        const chk = canRebrand(S, bid);
+        const armed = rebrandArm === bid;
+        head += `<div class="doctrine"><span class="chip mine">Your doctrine</span>${S.rebranded ? '' : `<button class="rebrand ${armed ? 'armed' : ''}" data-rb="${bid}" ${chk.ok ? '' : 'disabled'}>${armed ? `Confirm: switch to ${bname(opp)}` : `Rebrand to ${bname(opp)}`}</button>`}</div>
+          ${S.rebranded ? '' : `<p class="fine">Once per game. Refunds half of this branch (tiers 2–4), costs ${REBRAND_COST} Clout and +${REBRAND_NOTORIETY} Notoriety.${chk.ok ? '' : ' ' + chk.why + '.'}</p>`}`;
+      } else if (closed) head += `<div class="doctrine"><span class="chip closed">Closed: you chose ${bname(opp)}</span></div>`;
+      else if (opp) head += `<p class="fine">Buying a second upgrade here closes ${bname(opp)} for the rest of the game.</p>`;
+      return `<div class="branch ${closed || lock ? 'is-closed' : ''} ${mine ? 'is-mine' : ''}">${head}<ol>` +
+        UPGRADES.filter(u => u.b === bid).map(u => {
+          const owned = S.owned.includes(u.id);
+          const shut = !owned && closed && u.tier >= 1;
+          const chk = canBuy(S, u);
+          const locked = !owned && !shut && !chk.ok && chk.why !== 'Not enough Clout';
+          const cost = upCost(S, u); const poor = !owned && !locked && !shut && S.clout < cost;
+          const cls = owned ? 'owned' : shut ? 'locked shut' : locked ? 'locked' : poor ? 'poor' : '';
+          const boostLine = u.boost ? `<span class="bt ${boosted(S, u) ? 'on' : ''}">${boosted(S, u) ? '★ ' : ''}With ${uname(syn)}: ${u.btext}</span>` : '';
+          const sp = u.special ? `<span class="bt sp">Special action${CAPSTONE_NEEDS[u.id] ? ' · needs ' + uname(CAPSTONE_NEEDS[u.id]) : ''}${owned ? (S.specials[u.special] === 'used' ? ' · used' : ' · ready') : ''}</span>` : '';
+          const status = owned ? 'Owned' : shut ? 'Closed' : locked ? (chk.why.startsWith('Needs') ? chk.why : 'Locked') : cost + ' Clout';
+          return `<li><button class="up ${cls} ${u.special ? 'cap' : ''}" data-up="${u.id}" ${owned || locked || poor || shut ? 'aria-disabled="true"' : ''}><span class="n">${u.name}</span><span class="t">${u.text}</span>${boostLine}${sp}<span class="c">${status}</span></button></li>`;
+        }).join('') + `</ol></div>`;
+    }).join('');
     tree.querySelectorAll('.up').forEach(b => b.addEventListener('click', () => { if (buyUpgrade(S, b.dataset.up).ok) render(); }));
+    tree.querySelectorAll('.rebrand').forEach(b => b.addEventListener('click', () => {
+      const bid = b.dataset.rb;
+      if (rebrandArm !== bid) { rebrandArm = bid; renderTree(); setTimeout(() => { if (rebrandArm === bid) { rebrandArm = null; if (!$('treeOv').hidden) renderTree(); } }, 4000); return; }
+      rebrandArm = null; if (rebrand(S, bid).ok) render(); else renderTree();
+    }));
   }
 
   function select(id) {
@@ -713,16 +1529,18 @@ function doOp(s, opId, target) {
     S = createState(id, (Math.random() * 2 ** 31) | 0);
     picking = false; $('pickbar').hidden = true; $('mapHint').textContent = 'Click a country for its dossier';
     selected = id; drawEdges(); setSpeed(1); render();
+    lastSaveWeek = -1; autosave();
   }
 
   function showEnd() {
     S.endShown = true; setSpeed(0);
-    const win = S.over === 'win';
+    if (Acc.session()) { Acc.clear().then(() => { $('savedAt').textContent = 'game over'; }).catch(() => {}); }
+    const win = S.over === 'win' || S.over === 'collapse';
     $('endEyebrow').textContent = `Week ${S.week}`;
-    $('endTitle').textContent = win ? 'The world agrees with you' : S.over === 'treaty' ? 'Treaty signed' : 'Movement dissolved';
+    $('endTitle').textContent = S.over === 'collapse' ? 'The treaty collapsed' : win ? 'The world agrees with you' : S.over === 'treaty' ? 'Treaty ratified' : 'Movement dissolved';
     $('endText').textContent = win
-      ? `You aligned ${(alignedShare(S) * 100).toFixed(0)}% of the world in ${S.week} weeks, with the Containment Treaty at ${Math.floor(S.treaty)}% and Notoriety at ${Math.floor(S.notoriety)}. You bought ${S.owned.length} upgrades.`
-      : `The World Order ratified its Containment Treaty in week ${S.week}. At your peak you had ${(S.peakShare * 100).toFixed(0)}% of the world. Next time, stay quieter for longer or invest in Spin.`;
+      ? (S.over === 'collapse' ? `You held enough countries that the World Order could never collect ${SIGNATURES_TO_LOSE} signatures. It dissolved in week ${S.week} with ${signedCount(S)} signed. You aligned ${(alignedShare(S) * 100).toFixed(0)}% of the world along the way.` : `You aligned ${(alignedShare(S) * 100).toFixed(0)}% of the world in ${S.week} weeks, with the Containment Treaty at ${Math.floor(S.treaty)}% and Notoriety at ${Math.floor(S.notoriety)}. You bought ${S.owned.length} upgrades.`)
+      : `${SIGNATURES_TO_LOSE} countries signed the Containment Treaty in week ${S.week}. At your peak you had ${(S.peakShare * 100).toFixed(0)}% of the world. Next time, answer signing ceremonies with Summits, or push support past 60% in the countries the World Order targets.`;
     $('endOv').hidden = false;
   }
 
@@ -739,7 +1557,14 @@ function doOp(s, opId, target) {
   $('closeTree').addEventListener('click', () => { $('treeOv').hidden = true; });
   $('treeOv').addEventListener('click', e => { if (e.target.id === 'treeOv') $('treeOv').hidden = true; });
   $('introGo').addEventListener('click', () => { $('introOv').hidden = true; picking = true; $('mapHint').textContent = 'Choose your starting country'; });
-  $('again').addEventListener('click', () => { $('endOv').hidden = true; S = null; selected = null; picking = true; $('pickbar').hidden = true; $('mapHint').textContent = 'Choose your starting country'; gBubbles.innerHTML = ''; render(); COUNTRIES.forEach(c => { const n = nodeEls[c.id]; n.ink.setAttribute('r', 0); n.pct.textContent = ''; n.g.classList.remove('held'); n.counter.style.display = 'none'; }); ['week','clout'].forEach(k => $(k).textContent = 0); });
+  function resetBoard() {
+    $('endOv').hidden = true; $('decOv').hidden = true; $('treeOv').hidden = true;
+    S = null; selected = null; picking = false; setSpeed(0); $('pickbar').hidden = true; gBubbles.innerHTML = ''; gWo.innerHTML = '';
+    COUNTRIES.forEach(c => { const n = nodeEls[c.id]; n.ink.setAttribute('r', 0); n.pct.textContent = ''; n.g.classList.remove('held', 'is-signed'); ['counter', 'member', 'signed', 'stamp'].forEach(k => n[k].style.display = 'none'); });
+    ['week', 'clout'].forEach(k => $(k).textContent = 0);
+    render();
+  }
+  $('again').addEventListener('click', () => { resetBoard(); picking = true; $('mapHint').textContent = 'Choose your starting country'; });
   $('stay').addEventListener('click', () => { $('endOv').hidden = true; });
 
   function loop(now) {
@@ -749,23 +1574,170 @@ function doOp(s, opId, target) {
       let ticked = false;
       while (acc >= SPEED_MS[speed]) { acc -= SPEED_MS[speed]; step(S); ticked = true; if (S.over) break; }
       if (ticked) render();
+      if (ticked && Acc.session() && S && !S.over && S.week - lastSaveWeek >= AUTOSAVE_WEEKS) autosave();
     } else if (S && S.over && !S.endShown) render();
     requestAnimationFrame(loop);
   }
 
   // Keep a running game across live updates of this page.
   function boot(data) {
-    if (data && data.S) {
-      S = data.S; selected = data.selected || null; $('introOv').hidden = true;
+    if (data && data.S && data.S.v === 5) {
+      S = data.S; selected = data.selected || null;
       $('mapHint').textContent = 'Click a country for its dossier';
       if (S.over) S.endShown = true;
     }
-    drawEdges(); COUNTRIES.forEach(c => nodeEls[c.id].counter.style.display = 'none'); render();
+    drawEdges(); COUNTRIES.forEach(c => ['counter', 'member', 'signed', 'stamp'].forEach(k => nodeEls[c.id][k].style.display = 'none')); render();
     requestAnimationFrame(loop);
+    Acc.init().then(info => {
+      $('authNote').textContent = info.note;
+      if (info.recovery) { showAuth(info.recovery.session ? 'reset' : 'forgot', info.recovery.error || ''); return; }
+      if (S) { showAcct(); return; }
+      if (info.session) afterLogin(); else showAuth('login');
+    }).catch(() => showAuth('login'));
   }
+
+  // ---------- accounts, saving and resuming ----------
+  const Acc = window.GIAccounts;
+  const AUTOSAVE_WEEKS = 10;
+  let lastSaveWeek = -1, saving = false, authMode = 'login', pendingRec = null;
+  function record() { return { fmt: 1, week: S.week, share: alignedShare(S), savedAt: new Date().toISOString(), S, selected }; }
+  function savedLabel(t) { $('savedAt').textContent = t; }
+  async function autosave() {
+    if (!Acc.session() || !S || S.over || saving) return;
+    saving = true;
+    try { await Acc.save(record()); lastSaveWeek = S.week; savedLabel('saved wk ' + S.week); $('savedAt').title = ''; }
+    catch (e) { savedLabel('not saved'); $('savedAt').title = e.message; lastSaveWeek = S ? S.week : lastSaveWeek; }
+    finally { saving = false; }
+  }
+  function saveOnExit() {
+    if (!Acc.session() || !S || S.over) return;
+    try { Acc.saveSync(record()); lastSaveWeek = S.week; } catch { /* page is closing */ }
+  }
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveOnExit(); });
+  window.addEventListener('pagehide', saveOnExit);
+
+  function showAcct() {
+    const s = Acc.session();
+    $('acct').hidden = false;
+    $('acctEmail').textContent = s ? s.email : 'Guest';
+    $('acctEmail').title = s ? (Acc.kind() === 'supabase' ? 'Saved online' : 'Profile saved in this browser') : 'Guest games are not saved';
+    $('logout').dataset.kind = Acc.kind();
+    $('logout').textContent = s ? (Acc.kind() === 'supabase' ? 'Log out' : 'Switch profile') : (Acc.kind() === 'supabase' ? 'Log in' : 'Use a profile');
+    if (!s) savedLabel('');
+  }
+  function authError(t) { $('authErr').textContent = t; }
+  let captchaId = null;
+  function captchaToken() { try { return captchaId !== null && window.turnstile ? window.turnstile.getResponse(captchaId) : ''; } catch { return ''; } }
+  function captchaReset() { try { if (captchaId !== null && window.turnstile) window.turnstile.reset(captchaId); } catch { /* widget gone */ } }
+  function mountCaptcha() {
+    const key = Acc.captchaSiteKey(); if (!key || captchaId !== null) return;
+    const render = () => { try { captchaId = window.turnstile.render('#captcha', { sitekey: key, theme: 'dark', size: 'flexible' }); } catch { /* blocked */ } };
+    if (window.turnstile) return render();
+    const sc = document.createElement('script');
+    sc.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'; sc.async = true; sc.onload = render;
+    document.head.appendChild(sc);
+  }
+  const AUTH = {
+    profile: { eyebrow: 'Profile on this device', title: 'Who is playing?', go: 'Play', email: 'Profile name', pw: false, pw2: false },
+    login: { eyebrow: 'Account', title: 'Log in', go: 'Log in', email: 'Email', pw: 'Password', pw2: false },
+    register: { eyebrow: 'Register', title: 'Create an account', go: 'Register', email: 'Email', pw: 'Password (8+ characters, letters and digits)', pw2: true },
+    forgot: { eyebrow: 'Password reset', title: 'Forgot password', go: 'Send reset link', email: 'Email', pw: false, pw2: false, lead: 'Enter your email. If an account exists, we send a link to set a new password.' },
+    reset: { eyebrow: 'Password reset', title: 'Set a new password', go: 'Save new password', email: false, pw: 'New password (8+ characters, letters and digits)', pw2: true }
+  };
+  function authError(t, ok) { $('authErr').textContent = t; $('authErr').classList.toggle('ok', !!ok); }
+  function showAuth(mode, msg) {
+    if (Acc.kind() === 'local' && mode !== 'profile') mode = 'profile';
+    authMode = mode; const m = AUTH[mode]; const online = Acc.kind() === 'supabase';
+    $('authEyebrow').textContent = m.eyebrow; $('authTitle').textContent = m.title; $('authGo').textContent = m.go;
+    $('authLead').hidden = !m.lead; $('authLead').textContent = m.lead || '';
+    $('authEmailWrap').hidden = !m.email; $('authEmailLbl').textContent = m.email || '';
+    $('authEmail').type = mode === 'profile' ? 'text' : 'email';
+    $('authEmail').setAttribute('autocomplete', mode === 'profile' ? 'nickname' : 'email');
+    $('authEmail').maxLength = mode === 'profile' ? 24 : 254;
+    if (mode === 'profile' && !$('authEmail').value) $('authEmail').value = Acc.profiles().slice(-1)[0] || '';
+    $('authPwWrap').hidden = !m.pw; $('authPwLbl').textContent = m.pw || '';
+    $('authPw').setAttribute('autocomplete', mode === 'login' ? 'current-password' : 'new-password');
+    $('authPw2Wrap').hidden = !m.pw2;
+    $('authAltRow').hidden = !online || mode === 'reset';
+    $('authSwitchText').textContent = mode === 'login' ? 'No account yet?' : 'Already registered?';
+    $('authSwitch').textContent = mode === 'login' ? 'Register' : 'Log in';
+    $('authForgot').hidden = mode !== 'login';
+    $('authGuest').parentElement.hidden = mode === 'reset';
+    authError(msg || '');
+    $('introOv').hidden = true; $('resumeOv').hidden = true; $('authOv').hidden = false;
+    if (online && mode !== 'reset') mountCaptcha();
+    setTimeout(() => (m.email ? $('authEmail') : $('authPw')).focus(), 0);
+  }
+  $('authSwitch').addEventListener('click', () => showAuth(authMode === 'login' ? 'register' : 'login'));
+  $('authForgot').addEventListener('click', () => showAuth('forgot'));
+  $('authForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const email = $('authEmail').value, pw = $('authPw').value, pw2 = $('authPw2').value, token = captchaToken();
+    if (AUTH[authMode].pw2 && pw !== pw2) { authError('Passwords do not match.'); return; }
+    $('authGo').disabled = true; authError('');
+    try {
+      if (authMode === 'forgot') {
+        await Acc.recover(email, token);
+        authError('If an account exists for this email, a reset link is on its way. Check your inbox and spam folder.', true);
+        return;
+      }
+      if (authMode === 'profile') await Acc.openProfile(email);
+      else if (authMode === 'register') await Acc.register(email, pw, token);
+      else if (authMode === 'login') await Acc.login(email, pw, token);
+      else if (authMode === 'reset') await Acc.finishReset(pw);
+      $('authPw').value = ''; $('authPw2').value = '';
+      $('authOv').hidden = true;
+      await afterLogin();
+    } catch (x) { authError(x.message || 'Something went wrong.'); }
+    finally { $('authGo').disabled = false; captchaReset(); }
+  });
+  $('authGuest').addEventListener('click', () => {
+    $('authOv').hidden = true; showAcct();
+    if (!S) $('introOv').hidden = false;
+  });
+  $('logout').addEventListener('click', async () => {
+    if (!Acc.session()) { setSpeed(0); showAuth('login'); return; }
+    setSpeed(0); await autosave(); await Acc.logout();
+    resetBoard(); $('acct').hidden = true; savedLabel('');
+    showAuth('login');
+  });
+
+  async function afterLogin() {
+    showAcct(); savedLabel('');
+    let rec = null;
+    try { rec = await Acc.load(); } catch (e) { savedLabel('could not load'); $('savedAt').title = e.message; }
+    const ok = rec && rec.S && rec.S.v === 5 && !rec.S.over;
+    if (!ok) {
+      if (S) { lastSaveWeek = -1; autosave(); } else $('introOv').hidden = false;
+      return;
+    }
+    pendingRec = rec;
+    const when = rec.savedAt ? new Date(rec.savedAt) : null;
+    $('resumeText').textContent = `Your movement is at week ${rec.week}, with ${(rec.share * 100).toFixed(1)}% of the world aligned${when && !isNaN(when) ? `. Saved ${when.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}` : ''}.`;
+    $('resumeNew').textContent = S ? 'Keep the game on screen' : 'New game';
+    $('resumeOv').hidden = false;
+  }
+  function restore(rec) {
+    const st = rec.S;
+    if (st.ev && st.ev.nextDecision == null) st.ev.nextDecision = st.pending ? Infinity : st.week + 25;
+    st.endShown = false;
+    resetBoard();
+    S = st; selected = rec.selected || null; picking = false;
+    $('introOv').hidden = true; $('mapHint').textContent = 'Click a country for its dossier';
+    lastSaveWeek = S.week; savedLabel('saved wk ' + S.week);
+    drawEdges(); render();
+  }
+  $('resumeGo').addEventListener('click', () => { $('resumeOv').hidden = true; if (pendingRec) restore(pendingRec); pendingRec = null; });
+  $('resumeNew').addEventListener('click', async () => {
+    $('resumeOv').hidden = true; pendingRec = null;
+    if (S) { lastSaveWeek = -1; autosave(); return; }
+    try { await Acc.clear(); } catch { /* next autosave overwrites it anyway */ }
+    $('introOv').hidden = false;
+  });
+
   window.claude?.hot?.snapshot?.(() => ({ S, selected }));
   window.claude?.hot?.ready ? window.claude.hot.ready(boot) : boot(window.claude?.hot?.data ?? {});
-  window.__GI = { get S() { return S; }, startGame, setSpeed };
+  window.__GI = { get S() { return S; }, startGame, setSpeed, render, autosave, saveOnExit };
 })();
 </script>
 
