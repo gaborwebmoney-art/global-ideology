@@ -8,7 +8,9 @@ acc = open('accounts.js').read()
 cfg = "const GI_BACKEND = { url: '', key: '', turnstile: '' };"
 assert cfg in acc
 if url: acc = acc.replace(cfg, 'const GI_BACKEND = ' + json.dumps({'url': url, 'key': key, 'turnstile': ts}) + ';')
-page = open('template.html').read().replace('/*SIM*/', code).replace('/*ACCOUNTS*/', acc)
+T = json.load(open('terrain/terrain.json'))
+terrain = 'const TERRAIN = ' + json.dumps({k: T[k] for k in ('land', 'shelf1', 'shelf2', 'territories', 'borders', 'peaks')}, separators=(',', ':')) + ';'
+page = open('template.html').read().replace('/*SIM*/', code).replace('/*ACCOUNTS*/', acc).replace('/*TERRAIN*/', terrain)
 open(out, 'w').write(page)
 if out == 'global-ideology.html':
     hashes = ["'sha256-%s'" % base64.b64encode(hashlib.sha256(m.encode()).digest()).decode() for m in re.findall(r'<script>([\s\S]*?)</script>', page)]

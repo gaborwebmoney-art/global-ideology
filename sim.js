@@ -10,17 +10,17 @@ const COUNTRIES = [
   { id: 'aethelgard', name: 'Aethelgard', pop: 330,  x: 205, y: 220, res: { mil: .75, eco: .75, dip: .75, ideo: .15 }, traits: ['Superpower', 'Divided politics'], desc: 'A sprawling federation with a powerful, sometimes divided, government. Strong on every front except ideas: it will try any of them once.' },
   { id: 'laplata',    name: 'La Plata',   pop: 46,   x: 290, y: 450, res: { mil: .55, eco: .15, dip: .15, ideo: .15 }, traits: ['Agricultural wealth', 'Unstable'], desc: 'Great natural beauty, vast farmland and a long history of political turmoil. Very open to a good economic offer.' },
   { id: 'isolde',     name: 'Isolde',     pop: 0.4,  x: 395, y: 55,  res: { mil: .15, eco: .55, dip: .35, ideo: .35 }, traits: ['Island', 'Close-knit'], desc: 'A remote island of fire and ice. Small, self-reliant and proud of its heritage.' },
-  { id: 'guldor',     name: 'Guldor',     pop: 68,   x: 455, y: 135, res: { mil: .35, eco: .35, dip: .75, ideo: .35 }, traits: ['Island', 'Old money'], desc: 'An ancient kingdom of trade and exploration. Its power rests on centuries of relationships and very old treaties.' },
+  { id: 'guldor',     name: 'Guldor',     pop: 68,   x: 430, y: 128, res: { mil: .35, eco: .35, dip: .75, ideo: .35 }, traits: ['Island', 'Old money'], desc: 'An ancient kingdom of trade and exploration. Its power rests on centuries of relationships and very old treaties.' },
   { id: 'celestia',   name: 'Celestia',   pop: 67,   x: 480, y: 240, res: { mil: .30, eco: .40, dip: .60, ideo: .60 }, traits: ['Cultural power'], desc: 'Philosophers, painters and strikes. Soft power, soft army.' },
   { id: 'helvetia',   name: 'Helvetia',   pop: 9,    x: 555, y: 205, res: { mil: .15, eco: .75, dip: .55, ideo: .35 }, traits: ['Neutral', 'Financial centre'], desc: 'A neutral, prosperous alpine republic. Its banks are everywhere; its opinions, officially, nowhere.' },
-  { id: 'pannonia',   name: 'Pannonia',   pop: 10,   x: 615, y: 150, res: { mil: .15, eco: .15, dip: .35, ideo: .35 }, traits: ['Landlocked', 'Unpredictable'], desc: 'A landlocked state with a proud history and a distinct identity, often at odds with its own alliances.' },
+  { id: 'pannonia',   name: 'Pannonia',   pop: 10,   x: 615, y: 155, res: { mil: .15, eco: .15, dip: .35, ideo: .35 }, traits: ['Landlocked', 'Unpredictable'], desc: 'A landlocked state with a proud history and a distinct identity, often at odds with its own alliances.' },
   { id: 'koryn',      name: 'Koryn',      pop: 145,  x: 755, y: 95,  res: { mil: .55, eco: .35, dip: .35, ideo: .55 }, traits: ['Authoritarian', 'Resource-rich'], desc: 'A vast, resource-rich nation with a centralised government and a proud military history.' },
-  { id: 'tavaro',     name: 'Tavaro',     pop: 90,   x: 665, y: 310, res: { mil: .60, eco: .70, dip: .40, ideo: .60 }, traits: ['Crossroads', 'Oil'], desc: 'A desert crossroads sitting on the world’s favourite resource.' },
-  { id: 'kestria',    name: 'Kestria',    pop: 220,  x: 545, y: 425, res: { mil: .30, eco: .30, dip: .30, ideo: .40 }, traits: ['Young population'], desc: 'The youngest population on the map. Ideas spread here fast.', growthMul: 1.25 },
+  { id: 'tavaro',     name: 'Tavaro',     pop: 90,   x: 665, y: 305, res: { mil: .60, eco: .70, dip: .40, ideo: .60 }, traits: ['Crossroads', 'Oil'], desc: 'A desert crossroads sitting on the world’s favourite resource.' },
+  { id: 'kestria',    name: 'Kestria',    pop: 220,  x: 545, y: 430, res: { mil: .30, eco: .30, dip: .30, ideo: .40 }, traits: ['Young population'], desc: 'The youngest population on the map. Ideas spread here fast.', growthMul: 1.25 },
   { id: 'bharat',     name: 'Bharat',     pop: 900,  x: 780, y: 340, res: { mil: .55, eco: .35, dip: .35, ideo: .55 }, traits: ['Colossal democracy', 'Tech boom'], desc: 'A colossal democracy of vibrant cultures and a booming tech sector. Its diversity is both a strength and a way in.' },
   { id: 'sinopeia',   name: 'Sinopeia',   pop: 900,  x: 860, y: 225, res: { mil: .55, eco: .75, dip: .55, ideo: .55 }, traits: ['Authoritarian', 'Manufacturing giant'], desc: 'A vast, ancient empire with a disciplined, centrally run society. Nothing enters without paperwork.' },
   { id: 'juche',      name: 'Juche',      pop: 26,   x: 935, y: 120, res: { mil: .15, eco: .15, dip: .15, ideo: .75 }, traits: ['Isolated', 'Personality cult'], desc: 'A fiercely isolated nation built around one leader’s portrait. Unmoved by any idea but the official one.' },
-  { id: 'nippon',     name: 'Nippon',     pop: 125,  x: 950, y: 270, res: { mil: .55, eco: .75, dip: .75, ideo: .55 }, traits: ['Island', 'Hyper-advanced'], desc: 'An island nation with a hyper-advanced economy and a disciplined, ageing society.' },
+  { id: 'nippon',     name: 'Nippon',     pop: 125,  x: 962, y: 292, res: { mil: .55, eco: .75, dip: .75, ideo: .55 }, traits: ['Island', 'Hyper-advanced'], desc: 'An island nation with a hyper-advanced economy and a disciplined, ageing society.' },
   { id: 'pinguinia',  name: 'Pinguinia',  pop: 0.05, x: 470, y: 540, res: { mil: .10, eco: .20, dip: .90, ideo: .90 }, traits: ['Polar', 'Research stations'], desc: 'Fifty thousand scientists and considerably more penguins.' }
 ];
 const BORDERS = [
@@ -133,7 +133,10 @@ function createState(startId, seed) {
 }
 function rng(s) { const r = mulberry32(s.seed + s.rngCalls * 7919)(); s.rngCalls++; return r; }
 function byId(id) { return COUNTRIES.find(c => c.id === id); }
-function addNews(s, text, kind) { s.news.unshift({ week: s.week, text, kind: kind || 'world' }); if (s.news.length > 40) s.news.pop(); }
+function addNews(s, text, kind) { s.newsSeq = (s.newsSeq || 0) + 1; s.news.unshift({ week: s.week, text, kind: kind || 'world', seq: s.newsSeq }); if (s.news.length > 40) s.news.pop(); }
+// Mark the latest news item for the UI: level 'important' | 'critical' raises an alert; id pins it to a country; tag is the short map label.
+function newsCountry(text) { let best = null, at = 1e9; COUNTRIES.forEach(c => { const i = text.indexOf(c.name); if (i >= 0 && i < at) { at = i; best = c.id; } }); return best; }
+function flag(s, level, id, tag) { const n = s.news[0]; if (!n) return; n.level = level; if (id) n.id = id; if (tag) n.tag = tag; }
 function worldPop() { return COUNTRIES.reduce((a, c) => a + c.pop, 0); }
 function alignedShare(s) { return COUNTRIES.reduce((a, c) => a + c.pop * s.inf[c.id] / 100, 0) / worldPop(); }
 function neighbours(id) { return BORDERS.filter(e => e.includes(id)).map(e => e[0] === id ? e[1] : e[0]); }
@@ -224,7 +227,7 @@ function seed(s, id, amount, src) {
   if (!s.flags['seed_' + id]) {
     s.flags['seed_' + id] = true;
     const c = byId(id);
-    addNews(s, src ? `Your ideas reach ${c.name} from ${byId(src).name}.` : `Your ideas appear in ${c.name}. Nobody is sure how.`, 'you');
+    addNews(s, src ? `Your ideas reach ${c.name} from ${byId(src).name}.` : `Your ideas appear in ${c.name}. Nobody is sure how.`, 'you'); flag(s, 'ping', c.id, 'New foothold');
     spawnBubble(s, id, 2);
   }
 }
@@ -264,7 +267,7 @@ function woActivate(s) {
   // founding members: the HQ's neighbours and trade partners that resist you most
   const near = [...new Set([...neighbours(hq.id), ...tradeLinks(s, hq.id)])].filter(id => s.inf[id] < TUNE.joinBelow && byId(id).pop >= 1).sort((a, b) => s.inf[a] - s.inf[b]).slice(0, TUNE.founders);
   near.forEach(id => { s.wo.members[id] = true; });
-  addNews(s, `The World Order convenes in ${hq.name}${near.length ? ' with ' + near.map(id => byId(id).name).join(' and ') : ''}. ${SG}: \u201cWe are deeply concerned, and have formed a committee to be concerned more efficiently.\u201d`, 'wo');
+  addNews(s, `The World Order convenes in ${hq.name}${near.length ? ' with ' + near.map(id => byId(id).name).join(' and ') : ''}. ${SG}: \u201cWe are deeply concerned, and have formed a committee to be concerned more efficiently.\u201d`, 'wo'); flag(s, 'critical', hq.id, 'World Order HQ');
 }
 function woPlan(s) {
   const W = s.wo; const lead = TUNE.lead;
@@ -275,42 +278,42 @@ function woPlan(s) {
   // 1. Signatures, as far as the draft allows
   if (signedCount(s) + pendingSigns < signCapacity(s)) {
     const c = members.filter(id => !W.signed[id] && !busy.has(id) && s.inf[id] < TUNE.signBelow - s.stats.shield).sort((a, b) => s.inf[a] - s.inf[b])[0];
-    if (c) { push('sign', c); addNews(s, `${SG} schedules a signing ceremony in ${byId(c).name} in ${lead} weeks. Commemorative pens ordered.`, 'wo'); return; }
+    if (c) { push('sign', c); addNews(s, `${SG} schedules a signing ceremony in ${byId(c).name} in ${lead} weeks. Commemorative pens ordered.`, 'wo'); flag(s, 'important', c, `Signing in ${lead} wk`); return; }
   }
   // 2. Recruit members: biggest country that still resists you
   const r = rng(s);
   const recruits = COUNTRIES.filter(c => !W.members[c.id] && !busy.has(c.id) && s.inf[c.id] < TUNE.joinBelow - s.stats.shield - 10 && c.pop >= 1).sort((a, b) => b.pop - a.pop);
   if (recruits.length && (r < 0.55 || memberCount(s) < SIGNATURES_TO_LOSE)) {
     const c = recruits[Math.floor(rng(s) * Math.min(3, recruits.length))];
-    push('invite', c.id); addNews(s, `World Order invites ${c.name} to join. RSVP in ${lead} weeks.`, 'wo'); return;
+    push('invite', c.id); addNews(s, `World Order invites ${c.name} to join. RSVP in ${lead} weeks.`, 'wo'); flag(s, 'important', c.id, `Invitation in ${lead} wk`); return;
   }
   // 3. Sanctions: cut a trade route you are using
   const routes = s.trade.filter(([a, b]) => !isBlocked(s, a, b) && Math.max(s.inf[a], s.inf[b]) >= 20 && Math.min(s.inf[a], s.inf[b]) < 60);
   if (routes.length && r < 0.75 && s.week >= s.noSanctionUntil) {
     const [a, b] = routes[Math.floor(rng(s) * routes.length)];
     const target = s.inf[a] < s.inf[b] ? a : b;
-    if (!busy.has(target)) { push('sanction', target, { route: [a, b] }); addNews(s, `World Order drafts sanctions on the ${byId(a).name}\u2013${byId(b).name} trade route. Effective in ${lead} weeks.`, 'wo'); return; }
+    if (!busy.has(target)) { push('sanction', target, { route: [a, b] }); addNews(s, `World Order drafts sanctions on the ${byId(a).name}\u2013${byId(b).name} trade route. Effective in ${lead} weeks.`, 'wo'); flag(s, 'important', a, `Sanctions in ${lead} wk`); return; }
   }
   // 4. Awareness campaign on your biggest foothold
   W.lastCampaign = W.lastCampaign || {};
   const cc = COUNTRIES.filter(c => s.inf[c.id] >= 5 && s.inf[c.id] < 97 && !busy.has(c.id) && !(W.lastCampaign[c.id] > s.week - 20));
   if (cc.length) {
     const t = cc.reduce((a, c) => (c.pop * s.inf[c.id] > a.pop * s.inf[a.id] ? c : a));
-    push('campaign', t.id); addNews(s, `World Order announces an awareness campaign for ${t.name} in ${lead} weeks.`, 'wo');
+    push('campaign', t.id); addNews(s, `World Order announces an awareness campaign for ${t.name} in ${lead} weeks.`, 'wo'); flag(s, 'important', t.id, `Campaign in ${lead} wk`);
   }
 }
 function woExecute(s, q) {
   const W = s.wo; const c = byId(q.target); const v = s.inf[q.target];
   if (q.kind === 'sign') {
-    if (W.members[q.target] && v < TUNE.signBelow - s.stats.shield) { W.signed[q.target] = true; addNews(s, `${c.name} signs the Containment Treaty. ${signedCount(s)} of ${SIGNATURES_TO_LOSE} signatures.`, 'wo'); }
-    else addNews(s, `${c.name} refuses to sign. Your supporters there hid the pens.`, 'you');
+    if (W.members[q.target] && v < TUNE.signBelow - s.stats.shield) { W.signed[q.target] = true; addNews(s, `${c.name} signs the Containment Treaty. ${signedCount(s)} of ${SIGNATURES_TO_LOSE} signatures.`, 'wo'); flag(s, 'critical', q.target, 'Signed treaty'); }
+    else { addNews(s, `${c.name} refuses to sign. Your supporters there hid the pens.`, 'you'); flag(s, 'important', q.target, 'Refused to sign'); }
   }
   if (q.kind === 'invite') {
-    if (v < TUNE.joinBelow - s.stats.shield) { W.members[q.target] = true; addNews(s, `${c.name} joins the World Order. Membership includes a lanyard.`, 'wo'); }
-    else addNews(s, `${c.name} declines the World Order\u2019s invitation. Too many of its people agree with you.`, 'you');
+    if (v < TUNE.joinBelow - s.stats.shield) { W.members[q.target] = true; addNews(s, `${c.name} joins the World Order. Membership includes a lanyard.`, 'wo'); flag(s, 'critical', q.target, 'Joined World Order'); }
+    else { addNews(s, `${c.name} declines the World Order\u2019s invitation. Too many of its people agree with you.`, 'you'); flag(s, 'important', q.target, 'Declined invitation'); }
   }
   if ((q.kind === 'sanction' || q.kind === 'campaign') && s.stats.sabotage && rng(s) < s.stats.sabotage) { addNews(s, `The World Order\u2019s ${q.kind === 'sanction' ? 'sanctions' : 'campaign'} in ${c.name} collapses amid mysterious scheduling conflicts.`, 'you'); return; }
-  if (q.kind === 'sanction') { s.blocked.push({ a: q.route[0], b: q.route[1], until: s.week + 30 }); addNews(s, `Sanctions close the ${byId(q.route[0]).name}\u2013${byId(q.route[1]).name} trade route for 30 weeks.`, 'wo'); }
+  if (q.kind === 'sanction') { s.blocked.push({ a: q.route[0], b: q.route[1], until: s.week + 30 }); addNews(s, `Sanctions close the ${byId(q.route[0]).name}\u2013${byId(q.route[1]).name} trade route for 30 weeks.`, 'wo'); flag(s, 'critical', q.route[0], 'Route closed'); }
   if (q.kind === 'campaign') { counterCampaign(s, q.target); W.lastCampaign = W.lastCampaign || {}; W.lastCampaign[q.target] = s.week; }
 }
 function possibleSignatures(s) { return signedCount(s) + COUNTRIES.filter(c => !s.wo.signed[c.id] && s.inf[c.id] < TUNE.signBelow - s.stats.shield).length; }
@@ -319,10 +322,10 @@ function woTick(s) {
   // Treaty collapse: if the World Order can no longer reach 8 signatures for 26 weeks, it dissolves.
   if (possibleSignatures(s) < SIGNATURES_TO_LOSE) {
     W.hopeless = (W.hopeless || 0) + 1;
-    if (W.hopeless === 1) addNews(s, `${SG} counts the remaining undecided nations and asks for a glass of water. Unless 8 signatures become possible within 26 weeks, the treaty collapses.`, 'you');
-  } else if (W.hopeless) { W.hopeless = 0; addNews(s, 'The World Order finds enough undecided nations to keep the treaty alive.', 'wo'); }
+    if (W.hopeless === 1) addNews(s, `${SG} counts the remaining undecided nations and asks for a glass of water. Unless 8 signatures become possible within 26 weeks, the treaty collapses.`, 'you'); flag(s, 'important', null, 'Treaty failing');
+  } else if (W.hopeless) { W.hopeless = 0; addNews(s, 'The World Order finds enough undecided nations to keep the treaty alive.', 'wo'); flag(s, 'important'); }
   // withdrawals: signed countries that turned to you
-  Object.keys(W.signed).forEach(id => { if (s.inf[id] >= TUNE.withdrawAt) { delete W.signed[id]; addNews(s, `${byId(id).name} withdraws its treaty signature. ${SG} is \u201cdisappointed, procedurally\u201d.`, 'you'); } });
+  Object.keys(W.signed).forEach(id => { if (s.inf[id] >= TUNE.withdrawAt) { delete W.signed[id]; addNews(s, `${byId(id).name} withdraws its treaty signature. ${SG} is \u201cdisappointed, procedurally\u201d.`, 'you'); flag(s, 'important', id, 'Signature withdrawn'); } });
   W.queue.filter(q => q.at <= s.week).forEach(q => woExecute(s, q));
   W.queue = W.queue.filter(q => q.at > s.week);
   if (fxOn(s, 'woPause')) W.nextPlan = Math.max(W.nextPlan, s.week + 1);
@@ -337,7 +340,7 @@ function treatyNews(s) {
     [75, 'Treaty enters final reading. Pens are being ceremonially polished.'],
     [90, 'Signing ceremony booked. Venue: extremely neutral.']
   ];
-  steps.forEach(([v, t]) => { if (s.treaty >= v && !s.flags['t' + v]) { s.flags['t' + v] = true; addNews(s, t, 'wo'); } });
+  steps.forEach(([v, t]) => { if (s.treaty >= v && !s.flags['t' + v]) { s.flags['t' + v] = true; addNews(s, t, 'wo'); flag(s, 'important'); } });
 }
 function milestoneNews(s, share) {
   const steps = [
@@ -347,9 +350,9 @@ function milestoneNews(s, share) {
     [0.50, 'Half the world now agrees with you. The other half is typing.'],
     [0.62, 'Your leader’s face appears on a stamp. Philatelists divided.']
   ];
-  steps.forEach(([v, t]) => { if (share >= v && !s.flags['m' + v]) { s.flags['m' + v] = true; addNews(s, t, 'you'); } });
+  steps.forEach(([v, t]) => { if (share >= v && !s.flags['m' + v]) { s.flags['m' + v] = true; addNews(s, t, 'you'); flag(s, 'important'); } });
   const nsteps = [[40, 'Notoriety high: foreign ministers now mention you by name.'], [70, 'Notoriety critical: you are the lead story on every channel.']];
-  nsteps.forEach(([v, t]) => { if (s.notoriety >= v && !s.flags['n' + v]) { s.flags['n' + v] = true; addNews(s, t, 'wo'); } });
+  nsteps.forEach(([v, t]) => { if (s.notoriety >= v && !s.flags['n' + v]) { s.flags['n' + v] = true; addNews(s, t, 'wo'); flag(s, 'important'); } });
 }
 
 // ---- Player actions ----
@@ -625,7 +628,7 @@ function eventsTick(s) {
     pBad = Math.min(.8, Math.max(.3, pBad));
     const good = rng(s) >= pBad;
     const pool = EVENTS.filter(e => e.good === good && e.ok(s));
-    if (pool.length) { const e = pick(s, pool); const text = e.fire(s); addNews(s, `${e.name}: ${text}`, good ? 'you' : 'wo'); s.news[0].ev = good ? 'good' : 'bad'; E.log.unshift({ week: s.week, id: e.id, good }); }
+    if (pool.length) { const e = pick(s, pool); const text = e.fire(s); addNews(s, `${e.name}: ${text}`, good ? 'you' : 'wo'); s.news[0].ev = good ? 'good' : 'bad'; flag(s, 'important', newsCountry(text), e.name); E.log.unshift({ week: s.week, id: e.id, good }); }
     E.next = s.week + TUNE.evGap + Math.floor(rng(s) * 9);
   }
   if (!s.pending && s.week >= E.nextDecision) {
@@ -647,7 +650,7 @@ function resolveDecision(s, choice) {
   const chk = canChoose(s, choice); if (!chk.ok) return chk;
   const p = s.pending; const d = DECISIONS.find(x => x.id === p.id);
   const text = d[choice](s, p);
-  addNews(s, `${p.name}: ${text}`, 'you'); s.news[0].ev = 'dec';
+  addNews(s, `${p.name}: ${text}`, 'you'); s.news[0].ev = 'dec'; flag(s, 'important', p.target || newsCountry(text), p.name);
   s.pending = null; s.ev.nextDecision = s.week + 25 + Math.floor(rng(s) * 11);
   return { ok: true, text };
 }

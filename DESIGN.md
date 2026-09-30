@@ -204,6 +204,23 @@ Email verification, custom SMTP, leaked-password protection (Supabase Pro plan),
 ### Build
 `python3 build.py global-ideology.html <supabase_url> <publishable_key> [turnstile_site_key]` writes the artifact page and `index.html` (with CSP).
 
+## Prototype v7: world map and alerts
+### Map
+- A generated fictional world behind the country circles: continents, islands, polar ice, an inland sea, mountain ranges and offshore depth lines. Each country has a territory.
+- The geography follows the game rules: land borders are exactly the game's 12 border pairs (checked by `terrain/gen.py`), trade routes cross sea, Pannonia is landlocked, Guldor/Isolde/Nippon are islands, Pinguinia is polar. An inland sea separates Koryn/Tavaro/Bharat/Sinopeia so only the allowed pairs touch.
+- Territories fill amber with your support (up to 55% opacity at 100%). World Order members get a blue outline, signatories a thicker one. Territories are clickable (bigger targets than the circles). The thin land-border lines between circles were removed; trade routes stay.
+- Positions moved: Guldor (455,135 → 430,128), Nippon (950,270 → 962,292); Pannonia, Tavaro, Kestria by 5 px. No balance impact (the simulation uses links, not coordinates; doctrine win rates unchanged).
+- Phone: "Whole map" / "Zoom in" toggle (whole map by default, remembered per browser). Zoomed view centres on the selected country.
+- Regenerate: `python3 terrain/gen.py` (numpy, scipy, scikit-image), then `build.py`.
+
+### Alerts
+- News items carry a level: ping (map only), important (alert), critical (alert that stays until dismissed).
+  - Critical: World Order convenes, a country signs the treaty, joins the World Order, sanctions close a route.
+  - Important: World Order moves announced, random events, decision outcomes, refusals, withdrawn signatures, treaty/share/Notoriety milestones.
+  - Ping: your ideas reach a new country.
+- Alerts: top-right of the map (bottom of the screen on phones), at most 3 (2 on phones); important ones disappear after 6 s. Colour: amber good, blue World Order, red bad. Clicking one opens that country's dossier.
+- Map pings: an expanding ring on the country plus a short label (e.g. "Signed treaty", "Campaign in 6 wk", event name) for 4 s.
+
 ### Next
 - Make loud play a real alternative, not a trap
 - Upgrade combos and refunds
