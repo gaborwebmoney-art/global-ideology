@@ -12,7 +12,7 @@ const prioFor = ([a, b], rush) => { const ids = t => S.UPGRADES.filter(u => u.b 
 const AMT = { eco1: 2.5, ideo1: 2.5, mil1: 3, eco2: 6, dip1: 4, mil2: 8, dip2: 9, ideo2: 8, eco3: 10, ideo3: 6 };
 const NEEDS_FOOTHOLD = { ideo2: 1, ideo3: 1, dip1: 1, dip2: 1, eco3: 1 };
 // answers to a courtship, by how far it has got
-const PNR = s => (s.cfg.v10t && s.cfg.v10t.pnr) || 101;
+const PNR = s => (s.cfg.v10t && s.cfg.v10t.pnr) || 66;
 const ANSWER = [
   [66, ['ideo4', 'mil4', 'dip4', 'mil3', 'dip3', 'eco3', 'ideo3', 'dip2', 'mil2']],
   [40, ['mil3', 'dip3', 'eco3', 'ideo3', 'dip2', 'mil2']],

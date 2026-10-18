@@ -126,7 +126,7 @@ const V10_RES = {
   nippon: { eco: .85, mil: .30, dip: .70, ideo: .55 }, pinguinia: { eco: .10, mil: .05, dip: .85, ideo: .85 }
 };
 // tuning knobs for the prototype (the bot overrides some via cfg.v10t)
-const V10 = { courtWeeks: 12, drain: 4, knockMul: 1, pushMul: 1, pnr: 101, costs: [4, 7, 10, 14], cds: [15, 30, 45, 80] };
+const V10 = { courtWeeks: 8, drain: 4, knockMul: 1, pushMul: 0.6, pnr: 66, t4Up: 10, costs: [4, 7, 10, 14], cds: [15, 30, 45, 80] };
 function v10t(s, k) { return (s.cfg.v10t && s.cfg.v10t[k] !== undefined) ? s.cfg.v10t[k] : V10[k]; }
 function baseRes(s, id) { return s.cfg && s.cfg.v10 ? V10_RES[id] : byId(id).res; }
 // Share of the world's strength in a domain that you hold: progressive in support, weighted by sqrt(pop).
@@ -145,7 +145,7 @@ const ACTIONS = [
   { id: 'mil2', dom: 'mil', tier: 2, name: 'Snap Exercise', text: '+support, courtship −25. Loud' },
   { id: 'mil3', dom: 'mil', tier: 3, name: 'Proxy Garrison', text: 'Courtship −50 and half speed 15 wk; no new courtship 15 wk; +support. Loud' },
   { id: 'mil4', dom: 'mil', tier: 4, name: 'Regime Change', text: 'Support to at least 50%, leaves the WO, signature void. +10 Notoriety, neighbours resist +20% for 30 wk' },
-  { id: 'dip1', dom: 'dip', tier: 1, name: 'Cultural Attache', text: 'All resistance down 20 wk. Slight courtship knock-back' },
+  { id: 'dip1', dom: 'dip', tier: 1, name: 'Embassy', text: '+support (can seed); this country resists 10% less for good (once per country). Slight courtship knock-back' },
   { id: 'dip2', dom: 'dip', tier: 2, name: 'Summit', text: 'All resistance down a lot 25 wk, courtship −30. Quiet' },
   { id: 'dip3', dom: 'dip', tier: 3, name: 'Non-Aligned Pact', text: 'Target and neighbours: courtship −40, no new courtship 20 wk' },
   { id: 'dip4', dom: 'dip', tier: 4, name: 'Endless Negotiations', text: 'Courtship here at 1/3 speed, and no new courtships anywhere, for 30 wk' },
@@ -214,8 +214,7 @@ function doAct(s, aid, target) {
     case 'mil3': knock(s, target, 50, a); s.mods.push({ id: target, kind: 'courtSlow', mul: .5, until: s.week + 15 }); block(target, 15); pushSupport(s, target, 6 * e); noto(3); break;
     case 'mil4': s.inf[target] = Math.max(s.inf[target], 50); if (W.members[target] && target !== W.hq) leave(target); delete W.signed[target]; W.court = (W.court || []).filter(c => c.target !== target);
       neighbours(target).forEach(n => resMod(s, n, 1.2, 30)); noto(10); break;
-    case 'dip1': if (v10t(s, 'embassy')) { pushSupport(s, target, 2 * e); if (!hasMod(s, target, 'embassy')) { s.mods.push({ id: target, kind: 'embassy', until: 1e9 }); resMod(s, target, .9, 1e9); } }
-      else resMod(s, target, Math.max(.4, 1 - .15 * e), 20);
+    case 'dip1': pushSupport(s, target, 2 * e); if (!hasMod(s, target, 'embassy')) { s.mods.push({ id: target, kind: 'embassy', until: 1e9 }); resMod(s, target, .9, 1e9); }
       knock(s, target, 5, a); break;
     case 'dip2': resMod(s, target, Math.max(.3, 1 - .4 * e), 25); knock(s, target, 30, a); noto(.5); break;
     case 'dip3': [target, ...neighbours(target)].forEach(id => { knock(s, id, 40, a); block(id, 20); }); break;
@@ -599,14 +598,14 @@ function milestoneNews(s, share) {
 }
 
 // ---- Player actions ----
-function upCost(s, u) { const base = s.cfg.v10 && u.special && ['ideo', 'eco', 'mil', 'dip'].includes(u.b) && s.cfg.v10t && s.cfg.v10t.t4Up ? s.cfg.v10t.t4Up : u.cost; return Math.round(base * (1 + TUNE.costGrow * s.owned.length)); }
+function upCost(s, u) { const base = s.cfg.v10 && u.special && ['ideo', 'eco', 'mil', 'dip'].includes(u.b) ? v10t(s, 't4Up') : u.cost; return Math.round(base * (1 + TUNE.costGrow * s.owned.length)); }
 function canBuy(s, u) {
   if (s.owned.includes(u.id)) return { ok: false, why: 'Owned' };
   if (u.req && !s.owned.includes(u.req)) return { ok: false, why: 'Needs ' + UPGRADES.find(x => x.id === u.req).name };
   const opp = OPPOSITE[u.b];
   if (opp && u.tier >= 1 && committed(s, opp)) return { ok: false, why: 'Closed: you chose ' + BRANCHES.find(b => b.id === opp).name };
   const lock = branchLock(s, u.b); if (lock) return { ok: false, why: lock };
-  if (CAPSTONE_NEEDS[u.id] && !(s.cfg.v10 && s.cfg.capNeeds === false) && !s.owned.includes(CAPSTONE_NEEDS[u.id])) return { ok: false, why: 'Needs ' + UPGRADES.find(x => x.id === CAPSTONE_NEEDS[u.id]).name };
+  if (CAPSTONE_NEEDS[u.id] && !(s.cfg.v10 && s.cfg.capNeeds !== true) && !s.owned.includes(CAPSTONE_NEEDS[u.id])) return { ok: false, why: 'Needs ' + UPGRADES.find(x => x.id === CAPSTONE_NEEDS[u.id]).name };
   if (s.clout < upCost(s, u)) return { ok: false, why: 'Not enough Clout' };
   return { ok: true };
 }
