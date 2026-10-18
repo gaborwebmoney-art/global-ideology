@@ -1,4 +1,5 @@
 const S = require('./sim.js');
+const CFG = process.env.GI_CFG ? JSON.parse(process.env.GI_CFG) : undefined;
 function botDecide(S, s, passive) {
   if (!s.pending) return;
   if (passive) { S.resolveDecision(s, 'b'); return; }
@@ -22,7 +23,7 @@ function useSpecials(s){
   if(sp.hybrid==='ready' && (s.blocked.length>=2 || W.queue.filter(q=>q.kind==='sign').length)) S.useSpecial(s,'hybrid');
 }
 function play(start, seed, core, extra, careful){
-  const s=S.createState(start,seed); const p=prio(core, extra);
+  const s=S.createState(start,seed,CFG); const p=prio(core, extra);
   let rnd=seed*7+3; const R=()=>{rnd=(rnd*16807)%2147483647; return rnd/2147483647;};
   while(!s.over&&s.week<1500){ S.step(s); botDecide(S, s, false);
     if(careful) s.bubbles.slice().forEach(b=>S.collectBubble(s,b.key));
