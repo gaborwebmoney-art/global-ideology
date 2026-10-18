@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-hzCwiCH9IU/8hMGniTTllCCZVjzwnF6f4K9eVAeJ3zc=' 'sha256-zFT2ff/P4farcRKGR/ceoy6/fqqG71pWJJyjn01AE2w=' 'sha256-3ArAEPsXGMXmVGPdLmG9P5avt9nlAb7SJOOKK3+//Nw=' 'sha256-IVahs7LV+y7gwsl7jHyPKT4+GRyzLDihYOG5iEFk058=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-hzCwiCH9IU/8hMGniTTllCCZVjzwnF6f4K9eVAeJ3zc=' 'sha256-zFT2ff/P4farcRKGR/ceoy6/fqqG71pWJJyjn01AE2w=' 'sha256-XfkBkMGPlQCRWGZs2XgvP7kQcHsJWwiHi7h5dU4ieX0=' 'sha256-IVahs7LV+y7gwsl7jHyPKT4+GRyzLDihYOG5iEFk058=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#0d1820">
 <meta name="mobile-web-app-capable" content="yes">
@@ -420,6 +420,59 @@ body { overscroll-behavior: none; -webkit-tap-highlight-color: transparent; }
   .intro ol { margin: 6px 0 10px; font-size: 13px; gap: 4px; }
   .decision h2 { font-size: 22px; }
 }
+/* ===== Upgrades screen: tiles, one level at a time ===== */
+.sheet-head { align-items: center; }
+.sheet-head .btn { white-space: nowrap; flex: none; }
+.tree { display: block; overflow: visible; padding: 0; }
+.tiles { display: grid; gap: 10px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.tile { text-align: left; display: flex; flex-direction: column; gap: 4px; min-height: 104px; padding: 12px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; cursor: pointer; color: var(--text); }
+.tile:hover { border-color: var(--you); }
+.tile.mine { border-color: var(--you); background: var(--you-dim); }
+.tile.owned { border-color: var(--you); background: var(--you-dim); }
+.tile.dim { opacity: .55; }
+.tile.poor .tc { color: var(--danger); }
+.tile.cap { border-style: double; border-width: 3px; }
+.tile .tn { font-family: var(--display); font-weight: 800; font-size: 24px; text-transform: uppercase; letter-spacing: .03em; line-height: 1; }
+.tile .tn.sm { font-family: var(--body); font-weight: 600; font-size: 15px; text-transform: none; letter-spacing: 0; line-height: 1.25; }
+.tile .ts { font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.tile .tc { margin-top: auto; font-family: var(--mono); font-size: 13px; color: var(--you); }
+.tile .tp { margin-top: auto; display: flex; gap: 4px; align-items: center; }
+.tile .tp i { width: 14px; height: 8px; border-radius: 2px; background: var(--ink); border: 1px solid var(--line); }
+.tile .tp i.on { background: var(--you); border-color: var(--you); }
+.tile .tp em { font-style: normal; font-family: var(--mono); font-size: 11px; color: var(--muted); margin-left: 4px; }
+.tile .chip { align-self: flex-start; }
+.binfo { margin: 0 0 6px; color: var(--muted); }
+.tree .fine { font-size: 12px; color: var(--muted); margin: 0 0 8px; }
+.tree .doctrine { margin: 0 0 8px; }
+.how { margin: 0 0 12px; color: var(--muted); font-size: 13px; }
+.how summary { cursor: pointer; padding: 6px 0; }
+.how p { margin: 4px 0 0; }
+.udetail { max-width: 560px; display: grid; gap: 10px; }
+.udetail .ut { font-size: 17px; margin: 0; }
+.udetail .bt { margin: 0; font-size: 13px; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 8px; }
+.udetail .bt.on { color: var(--you); }
+.udetail .bt.sp { color: var(--wo); }
+.ustate { font-family: var(--mono); font-size: 14px; color: var(--muted); padding: 10px 12px; border: 1px dashed var(--line); border-radius: 6px; }
+.ustate.owned { color: var(--you); border-color: var(--you); border-style: solid; }
+.ustate.poor { color: var(--danger); }
+.btn.big { min-height: 52px; font-size: 16px; }
+@media (max-width: 600px) and (orientation: portrait) {
+  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tile { min-height: 96px; padding: 10px; }
+  .tile .tn { font-size: 22px; }
+  .sheet-head { flex-wrap: nowrap; gap: 8px; margin-bottom: 10px; }
+  .sheet-head h2 { font-size: 24px; }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  .tile { min-height: 84px; padding: 8px 10px; }
+  .tile .tn { font-size: 20px; }
+  .tile .tn.sm { font-size: 14px; }
+  .sheet-head { flex-wrap: nowrap; margin-bottom: 8px; gap: 10px; }
+  .sheet-head h2 { font-size: 22px; }
+  .udetail { max-width: none; gap: 6px; }
+  .udetail .ut { font-size: 15px; }
+  .how { margin-bottom: 8px; }
+}
 </style>
 </head>
 <body>
@@ -475,12 +528,11 @@ body { overscroll-behavior: none; -webkit-tap-highlight-color: transparent; }
 <div class="overlay" id="treeOv" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="treeTitle">
     <div class="sheet-head">
-      <div><div class="eyebrow">Spend Clout</div><h2 id="treeTitle">Upgrades</h2></div>
+      <button class="btn" id="closeTree" type="button">&larr; Back</button>
+      <div><div class="eyebrow" id="treeEyebrow">Spend Clout</div><h2 id="treeTitle">Upgrades</h2></div>
       <div class="spacer"></div>
       <div class="readout clout"><span>Clout</span><b id="clout2">0</b></div>
-      <button class="btn" id="closeTree">Close</button>
     </div>
-    <p class="empty" style="margin:-4px 0 12px">Choose a doctrine: Ideology or Economy, and Military or Diplomacy. The first upgrade of every branch is open to all; the second one commits you. Partners boost each other: Ideology and Diplomacy, Economy and Military, Faith and Covert Ops. Top-tier upgrades are one-off special actions. Each upgrade you own makes the next one 15% dearer. The game keeps running while this is open.</p>
     <div class="tree" id="tree"></div>
   </div>
 </div>
@@ -1577,7 +1629,7 @@ window.GIAccounts = (() => {
     const top = S.news.slice(0, 8).map((n, i) => `<li class="${n.kind}${n.ev ? ' ev' : ''}${n.ev && n.week >= S.week - 1 && i < 3 ? ' fresh' : ''}"><span>wk ${+n.week}</span>${n.ev === 'good' ? '▲ ' : n.ev === 'bad' ? '▼ ' : ''}${esc(n.text)}</li>`).join('');
     if (ul.dataset.sig !== S.news.length + ':' + S.news[0]?.text) { ul.innerHTML = top; ul.dataset.sig = S.news.length + ':' + S.news[0]?.text; }
     renderSide();
-    if (!$('treeOv').hidden) renderTree();
+    if (treeOpen()) renderTree();
     renderDecision();
     if (S.over && $('endOv').hidden && !S.endShown) showEnd();
   }
@@ -1590,7 +1642,7 @@ window.GIAccounts = (() => {
       $('decEyebrow').textContent = `Decision · week ${p.week}`;
       $('decTitle').textContent = p.name;
       $('decText').textContent = p.text;
-      $('treeOv').hidden = true;
+      closeTree(false);
       const t = p.target || (p.pair && p.pair[0]); if (t) selected = t;
     }
     ['a', 'b'].forEach(k => {
@@ -1720,46 +1772,101 @@ window.GIAccounts = (() => {
 
   const TREE_ORDER = ['ideo', 'eco', 'mil', 'dip', 'faith', 'covert', 'spin'];
   let rebrandArm = null; // two-step confirmation for Rebrand
+  // Upgrades screen: level 0 = branch tiles, 1 = upgrade tiles of one branch, 2 = one upgrade (confirm here)
+  let treeView = { level: 0, branch: null, up: null }, resumeSpeed = 0;
+  const treeOpen = () => !$('treeOv').hidden;
+  function openTree() {
+    if (!S || S.over || treeOpen()) return;
+    resumeSpeed = speed; setSpeed(0);          // the clock stops while you shop
+    treeView = { level: 0, branch: null, up: null }; rebrandArm = null;
+    $('treeOv').hidden = false; renderTree();
+  }
+  function closeTree(resume) {
+    if (!treeOpen()) return;
+    $('treeOv').hidden = true; rebrandArm = null;
+    if (resume && S && !S.over && resumeSpeed) setSpeed(resumeSpeed);   // and restarts when you leave
+    resumeSpeed = 0;
+  }
+  function treeBack() {
+    if (treeView.level === 2) treeView = { level: 1, branch: treeView.branch, up: null };
+    else if (treeView.level === 1) treeView = { level: 0, branch: null, up: null };
+    else { closeTree(true); return; }
+    rebrandArm = null; renderTree();
+  }
   function renderTree() {
-    const tree = $('tree');
+    if (!S) return;
+    const tree = $('tree'), v = treeView;
     const bname = id => BRANCHES.find(b => b.id === id).name;
     const uname = id => UPGRADES.find(u => u.id === id).name;
-    tree.innerHTML = TREE_ORDER.map((bid, i) => {
-      const br = BRANCHES.find(b => b.id === bid); const opp = OPPOSITE[bid];
-      const mine = opp && committed(S, bid), closed = opp && committed(S, opp);
-      const pairStart = opp && i % 2 === 0;
-      const lock = branchLock(S, bid);
-      const syn = SYNERGY[bid];
-      let head = `<div class="bhead"><h3>${br.name}</h3><span class="vs">${opp ? (pairStart ? 'or ' + bname(opp) + ' →' : '← or ' + bname(opp)) : bid === 'spin' ? 'Open to every doctrine' : 'Open · pairs with ' + bname(br.partner)}</span></div><p>${br.blurb}</p>`;
-      if (syn) head += `<p class="fine syn ${S.owned.includes(syn) ? 'on' : ''}">${S.owned.includes(syn) ? '★ Boosted by ' : 'Boosted by '}${uname(syn)} (${bname(UPGRADES.find(u => u.id === syn).b)} tier 3)</p>`;
-      if (lock) head += `<div class="doctrine"><span class="chip closed">${lock}</span></div>`;
-      if (mine) {
-        const chk = canRebrand(S, bid);
-        const armed = rebrandArm === bid;
-        head += `<div class="doctrine"><span class="chip mine">Your doctrine</span>${S.rebranded ? '' : `<button class="rebrand ${armed ? 'armed' : ''}" data-rb="${bid}" ${chk.ok ? '' : 'disabled'}>${armed ? `Confirm: switch to ${bname(opp)}` : `Rebrand to ${bname(opp)}`}</button>`}</div>
+    const branchState = bid => {
+      const opp = OPPOSITE[bid];
+      return { opp, mine: !!(opp && committed(S, bid)), closed: !!(opp && committed(S, opp)), lock: branchLock(S, bid) };
+    };
+    const upState = u => {
+      const st = branchState(u.b);
+      const owned = S.owned.includes(u.id);
+      const shut = !owned && st.closed && u.tier >= 1;
+      const chk = canBuy(S, u);
+      const locked = !owned && !shut && !chk.ok && chk.why !== 'Not enough Clout';
+      const cost = upCost(S, u);
+      const poor = !owned && !locked && !shut && S.clout < cost;
+      return { owned, shut, locked, poor, cost, chk, ok: !owned && !shut && !locked && !poor };
+    };
+    $('clout2').textContent = Math.floor(S.clout);
+    const eyebrow = $('treeEyebrow'), title = $('treeTitle');
+    if (v.level === 0) {
+      eyebrow.textContent = 'Spend Clout'; title.textContent = 'Upgrades';
+      tree.innerHTML = `<details class="how"><summary>How upgrades work</summary><p>Choose a doctrine: Ideology or Economy, and Military or Diplomacy. The first upgrade of every branch is open to all; the second one commits you. Partners boost each other: Ideology and Diplomacy, Economy and Military, Faith and Covert Ops. Top-tier upgrades are one-off special actions. Each upgrade you own makes the next one 15% dearer. The game is paused while this screen is open.</p></details>
+        <div class="tiles tiles-branches">` + TREE_ORDER.map(bid => {
+          const br = BRANCHES.find(b => b.id === bid), st = branchState(bid);
+          const ups = UPGRADES.filter(u => u.b === bid);
+          const n = ups.filter(u => S.owned.includes(u.id)).length;
+          const sub = st.opp ? 'or ' + bname(st.opp) : bid === 'spin' ? 'any doctrine' : 'with ' + bname(br.partner);
+          const badge = st.mine ? '<span class="chip mine">Your doctrine</span>' : st.closed ? '<span class="chip closed">Closed</span>' : st.lock ? '<span class="chip closed">Locked</span>' : '';
+          return `<button class="tile ${st.closed || st.lock ? 'dim' : ''} ${st.mine ? 'mine' : ''}" data-b="${bid}"><span class="tn">${br.name}</span><span class="ts">${sub}</span><span class="tp">${ups.map(u => `<i class="${S.owned.includes(u.id) ? 'on' : ''}"></i>`).join('')}<em>${n}/${ups.length}</em></span>${badge}</button>`;
+        }).join('') + `</div>`;
+      tree.querySelectorAll('[data-b]').forEach(b => b.addEventListener('click', () => { treeView = { level: 1, branch: b.dataset.b, up: null }; renderTree(); }));
+      return;
+    }
+    const bid = v.branch, br = BRANCHES.find(b => b.id === bid), st = branchState(bid), syn = SYNERGY[bid];
+    if (v.level === 1) {
+      eyebrow.textContent = 'Upgrades'; title.textContent = br.name;
+      let info = `<p class="binfo">${br.blurb}</p>`;
+      if (syn) info += `<p class="fine syn ${S.owned.includes(syn) ? 'on' : ''}">${S.owned.includes(syn) ? '★ Boosted by ' : 'Boosted by '}${uname(syn)} (${bname(UPGRADES.find(u => u.id === syn).b)} tier 3)</p>`;
+      if (st.lock) info += `<div class="doctrine"><span class="chip closed">${st.lock}</span></div>`;
+      if (st.mine) {
+        const chk = canRebrand(S, bid), armed = rebrandArm === bid;
+        info += `<div class="doctrine"><span class="chip mine">Your doctrine</span>${S.rebranded ? '' : `<button class="rebrand ${armed ? 'armed' : ''}" data-rb="${bid}" ${chk.ok ? '' : 'disabled'}>${armed ? `Confirm: switch to ${bname(st.opp)}` : `Rebrand to ${bname(st.opp)}`}</button>`}</div>
           ${S.rebranded ? '' : `<p class="fine">Once per game. Refunds half of this branch (tiers 2–4), costs ${REBRAND_COST} Clout and +${REBRAND_NOTORIETY} Notoriety.${chk.ok ? '' : ' ' + chk.why + '.'}</p>`}`;
-      } else if (closed) head += `<div class="doctrine"><span class="chip closed">Closed: you chose ${bname(opp)}</span></div>`;
-      else if (opp) head += `<p class="fine">Buying a second upgrade here closes ${bname(opp)} for the rest of the game.</p>`;
-      return `<div class="branch ${closed || lock ? 'is-closed' : ''} ${mine ? 'is-mine' : ''}">${head}<ol>` +
-        UPGRADES.filter(u => u.b === bid).map(u => {
-          const owned = S.owned.includes(u.id);
-          const shut = !owned && closed && u.tier >= 1;
-          const chk = canBuy(S, u);
-          const locked = !owned && !shut && !chk.ok && chk.why !== 'Not enough Clout';
-          const cost = upCost(S, u); const poor = !owned && !locked && !shut && S.clout < cost;
-          const cls = owned ? 'owned' : shut ? 'locked shut' : locked ? 'locked' : poor ? 'poor' : '';
-          const boostLine = u.boost ? `<span class="bt ${boosted(S, u) ? 'on' : ''}">${boosted(S, u) ? '★ ' : ''}With ${uname(syn)}: ${u.btext}</span>` : '';
-          const sp = u.special ? `<span class="bt sp">Special action${CAPSTONE_NEEDS[u.id] ? ' · needs ' + uname(CAPSTONE_NEEDS[u.id]) : ''}${owned ? (S.specials[u.special] === 'used' ? ' · used' : ' · ready') : ''}</span>` : '';
-          const status = owned ? 'Owned' : shut ? 'Closed' : locked ? (chk.why.startsWith('Needs') ? chk.why : 'Locked') : cost + ' Clout';
-          return `<li><button class="up ${cls} ${u.special ? 'cap' : ''}" data-up="${u.id}" ${owned || locked || poor || shut ? 'aria-disabled="true"' : ''}><span class="n">${u.name}</span><span class="t">${u.text}</span>${boostLine}${sp}<span class="c">${status}</span></button></li>`;
-        }).join('') + `</ol></div>`;
-    }).join('');
-    tree.querySelectorAll('.up').forEach(b => b.addEventListener('click', () => { if (buyUpgrade(S, b.dataset.up).ok) render(); }));
-    tree.querySelectorAll('.rebrand').forEach(b => b.addEventListener('click', () => {
-      const bid = b.dataset.rb;
-      if (rebrandArm !== bid) { rebrandArm = bid; renderTree(); setTimeout(() => { if (rebrandArm === bid) { rebrandArm = null; if (!$('treeOv').hidden) renderTree(); } }, 4000); return; }
-      rebrandArm = null; if (rebrand(S, bid).ok) render(); else renderTree();
-    }));
+      } else if (st.closed) info += `<div class="doctrine"><span class="chip closed">Closed: you chose ${bname(st.opp)}</span></div>`;
+      else if (st.opp) info += `<p class="fine">Buying a second upgrade here closes ${bname(st.opp)} for the rest of the game.</p>`;
+      tree.innerHTML = info + `<div class="tiles tiles-ups">` + UPGRADES.filter(u => u.b === bid).map(u => {
+        const s = upState(u);
+        const cls = s.owned ? 'owned' : s.shut ? 'dim' : s.locked ? 'dim' : s.poor ? 'poor' : '';
+        const status = s.owned ? 'Owned' : s.shut ? 'Closed' : s.locked ? (s.chk.why.startsWith('Needs') ? 'Locked' : 'Locked') : s.cost + ' Clout';
+        return `<button class="tile ${cls} ${u.special ? 'cap' : ''}" data-up="${u.id}"><span class="ts">Tier ${u.tier + 1}${u.special ? ' · special' : ''}</span><span class="tn sm">${u.name}</span><span class="tc">${status}</span></button>`;
+      }).join('') + `</div>`;
+      tree.querySelectorAll('[data-up]').forEach(b => b.addEventListener('click', () => { treeView = { level: 2, branch: bid, up: b.dataset.up }; renderTree(); }));
+      tree.querySelectorAll('.rebrand').forEach(b => b.addEventListener('click', () => {
+        if (rebrandArm !== bid) { rebrandArm = bid; renderTree(); setTimeout(() => { if (rebrandArm === bid) { rebrandArm = null; if (treeOpen() && treeView.level === 1) renderTree(); } }, 4000); return; }
+        rebrandArm = null; if (rebrand(S, bid).ok) render(); else renderTree();
+      }));
+      return;
+    }
+    // level 2: one upgrade
+    const u = UPGRADES.find(x => x.id === v.up), s = upState(u);
+    eyebrow.textContent = br.name; title.textContent = u.name;
+    const boostLine = u.boost ? `<p class="bt ${boosted(S, u) ? 'on' : ''}">${boosted(S, u) ? '★ ' : ''}With ${uname(syn)}: ${u.btext}</p>` : '';
+    const sp = u.special ? `<p class="bt sp">Special action, one use${CAPSTONE_NEEDS[u.id] ? ' · needs ' + uname(CAPSTONE_NEEDS[u.id]) : ''}${s.owned ? (S.specials[u.special] === 'used' ? ' · used' : ' · ready, use it from the map') : ''}</p>` : '';
+    let action;
+    if (s.owned) action = `<div class="ustate owned">Owned</div>`;
+    else if (s.shut) action = `<div class="ustate">Closed: you chose ${bname(st.opp)}</div>`;
+    else if (s.locked) action = `<div class="ustate">${s.chk.why}</div>`;
+    else if (s.poor) action = `<div class="ustate poor">Needs ${s.cost} Clout. You have ${Math.floor(S.clout)}.</div>`;
+    else action = `<div class="ustate">Cost ${s.cost} Clout. You will have ${Math.floor(S.clout) - s.cost} left.</div><button class="btn primary big" id="buyUp">Confirm upgrade · ${s.cost} Clout</button>`;
+    tree.innerHTML = `<div class="udetail"><p class="ut">${u.text}</p>${boostLine}${sp}${action}</div>`;
+    const buy = $('buyUp');
+    if (buy) buy.addEventListener('click', () => { if (buyUpgrade(S, u.id).ok) { treeView = { level: 1, branch: bid, up: null }; render(); } });
   }
 
   // ---------- alerts and map pings ----------
@@ -1859,16 +1966,17 @@ window.GIAccounts = (() => {
   document.addEventListener('keydown', e => {
     if (e.target.closest && e.target.closest('input,textarea')) return;
     if (!S || S.over) return;
-    if (e.code === 'Space' && !e.target.closest('button,[role=button]')) { e.preventDefault(); setSpeed(speed ? 0 : 1); }
+    if (e.code === 'Space' && !treeOpen() && !e.target.closest('button,[role=button]')) { e.preventDefault(); setSpeed(speed ? 0 : 1); }
+    if (e.key === 'Escape' && treeOpen()) { treeBack(); return; }
+    if (treeOpen()) return;
     if (['1', '2', '3'].includes(e.key)) setSpeed(+e.key);
-    if (e.key === 'Escape') $('treeOv').hidden = true;
   });
-  $('openTree').addEventListener('click', () => { if (!S) return; renderTree(); $('treeOv').hidden = false; });
-  $('closeTree').addEventListener('click', () => { $('treeOv').hidden = true; });
-  $('treeOv').addEventListener('click', e => { if (e.target.id === 'treeOv') $('treeOv').hidden = true; });
+  $('openTree').addEventListener('click', openTree);
+  $('closeTree').addEventListener('click', treeBack);
+  $('treeOv').addEventListener('click', e => { if (e.target.id === 'treeOv') closeTree(true); });
   $('introGo').addEventListener('click', () => { $('introOv').hidden = true; picking = true; $('mapHint').textContent = 'Choose your starting country'; });
   function resetBoard() {
-    $('endOv').hidden = true; $('decOv').hidden = true; $('treeOv').hidden = true;
+    $('endOv').hidden = true; $('decOv').hidden = true; closeTree(false);
     S = null; selected = null; picking = false; setSpeed(0); $('pickbar').hidden = true; gBubbles.innerHTML = ''; gWo.innerHTML = '';
     COUNTRIES.forEach(c => { const n = nodeEls[c.id]; n.ink.setAttribute('r', 0); n.pct.textContent = ''; n.g.classList.remove('held', 'is-signed'); ['counter', 'member', 'signed', 'stamp'].forEach(k => n[k].style.display = 'none'); });
     ['week', 'clout'].forEach(k => $(k).textContent = 0);
