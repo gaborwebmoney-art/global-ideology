@@ -114,7 +114,7 @@ const OPS = [
 ];
 
 
-// ---- v10 prototype (cfg.v10): widened resistance profiles, domain power, 16 actions ----
+// ---- v10 prototype (cfg.v10): widened resistance profiles, domain power, 16 actions, World Order courtships ----
 const V10_RES = {
   borealis: { eco: .80, mil: .45, dip: .60, ideo: .15 }, aethelgard: { eco: .80, mil: .90, dip: .60, ideo: .10 },
   laplata: { eco: .10, mil: .60, dip: .25, ideo: .40 }, isolde: { eco: .55, mil: .10, dip: .35, ideo: .80 },
@@ -125,6 +125,9 @@ const V10_RES = {
   sinopeia: { eco: .85, mil: .65, dip: .30, ideo: .60 }, juche: { eco: .10, mil: .65, dip: .10, ideo: .95 },
   nippon: { eco: .85, mil: .30, dip: .70, ideo: .55 }, pinguinia: { eco: .10, mil: .05, dip: .85, ideo: .85 }
 };
+// tuning knobs for the prototype (the bot overrides some via cfg.v10t)
+const V10 = { courtWeeks: 12, drain: 4, knockMul: 1, pushMul: 1, pnr: 101, costs: [4, 7, 10, 14], cds: [15, 30, 45, 80] };
+function v10t(s, k) { return (s.cfg.v10t && s.cfg.v10t[k] !== undefined) ? s.cfg.v10t[k] : V10[k]; }
 function baseRes(s, id) { return s.cfg && s.cfg.v10 ? V10_RES[id] : byId(id).res; }
 // Share of the world's strength in a domain that you hold: progressive in support, weighted by sqrt(pop).
 function domainPower(s, t) {
@@ -132,86 +135,133 @@ function domainPower(s, t) {
   COUNTRIES.forEach(c => { const w = Math.sqrt(c.pop) * resOf(s, c.id)[t]; den += w; num += w * Math.pow(s.inf[c.id] / 100, 1.5); });
   return den ? Math.min(1, num / den) : 0;
 }
+// Tier frame: T1 poke, T2 timed rule change, T3 protect/deny, T4 turn the tide (needs the branch's tier-4 upgrade).
 const ACTIONS = [
-  { id: 'eco1', dom: 'eco', tier: 1, name: 'Foreign Investment', cost: 3, cd: 15 },
-  { id: 'eco2', dom: 'eco', tier: 2, name: 'Trade Deal', cost: 7, cd: 30 },
-  { id: 'eco3', dom: 'eco', tier: 3, name: 'Buyout', cost: 11, cd: 45 },
-  { id: 'eco4', dom: 'eco', tier: 4, name: 'Market Capture', cost: 16, cd: 80 },
-  { id: 'mil1', dom: 'mil', tier: 1, name: 'Show of Force', cost: 3, cd: 15 },
-  { id: 'mil2', dom: 'mil', tier: 2, name: 'Snap Exercise', cost: 7, cd: 30 },
-  { id: 'mil3', dom: 'mil', tier: 3, name: 'Proxy Garrison', cost: 11, cd: 45 },
-  { id: 'mil4', dom: 'mil', tier: 4, name: 'Regime Change', cost: 16, cd: 80 },
-  { id: 'dip1', dom: 'dip', tier: 1, name: 'Cultural Attache', cost: 3, cd: 15 },
-  { id: 'dip2', dom: 'dip', tier: 2, name: 'Summit', cost: 7, cd: 30 },
-  { id: 'dip3', dom: 'dip', tier: 3, name: 'Non-Aligned Pact', cost: 11, cd: 45 },
-  { id: 'dip4', dom: 'dip', tier: 4, name: 'Grand Accord', cost: 16, cd: 80 },
-  { id: 'ideo1', dom: 'ideo', tier: 1, name: 'Pamphlets', cost: 3, cd: 15 },
-  { id: 'ideo2', dom: 'ideo', tier: 2, name: 'Youth Movement', cost: 7, cd: 30 },
-  { id: 'ideo3', dom: 'ideo', tier: 3, name: 'Martyr Narrative', cost: 11, cd: 45 },
-  { id: 'ideo4', dom: 'ideo', tier: 4, name: 'Mass Awakening', cost: 16, cd: 80 }
+  { id: 'eco1', dom: 'eco', tier: 1, name: 'Foreign Investment', text: '+support (can seed). Slight courtship knock-back' },
+  { id: 'eco2', dom: 'eco', tier: 2, name: 'Trade Deal', text: 'Opens a trade route into the target from your strongest country' },
+  { id: 'eco3', dom: 'eco', tier: 3, name: 'Buyout', text: 'Economic resistance halved 30 wk, +support, courtship −35' },
+  { id: 'eco4', dom: 'eco', tier: 4, name: 'Run on the Bank', text: 'Treaty −15, every courtship at half speed for 25 wk. Your income −30% for 15 wk', global: true },
+  { id: 'mil1', dom: 'mil', tier: 1, name: 'Show of Force', text: '+support next to a 15%+ country. Slight courtship knock-back' },
+  { id: 'mil2', dom: 'mil', tier: 2, name: 'Snap Exercise', text: '+support, courtship −25. Loud' },
+  { id: 'mil3', dom: 'mil', tier: 3, name: 'Proxy Garrison', text: 'Courtship −50 and half speed 15 wk; no new courtship 15 wk; +support. Loud' },
+  { id: 'mil4', dom: 'mil', tier: 4, name: 'Regime Change', text: 'Support to at least 50%, leaves the WO, signature void. +10 Notoriety, neighbours resist +20% for 30 wk' },
+  { id: 'dip1', dom: 'dip', tier: 1, name: 'Cultural Attache', text: 'All resistance down 20 wk. Slight courtship knock-back' },
+  { id: 'dip2', dom: 'dip', tier: 2, name: 'Summit', text: 'All resistance down a lot 25 wk, courtship −30. Quiet' },
+  { id: 'dip3', dom: 'dip', tier: 3, name: 'Non-Aligned Pact', text: 'Target and neighbours: courtship −40, no new courtship 20 wk' },
+  { id: 'dip4', dom: 'dip', tier: 4, name: 'Endless Negotiations', text: 'Courtship here at 1/3 speed, and no new courtships anywhere, for 30 wk' },
+  { id: 'ideo1', dom: 'ideo', tier: 1, name: 'Pamphlets', text: '+support (can seed). Slight courtship knock-back' },
+  { id: 'ideo2', dom: 'ideo', tier: 2, name: 'Youth Movement', text: 'Growth here x(1+effect) 25 wk, courtship −10' },
+  { id: 'ideo3', dom: 'ideo', tier: 3, name: 'Martyr Narrative', text: 'Growth up and immune to campaigns 40 wk, courtship −30' },
+  { id: 'ideo4', dom: 'ideo', tier: 4, name: 'Popular Uprising', text: 'Courtship wiped, country cannot be courted 40 wk, +15 support' }
 ];
+ACTIONS.forEach(a => { a.cost = V10.costs[a.tier - 1]; a.cd = V10.cds[a.tier - 1]; });
+function actCost(s, a) { return v10t(s, 'costs')[a.tier - 1]; }
+function actCd(s, a) { return v10t(s, 'cds')[a.tier - 1]; }
 function actEff(s, a, target) { return (1 - resBreakdown(s, target)[a.dom]) * (1 + domainPower(s, a.dom)); }
 function hasMod(s, id, kind) { return s.mods.some(m => m.id === id && m.kind === kind && m.until > s.week); }
 function modMul(s, id, kind) { return s.mods.filter(m => m.id === id && m.kind === kind && m.until > s.week).reduce((a, m) => a * m.mul, 1); }
 function cdKey(s, a, target) { return s.cfg && (s.cfg.cdMode === 'country' || s.cfg.cdMode === 'hybrid') ? a.id + '@' + target : a.id; }
 function nbMax(s, id) { return Math.max(0, ...neighbours(id).map(n => s.inf[n])); }
+function courtOn(s, id) { return ((s.wo && s.wo.court) || []).find(c => c.target === id); }
+function joinLimit(s, id) { return TUNE.joinBelow - s.stats.shield + (Q(s, id).recruitDelta || 0); }
+// past the point of no return (pnr) only a T4 or support above the refuse line stops a courtship
+function knock(s, id, pts, a) { const c = courtOn(s, id); if (c && c.prog < v10t(s, 'pnr')) c.prog = Math.max(0, c.prog - pts * v10t(s, 'knockMul') * (1 + domainPower(s, a.dom))); }
 function canAct(s, aid, target) {
   const a = ACTIONS.find(x => x.id === aid);
   if (s.over) return { ok: false, why: 'Game over' };
-  if (!target) return { ok: false, why: 'Pick a country' };
+  if (!target && !a.global) return { ok: false, why: 'Pick a country' };
   const k = cdKey(s, a, target); s.acd = s.acd || {};
   if ((s.acd[k] || 0) > s.week) return { ok: false, why: `Ready in ${s.acd[k] - s.week} wk` };
-  if (s.cfg && s.cfg.cdMode === 'hybrid' && (s.acd['g:' + a.id] || 0) > s.week) return { ok: false, why: `Ready in ${s.acd['g:' + a.id] - s.week} wk` };
-  if (s.clout < a.cost) return { ok: false, why: 'Not enough Clout' };
+  if (s.cfg.cdMode === 'hybrid' && (s.acd['g:' + a.id] || 0) > s.week) return { ok: false, why: `Ready in ${s.acd['g:' + a.id] - s.week} wk` };
+  if (s.clout < actCost(s, a)) return { ok: false, why: 'Not enough Clout' };
   if (s.week < s.utopiaUntil) return { ok: false, why: 'Utopia: no operations' };
-  if (s.cfg && s.cfg.gate && a.tier > 1) {
-    const n = s.owned.filter(id => UPGRADES.find(u => u.id === id).b === a.dom).length;
-    if (n < a.tier - 1) return { ok: false, why: `Needs ${a.tier - 1} ${TYPE_LABEL[a.dom]} upgrade${a.tier > 2 ? 's' : ''}` };
-  }
-  const v = s.inf[target], pend = pendingOn(s, target).length;
-  const W = s.wo;
-  if (['eco1', 'eco3', 'eco4', 'mil1', 'mil2', 'mil3', 'mil4', 'ideo1', 'ideo4'].includes(aid) && v >= 95) return { ok: false, why: 'Already yours' };
+  const nOwned = s.owned.filter(id => UPGRADES.find(u => u.id === id).b === a.dom).length;
+  if (a.tier === 4 && !s.owned.includes(a.dom[0] + '4') && !(a.dom === 'ideo' && s.owned.includes('i4'))) return { ok: false, why: `Needs the tier-4 ${TYPE_LABEL[a.dom]} upgrade` };
+  if (s.cfg.gate !== false && a.tier > 1 && a.tier < 4 && nOwned < a.tier - 1) return { ok: false, why: `Needs ${a.tier - 1} ${TYPE_LABEL[a.dom]} upgrade${a.tier > 2 ? 's' : ''}` };
+  if (a.global) return { ok: true };
+  const v = s.inf[target], W = s.wo, ct = courtOn(s, target);
+  if (['eco1', 'eco3', 'mil1', 'mil2', 'mil3', 'ideo1'].includes(aid) && v >= 95) return { ok: false, why: 'Already yours' };
   if (aid === 'eco2') {
     const src = strongest(s, target);
     if (s.inf[src.id] < 10) return { ok: false, why: 'Need 10%+ somewhere else first' };
     if (tradeLinks(s, target).includes(src.id)) return { ok: false, why: 'Already trades with ' + src.name };
   }
-  if (aid === 'mil1' && nbMax(s, target) < 15 && !pend) return { ok: false, why: 'Needs a neighbour at 15%+' };
-  if ((aid === 'mil2' || aid === 'mil3') && nbMax(s, target) < 25 && !pend) return { ok: false, why: 'Needs a neighbour at 25%+' };
+  if (aid === 'mil1' && nbMax(s, target) < 15 && !ct) return { ok: false, why: 'Needs a neighbour at 15%+' };
+  if ((aid === 'mil2' || aid === 'mil3') && nbMax(s, target) < 25 && !ct) return { ok: false, why: 'Needs a neighbour at 25%+' };
   if (aid === 'mil4' && nbMax(s, target) < 50) return { ok: false, why: 'Needs a neighbour at 50%+' };
-  if ((aid === 'ideo2' || aid === 'ideo3' || aid === 'eco3' || aid === 'eco4') && v <= 0) return { ok: false, why: 'No foothold here' };
-  if (aid === 'dip4' && (!W.members[target] || target === W.hq)) return { ok: false, why: 'Only a World Order member (not the HQ)' };
+  if (aid === 'mil4' && v >= 50 && !W.members[target] && !W.signed[target]) return { ok: false, why: 'Already 50%+ and outside the World Order' };
+  if ((aid === 'ideo2' || aid === 'ideo3' || aid === 'eco3') && v <= 0) return { ok: false, why: 'No foothold here' };
+  if ((aid === 'dip4' || aid === 'ideo4') && !ct) return { ok: false, why: 'Only where the World Order is courting' };
   return { ok: true };
 }
-function pushSupport(s, id, amt) { if (amt <= 0) return; if (s.inf[id] <= 0) seed(s, id, 0.5, null); s.inf[id] = Math.min(100, s.inf[id] + amt); }
+function pushSupport(s, id, amt) { amt *= v10t(s, 'pushMul'); if (amt <= 0) return; if (s.inf[id] <= 0) seed(s, id, 0.5, null); s.inf[id] = Math.min(100, s.inf[id] + amt); }
 function doAct(s, aid, target) {
   const chk = canAct(s, aid, target); if (!chk.ok) return chk;
-  const a = ACTIONS.find(x => x.id === aid), e = actEff(s, a, target), W = s.wo, c = byId(target);
-  s.clout -= a.cost; s.acd[cdKey(s, a, target)] = s.week + a.cd; if (s.cfg.cdMode === 'hybrid') s.acd['g:' + a.id] = s.week + Math.round(a.cd / 3);
+  const a = ACTIONS.find(x => x.id === aid), W = s.wo, e = target ? actEff(s, a, target) : 0;
+  s.clout -= actCost(s, a); s.acd[cdKey(s, a, target)] = s.week + actCd(s, a);
+  if (s.cfg.cdMode === 'hybrid') s.acd['g:' + a.id] = s.week + Math.round(actCd(s, a) / 3);
   s.actLog = s.actLog || []; s.actLog.push(aid);
-  const cancel = kinds => { W.queue = W.queue.filter(q => !(q.target === target && (!kinds || kinds.includes(q.kind)))); };
-  const leave = id => { delete W.members[id]; delete W.signed[id]; W.queue = W.queue.filter(q => q.target !== id); };
+  const leave = id => { delete W.members[id]; delete W.signed[id]; W.queue = W.queue.filter(q => q.target !== id); W.court = (W.court || []).filter(c => c.target !== id); };
   const noto = n => addNoto(s, n);
+  const block = (id, wk) => s.mods.push({ id, kind: 'noCourt', until: s.week + wk });
   switch (aid) {
-    case 'eco1': pushSupport(s, target, 3 * e); break;
+    case 'eco1': pushSupport(s, target, 2.5 * e); knock(s, target, 5, a); break;
     case 'eco2': { const src = strongest(s, target); s.trade.push([src.id, target]); pushSupport(s, target, 2 * e); noto(1); break; }
-    case 'eco3': resMod(s, target, .5, 30, ['eco']); pushSupport(s, target, 6 * e); break;
-    case 'eco4': pushSupport(s, target, 12 * e); s.mods.push({ id: target, kind: 'tradeIn', mul: 2, until: s.week + 40 }); noto(1); break;
-    case 'mil1': pushSupport(s, target, 4 * e); noto(1); break;
-    case 'mil2': cancel(); pushSupport(s, target, 10 * e); noto(3); break;
-    case 'mil3': cancel(['invite', 'sign']); s.mods.push({ id: target, kind: 'noInvite', until: s.week + 40 }, { id: target, kind: 'noSign', until: s.week + 40 }); pushSupport(s, target, 6 * e); noto(3); break;
-    case 'mil4': pushSupport(s, target, 25 * e); if (W.members[target] && target !== W.hq) leave(target); delete W.signed[target]; noto(6); break;
-    case 'dip1': resMod(s, target, Math.max(.4, 1 - .15 * e), 20); break;
-    case 'dip2': resMod(s, target, Math.max(.3, 1 - .4 * e), 25); cancel(); noto(.5); break;
-    case 'dip3': [target, ...neighbours(target)].forEach(id => { s.mods.push({ id, kind: 'noInvite', until: s.week + 40 }); W.queue = W.queue.filter(q => !(q.target === id && q.kind === 'invite')); }); break;
-    case 'dip4': leave(target); s.treaty = Math.max(0, s.treaty - 10 * e); break;
-    case 'ideo1': pushSupport(s, target, 3 * e); break;
-    case 'ideo2': s.mods.push({ id: target, kind: 'growth', mul: 1 + e, until: s.week + 25 }); break;
-    case 'ideo3': s.mods.push({ id: target, kind: 'noCampaign', until: s.week + 40 }, { id: target, kind: 'growth', mul: 1 + .3 * e, until: s.week + 40 }); cancel(['campaign']); break;
-    case 'ideo4': pushSupport(s, target, 20 * e); neighboursOrTrade(s, target).forEach(n => pushSupport(s, n, 5 * actEff(s, a, n))); noto(4); break;
+    case 'eco3': resMod(s, target, .5, 30, ['eco']); pushSupport(s, target, 8 * e); knock(s, target, 35, a); break;
+    case 'eco4': s.treaty = Math.max(0, s.treaty - 15); s.woBankUntil = s.week + 25; timed(s, 'incomeMul', 15, .7); break;
+    case 'mil1': pushSupport(s, target, 3 * e); knock(s, target, 5, a); noto(1); break;
+    case 'mil2': pushSupport(s, target, 8 * e); knock(s, target, 25, a); noto(3); break;
+    case 'mil3': knock(s, target, 50, a); s.mods.push({ id: target, kind: 'courtSlow', mul: .5, until: s.week + 15 }); block(target, 15); pushSupport(s, target, 6 * e); noto(3); break;
+    case 'mil4': s.inf[target] = Math.max(s.inf[target], 50); if (W.members[target] && target !== W.hq) leave(target); delete W.signed[target]; W.court = (W.court || []).filter(c => c.target !== target);
+      neighbours(target).forEach(n => resMod(s, n, 1.2, 30)); noto(10); break;
+    case 'dip1': resMod(s, target, Math.max(.4, 1 - .15 * e), 20); knock(s, target, 5, a); break;
+    case 'dip2': resMod(s, target, Math.max(.3, 1 - .4 * e), 25); knock(s, target, 30, a); noto(.5); break;
+    case 'dip3': [target, ...neighbours(target)].forEach(id => { knock(s, id, 40, a); block(id, 20); }); break;
+    case 'dip4': s.mods.push({ id: target, kind: 'courtSlow', mul: 1 / 3, until: s.week + 30 }); s.woNoNewUntil = s.week + 30; break;
+    case 'ideo1': pushSupport(s, target, 2.5 * e); knock(s, target, 5, a); break;
+    case 'ideo2': s.mods.push({ id: target, kind: 'growth', mul: 1 + e, until: s.week + 25 }); knock(s, target, 10, a); break;
+    case 'ideo3': s.mods.push({ id: target, kind: 'noCampaign', until: s.week + 40 }, { id: target, kind: 'growth', mul: 1 + .3 * e, until: s.week + 40 }); W.queue = W.queue.filter(q => !(q.target === target && q.kind === 'campaign')); knock(s, target, 30, a); break;
+    case 'ideo4': W.court = W.court.filter(c => c.target !== target); block(target, 40); pushSupport(s, target, 15); noto(4); break;
   }
-  addNews(s, `${a.name} in ${c.name}.`, 'you');
+  addNews(s, `${a.name}${target ? ' in ' + byId(target).name : ''}.`, 'you');
   return { ok: true };
+}
+// World Order courtships: one target at a time (two from Notoriety 50). Progress fills each week; it drains while
+// your support there is above the refuse line. At 100 the country joins (invite) or signs (sign).
+function courtSlots(s) { return 1 + (s.notoriety >= 50 ? 1 : 0); }
+function courtOpen(s) {
+  const W = s.wo; W.court = W.court || [];
+  if (W.court.length >= courtSlots(s) || s.week < (s.woNoNewUntil || 0)) return false;
+  const busy = new Set([...W.court.map(c => c.target), ...W.queue.map(q => q.target)]);
+  const ok = id => !busy.has(id) && !hasMod(s, id, 'noCourt');
+  if (signedCount(s) + W.court.filter(c => c.kind === 'sign').length < signCapacity(s)) {
+    const c = Object.keys(W.members).filter(id => !W.signed[id] && ok(id) && s.inf[id] < signLimit(s, id) - 10).sort((a, b) => s.inf[a] - s.inf[b])[0];
+    if (c) { W.court.push({ target: c, kind: 'sign', prog: 0 }); addNews(s, `${SG} starts courting ${byId(c).name} to sign the treaty.`, 'wo'); flag(s, 'important', c, 'Courting: sign'); return true; }
+  }
+  const rec = COUNTRIES.filter(c => !W.members[c.id] && ok(c.id) && !Q(s, c.id).noRecruit && s.inf[c.id] < joinLimit(s, c.id) - 10 && c.pop >= 1).sort((a, b) => b.pop - a.pop);
+  if (rec.length) { const c = rec[Math.floor(rng(s) * Math.min(3, rec.length))]; W.court.push({ target: c.id, kind: 'invite', prog: 0 }); addNews(s, `${SG} starts courting ${c.name} to join the World Order.`, 'wo'); flag(s, 'important', c.id, 'Courting: join'); return true; }
+  return false;
+}
+function courtTick(s) {
+  const W = s.wo; W.court = W.court || [];
+  W.court.forEach(c => {
+    const lim = c.kind === 'sign' ? signLimit(s, c.target) : joinLimit(s, c.target), v = s.inf[c.target];
+    if (c.kind === 'sign' && !W.members[c.target]) { c.done = true; return; }
+    if (v >= lim) c.prog -= v10t(s, 'drain');
+    else {
+      let sp = (100 / v10t(s, 'courtWeeks')) * (0.6 + s.notoriety / 100) * (1 + .03 * memberCount(s)) * (1 - 0.7 * v / lim) * modMul(s, c.target, 'courtSlow') * (s.week < (s.woBankUntil || 0) ? .5 : 1);
+      if (Q(s, c.target).woFail) sp *= 1 - Q(s, c.target).woFail;
+      c.prog += sp;
+    }
+    const nm = byId(c.target).name;
+    if (c.prog >= 100) {
+      c.done = true;
+      if (c.kind === 'sign') { W.signed[c.target] = true; addNews(s, `${nm} signs the Containment Treaty. ${signedCount(s)} of ${SIGNATURES_TO_LOSE} signatures.`, 'wo'); flag(s, 'critical', c.target, 'Signed treaty'); }
+      else { W.members[c.target] = true; addNews(s, `${nm} joins the World Order.`, 'wo'); flag(s, 'critical', c.target, 'Joined World Order'); }
+    } else if (c.prog <= 0 && v >= lim) { c.done = true; addNews(s, `${nm} turns the World Order down. Too many of its people agree with you.`, 'you'); flag(s, 'important', c.target, 'Courtship failed'); }
+    c.prog = Math.max(0, c.prog);
+  });
+  W.court = W.court.filter(c => !c.done);
 }
 
 const WIN_SHARE = 0.70;
@@ -460,17 +510,20 @@ function woPlan(s) {
   const members = Object.keys(W.members);
   const pendingSigns = W.queue.filter(q => q.kind === 'sign').length;
   const push = (kind, target, extra) => { W.queue.push(Object.assign({ key: ++W.seq, kind, target, at: s.week + lead, planned: s.week }, extra || {})); };
+  let r;
+  if (s.cfg.v10) { if (courtOpen(s)) return; r = rng(s); } else {
   // 1. Signatures, as far as the draft allows
   if (signedCount(s) + pendingSigns < signCapacity(s)) {
     const c = members.filter(id => !W.signed[id] && !busy.has(id) && !hasMod(s, id, 'noSign') && s.inf[id] < signLimit(s, id)).sort((a, b) => s.inf[a] - s.inf[b])[0];
     if (c) { push('sign', c); addNews(s, `${SG} schedules a signing ceremony in ${byId(c).name} in ${lead} weeks. Commemorative pens ordered.`, 'wo'); flag(s, 'important', c, `Signing in ${lead} wk`); return; }
   }
   // 2. Recruit members: biggest country that still resists you
-  const r = rng(s);
+  r = rng(s);
   const recruits = COUNTRIES.filter(c => !W.members[c.id] && !busy.has(c.id) && !hasMod(s, c.id, 'noInvite') && !Q(s, c.id).noRecruit && s.inf[c.id] < TUNE.joinBelow - s.stats.shield - 10 + (Q(s, c.id).recruitDelta || 0) && c.pop >= 1).sort((a, b) => b.pop - a.pop);
   if (recruits.length && (r < 0.55 || memberCount(s) < SIGNATURES_TO_LOSE)) {
     const c = recruits[Math.floor(rng(s) * Math.min(3, recruits.length))];
     push('invite', c.id); addNews(s, `World Order invites ${c.name} to join. RSVP in ${lead} weeks.`, 'wo'); flag(s, 'important', c.id, `Invitation in ${lead} wk`); return;
+  }
   }
   // 3. Sanctions: cut a trade route you are using
   const routes = s.trade.filter(([a, b]) => !isBlocked(s, a, b) && Math.max(s.inf[a], s.inf[b]) >= 20 && Math.min(s.inf[a], s.inf[b]) < 60);
@@ -513,6 +566,7 @@ function woTick(s) {
   } else if (W.hopeless) { W.hopeless = 0; addNews(s, 'The World Order finds enough undecided nations to keep the treaty alive.', 'wo'); flag(s, 'important'); }
   // withdrawals: signed countries that turned to you
   Object.keys(W.signed).forEach(id => { if (s.inf[id] >= TUNE.withdrawAt) { delete W.signed[id]; addNews(s, `${byId(id).name} withdraws its treaty signature. ${SG} is \u201cdisappointed, procedurally\u201d.`, 'you'); flag(s, 'important', id, 'Signature withdrawn'); } });
+  if (s.cfg.v10) courtTick(s);
   W.queue.filter(q => q.at <= s.week).forEach(q => woExecute(s, q));
   W.queue = W.queue.filter(q => q.at > s.week);
   if (fxOn(s, 'woPause')) W.nextPlan = Math.max(W.nextPlan, s.week + 1);
@@ -543,14 +597,14 @@ function milestoneNews(s, share) {
 }
 
 // ---- Player actions ----
-function upCost(s, u) { return Math.round(u.cost * (1 + TUNE.costGrow * s.owned.length)); }
+function upCost(s, u) { const base = s.cfg.v10 && u.special && ['ideo', 'eco', 'mil', 'dip'].includes(u.b) && s.cfg.v10t && s.cfg.v10t.t4Up ? s.cfg.v10t.t4Up : u.cost; return Math.round(base * (1 + TUNE.costGrow * s.owned.length)); }
 function canBuy(s, u) {
   if (s.owned.includes(u.id)) return { ok: false, why: 'Owned' };
   if (u.req && !s.owned.includes(u.req)) return { ok: false, why: 'Needs ' + UPGRADES.find(x => x.id === u.req).name };
   const opp = OPPOSITE[u.b];
   if (opp && u.tier >= 1 && committed(s, opp)) return { ok: false, why: 'Closed: you chose ' + BRANCHES.find(b => b.id === opp).name };
   const lock = branchLock(s, u.b); if (lock) return { ok: false, why: lock };
-  if (CAPSTONE_NEEDS[u.id] && !s.owned.includes(CAPSTONE_NEEDS[u.id])) return { ok: false, why: 'Needs ' + UPGRADES.find(x => x.id === CAPSTONE_NEEDS[u.id]).name };
+  if (CAPSTONE_NEEDS[u.id] && !(s.cfg.v10 && s.cfg.capNeeds === false) && !s.owned.includes(CAPSTONE_NEEDS[u.id])) return { ok: false, why: 'Needs ' + UPGRADES.find(x => x.id === CAPSTONE_NEEDS[u.id]).name };
   if (s.clout < upCost(s, u)) return { ok: false, why: 'Not enough Clout' };
   return { ok: true };
 }
@@ -844,4 +898,4 @@ function resolveDecision(s, choice) {
 }
 
 // SIM-END
-if (typeof module !== 'undefined') module.exports = { ACTIONS, canAct, doAct, domainPower, actEff, resBreakdown, TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };
+if (typeof module !== 'undefined') module.exports = { courtOn, actCost, ACTIONS, canAct, doAct, domainPower, actEff, resBreakdown, TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };
