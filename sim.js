@@ -214,7 +214,9 @@ function doAct(s, aid, target) {
     case 'mil3': knock(s, target, 50, a); s.mods.push({ id: target, kind: 'courtSlow', mul: .5, until: s.week + 15 }); block(target, 15); pushSupport(s, target, 6 * e); noto(3); break;
     case 'mil4': s.inf[target] = Math.max(s.inf[target], 50); if (W.members[target] && target !== W.hq) leave(target); delete W.signed[target]; W.court = (W.court || []).filter(c => c.target !== target);
       neighbours(target).forEach(n => resMod(s, n, 1.2, 30)); noto(10); break;
-    case 'dip1': resMod(s, target, Math.max(.4, 1 - .15 * e), 20); knock(s, target, 5, a); break;
+    case 'dip1': if (v10t(s, 'embassy')) { pushSupport(s, target, 2 * e); if (!hasMod(s, target, 'embassy')) { s.mods.push({ id: target, kind: 'embassy', until: 1e9 }); resMod(s, target, .9, 1e9); } }
+      else resMod(s, target, Math.max(.4, 1 - .15 * e), 20);
+      knock(s, target, 5, a); break;
     case 'dip2': resMod(s, target, Math.max(.3, 1 - .4 * e), 25); knock(s, target, 30, a); noto(.5); break;
     case 'dip3': [target, ...neighbours(target)].forEach(id => { knock(s, id, 40, a); block(id, 20); }); break;
     case 'dip4': s.mods.push({ id: target, kind: 'courtSlow', mul: 1 / 3, until: s.week + 30 }); s.woNoNewUntil = s.week + 30; break;
