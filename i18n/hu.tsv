@@ -682,3 +682,112 @@ ready	kész
 ready, use it from the map	kész, használd a térképről
 Saved {}	Mentve: {1}
 Beta version: progress is kept on this device only, separate from the main game.	Béta verzió: a haladás csak ezen az eszközön marad, a fő játéktól elkülönítve.
+# ---- v10: actions, domain power, courtships, Enforcement ----
+Your power	Az erőd
+Your share of the world’s strength in each domain. Every point makes that domain’s actions and bonus stronger.	A világ erejéből rád eső rész doménenként. Minden pont erősebbé teszi az adott domén akcióit és bónuszát.
+More Clout income	Több befolyás-bevétel
+Stronger military actions	Erősebb katonai akciók
+Stronger diplomatic actions, slower World Order	Erősebb diplomáciai akciók, lassabb Világrend
+Stronger ideological actions, faster growth	Erősebb ideológiai akciók, gyorsabb növekedés
+Weakest to:	Leggyengébb pont:
+Strongest in:	Legerősebb terület:
+{} and {}.	{1} és {2}.
+Actions in {}	Akciók itt: {1}
+{} actions · {}	{1} – akciók · {2}
+{} · tier {}	{1} · {2}. szint
+{}% power · economic resistance here {}	{1}% erő · itteni gazdasági ellenállás {2}
+{}% power · military resistance here {}	{1}% erő · itteni katonai ellenállás {2}
+{}% power · diplomatic resistance here {}	{1}% erő · itteni diplomáciai ellenállás {2}
+{}% power · ideological resistance here {}	{1}% erő · itteni ideológiai ellenállás {2}
+{} ready	{1} kész
+none ready	egy sem kész
+Tier {} · worldwide	{1}. szint · világszerte
+Not here	Itt nem
+‹ Back	‹ Vissza
+Cost {} Clout, then ready again in {} weeks.	Ára {1} befolyás, utána {2} hét múlva újra kész.
+Confirm {} in {} · {} Clout	Megerősítés: {1} itt: {2} · {3} befolyás
+Confirm {} worldwide · {} Clout	Megerősítés: {1} világszerte · {2} befolyás
+Strength here: ×{} ({} resistance {}, your {} power {}%).	Erősség itt: ×{1} ({2} ellenállás {3}, {4} erőd {5}%).
+economic	gazdasági
+military	katonai
+diplomatic	diplomáciai
+ideological	ideológiai
+Click a country on the map to see its resistances and take actions there.	Kattints egy országra a térképen, hogy lásd az ellenállásait, és akciókat indíts ott.
+Courting	Győzködés
+Joining	Csatlakozás
+Signing	Aláírás
+Past the point of no return: only a tier-4 action, or your support above {}%, stops it.	Nincs visszaút: csak egy 4. szintű akció vagy {1}% feletti támogatásod állíthatja meg.
+World Order courting {}: {}%	A Világrend győzködi: {1} – {2}%
+Enforcement · week {}	Végrehajtás · {1}. hét
+Every week: signed countries −{}, members −{}, everyone else −{} support. Clout income ×{}. You lose below {}% of the world. Get under {} signatures to stop it.	Hetente: aláíró országok −{1}, tagok −{2}, mindenki más −{3} támogatás. Befolyás-bevétel ×{4}. Veszítesz, ha a világ {5}%-a alá esel. Szorítsd {6} aláírás alá, hogy leálljon.
+Enforcement suspended	Végrehajtás felfüggesztve
+{} of {} signatures. It resumes, harder, at {}.	{1}/{2} aláírás. {3}-nál keményebben folytatódik.
+Ratified. Enforcement week {}: your support drains everywhere	Ratifikálva. Végrehajtás {1}. hete: a támogatásod mindenhol fogy
+Enforcement suspended: {} of {} signed	Végrehajtás felfüggesztve: {1}/{2} aláírt
+Draft {}%: enough for {} signature. At {}, Enforcement starts	Tervezet: {1}% – elég {2} aláíráshoz. {3}-nál indul a Végrehajtás
+Draft {}%: enough for {} signatures. At {}, Enforcement starts	Tervezet: {1}% – elég {2} aláíráshoz. {3}-nál indul a Végrehajtás
+Draft {}%: enough for {} signature. At {}, Enforcement starts. Your growth −{}%	Tervezet: {1}% – elég {2} aláíráshoz. {3}-nál indul a Végrehajtás. Növekedésed −{4}%
+Draft {}%: enough for {} signatures. At {}, Enforcement starts. Your growth −{}%	Tervezet: {1}% – elég {2} aláíráshoz. {3}-nál indul a Végrehajtás. Növekedésed −{4}%
+Not started. 8 signatures start Enforcement	Nem indult el. 8 aláírásnál indul a Végrehajtás
+Treaty enforced	A szerződést végrehajtották
+The treaty was ratified in week {}, and {} weeks of Enforcement squeezed your movement to the margins by week {}. At your peak you had {}% of the world. Next time, stop courtships before they pass the point of no return.	A szerződést a(z) {1}. héten ratifikálták, és {2} hét Végrehajtás a {3}. hétre a perifériára szorította a mozgalmadat. A csúcson a világ {4}%-a volt veled. Legközelebb állítsd meg a győzködést, mielőtt túllép a visszafordíthatatlansági ponton.
+Unlocks the tier-4 action {}: {}	Feloldja a(z) {1} 4. szintű akciót: {2}
+{} unlocks {}, a tier-4 action. Find it under Actions.	{1} feloldja ezt a 4. szintű akciót: {2}. Az Akciók között találod.
+{} starts courting {} to sign the treaty.	{1} győzködni kezdi {2} országot, hogy írja alá a szerződést.
+{} starts courting {} to join the World Order.	{1} győzködni kezdi {2} országot, hogy csatlakozzon a Világrendhez.
+{} joins the World Order.	{1} csatlakozik a Világrendhez.
+{} turns the World Order down. Too many of its people agree with you.	{1} kikosarazza a Világrendet. Túl sokan értenek egyet veled.
+Containment Treaty ratified by {} nations. Enforcement begins: your movement is squeezed everywhere the treaty reaches.	A Megfékezési Szerződést {1} nemzet ratifikálta. Indul a Végrehajtás: mozgalmadat mindenhol szorongatják, ahová a szerződés elér.
+Enough signatures again. Enforcement resumes.	Újra elég az aláírás. Folytatódik a Végrehajtás.
+Signatures fall to {}. Enforcement is suspended while {} recounts.	Az aláírások száma {1}-re esik. A Végrehajtás szünetel, amíg {2} újraszámol.
+{}'s signature goes back to committee. Nobody expects it back soon.	{1} aláírása visszakerül a bizottsághoz. Senki sem várja vissza egyhamar.
+Courting: sign	Győzködés: aláírás
+Courting: join	Győzködés: csatlakozás
+Courtship failed	A győzködés kudarcot vallott
+Enforcement resumes	Folytatódik a Végrehajtás
+Campaign-immune	Kampányálló
+Not courtable	Nem győzködhető
+Resistance −{}%	Ellenállás −{1}%
+Resistance +{}%	Ellenállás +{1}%
+Growth ×{}	Növekedés ×{1}
+Courtship ×{}	Győzködés ×{1}
+Foreign Investment	Külföldi befektetés
+Buyout	Felvásárlás
+Run on the Bank	Bankroham
+Show of Force	Erődemonstráció
+Proxy Garrison	Helytartó helyőrség
+Regime Change	Rendszerváltás
+Non-Aligned Pact	El nem kötelezett paktum
+Endless Negotiations	Végtelen tárgyalások
+Pamphlets	Röplapok
+Youth Movement	Ifjúsági mozgalom
+Martyr Narrative	Mártírnarratíva
+Popular Uprising	Népfelkelés
++support (can seed). Slight courtship knock-back	+támogatás (új hídfőt is nyithat). Kicsit visszaveti a győzködést
+Opens a trade route into the target from your strongest country	Kereskedelmi útvonalat nyit a célpontba a legerősebb országodból
+Economic resistance halved 30 wk, +support, courtship −35	Gazdasági ellenállás feleződik 30 hétre, +támogatás, győzködés −35
+Treaty −15, every courtship at half speed for 25 wk. Your income −30% for 15 wk	Szerződés −15, minden győzködés fele sebességgel 25 hétig. Bevételed −30% 15 hétig
++support next to a 15%+ country. Slight courtship knock-back	+támogatás egy 15%+ ország mellett. Kicsit visszaveti a győzködést
++support, courtship −25. Loud	+támogatás, győzködés −25. Feltűnő
+Courtship −50 and half speed 15 wk; no new courtship 15 wk; +support. Loud	Győzködés −50 és fele sebesség 15 hétig; 15 hétig nincs új győzködés; +támogatás. Feltűnő
+Support to at least 50%, leaves the WO, signature void. +10 Notoriety, neighbours resist +20% for 30 wk	Támogatás legalább 50%-ra, kilép a Világrendből, aláírása semmis. +10 Hírhedtség, a szomszédok ellenállása +20% 30 hétig
++support (can seed); this country resists 10% less for good (once per country). Slight courtship knock-back	+támogatás (új hídfőt is nyithat); ez az ország végleg 10%-kal kevésbé áll ellen (országonként egyszer). Kicsit visszaveti a győzködést
+All resistance down a lot 25 wk, courtship −30. Quiet	Minden ellenállás erősen csökken 25 hétig, győzködés −30. Csendes
+Target and neighbours: courtship −40, no new courtship 20 wk	Célpont és szomszédai: győzködés −40, 20 hétig nincs új győzködés
+Courtship here at 1/3 speed, and no new courtships anywhere, for 30 wk	Itt a győzködés harmad sebességű, és sehol nincs új győzködés, 30 hétig
+Growth here x(1+effect) 25 wk, courtship −10	Növekedés itt ×(1+hatás) 25 hétig, győzködés −10
+Growth up and immune to campaigns 40 wk, courtship −30	Növekedés nő és kampányálló 40 hétig, győzködés −30
+Courtship wiped, country cannot be courted 40 wk, +15 support	Győzködés törölve, az ország 40 hétig nem győzködhető, +15 támogatás
+Needs {} {} upgrade	Kell {1} {2} fejlesztés
+Needs {} {} upgrades	Kell {1} {2} fejlesztés
+Needs the tier-4 {} upgrade	Kell a 4. szintű {1} fejlesztés
+Needs a neighbour at 15%+	Kell egy 15%+ szomszéd
+Needs a neighbour at 50%+	Kell egy 50%+ szomszéd
+Already 50%+ and outside the World Order	Már 50%+ és a Világrenden kívül van
+Only where the World Order is courting	Csak ahol a Világrend győzködik
+Only where the World Order is courting, or a signed country during Enforcement	Csak ahol a Világrend győzködik, vagy Végrehajtás alatt egy aláíró országban
+No foothold here	Itt nincs hídfőd
+(four per domain, one country at a time, then a cooldown). Each upgrade in a branch opens the next tier of that domain’s actions; the top upgrade unlocks a tier-4 action that can turn the tide. Click amber bubbles to collect Clout. Upgrades come in opposed pairs: commit to Ideology or Economy, and to Military or Diplomacy.	(doménenként négy, egyszerre egy országban, utána várakozási idő). Egy ág minden fejlesztése megnyitja a domén akcióinak következő szintjét; a csúcsfejlesztés egy 4. szintű, fordulatot hozó akciót old fel. Kattints a borostyánszínű buborékokra, hogy befolyást gyűjts. A fejlesztések szemben álló párokban jönnek: dönts az Ideológia vagy a Gazdaság, és a Hadsereg vagy a Diplomácia mellett.
+actions	akciókra
+Win by aligning 70% of the world, or by holding so many countries (60%+ support) that the World Order can never reach 8 signatures for 26 weeks. When 8 countries sign, the treaty is ratified and Enforcement drains your support everywhere until you break it or fade away.	Nyerj a világ 70%-ának összehangolásával, vagy annyi ország (60%+ támogatás) megtartásával, hogy a Világrend 26 hétig ne gyűjthessen 8 aláírást. Ha 8 ország aláír, a szerződést ratifikálják, és a Végrehajtás mindenhol apasztja a támogatásodat, amíg meg nem töröd, vagy el nem tűnsz.
+Upgrades lower resistances everywhere; actions hit one country.	A fejlesztések mindenhol csökkentik az ellenállást; az akciók egy országra hatnak.

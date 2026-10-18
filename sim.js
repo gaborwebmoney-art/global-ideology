@@ -228,7 +228,7 @@ function doAct(s, aid, target) {
     case 'ideo3': s.mods.push({ id: target, kind: 'noCampaign', until: s.week + 40 }, { id: target, kind: 'growth', mul: 1 + .3 * e, until: s.week + 40 }); W.queue = W.queue.filter(q => !(q.target === target && q.kind === 'campaign')); knock(s, target, 30, a); break;
     case 'ideo4': W.court = W.court.filter(c => c.target !== target); block(target, 40); pushSupport(s, target, 15); noto(4); break;
   }
-  addNews(s, `${a.name}${target ? ' in ' + byId(target).name : ''}.`, 'you');
+  addNews(s, `${a.name}${target ? ': ' + byId(target).name : ''}.`, 'you');
   return { ok: true };
 }
 // World Order courtships: one target at a time (two from Notoriety 50). Progress fills each week; it drains while
@@ -687,7 +687,8 @@ function buyUpgrade(s, id) {
   s.clout -= upCost(s, u); s.owned.push(id);
   if (u.once && u.once.treaty) s.treaty = Math.max(0, s.treaty + u.once.treaty);
   if (u.once && u.once.seed) { const zeros = COUNTRIES.filter(c => s.inf[c.id] <= 0); for (let i = 0; i < u.once.seed && zeros.length; i++) seed(s, zeros.splice(Math.floor(rng(s) * zeros.length), 1)[0].id, 2, null); }
-  if (u.special) { s.specials[u.special] = 'ready'; addNews(s, `${u.name} is ready. Use it when the moment is right: it works once.`, 'you'); }
+  if (u.special && s.cfg.v10 && TYPES.includes(u.b)) { const a = ACTIONS.find(x => x.dom === u.b && x.tier === 4); addNews(s, `${u.name} unlocks ${a.name}, a tier-4 action. Find it under Actions.`, 'you'); }
+  else if (u.special) { s.specials[u.special] = 'ready'; addNews(s, `${u.name} is ready. Use it when the moment is right: it works once.`, 'you'); }
   recomputeStats(s);
   const partnerOf = Object.keys(SYNERGY).find(b => SYNERGY[b] === id);
   if (partnerOf && s.owned.some(x => x[0] === partnerOf[0] && UPGRADES.find(y => y.id === x).b === partnerOf)) addNews(s, `${u.name} strengthens your ${BRANCHES.find(b => b.id === partnerOf).name} upgrades.`, 'you');
