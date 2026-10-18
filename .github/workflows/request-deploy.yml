@@ -1,0 +1,12 @@
+# A push to a game branch asks the Deploy workflow (on main) to republish the site.
+# Deploy reads channels.json on main to decide which branch is live and which is beta.
+name: Request deploy
+on:
+  push:
+    branches: [mobile, 'release/**', 'v10-*']
+    paths-ignore: ['**.md']
+jobs:
+  request:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Deploy requested by ${{ github.ref_name }} @ ${{ github.sha }}"

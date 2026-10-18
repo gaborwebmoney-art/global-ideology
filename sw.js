@@ -1,5 +1,5 @@
-// Offline cache for the PWA. Bump CACHE when any cached file changes.
-const CACHE = 'gi-v4';
+// Offline cache for the PWA. The deploy workflow stamps CACHE with the commit, so every deploy (or rollback) refreshes phones.
+const CACHE = 'gi-v4';  // replaced at deploy
 const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png',
   'fonts/big-shoulders-display-latin-600-normal.woff2', 'fonts/big-shoulders-display-latin-800-normal.woff2',
   'fonts/ibm-plex-sans-latin-400-normal.woff2', 'fonts/ibm-plex-sans-latin-500-normal.woff2', 'fonts/ibm-plex-sans-latin-600-normal.woff2',
@@ -11,6 +11,8 @@ self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Pr
 self.addEventListener('fetch', e => {
   const u = new URL(e.request.url);
   if (e.request.method !== 'GET' || u.origin !== location.origin) return;
+  // the live game's worker leaves the beta channel (/beta/) to its own worker
+  if (!self.registration.scope.includes('/beta/') && u.pathname.includes('/beta/')) return;
   if (e.request.mode === 'navigate') {
     e.respondWith(new Promise(res => {
       let done = false; const fall = () => caches.match('index.html', { ignoreSearch: true }).then(h => { if (!done && h) { done = true; res(h); } });

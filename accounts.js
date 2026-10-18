@@ -6,10 +6,12 @@ const GI_BACKEND = { url: '', key: '', turnstile: '' };
 
 window.GIAccounts = (() => {
   const MIN_PW = 8;
+  // The beta channel (served under /beta/) keeps its profiles and saves apart from the main game and never uses the online server.
+  const BETA = /\/beta\//.test(location.pathname), P = BETA ? 'beta.' : '';
   const LS = {
-    get(k) { try { return localStorage.getItem(k); } catch { return null; } },
-    set(k, v) { try { localStorage.setItem(k, v); return true; } catch { return false; } },
-    del(k) { try { localStorage.removeItem(k); } catch { /* storage blocked */ } }
+    get(k) { try { return localStorage.getItem(P + k); } catch { return null; } },
+    set(k, v) { try { localStorage.setItem(P + k, v); return true; } catch { return false; } },
+    del(k) { try { localStorage.removeItem(P + k); } catch { /* storage blocked */ } }
   };
   const readJSON = k => { try { return JSON.parse(LS.get(k) || 'null'); } catch { return null; } };
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -125,7 +127,8 @@ window.GIAccounts = (() => {
     async init() {
       let note = 'No online server is set up, so progress is kept as profiles in this browser. Anyone using this browser can open them.';
       LS.del('gi.users'); // accounts from the earlier browser-only version held password hashes; they are no longer used
-      if (GI_BACKEND.key && isSecretKey(GI_BACKEND.key)) note = 'This page contains a secret server key, which must never be used in a browser. Replace it with the publishable key. Using device profiles for now.';
+      if (BETA) note = 'Beta version: progress is kept on this device only, separate from the main game.';
+      else if (GI_BACKEND.key && isSecretKey(GI_BACKEND.key)) note = 'This page contains a secret server key, which must never be used in a browser. Replace it with the publishable key. Using device profiles for now.';
       else if (GI_BACKEND.url && GI_BACKEND.key) {
         const b = supabase({ url: GI_BACKEND.url.replace(/\/+$/, ''), key: GI_BACKEND.key });
         if (await b.ping()) { backend = b; note = 'Your progress is saved online, so you can continue on any device.'; }
