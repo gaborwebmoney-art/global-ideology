@@ -1,0 +1,8 @@
+{
+  "appId": "app.globalideology.game",
+  "appName": "Global Ideology",
+  "webDir": "www",
+  "backgroundColor": "#0d1820",
+  "android": { "allowMixedContent": false },
+  "server": { "androidScheme": "https" }
+}

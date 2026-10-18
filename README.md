@@ -2,7 +2,7 @@
 
 A Plague Inc.–style strategy game prototype. You lead a movement that wants the whole world to agree with it. Spread across 15 fictional countries over land borders and trade routes, and align 70% of the world before the World Order signs its Containment Treaty.
 
-**Play:** open `index.html` in any browser. It is a single file with no build step and no dependencies.
+**Play:** open `index.html` in any browser. It is a single file with no build step and no dependencies. **Phone / Android:** see `ANDROID.md`.
 
 ## How it plays
 - Support grows inside a country by itself and spills over borders and trade routes once it passes 8%.

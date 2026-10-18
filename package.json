@@ -1,0 +1,21 @@
+{
+  "name": "global-ideology",
+  "version": "0.9.0",
+  "private": true,
+  "description": "Global Ideology: Android wrapper (Capacitor)",
+  "scripts": {
+    "serve": "./serve.sh",
+    "web": "node tools/make-www.js",
+    "android:add": "npm run web && cap add android",
+    "android:sync": "npm run web && cap sync android",
+    "android:open": "cap open android",
+    "android:run": "npm run web && cap sync android && cap run android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/core": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.0.0"
+  }
+}

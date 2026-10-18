@@ -3,13 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-hzCwiCH9IU/8hMGniTTllCCZVjzwnF6f4K9eVAeJ3zc=' 'sha256-zFT2ff/P4farcRKGR/ceoy6/fqqG71pWJJyjn01AE2w=' 'sha256-3ArAEPsXGMXmVGPdLmG9P5avt9nlAb7SJOOKK3+//Nw=' https://challenges.cloudflare.com; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-hzCwiCH9IU/8hMGniTTllCCZVjzwnF6f4K9eVAeJ3zc=' 'sha256-zFT2ff/P4farcRKGR/ceoy6/fqqG71pWJJyjn01AE2w=' 'sha256-3ArAEPsXGMXmVGPdLmG9P5avt9nlAb7SJOOKK3+//Nw=' 'sha256-IVahs7LV+y7gwsl7jHyPKT4+GRyzLDihYOG5iEFk058=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#0d1820">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
 <title>Global Ideology</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+@font-face{font-family:'Big Shoulders Display';font-weight:600;font-style:normal;font-display:swap;src:url(fonts/big-shoulders-display-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Big Shoulders Display';font-weight:800;font-style:normal;font-display:swap;src:url(fonts/big-shoulders-display-latin-800-normal.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Sans';font-weight:400;font-style:normal;font-display:swap;src:url(fonts/ibm-plex-sans-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Sans';font-weight:500;font-style:normal;font-display:swap;src:url(fonts/ibm-plex-sans-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Sans';font-weight:600;font-style:normal;font-display:swap;src:url(fonts/ibm-plex-sans-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-weight:400;font-style:normal;font-display:swap;src:url(fonts/ibm-plex-mono-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-weight:500;font-style:normal;font-display:swap;src:url(fonts/ibm-plex-mono-latin-500-normal.woff2) format('woff2')}
 /* Layout: situation-room briefing table. Top bar, map + dossier panel, three threat meters and a news wire along the bottom. Single dark look by design. */
 :root {
   color-scheme: dark;
@@ -328,6 +339,87 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--you); 
   .alert .a-text { font-size: 12.5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .map-hint { position: sticky; display: block; padding: 8px 12px 0; }
 }
+/* ===== Phone and touch (added for the Android build) ===== */
+html { -webkit-text-size-adjust: 100%; }
+body { overscroll-behavior: none; -webkit-tap-highlight-color: transparent; }
+#app { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); padding-top: max(10px, env(safe-area-inset-top)); padding-bottom: max(10px, env(safe-area-inset-bottom)); }
+#newsBtn { display: none; }
+@media (pointer: coarse) {
+  body { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
+  input { -webkit-user-select: text; user-select: text; font-size: 16px; }
+  .speed button { min-height: 40px; padding: 8px 14px; }
+  .btn, .rebrand { min-height: 40px; }
+  .op, .up, .choice, .moves li button, .specials button { min-height: 44px; }
+  .alert .a-x { padding: 8px 12px; margin: -8px -10px -8px 0; }
+  .linkbtn { padding: 8px 0; }
+}
+/* shared by both phone layouts */
+@media (max-width: 600px) and (orientation: portrait), (max-height: 520px) and (orientation: landscape) {
+  #app { height: 100dvh; min-height: 0; grid-template-rows: auto minmax(0, 1fr) auto; gap: 6px; max-width: none; }
+  .bar { gap: 6px 10px; }
+  .brand { font-size: 19px; }
+  .brand small { display: none; }
+  .readout b { font-size: 17px; }
+  .readout span:first-child { font-size: 9px; }
+  #newsBtn { display: inline-block; }
+  .btn { padding: 6px 12px; }
+  .main { min-height: 0; }
+  .mapwrap { aspect-ratio: auto; min-height: 0; }
+  .side { padding: 10px; gap: 10px; font-size: 13px; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .cname { font-size: 24px; }
+  .hud { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .meter { padding: 5px 8px; }
+  .meter .note, .legend { display: none; }
+  .meter .val { font-size: 15px; }
+  .meter .track { margin-top: 4px; height: 6px; }
+  .pips { margin-top: 4px; }
+  .pips i { height: 6px; }
+  .meter .eyebrow { font-size: 9px; letter-spacing: .08em; }
+  .wire { display: none; }
+  body.news-open .wire { display: block; position: fixed; left: 8px; right: 8px; bottom: max(8px, env(safe-area-inset-bottom)); max-height: 55dvh; overflow-y: auto; z-index: 40; background: var(--panel); box-shadow: 0 8px 30px rgba(0, 0, 0, .6); }
+  body.news-open .wire ul { max-height: none; }
+  .alerts { position: fixed; z-index: 15; }
+  .alert .a-text { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .sheet { padding: 12px; }
+  .sheet-head h2 { font-size: 24px; }
+  .overlay { padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left)); }
+}
+/* phone, portrait: bar, map, hud, scrolling dossier */
+@media (max-width: 600px) and (orientation: portrait) {
+  .main { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); gap: 6px; }
+  .mapwrap { height: 40dvh; overflow: auto; }
+  .mapwrap.fit { height: auto; aspect-ratio: 1000 / 580; overflow: hidden; }
+  .mapwrap.fit #map { width: 100%; height: 100%; aspect-ratio: auto; }
+  .mapwrap.fit .fitbtn { position: absolute; left: 6px; bottom: 6px; margin: 0; }
+  .map-hint { position: absolute; padding: 0; left: auto; right: 8px; top: 6px; font-size: 10px; }
+  .speed button { min-height: 36px; padding: 6px 10px; }
+  .bar .btn { min-height: 36px; padding: 6px 10px; }
+  .acct { order: 9; flex: 1 0 100%; font-size: 10px; }
+  .acct b { max-width: 60vw; }
+  .alerts { left: 8px; right: 8px; bottom: calc(max(8px, env(safe-area-inset-bottom)) + 52px); top: auto; width: auto; }
+  .alert { padding: 6px 8px 7px; }
+  .meter .top { flex-wrap: wrap; row-gap: 0; }
+  .meter .val { white-space: nowrap; }
+  .meter .eyebrow { max-width: 100%; }
+}
+/* phone, landscape: map left, dossier right, thin bars top and bottom */
+@media (max-height: 520px) and (orientation: landscape) {
+  #app { padding-top: max(6px, env(safe-area-inset-top)); padding-bottom: max(6px, env(safe-area-inset-bottom)); }
+  .bar { flex-wrap: nowrap; }
+  .acct { font-size: 10px; min-width: 0; }
+  .acct b { max-width: 70px; }
+  .main { grid-template-columns: minmax(0, 1fr) clamp(230px, 34vw, 300px); grid-template-rows: minmax(0, 1fr); gap: 6px; }
+  .mapwrap, .mapwrap.fit { overflow: hidden; }
+  #map, .mapwrap.fit #map { width: 100%; height: 100%; aspect-ratio: auto; }
+  .fitbtn { display: none !important; }
+  .node text:not(.stamp) { display: none; }
+  .map-hint { position: absolute; padding: 0; left: 8px; top: 6px; font-size: 10px; }
+  .alerts { left: 8px; bottom: max(8px, env(safe-area-inset-bottom)); top: auto; right: auto; width: min(52vw, 340px); }
+  .sheet > p.empty { font-size: 11px; line-height: 1.35; margin: 0 0 8px !important; }
+  .intro h1 { font-size: 34px; margin: 2px 0 6px; }
+  .intro ol { margin: 6px 0 10px; font-size: 13px; gap: 4px; }
+  .decision h2 { font-size: 22px; }
+}
 </style>
 </head>
 <body>
@@ -344,6 +436,7 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--you); 
       <button id="sp2" aria-pressed="false" title="Fast (2)">2&times;</button>
       <button id="sp3" aria-pressed="false" title="Fastest (3)">3&times;</button>
     </div>
+    <button class="btn" id="newsBtn" type="button">News</button>
     <button class="btn primary" id="openTree">Upgrades</button>
   </header>
 
@@ -1960,5 +2053,27 @@ window.GIAccounts = (() => {
 })();
 </script>
 
+<script>
+// Android/PWA glue: News sheet toggle, offline service worker, keep the screen awake while playing.
+(function () {
+  var nb = document.getElementById('newsBtn');
+  if (nb) {
+    nb.addEventListener('click', function (e) { e.stopPropagation(); document.body.classList.toggle('news-open'); });
+    document.addEventListener('click', function (e) {
+      if (document.body.classList.contains('news-open') && !e.target.closest('.wire')) document.body.classList.remove('news-open');
+    });
+  }
+  if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+    window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
+  }
+  var lock = null;
+  function keepAwake() {
+    if (!navigator.wakeLock || document.visibilityState !== 'visible') return;
+    navigator.wakeLock.request('screen').then(function (l) { lock = l; l.addEventListener('release', function () { lock = null; }); }).catch(function () {});
+  }
+  document.addEventListener('visibilitychange', function () { if (!lock) keepAwake(); });
+  document.addEventListener('pointerdown', function once() { document.removeEventListener('pointerdown', once); keepAwake(); });
+})();
+</script>
 </body>
 </html>
