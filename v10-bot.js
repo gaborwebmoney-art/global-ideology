@@ -54,12 +54,19 @@ function play(start, seed, cfg, build, sharp) {
       const row = ANSWER.find(([min]) => c.prog >= min); if (!row) continue;
       for (const aid of row[1]) if (S.doAct(s, aid, c.target).ok) break;
     }
+    // Enforcement: strip signatures (T4s), then push support in the strongest signed country toward the withdrawal line
+    if (S.ratified(s)) {
+      const signed = Object.keys(s.wo.signed).sort((a, b) => s.inf[b] - s.inf[a]);
+      for (const id of signed) { if (S.doAct(s, 'mil4', id).ok || S.doAct(s, 'dip4', id).ok) break; }
+      const top = Object.keys(s.wo.signed).sort((a, b) => s.inf[b] - s.inf[a])[0];
+      if (top) for (const aid of ['eco3', 'ideo3', 'dip2', 'mil2', 'ideo2', 'eco1', 'ideo1', 'mil1', 'dip1']) S.doAct(s, aid, top);
+    }
     if (s.treaty > 70 || (s.wo.court || []).reduce((x, c) => x + c.prog, 0) > 120) S.doAct(s, 'eco4');
     for (let i = 0; i < 4; i++) { const b = bestAction(s); if (!b || b.score <= 0) break; S.doAct(s, b.a, b.t); }
   }
   const log = s.actLog || [];
   const tiers = [1, 2, 3, 4].map(t => log.filter(id => +id.slice(-1) === t).length);
-  return { over: s.over || 'timeout', week: s.week, acts: log.length, tiers, t4: tiers[3] > 0, w4, crisis };
+  return { over: s.over || 'timeout', week: s.week, acts: log.length, tiers, t4: tiers[3] > 0, w4, crisis, ratAt: s.wo.ratifiedAt || 0, cb: s.comebacks || 0 };
 }
 
 const T = { courtWeeks: 8, pushMul: 0.6 };
