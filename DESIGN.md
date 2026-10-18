@@ -221,7 +221,7 @@ Email verification, custom SMTP, leaked-password protection (Supabase Pro plan),
 - Alerts: top-right of the map (bottom of the screen on phones), at most 3 (2 on phones); important ones disappear after 6 s. Colour: amber good, blue World Order, red bad. Clicking one opens that country's dossier.
 - Map pings: an expanding ring on the country plus a short label (e.g. "Signed treaty", "Campaign in 6 wk", event name) for 4 s.
 
-### Next
+### Next (superseded by v9 for countries; rest still open)
 - Make loud play a real alternative, not a trap
 - Upgrade combos and refunds
 - Difficulty levels and scenarios
@@ -229,3 +229,33 @@ Email verification, custom SMTP, leaked-password protection (Supabase Pro plan),
 - Real-looking map shapes
 - Save/load
 - Sound
+
+## Prototype v9: country traits and per-run variation
+Why: two playthroughs felt samey. Upgrades are mostly the same resistance cut, country actions gave no palpable result, and every game used the same 15 countries with the same rules. Countries now differ in rules, not just numbers.
+
+### Traits (all 16 countries)
+- **Quirk:** an always-on rule. Examples: Koryn grows 15% slower but is immune to World Order campaigns once you hold 50%; Juche takes no trade spread, and Leaked Dossiers zero all four of its resistances; Pannonia: 40% of World Order moves there fall through; Helvetia: no campaigns at all; Aethelgard and La Plata: random support swings of 4–10 points (only once you have 8%+, so they cannot wipe out a fresh start).
+- **Perk:** a bonus while you hold the country at 60%+ (CONTROL). Examples: Nippon cuts every cooldown by 6 weeks; Helvetia makes operations 1 Clout cheaper; Tavaro/Guldor/Sinopeia give Clout income; Bharat +10% growth everywhere; Aethelgard softens campaigns by 30%.
+- Data lives in `TRAITS` in `sim.js`. Quirk keys are in the comment above it. The dossier shows the quirk and the perk (marked active when you hold the country), including on the start-country screen.
+
+### Per-run variation (the replay driver)
+- **Resistance jitter:** every country's four resistances shift by up to ±15% per game (seeded). Sinopeia and Bharat are capped at +0.03 over base so the two giants you need cannot get much harder.
+- **World conditions:** two of six are drawn per game and shown as chips and a news line: Trade boom, Closed borders, Media storm, Hawkish world, Fragmented diplomacy, Austerity.
+- `createState(start, seed, { traits, random })`: both default to true. `{ traits:false, random:false }` reproduces the v8 numbers exactly (checked with `doctrine-bot.js`). The bots read `GI_CFG` (JSON) to switch this.
+
+### Balance (v9, `doctrine-bot.js`, casual / careful win %, traits+random on; v8 in brackets)
+| Build | + Faith | + Covert |
+|---|---|---|
+| Ideology + Diplomacy | 78 / 88 (72 / 82) | 80 / 88 (82 / 87) |
+| Economy + Military | 75 / 90 (63 / 88) | 78 / 92 (73 / 97) |
+| Ideology + Military | 72 / 77 (65 / 80) | 77 / 87 (72 / 88) |
+| Economy + Diplomacy | 60 / 68 (65 / 78) | 65 / 77 (65 / 83) |
+
+Traits alone add about 8 points on average (perks help more than quirks hurt); the random layer brings it back close to v8. Economy + Diplomacy is the weakest build and slightly weaker than before.
+- Idle player: 1 of 96 games ends in a treaty collapse at week 477 (Celestia + Fragmented diplomacy). Everything else is a loss.
+- Not yet tuned: per-trait strength. Run the doctrine bot per start country before changing any perk.
+
+### Next
+- Country states (Foothold → Contested → Aligned → Stronghold) with a visible map change and news on every step; make operations country-specific.
+- Redo upgrades as verbs (rule changes) after that, and add a mid-game pick-1-of-3 perk offer.
+- `template.html` (used by `build.py`) is not in this repo, so v9 was applied directly to `index.html` and its CSP hashes were recomputed. Restore the template before the next UI change.
