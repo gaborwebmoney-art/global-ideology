@@ -15,6 +15,7 @@ A Plague Inc.–style strategy game prototype. You lead a movement that wants th
 - Accounts: register or log in with email and password (online, via Supabase), or play under a device profile. The game autosaves and you continue where you left off. See `DESIGN.md` → Prototype v6.1.
 - A generated world map: territories fill amber as your support grows; alerts and map pings flag important news.
 - Controls: Space pauses, keys 1, 2 and 3 set the speed.
+- Language: EN / HU switch in the header (and on the login and start screens). The game code stays English and text is translated as it reaches the screen, so new texts need an English-to-Hungarian line in `i18n/hu.tsv` (use `{}` for variable parts and `{1}`, `{2}` on the Hungarian side). Untranslated text falls back to English; `GI_I18N.misses` lists it in the browser console.
 
 ## Files
 | File | What it is |
@@ -24,6 +25,7 @@ A Plague Inc.–style strategy game prototype. You lead a movement that wants th
 | `build.py` | Builds `index.html` from the sources, with the security policy |
 | `terrain/gen.py`, `terrain/terrain.json` | World map generator and its output (embedded by `build.py`) |
 | `supabase-setup.sql` | One-time database setup for online accounts |
+| `i18n/engine.js`, `i18n/hu.tsv` | Language layer (English and Hungarian) and the Hungarian translation. After editing: `node tools/i18n-build.js && python3 tools/csp.py` |
 | `sim.js` | The simulation core, the same code as inside `index.html`, as a Node module |
 | `balance-bot.js` | Automated balance test: `node balance-bot.js` plays 90 games per strategy |
 | `doctrine-bot.js` | Win rate of each doctrine build: `node doctrine-bot.js` |
