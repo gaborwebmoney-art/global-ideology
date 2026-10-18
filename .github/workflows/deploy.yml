@@ -1,0 +1,109 @@
+# Publishes the game to GitHub Pages: the LIVE branch at the site root, the BETA branch under /beta/.
+# channels.json (on main) records which branch is live and which is beta.
+#
+# Roll back / promote: Actions -> Deploy -> Run workflow, type a branch in "live" (e.g. release/v9.0)
+# and/or "beta". The choice is saved to channels.json, so later pushes keep it.
+# A push to a game branch (see request-deploy.yml on that branch) republishes with the saved channels.
+name: Deploy
+on:
+  workflow_dispatch:
+    inputs:
+      live:
+        description: 'Branch to make LIVE (e.g. mobile, release/v9.0). Leave empty to keep the current one.'
+        required: false
+        default: ''
+      beta:
+        description: 'Branch to make BETA at /beta/ (e.g. v10-core). Leave empty to keep the current one.'
+        required: false
+        default: ''
+  workflow_run:
+    workflows: [Request deploy]
+    types: [completed]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: Read channels
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: ctl
+
+      - name: Update channels
+        id: ch
+        working-directory: ctl
+        env:
+          IN_LIVE: ${{ inputs.live }}
+          IN_BETA: ${{ inputs.beta }}
+        run: |
+          set -euo pipefail
+          live=$(jq -r '.live // "mobile"' channels.json); beta=$(jq -r '.beta // ""' channels.json)
+          if [ -n "${IN_LIVE:-}" ]; then live="$IN_LIVE"; fi
+          if [ -n "${IN_BETA:-}" ]; then beta="$IN_BETA"; fi
+          git ls-remote --exit-code --heads origin "$live" >/dev/null || { echo "::error::Live branch '$live' does not exist"; exit 1; }
+          if [ -n "$beta" ] && ! git ls-remote --exit-code --heads origin "$beta" >/dev/null; then echo "::warning::Beta branch '$beta' not found, skipping beta"; beta=""; fi
+          jq -n --arg l "$live" --arg b "$beta" '{live: $l, beta: $b}' > channels.json
+          if ! git diff --quiet; then
+            git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -qam "Channels: live=$live beta=${beta:-none}"; git push -q
+          fi
+          echo "live=$live" >> "$GITHUB_OUTPUT"; echo "beta=$beta" >> "$GITHUB_OUTPUT"
+          echo "### Live: \`$live\` · Beta: \`${beta:-none}\`" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Check out live
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.ch.outputs.live }}
+          path: live
+
+      - name: Check out beta
+        if: steps.ch.outputs.beta != ''
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.ch.outputs.beta }}
+          path: beta
+
+      - name: Assemble site
+        run: |
+          set -euo pipefail
+          # stamp a channel: version label in the header, cache name = commit (phones refresh on every deploy)
+          stamp() {
+            local d=$1 label=$2 sha ver
+            sha=$(git -C "$d" rev-parse --short HEAD)
+            ver=$(cat "$d/VERSION" 2>/dev/null | tr -d '[:space:]' || true); ver=${ver:-dev}
+            [ -f "$d/sw.js" ] && sed -i "s/const CACHE = '[^']*';/const CACHE = 'gi-$sha';/" "$d/sw.js"
+            sed -i "s#<small id=\"giVer\">[^<]*</small>#<small id=\"giVer\">v$ver$label</small>#" "$d/index.html"
+            echo "- $d: v$ver$label ($sha)" >> "$GITHUB_STEP_SUMMARY"
+          }
+          copy() { rsync -a --exclude .git --exclude .github --exclude node_modules --exclude android --exclude www "$1/" "$2/"; }
+          mkdir -p _site
+          stamp live ''
+          copy live _site
+          if [ -d beta ]; then
+            stamp beta ' beta'
+            [ -f beta/manifest.webmanifest ] && sed -i 's/"name": "Global Ideology"/"name": "Global Ideology (beta)"/; s/"short_name": "Ideology"/"short_name": "Ideology beta"/' beta/manifest.webmanifest
+            mkdir -p _site/beta
+            copy beta _site/beta
+          fi
+          touch _site/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deploy
+        uses: actions/deploy-pages@v4
