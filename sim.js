@@ -112,10 +112,59 @@ const SG = 'Secretary-General Horatio Quorum';
 const TUNE = { evBad: .65, evGap: 12, milNoSummit: true, fxScale: 0.4, treaty: 2.6, memberRes: 0.15, signBelow: 60, joinBelow: 50, withdrawAt: 70, lead: 6, planBase: 6, founders: 2, noto: 1.5, reachNoto: 0.12, pressure: 6, coalitionAt: 8, costGrow: 0.03, income: 3, shareIncome: 1.5 };
 const CONTROL = 60; // % support at which a country counts as "held"
 
+// ---- v9: country traits and per-run world conditions ----
+// Every country has a quirk (an always-on rule that changes how you play there) and a perk
+// (a bonus you get while you hold it at CONTROL% or more). q keys: gMul (internal growth), inMul/outMul (spread into/out of),
+// tradeInMul (trade spread into), swing (weekly chance of a +/- support swing), recruitDelta (World Order recruits it only below
+// joinBelow-10+delta), noRecruit, signDelta (signing threshold shift), immuneAt (no campaigns once support >= it), woFail
+// (chance a World Order move there falls through), dossierAll (Leaked Dossiers zero all four resistances).
+// fx keys: income (+Clout points), growth/trade/border (multipliers), vis (notoriety growth, added), fc (campaign softening),
+// opDisc (Clout off each operation), opCd (weeks off each cooldown), bubble (+bubble chance), treatySlow, memberRes (World Order member resistance reduction).
+const TRAITS = {
+  borealis:   { quirk: 'Federal: the World Order can only recruit it below 20% support.', q: { recruitDelta: -20 }, perkName: 'Resource-rich', perk: 'Clout income up a little', fx: { income: .5 } },
+  aethelgard: { quirk: 'Divided politics: random support swings of 4–10 points.', q: { swing: .015 }, perkName: 'Superpower ally', perk: 'World Order campaigns hit 30% softer', fx: { fc: .3 } },
+  laplata:    { quirk: 'Unstable: frequent support swings, up or down.', q: { swing: .02 }, perkName: 'Breadbasket', perk: 'Trade spread +15%', fx: { trade: 1.15 } },
+  isolde:     { quirk: 'Remote: the World Order never recruits it.', q: { noRecruit: true }, perkName: 'Hideout', perk: 'Clout income up a little', fx: { income: .2 } },
+  guldor:     { quirk: 'Old money: ideas travel out of Guldor 50% faster.', q: { outMul: 1.5 }, perkName: 'Financier', perk: 'Clout income up', fx: { income: 1 } },
+  celestia:   { quirk: 'Cultural power: ideas travel out of Celestia 40% faster.', q: { outMul: 1.4 }, perkName: 'Soft power', perk: 'Notoriety grows 10% slower', fx: { vis: -.1 } },
+  helvetia:   { quirk: 'Neutral: the World Order cannot run campaigns here.', q: { immuneAt: 1 }, perkName: 'Discreet banking', perk: 'Operations cost 1 Clout less', fx: { opDisc: 1 } },
+  pannonia:   { quirk: 'Unpredictable: 40% of World Order moves here fall through.', q: { woFail: .4 }, perkName: 'Landlocked hub', perk: 'Border spread +10%', fx: { border: 1.1 } },
+  koryn:      { quirk: 'Authoritarian: slow to convert (−15% growth), but immune to campaigns once you hold 50%.', q: { gMul: .85, immuneAt: 50 }, perkName: 'Resource-rich', perk: 'Clout income up a little', fx: { income: .5 } },
+  tavaro:     { quirk: 'Crossroads: spread through Tavaro is 40% faster out, 20% faster in.', q: { outMul: 1.4, inMul: 1.2 }, perkName: 'Oil', perk: 'Clout income up', fx: { income: 1 } },
+  kestria:    { quirk: 'Young population: +25% internal growth.', q: {}, perkName: 'Youth movement', perk: 'More opportunity bubbles', fx: { bubble: .06 } },
+  bharat:     { quirk: 'Colossal democracy: slow to convert (−15% growth), and needs 10 points less support to refuse a signing.', q: { gMul: .85, signDelta: -10 }, perkName: 'Digital reach', perk: 'Internal growth +10% everywhere', fx: { growth: 1.1 } },
+  sinopeia:   { quirk: 'Paperwork: spread into Sinopeia is halved, but out of it +30%.', q: { inMul: .5, outMul: 1.3 }, perkName: 'Manufacturing giant', perk: 'Clout income up', fx: { income: 1 } },
+  juche:      { quirk: 'Isolated: no trade spread in, border spread halved, but Leaked Dossiers break every defence.', q: { inMul: .5, tradeInMul: 0, dossierAll: true }, perkName: 'Fanatics', perk: 'Treaty drafting 5% slower', fx: { treatySlow: .05 } },
+  nippon:     { quirk: 'Hyper-connected: +15% internal growth.', q: { gMul: 1.15 }, perkName: 'Hyper-advanced', perk: 'Every cooldown 6 weeks shorter', fx: { opCd: 6 } },
+  pinguinia:  { quirk: 'Polar: nothing happens here, for now.', q: {}, perkName: 'Neutral scientists', perk: 'World Order members resist 5 points less', fx: { memberRes: .05 } }
+};
+// Two of these are drawn for every game.
+const CONDITIONS = [
+  { id: 'tradeboom', name: 'Trade boom', text: 'Trade spread +30%', fx: { trade: 1.3 } },
+  { id: 'closed', name: 'Closed borders', text: 'Border spread −25%', fx: { border: .75 } },
+  { id: 'media', name: 'Media storm', text: 'More bubbles, Notoriety grows 20% faster', fx: { bubble: .08, vis: .2 } },
+  { id: 'hawk', name: 'Hawkish world', text: 'The World Order plans a week faster', fx: { plan: 1 } },
+  { id: 'fragmented', name: 'Fragmented diplomacy', text: 'Treaty drafting 15% slower', fx: { treatySlow: .15 } },
+  { id: 'austerity', name: 'Austerity', text: 'Clout income −30%', fx: { income: -.5 } }
+];
+const MULT_KEYS = ['growth', 'trade', 'border'];
+function Q(s, id) { return (s.cfg && s.cfg.traits === false) ? {} : ((TRAITS[id] && TRAITS[id].q) || {}); }
+function perk(s) {
+  const p = { income: 0, growth: 1, trade: 1, border: 1, vis: 0, fc: 0, opDisc: 0, opCd: 0, bubble: 0, treatySlow: 0, memberRes: 0, plan: 0 };
+  const add = fx => Object.entries(fx || {}).forEach(([k, v]) => { if (MULT_KEYS.includes(k)) p[k] *= v; else p[k] += v; });
+  if (!s.cfg || s.cfg.traits !== false) COUNTRIES.forEach(c => { if (s.inf[c.id] >= CONTROL && TRAITS[c.id]) add(TRAITS[c.id].fx); });
+  (s.cond || []).forEach(id => add(CONDITIONS.find(c => c.id === id).fx));
+  return p;
+}
+function resOf(s, id) { return (s.res && s.res[id]) || byId(id).res; }
+function signLimit(s, id) { return TUNE.signBelow - s.stats.shield + (Q(s, id).signDelta || 0); }
+
 function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 
-function createState(startId, seed) {
+function createState(startId, seed, opts) {
+  const cfg = Object.assign({ traits: true, random: true }, opts || {});
   const s = {
+    cfg, res: null, cond: [],
     v: 5, pending: null, ev: { next: 18, nextDecision: 70, fx: {}, temp: [], seen: {}, log: [], endorsed: null, loudOp: null }, seed: seed >>> 0, rngCalls: 0, week: 0, clout: 5, startId,
     inf: {}, mods: [], trade: TRADE.map(t => t.slice()),
     stats: { growth: .05, border: .02, trade: .015, reach: 0, income: 0, vis: 1, loud: 0, treatySlow: 0, fcRed: 0, summitCd: 0, snapBoost: 0, dossierDiscount: 0, shield: 0, sabotage: 0, hiCut: 0, opDiscount: 0, pen: { eco: 0, mil: 0, dip: 0, ideo: 0 } },
@@ -129,6 +178,22 @@ function createState(startId, seed) {
   s.inf[startId] = 3;
   s.flags['seed_' + startId] = true;
   addNews(s, `Unknown movement stirs in ${byId(startId).name}. Local officials call it “a phase”.`, 'you');
+  if (cfg.random) {
+    // per-run variation: every country's defences shift by up to +/-15%, and two world conditions apply.
+    // Sinopeia and Bharat (the two giants you need to win) can never end up much harder than their base values.
+    s.res = {};
+    COUNTRIES.forEach(c => {
+      s.res[c.id] = {};
+      TYPES.forEach(t => {
+        let v = c.res[t] * (1 + (rng(s) - .5) * .3);
+        if (c.id === 'sinopeia' || c.id === 'bharat') v = Math.min(v, c.res[t] + .03);
+        s.res[c.id][t] = Math.round(Math.min(.9, Math.max(.05, v)) * 100) / 100;
+      });
+    });
+    const pool = CONDITIONS.slice();
+    for (let i = 0; i < 2; i++) s.cond.push(pool.splice(Math.floor(rng(s) * pool.length), 1)[0].id);
+    addNews(s, `World conditions this game: ${s.cond.map(id => CONDITIONS.find(c => c.id === id).name).join(' and ')}.`, 'world');
+  }
   return s;
 }
 function rng(s) { const r = mulberry32(s.seed + s.rngCalls * 7919)(); s.rngCalls++; return r; }
@@ -146,11 +211,12 @@ function resBreakdown(s, id) {
   const c = byId(id); const out = {};
   const active = s.mods.filter(m => m.id === id && m.until > s.week);
   const mul = active.filter(m => m.kind === 'summit').length ? 0.6 : 1;
-  const add = (active.filter(m => m.kind === 'counter').length ? 0.25 : 0) + (s.wo && s.wo.members[id] ? TUNE.memberRes : 0);
-  const zero = active.filter(m => m.kind === 'dossier').length ? ['dip', 'ideo'] : [];
-  const hi = TYPES.reduce((a, t) => (c.res[t] > c.res[a] ? t : a), TYPES[0]);
+  const add = (active.filter(m => m.kind === 'counter').length ? 0.25 : 0) + (s.wo && s.wo.members[id] ? Math.max(0, TUNE.memberRes - perk(s).memberRes) : 0);
+  const zero = active.filter(m => m.kind === 'dossier').length ? (Q(s, id).dossierAll ? TYPES : ['dip', 'ideo']) : [];
+  const base = resOf(s, id);
+  const hi = TYPES.reduce((a, t) => (base[t] > base[a] ? t : a), TYPES[0]);
   TYPES.forEach(t => {
-    let v = zero.includes(t) ? 0 : Math.max(0, c.res[t] - (t === hi ? s.stats.hiCut : 0)) * (1 - Math.min(.85, s.stats.pen[t]));
+    let v = zero.includes(t) ? 0 : Math.max(0, base[t] - (t === hi ? s.stats.hiCut : 0)) * (1 - Math.min(.85, s.stats.pen[t]));
     active.filter(m => m.kind === 'res' && (!m.types || m.types.includes(t))).forEach(m => { v *= m.mul; });
     v = Math.min(.95, Math.max(0, v * mul + add));
     out[t] = v;
@@ -165,18 +231,29 @@ function step(s) {
   const R = {}; COUNTRIES.forEach(c => { R[c.id] = effRes(s, c.id); });
   const d = {}; COUNTRIES.forEach(c => { d[c.id] = 0; });
   const st = s.stats;
+  const pk = perk(s);
   // 1. Internal growth (logistic)
   COUNTRIES.forEach(c => {
     const v = s.inf[c.id]; if (v <= 0) return;
-    const g = st.growth * (c.growthMul || 1) * (1 - R[c.id]) * (s.week < s.utopiaUntil ? 2 : 1) * (fxOn(s, 'growthMul') || 1);
+    const g = st.growth * (c.growthMul || 1) * (Q(s, c.id).gMul || 1) * pk.growth * (1 - R[c.id]) * (s.week < s.utopiaUntil ? 2 : 1) * (fxOn(s, 'growthMul') || 1);
     d[c.id] += g * v * (1 - v / 100) + 0.04 * (1 - R[c.id]);
   });
+  // 1b. Quirk: support swings (unstable countries)
+  COUNTRIES.forEach(c => {
+    const sw = Q(s, c.id).swing; if (!sw || s.inf[c.id] < 8) return;
+    if (rng(s) < sw) {
+      const delta = (rng(s) < .5 ? -1 : 1) * (4 + 6 * rng(s));
+      d[c.id] += delta;
+      if (s.inf[c.id] >= 5) { addNews(s, delta > 0 ? `A populist wave in ${c.name} lifts your movement.` : `A scandal in ${c.name} knocks your movement back.`, delta > 0 ? 'you' : 'wo'); flag(s, 'ping', c.id, delta > 0 ? 'Swing up' : 'Swing down'); }
+    }
+  });
   // 2. Spread over borders and trade routes
-  const spread = (a, b, rate) => {
+  const spread = (a, b, rate, kind) => {
     [[a, b], [b, a]].forEach(([src, dst]) => {
       const sv = s.inf[src]; if (sv < 8) return;
       const inward = s.mods.some(m => m.id === src && m.inward && m.until > s.week) ? .5 : 1;
-      const pull = rate * inward * (sv / 100) * (1 - R[dst]);
+      const qIn = kind === 'trade' && Q(s, dst).tradeInMul !== undefined ? Q(s, dst).tradeInMul : (Q(s, dst).inMul || 1);
+      const pull = rate * inward * qIn * (Q(s, src).outMul || 1) * (sv / 100) * (1 - R[dst]);
       if (s.inf[dst] <= 0) {
         if (rng(s) < pull * 3) seed(s, dst, 1, src);
       } else if (s.inf[dst] < sv) {
@@ -184,8 +261,8 @@ function step(s) {
       }
     });
   };
-  BORDERS.forEach(([a, b]) => spread(a, b, st.border));
-  s.trade.forEach(([a, b]) => { if (!isBlocked(s, a, b)) spread(a, b, st.trade * (fxOn(s, 'tradeMul') || 1)); });
+  BORDERS.forEach(([a, b]) => spread(a, b, st.border * pk.border, 'border'));
+  s.trade.forEach(([a, b]) => { if (!isBlocked(s, a, b)) spread(a, b, st.trade * pk.trade * (fxOn(s, 'tradeMul') || 1), 'trade'); });
   // 3. Faith reach: distant seeding
   if (st.reach > 0) COUNTRIES.forEach(c => {
     if (s.inf[c.id] <= 0 && rng(s) < st.reach * (1 + 6 * alignedShare(s)) * (1 - R[c.id])) seed(s, c.id, 1, null);
@@ -194,20 +271,20 @@ function step(s) {
 
   const share = alignedShare(s); s.peakShare = Math.max(s.peakShare, share);
   // 4. Clout income + opportunity bubbles
-  s.clout += TUNE.income * (0.12 + 0.06 * st.income) * (1 + TUNE.shareIncome * share) * (s.week < s.utopiaUntil ? 2 : 1) * (fxOn(s, 'incomeMul') || 1);
+  s.clout += TUNE.income * Math.max(0.05, 0.12 + 0.06 * (st.income + pk.income)) * (1 + TUNE.shareIncome * share) * (s.week < s.utopiaUntil ? 2 : 1) * (fxOn(s, 'incomeMul') || 1);
   s.bubbles = s.bubbles.filter(b => b.until > s.week);
   const held = COUNTRIES.filter(c => s.inf[c.id] > 0);
-  if (held.length && rng(s) < 0.16 + 0.1 * share) {
+  if (held.length && rng(s) < 0.16 + 0.1 * share + pk.bubble) {
     const c = held[Math.floor(rng(s) * held.length)];
     spawnBubble(s, c.id, 1 + (rng(s) < 0.35 ? 1 : 0));
   }
   // 5. Notoriety and the World Order
-  const vis = Math.max(0.2, st.vis);
+  const vis = Math.max(0.2, st.vis + pk.vis);
   s.notoriety = Math.min(100, s.notoriety + vis * (0.01 + TUNE.noto * share + TUNE.reachNoto * COUNTRIES.filter(c => s.inf[c.id] >= 5).length / COUNTRIES.length) + st.loud);
   if (!s.coalition && s.notoriety >= TUNE.coalitionAt) woActivate(s);
   if (s.coalition && s.week < s.frozenUntil) { s.wo.queue.forEach(q => { q.at++; q.planned++; }); s.wo.nextPlan++; }
   else if (s.coalition) {
-    s.treaty = Math.min(100, Math.max(0, s.treaty + TUNE.treaty * (0.35 + s.notoriety / 100) * (1 - Math.min(.8, st.treatySlow))));
+    s.treaty = Math.min(100, Math.max(0, s.treaty + TUNE.treaty * (0.35 + s.notoriety / 100) * (1 - Math.min(.8, st.treatySlow + pk.treatySlow))));
     treatyNews(s);
     woTick(s);
   }
@@ -238,13 +315,13 @@ function collectBubble(s, key) {
 }
 
 function counterCampaign(s, target) {
-  const fc = s.stats.fcRed;
+  const fc = Math.min(.9, s.stats.fcRed + perk(s).fc);
   const t = byId(target);
   s.inf[t.id] = Math.max(0, s.inf[t.id] - 10 * (1 - fc));
   s.mods.push({ id: t.id, kind: 'counter', until: s.week + Math.round(25 * (1 - fc / 2)) });
   const lines = [
     `World Order launches awareness campaign in ${t.name}. Leaflets feature a stern owl.`,
-    `Fact-checkers descend on ${t.name}. Your slogans rated \u201cmostly vibes\u201d.`,
+    `Fact-checkers descend on ${t.name}. Your slogans rated “mostly vibes”.`,
     `World Order funds ${t.name} civics classes. Attendance: mandatory, enthusiasm: optional.`,
     `${t.name} bans your pamphlets, then prints more to explain the ban.`
   ];
@@ -261,13 +338,13 @@ function woActivate(s) {
   s.coalition = true;
   // HQ: the most diplomatic country far from your start
   const start = byId(s.startId);
-  const cands = COUNTRIES.filter(c => c.id !== s.startId && c.pop >= 1).map(c => ({ c, score: c.res.dip * 2 + Math.hypot(c.x - start.x, c.y - start.y) / 400 - s.inf[c.id] / 50 }));
+  const cands = COUNTRIES.filter(c => c.id !== s.startId && c.pop >= 1).map(c => ({ c, score: resOf(s, c.id).dip * 2 + Math.hypot(c.x - start.x, c.y - start.y) / 400 - s.inf[c.id] / 50 }));
   const hq = cands.sort((a, b) => b.score - a.score)[0].c;
   s.wo.hq = hq.id; s.wo.members[hq.id] = true; s.wo.nextPlan = s.week + 3;
   // founding members: the HQ's neighbours and trade partners that resist you most
   const near = [...new Set([...neighbours(hq.id), ...tradeLinks(s, hq.id)])].filter(id => s.inf[id] < TUNE.joinBelow && byId(id).pop >= 1).sort((a, b) => s.inf[a] - s.inf[b]).slice(0, TUNE.founders);
   near.forEach(id => { s.wo.members[id] = true; });
-  addNews(s, `The World Order convenes in ${hq.name}${near.length ? ' with ' + near.map(id => byId(id).name).join(' and ') : ''}. ${SG}: \u201cWe are deeply concerned, and have formed a committee to be concerned more efficiently.\u201d`, 'wo'); flag(s, 'critical', hq.id, 'World Order HQ');
+  addNews(s, `The World Order convenes in ${hq.name}${near.length ? ' with ' + near.map(id => byId(id).name).join(' and ') : ''}. ${SG}: “We are deeply concerned, and have formed a committee to be concerned more efficiently.”`, 'wo'); flag(s, 'critical', hq.id, 'World Order HQ');
 }
 function woPlan(s) {
   const W = s.wo; const lead = TUNE.lead;
@@ -277,12 +354,12 @@ function woPlan(s) {
   const push = (kind, target, extra) => { W.queue.push(Object.assign({ key: ++W.seq, kind, target, at: s.week + lead, planned: s.week }, extra || {})); };
   // 1. Signatures, as far as the draft allows
   if (signedCount(s) + pendingSigns < signCapacity(s)) {
-    const c = members.filter(id => !W.signed[id] && !busy.has(id) && s.inf[id] < TUNE.signBelow - s.stats.shield).sort((a, b) => s.inf[a] - s.inf[b])[0];
+    const c = members.filter(id => !W.signed[id] && !busy.has(id) && s.inf[id] < signLimit(s, id)).sort((a, b) => s.inf[a] - s.inf[b])[0];
     if (c) { push('sign', c); addNews(s, `${SG} schedules a signing ceremony in ${byId(c).name} in ${lead} weeks. Commemorative pens ordered.`, 'wo'); flag(s, 'important', c, `Signing in ${lead} wk`); return; }
   }
   // 2. Recruit members: biggest country that still resists you
   const r = rng(s);
-  const recruits = COUNTRIES.filter(c => !W.members[c.id] && !busy.has(c.id) && s.inf[c.id] < TUNE.joinBelow - s.stats.shield - 10 && c.pop >= 1).sort((a, b) => b.pop - a.pop);
+  const recruits = COUNTRIES.filter(c => !W.members[c.id] && !busy.has(c.id) && !Q(s, c.id).noRecruit && s.inf[c.id] < TUNE.joinBelow - s.stats.shield - 10 + (Q(s, c.id).recruitDelta || 0) && c.pop >= 1).sort((a, b) => b.pop - a.pop);
   if (recruits.length && (r < 0.55 || memberCount(s) < SIGNATURES_TO_LOSE)) {
     const c = recruits[Math.floor(rng(s) * Math.min(3, recruits.length))];
     push('invite', c.id); addNews(s, `World Order invites ${c.name} to join. RSVP in ${lead} weeks.`, 'wo'); flag(s, 'important', c.id, `Invitation in ${lead} wk`); return;
@@ -292,11 +369,11 @@ function woPlan(s) {
   if (routes.length && r < 0.75 && s.week >= s.noSanctionUntil) {
     const [a, b] = routes[Math.floor(rng(s) * routes.length)];
     const target = s.inf[a] < s.inf[b] ? a : b;
-    if (!busy.has(target)) { push('sanction', target, { route: [a, b] }); addNews(s, `World Order drafts sanctions on the ${byId(a).name}\u2013${byId(b).name} trade route. Effective in ${lead} weeks.`, 'wo'); flag(s, 'important', a, `Sanctions in ${lead} wk`); return; }
+    if (!busy.has(target)) { push('sanction', target, { route: [a, b] }); addNews(s, `World Order drafts sanctions on the ${byId(a).name}–${byId(b).name} trade route. Effective in ${lead} weeks.`, 'wo'); flag(s, 'important', a, `Sanctions in ${lead} wk`); return; }
   }
   // 4. Awareness campaign on your biggest foothold
   W.lastCampaign = W.lastCampaign || {};
-  const cc = COUNTRIES.filter(c => s.inf[c.id] >= 5 && s.inf[c.id] < 97 && !busy.has(c.id) && !(W.lastCampaign[c.id] > s.week - 20));
+  const cc = COUNTRIES.filter(c => s.inf[c.id] >= 5 && s.inf[c.id] < 97 && !busy.has(c.id) && !(W.lastCampaign[c.id] > s.week - 20) && !(Q(s, c.id).immuneAt && s.inf[c.id] >= Q(s, c.id).immuneAt));
   if (cc.length) {
     const t = cc.reduce((a, c) => (c.pop * s.inf[c.id] > a.pop * s.inf[a.id] ? c : a));
     push('campaign', t.id); addNews(s, `World Order announces an awareness campaign for ${t.name} in ${lead} weeks.`, 'wo'); flag(s, 'important', t.id, `Campaign in ${lead} wk`);
@@ -304,19 +381,21 @@ function woPlan(s) {
 }
 function woExecute(s, q) {
   const W = s.wo; const c = byId(q.target); const v = s.inf[q.target];
+  const wf = Q(s, q.target).woFail;
+  if (wf && q.kind !== 'sanction' && rng(s) < wf) { addNews(s, `The World Order’s ${q.kind === 'sign' ? 'signing ceremony' : q.kind === 'invite' ? 'invitation' : 'campaign'} in ${c.name} falls through. Nobody can say who was meant to book the room.`, 'you'); flag(s, 'important', q.target, 'Fell through'); return; }
   if (q.kind === 'sign') {
-    if (W.members[q.target] && v < TUNE.signBelow - s.stats.shield) { W.signed[q.target] = true; addNews(s, `${c.name} signs the Containment Treaty. ${signedCount(s)} of ${SIGNATURES_TO_LOSE} signatures.`, 'wo'); flag(s, 'critical', q.target, 'Signed treaty'); }
+    if (W.members[q.target] && v < signLimit(s, q.target)) { W.signed[q.target] = true; addNews(s, `${c.name} signs the Containment Treaty. ${signedCount(s)} of ${SIGNATURES_TO_LOSE} signatures.`, 'wo'); flag(s, 'critical', q.target, 'Signed treaty'); }
     else { addNews(s, `${c.name} refuses to sign. Your supporters there hid the pens.`, 'you'); flag(s, 'important', q.target, 'Refused to sign'); }
   }
   if (q.kind === 'invite') {
-    if (v < TUNE.joinBelow - s.stats.shield) { W.members[q.target] = true; addNews(s, `${c.name} joins the World Order. Membership includes a lanyard.`, 'wo'); flag(s, 'critical', q.target, 'Joined World Order'); }
-    else { addNews(s, `${c.name} declines the World Order\u2019s invitation. Too many of its people agree with you.`, 'you'); flag(s, 'important', q.target, 'Declined invitation'); }
+    if (v < TUNE.joinBelow - s.stats.shield + (Q(s, q.target).recruitDelta || 0)) { W.members[q.target] = true; addNews(s, `${c.name} joins the World Order. Membership includes a lanyard.`, 'wo'); flag(s, 'critical', q.target, 'Joined World Order'); }
+    else { addNews(s, `${c.name} declines the World Order’s invitation. Too many of its people agree with you.`, 'you'); flag(s, 'important', q.target, 'Declined invitation'); }
   }
-  if ((q.kind === 'sanction' || q.kind === 'campaign') && s.stats.sabotage && rng(s) < s.stats.sabotage) { addNews(s, `The World Order\u2019s ${q.kind === 'sanction' ? 'sanctions' : 'campaign'} in ${c.name} collapses amid mysterious scheduling conflicts.`, 'you'); return; }
-  if (q.kind === 'sanction') { s.blocked.push({ a: q.route[0], b: q.route[1], until: s.week + 30 }); addNews(s, `Sanctions close the ${byId(q.route[0]).name}\u2013${byId(q.route[1]).name} trade route for 30 weeks.`, 'wo'); flag(s, 'critical', q.route[0], 'Route closed'); }
+  if ((q.kind === 'sanction' || q.kind === 'campaign') && s.stats.sabotage && rng(s) < s.stats.sabotage) { addNews(s, `The World Order’s ${q.kind === 'sanction' ? 'sanctions' : 'campaign'} in ${c.name} collapses amid mysterious scheduling conflicts.`, 'you'); return; }
+  if (q.kind === 'sanction') { s.blocked.push({ a: q.route[0], b: q.route[1], until: s.week + 30 }); addNews(s, `Sanctions close the ${byId(q.route[0]).name}–${byId(q.route[1]).name} trade route for 30 weeks.`, 'wo'); flag(s, 'critical', q.route[0], 'Route closed'); }
   if (q.kind === 'campaign') { counterCampaign(s, q.target); W.lastCampaign = W.lastCampaign || {}; W.lastCampaign[q.target] = s.week; }
 }
-function possibleSignatures(s) { return signedCount(s) + COUNTRIES.filter(c => !s.wo.signed[c.id] && s.inf[c.id] < TUNE.signBelow - s.stats.shield).length; }
+function possibleSignatures(s) { return signedCount(s) + COUNTRIES.filter(c => !s.wo.signed[c.id] && s.inf[c.id] < signLimit(s, c.id)).length; }
 function woTick(s) {
   const W = s.wo;
   // Treaty collapse: if the World Order can no longer reach 8 signatures for 26 weeks, it dissolves.
@@ -325,11 +404,11 @@ function woTick(s) {
     if (W.hopeless === 1) addNews(s, `${SG} counts the remaining undecided nations and asks for a glass of water. Unless 8 signatures become possible within 26 weeks, the treaty collapses.`, 'you'); flag(s, 'important', null, 'Treaty failing');
   } else if (W.hopeless) { W.hopeless = 0; addNews(s, 'The World Order finds enough undecided nations to keep the treaty alive.', 'wo'); flag(s, 'important'); }
   // withdrawals: signed countries that turned to you
-  Object.keys(W.signed).forEach(id => { if (s.inf[id] >= TUNE.withdrawAt) { delete W.signed[id]; addNews(s, `${byId(id).name} withdraws its treaty signature. ${SG} is \u201cdisappointed, procedurally\u201d.`, 'you'); flag(s, 'important', id, 'Signature withdrawn'); } });
+  Object.keys(W.signed).forEach(id => { if (s.inf[id] >= TUNE.withdrawAt) { delete W.signed[id]; addNews(s, `${byId(id).name} withdraws its treaty signature. ${SG} is “disappointed, procedurally”.`, 'you'); flag(s, 'important', id, 'Signature withdrawn'); } });
   W.queue.filter(q => q.at <= s.week).forEach(q => woExecute(s, q));
   W.queue = W.queue.filter(q => q.at > s.week);
   if (fxOn(s, 'woPause')) W.nextPlan = Math.max(W.nextPlan, s.week + 1);
-  else if (s.week >= W.nextPlan) { woPlan(s); W.nextPlan = s.week + Math.max(4, Math.round(TUNE.planBase - s.notoriety / 15)) * (fxOn(s, 'woSlow') ? 2 : 1); }
+  else if (s.week >= W.nextPlan) { woPlan(s); W.nextPlan = s.week + Math.max(4, Math.round(TUNE.planBase - s.notoriety / 15) - perk(s).plan) * (fxOn(s, 'woSlow') ? 2 : 1); }
 }
 
 function treatyNews(s) {
@@ -416,8 +495,8 @@ function buyUpgrade(s, id) {
   if (u.tier === 1 && OPPOSITE[u.b]) addNews(s, `You commit to ${BRANCHES.find(b => b.id === u.b).name}. ${BRANCHES.find(b => b.id === OPPOSITE[u.b]).name} is off the table.`, 'you');
   return { ok: true };
 }
-function opCost(s, op) { return Math.max(1, (op.id === 'dossier' ? op.cost - s.stats.dossierDiscount : op.cost) - s.stats.opDiscount); }
-function opCooldown(s, op) { return op.id === 'summit' ? op.cd - s.stats.summitCd : op.cd; }
+function opCost(s, op) { return Math.max(1, (op.id === 'dossier' ? op.cost - s.stats.dossierDiscount : op.cost) - s.stats.opDiscount - perk(s).opDisc); }
+function opCooldown(s, op) { return Math.max(8, (op.id === 'summit' ? op.cd - s.stats.summitCd : op.cd) - perk(s).opCd); }
 function strongest(s, exclude) {
   return COUNTRIES.filter(c => c.id !== exclude).reduce((a, c) => (s.inf[c.id] > s.inf[a.id] ? c : a), COUNTRIES.find(c => c.id !== exclude));
 }
@@ -448,7 +527,7 @@ function doOp(s, opId, target) {
   if (opId === 'summit') {
     s.mods.push({ id: target, kind: 'summit', until: s.week + 25 }); s.notoriety += 1;
     const derailed = pendingOn(s, target);
-    if (derailed.length) { s.wo.queue = s.wo.queue.filter(q => q.target !== target); addNews(s, `Your summit in ${c.name} runs long. The World Order\u2019s plans there are postponed indefinitely.`, 'you'); }
+    if (derailed.length) { s.wo.queue = s.wo.queue.filter(q => q.target !== target); addNews(s, `Your summit in ${c.name} runs long. The World Order’s plans there are postponed indefinitely.`, 'you'); }
     else addNews(s, `Summit in ${c.name} ends with a handshake that lasts 11 seconds.`, 'you');
   }
   if (opId === 'trade') { const src = strongest(s, target); s.trade.push([src.id, target]); s.notoriety += 1; addNews(s, `${src.name} and ${c.name} sign a trade deal nobody has read.`, 'you'); }
@@ -479,8 +558,8 @@ function useSpecial(s, key, target) {
   s.specials[key] = 'used'; const W = s.wo; const c = target ? byId(target) : null;
   const leave = id => { delete W.members[id]; delete W.signed[id]; W.queue = W.queue.filter(q => q.target !== id); };
   if (key === 'utopia') { s.utopiaUntil = s.week + 26; addNews(s, 'Utopia declared. Everyone is happy, by law. Growth and income double for 26 weeks.', 'you'); }
-  if (key === 'stoppage') { s.frozenUntil = s.week + 10; addNews(s, `Stoppage Order: ${SG}\u2019s office is surrounded by very polite soldiers. The World Order is frozen for 10 weeks.`, 'you'); s.notoriety = Math.min(100, s.notoriety + 5); }
-  if (key === 'bribe') { leave(target); s.inf[target] = Math.min(100, s.inf[target] + 25); addNews(s, `${c.name}\u2019s cabinet discovers a generous consultancy contract and quits the World Order.`, 'you'); }
+  if (key === 'stoppage') { s.frozenUntil = s.week + 10; addNews(s, `Stoppage Order: ${SG}’s office is surrounded by very polite soldiers. The World Order is frozen for 10 weeks.`, 'you'); s.notoriety = Math.min(100, s.notoriety + 5); }
+  if (key === 'bribe') { leave(target); s.inf[target] = Math.min(100, s.inf[target] + 25); addNews(s, `${c.name}’s cabinet discovers a generous consultancy contract and quits the World Order.`, 'you'); }
   if (key === 'breaker') { leave(target); ['eco', 'mil', 'dip', 'ideo'].forEach(t => { s.base.pen[t] += .08; }); recomputeStats(s); addNews(s, `${c.name} walks out of the World Order, and the whole alliance system wobbles. Resistance falls everywhere.`, 'you'); }
   if (key === 'believe') {
     const old = W.hq; leave(old);
@@ -656,4 +735,4 @@ function resolveDecision(s, choice) {
 }
 
 // SIM-END
-if (typeof module !== 'undefined') module.exports = { EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };
+if (typeof module !== 'undefined') module.exports = { TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };
