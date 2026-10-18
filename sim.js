@@ -321,7 +321,7 @@ function counterCampaign(s, target) {
   s.mods.push({ id: t.id, kind: 'counter', until: s.week + Math.round(25 * (1 - fc / 2)) });
   const lines = [
     `World Order launches awareness campaign in ${t.name}. Leaflets feature a stern owl.`,
-    `Fact-checkers descend on ${t.name}. Your slogans rated “mostly vibes”.`,
+    `Fact-checkers descend on ${t.name}. Your slogans rated \u201cmostly vibes\u201d.`,
     `World Order funds ${t.name} civics classes. Attendance: mandatory, enthusiasm: optional.`,
     `${t.name} bans your pamphlets, then prints more to explain the ban.`
   ];
@@ -344,7 +344,7 @@ function woActivate(s) {
   // founding members: the HQ's neighbours and trade partners that resist you most
   const near = [...new Set([...neighbours(hq.id), ...tradeLinks(s, hq.id)])].filter(id => s.inf[id] < TUNE.joinBelow && byId(id).pop >= 1).sort((a, b) => s.inf[a] - s.inf[b]).slice(0, TUNE.founders);
   near.forEach(id => { s.wo.members[id] = true; });
-  addNews(s, `The World Order convenes in ${hq.name}${near.length ? ' with ' + near.map(id => byId(id).name).join(' and ') : ''}. ${SG}: “We are deeply concerned, and have formed a committee to be concerned more efficiently.”`, 'wo'); flag(s, 'critical', hq.id, 'World Order HQ');
+  addNews(s, `The World Order convenes in ${hq.name}${near.length ? ' with ' + near.map(id => byId(id).name).join(' and ') : ''}. ${SG}: \u201cWe are deeply concerned, and have formed a committee to be concerned more efficiently.\u201d`, 'wo'); flag(s, 'critical', hq.id, 'World Order HQ');
 }
 function woPlan(s) {
   const W = s.wo; const lead = TUNE.lead;
@@ -369,7 +369,7 @@ function woPlan(s) {
   if (routes.length && r < 0.75 && s.week >= s.noSanctionUntil) {
     const [a, b] = routes[Math.floor(rng(s) * routes.length)];
     const target = s.inf[a] < s.inf[b] ? a : b;
-    if (!busy.has(target)) { push('sanction', target, { route: [a, b] }); addNews(s, `World Order drafts sanctions on the ${byId(a).name}–${byId(b).name} trade route. Effective in ${lead} weeks.`, 'wo'); flag(s, 'important', a, `Sanctions in ${lead} wk`); return; }
+    if (!busy.has(target)) { push('sanction', target, { route: [a, b] }); addNews(s, `World Order drafts sanctions on the ${byId(a).name}\u2013${byId(b).name} trade route. Effective in ${lead} weeks.`, 'wo'); flag(s, 'important', a, `Sanctions in ${lead} wk`); return; }
   }
   // 4. Awareness campaign on your biggest foothold
   W.lastCampaign = W.lastCampaign || {};
@@ -389,10 +389,10 @@ function woExecute(s, q) {
   }
   if (q.kind === 'invite') {
     if (v < TUNE.joinBelow - s.stats.shield + (Q(s, q.target).recruitDelta || 0)) { W.members[q.target] = true; addNews(s, `${c.name} joins the World Order. Membership includes a lanyard.`, 'wo'); flag(s, 'critical', q.target, 'Joined World Order'); }
-    else { addNews(s, `${c.name} declines the World Order’s invitation. Too many of its people agree with you.`, 'you'); flag(s, 'important', q.target, 'Declined invitation'); }
+    else { addNews(s, `${c.name} declines the World Order\u2019s invitation. Too many of its people agree with you.`, 'you'); flag(s, 'important', q.target, 'Declined invitation'); }
   }
-  if ((q.kind === 'sanction' || q.kind === 'campaign') && s.stats.sabotage && rng(s) < s.stats.sabotage) { addNews(s, `The World Order’s ${q.kind === 'sanction' ? 'sanctions' : 'campaign'} in ${c.name} collapses amid mysterious scheduling conflicts.`, 'you'); return; }
-  if (q.kind === 'sanction') { s.blocked.push({ a: q.route[0], b: q.route[1], until: s.week + 30 }); addNews(s, `Sanctions close the ${byId(q.route[0]).name}–${byId(q.route[1]).name} trade route for 30 weeks.`, 'wo'); flag(s, 'critical', q.route[0], 'Route closed'); }
+  if ((q.kind === 'sanction' || q.kind === 'campaign') && s.stats.sabotage && rng(s) < s.stats.sabotage) { addNews(s, `The World Order\u2019s ${q.kind === 'sanction' ? 'sanctions' : 'campaign'} in ${c.name} collapses amid mysterious scheduling conflicts.`, 'you'); return; }
+  if (q.kind === 'sanction') { s.blocked.push({ a: q.route[0], b: q.route[1], until: s.week + 30 }); addNews(s, `Sanctions close the ${byId(q.route[0]).name}\u2013${byId(q.route[1]).name} trade route for 30 weeks.`, 'wo'); flag(s, 'critical', q.route[0], 'Route closed'); }
   if (q.kind === 'campaign') { counterCampaign(s, q.target); W.lastCampaign = W.lastCampaign || {}; W.lastCampaign[q.target] = s.week; }
 }
 function possibleSignatures(s) { return signedCount(s) + COUNTRIES.filter(c => !s.wo.signed[c.id] && s.inf[c.id] < signLimit(s, c.id)).length; }
@@ -404,7 +404,7 @@ function woTick(s) {
     if (W.hopeless === 1) addNews(s, `${SG} counts the remaining undecided nations and asks for a glass of water. Unless 8 signatures become possible within 26 weeks, the treaty collapses.`, 'you'); flag(s, 'important', null, 'Treaty failing');
   } else if (W.hopeless) { W.hopeless = 0; addNews(s, 'The World Order finds enough undecided nations to keep the treaty alive.', 'wo'); flag(s, 'important'); }
   // withdrawals: signed countries that turned to you
-  Object.keys(W.signed).forEach(id => { if (s.inf[id] >= TUNE.withdrawAt) { delete W.signed[id]; addNews(s, `${byId(id).name} withdraws its treaty signature. ${SG} is “disappointed, procedurally”.`, 'you'); flag(s, 'important', id, 'Signature withdrawn'); } });
+  Object.keys(W.signed).forEach(id => { if (s.inf[id] >= TUNE.withdrawAt) { delete W.signed[id]; addNews(s, `${byId(id).name} withdraws its treaty signature. ${SG} is \u201cdisappointed, procedurally\u201d.`, 'you'); flag(s, 'important', id, 'Signature withdrawn'); } });
   W.queue.filter(q => q.at <= s.week).forEach(q => woExecute(s, q));
   W.queue = W.queue.filter(q => q.at > s.week);
   if (fxOn(s, 'woPause')) W.nextPlan = Math.max(W.nextPlan, s.week + 1);
@@ -527,7 +527,7 @@ function doOp(s, opId, target) {
   if (opId === 'summit') {
     s.mods.push({ id: target, kind: 'summit', until: s.week + 25 }); s.notoriety += 1;
     const derailed = pendingOn(s, target);
-    if (derailed.length) { s.wo.queue = s.wo.queue.filter(q => q.target !== target); addNews(s, `Your summit in ${c.name} runs long. The World Order’s plans there are postponed indefinitely.`, 'you'); }
+    if (derailed.length) { s.wo.queue = s.wo.queue.filter(q => q.target !== target); addNews(s, `Your summit in ${c.name} runs long. The World Order\u2019s plans there are postponed indefinitely.`, 'you'); }
     else addNews(s, `Summit in ${c.name} ends with a handshake that lasts 11 seconds.`, 'you');
   }
   if (opId === 'trade') { const src = strongest(s, target); s.trade.push([src.id, target]); s.notoriety += 1; addNews(s, `${src.name} and ${c.name} sign a trade deal nobody has read.`, 'you'); }
@@ -558,8 +558,8 @@ function useSpecial(s, key, target) {
   s.specials[key] = 'used'; const W = s.wo; const c = target ? byId(target) : null;
   const leave = id => { delete W.members[id]; delete W.signed[id]; W.queue = W.queue.filter(q => q.target !== id); };
   if (key === 'utopia') { s.utopiaUntil = s.week + 26; addNews(s, 'Utopia declared. Everyone is happy, by law. Growth and income double for 26 weeks.', 'you'); }
-  if (key === 'stoppage') { s.frozenUntil = s.week + 10; addNews(s, `Stoppage Order: ${SG}’s office is surrounded by very polite soldiers. The World Order is frozen for 10 weeks.`, 'you'); s.notoriety = Math.min(100, s.notoriety + 5); }
-  if (key === 'bribe') { leave(target); s.inf[target] = Math.min(100, s.inf[target] + 25); addNews(s, `${c.name}’s cabinet discovers a generous consultancy contract and quits the World Order.`, 'you'); }
+  if (key === 'stoppage') { s.frozenUntil = s.week + 10; addNews(s, `Stoppage Order: ${SG}\u2019s office is surrounded by very polite soldiers. The World Order is frozen for 10 weeks.`, 'you'); s.notoriety = Math.min(100, s.notoriety + 5); }
+  if (key === 'bribe') { leave(target); s.inf[target] = Math.min(100, s.inf[target] + 25); addNews(s, `${c.name}\u2019s cabinet discovers a generous consultancy contract and quits the World Order.`, 'you'); }
   if (key === 'breaker') { leave(target); ['eco', 'mil', 'dip', 'ideo'].forEach(t => { s.base.pen[t] += .08; }); recomputeStats(s); addNews(s, `${c.name} walks out of the World Order, and the whole alliance system wobbles. Resistance falls everywhere.`, 'you'); }
   if (key === 'believe') {
     const old = W.hq; leave(old);
