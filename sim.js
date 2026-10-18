@@ -45,6 +45,7 @@ const BRANCHES = [
   { id: 'dip', name: 'Diplomacy', blurb: 'Spreads across land borders. Blunts the World Order.', partner: 'ideo' },
   { id: 'faith', name: 'Faith', blurb: 'Crosses oceans and borders on its own.', partner: 'covert', unlock: 'reach' },
   { id: 'covert', name: 'Covert Ops', blurb: 'Weakens every defence. Very loud.', partner: 'faith', unlock: 'wo' },
+  { id: 'under', name: 'Underworld', blurb: 'Arms, drugs, people. Destabilises everyone. Loud, and notorious.' },
   { id: 'spin', name: 'Spin', blurb: 'Keeps the World Order busy.' }
 ];
 const UPGRADES = [
@@ -78,6 +79,11 @@ const UPGRADES = [
   { id: 'c3', b: 'covert', name: 'Orchestrated Unrest', cost: 16, fx: { pen: { eco: .08, mil: .08, dip: .08, ideo: .08 }, sabotage: .4, loud: .07 }, boost: { sabotage: .15 }, text: 'All resistances −8%. 40% of World Order campaigns and sanctions fall apart. Much louder', btext: '15% more fall apart' },
   { id: 'c4', b: 'covert', name: 'Hybrid Threat', cost: 16, special: 'hybrid', text: 'Special action: every sanction is lifted, every planned World Order move is cancelled, and it cannot sanction you for 40 weeks' },
 
+  { id: 'u1', b: 'under', name: 'Arms Brokerage', cost: 6, fx: { pen: { mil: .15, ideo: .05 }, border: .015, loud: .02 }, text: 'Military resistance −15%, ideological −5%. Border spread up. Louder' },
+  { id: 'u2', b: 'under', name: 'Narcotics Pipeline', cost: 10, fx: { income: 1, pen: { dip: .15 }, growth: .02, loud: .03 }, text: 'Clout income up. Diplomatic resistance −15%. Internal growth up a little. Louder' },
+  { id: 'u3', b: 'under', name: 'Trafficking Networks', cost: 15, fx: { border: .035, pen: { eco: .15, mil: .05, dip: .05, ideo: .05 }, loud: .04, vis: .15 }, text: 'Border spread up. Economic resistance −15%, all others −5%. Notoriety grows 15% faster' },
+  { id: 'u4', b: 'under', name: 'Engineered Collapse', cost: 18, special: 'collapse', text: 'Special action: for 20 weeks every country\u2019s resistance falls by 40%. Adds 8 Notoriety' },
+
   { id: 's1', b: 'spin', name: 'Plausible Deniability', cost: 5, fx: { vis: -.15 }, text: 'Notoriety grows 15% slower' },
   { id: 's2', b: 'spin', name: 'Friendly Fact-Checkers', cost: 9, fx: { fcRed: .5 }, text: 'World Order counter-campaigns hit half as hard' },
   { id: 's3', b: 'spin', name: 'Subcommittee on Subcommittees', cost: 14, fx: { treatySlow: .25 }, text: 'Treaty drafting 25% slower' },
@@ -94,7 +100,8 @@ const SPECIALS = {
   stoppage: { name: 'Stoppage Order', target: false },
   breaker: { name: 'Alliance Breaker', target: true },
   believe: { name: 'Believe!', target: false },
-  hybrid: { name: 'Hybrid Threat', target: false }
+  hybrid: { name: 'Hybrid Threat', target: false },
+  collapse: { name: 'Engineered Collapse', target: false }
 };
 const REBRAND_COST = 10, REBRAND_NOTORIETY = 15;
 const FAITH_UNLOCK_COUNTRIES = 4;
@@ -568,6 +575,7 @@ function useSpecial(s, key, target) {
     if (s.owned.includes('c3')) s.clout += 15;
     addNews(s, `${byId(old).name} loses faith in the treaty and leaves. The World Order moves its HQ to ${byId(next).name}, losing 15% of the draft in the removal van.`, 'you');
   }
+  if (key === 'collapse') { COUNTRIES.forEach(c => resMod(s, c.id, .6, 20)); s.notoriety = Math.min(100, s.notoriety + 8); addNews(s, 'Engineered Collapse: every government wakes to rumours, shortages and unmarked vans. Resistance falls everywhere for 20 weeks.', 'you'); }
   if (key === 'hybrid') { s.blocked = []; W.queue = []; s.noSanctionUntil = s.week + 40; if (s.owned.includes('f3')) s.treaty = Math.max(0, s.treaty - 10); addNews(s, 'Hybrid Threat: nobody at the World Order can agree who is threatening whom. Every plan is shelved and sanctions are lifted.', 'you'); s.notoriety = Math.min(100, s.notoriety + 6); }
   return { ok: true };
 }

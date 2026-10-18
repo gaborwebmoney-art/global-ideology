@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-hzCwiCH9IU/8hMGniTTllCCZVjzwnF6f4K9eVAeJ3zc=' 'sha256-zFT2ff/P4farcRKGR/ceoy6/fqqG71pWJJyjn01AE2w=' 'sha256-XfkBkMGPlQCRWGZs2XgvP7kQcHsJWwiHi7h5dU4ieX0=' 'sha256-IVahs7LV+y7gwsl7jHyPKT4+GRyzLDihYOG5iEFk058=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-N6GEKl9vxF/fYS328WC6xJnaUQWX7y6Snkfn6Edk3H4=' 'sha256-zFT2ff/P4farcRKGR/ceoy6/fqqG71pWJJyjn01AE2w=' 'sha256-k06c9kH6XQkmXSNp4k/SA9wdFZVzA6uw91IxCZ/dBIE=' 'sha256-IVahs7LV+y7gwsl7jHyPKT4+GRyzLDihYOG5iEFk058=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#0d1820">
 <meta name="mobile-web-app-capable" content="yes">
@@ -647,6 +647,7 @@ const BRANCHES = [
   { id: 'dip', name: 'Diplomacy', blurb: 'Spreads across land borders. Blunts the World Order.', partner: 'ideo' },
   { id: 'faith', name: 'Faith', blurb: 'Crosses oceans and borders on its own.', partner: 'covert', unlock: 'reach' },
   { id: 'covert', name: 'Covert Ops', blurb: 'Weakens every defence. Very loud.', partner: 'faith', unlock: 'wo' },
+  { id: 'under', name: 'Underworld', blurb: 'Arms, drugs, people. Destabilises everyone. Loud, and notorious.' },
   { id: 'spin', name: 'Spin', blurb: 'Keeps the World Order busy.' }
 ];
 const UPGRADES = [
@@ -680,6 +681,11 @@ const UPGRADES = [
   { id: 'c3', b: 'covert', name: 'Orchestrated Unrest', cost: 16, fx: { pen: { eco: .08, mil: .08, dip: .08, ideo: .08 }, sabotage: .4, loud: .07 }, boost: { sabotage: .15 }, text: 'All resistances −8%. 40% of World Order campaigns and sanctions fall apart. Much louder', btext: '15% more fall apart' },
   { id: 'c4', b: 'covert', name: 'Hybrid Threat', cost: 16, special: 'hybrid', text: 'Special action: every sanction is lifted, every planned World Order move is cancelled, and it cannot sanction you for 40 weeks' },
 
+  { id: 'u1', b: 'under', name: 'Arms Brokerage', cost: 6, fx: { pen: { mil: .15, ideo: .05 }, border: .015, loud: .02 }, text: 'Military resistance −15%, ideological −5%. Border spread up. Louder' },
+  { id: 'u2', b: 'under', name: 'Narcotics Pipeline', cost: 10, fx: { income: 1, pen: { dip: .15 }, growth: .02, loud: .03 }, text: 'Clout income up. Diplomatic resistance −15%. Internal growth up a little. Louder' },
+  { id: 'u3', b: 'under', name: 'Trafficking Networks', cost: 15, fx: { border: .035, pen: { eco: .15, mil: .05, dip: .05, ideo: .05 }, loud: .04, vis: .15 }, text: 'Border spread up. Economic resistance −15%, all others −5%. Notoriety grows 15% faster' },
+  { id: 'u4', b: 'under', name: 'Engineered Collapse', cost: 18, special: 'collapse', text: 'Special action: for 20 weeks every country\u2019s resistance falls by 40%. Adds 8 Notoriety' },
+
   { id: 's1', b: 'spin', name: 'Plausible Deniability', cost: 5, fx: { vis: -.15 }, text: 'Notoriety grows 15% slower' },
   { id: 's2', b: 'spin', name: 'Friendly Fact-Checkers', cost: 9, fx: { fcRed: .5 }, text: 'World Order counter-campaigns hit half as hard' },
   { id: 's3', b: 'spin', name: 'Subcommittee on Subcommittees', cost: 14, fx: { treatySlow: .25 }, text: 'Treaty drafting 25% slower' },
@@ -696,7 +702,8 @@ const SPECIALS = {
   stoppage: { name: 'Stoppage Order', target: false },
   breaker: { name: 'Alliance Breaker', target: true },
   believe: { name: 'Believe!', target: false },
-  hybrid: { name: 'Hybrid Threat', target: false }
+  hybrid: { name: 'Hybrid Threat', target: false },
+  collapse: { name: 'Engineered Collapse', target: false }
 };
 const REBRAND_COST = 10, REBRAND_NOTORIETY = 15;
 const FAITH_UNLOCK_COUNTRIES = 4;
@@ -1170,6 +1177,7 @@ function useSpecial(s, key, target) {
     if (s.owned.includes('c3')) s.clout += 15;
     addNews(s, `${byId(old).name} loses faith in the treaty and leaves. The World Order moves its HQ to ${byId(next).name}, losing 15% of the draft in the removal van.`, 'you');
   }
+  if (key === 'collapse') { COUNTRIES.forEach(c => resMod(s, c.id, .6, 20)); s.notoriety = Math.min(100, s.notoriety + 8); addNews(s, 'Engineered Collapse: every government wakes to rumours, shortages and unmarked vans. Resistance falls everywhere for 20 weeks.', 'you'); }
   if (key === 'hybrid') { s.blocked = []; W.queue = []; s.noSanctionUntil = s.week + 40; if (s.owned.includes('f3')) s.treaty = Math.max(0, s.treaty - 10); addNews(s, 'Hybrid Threat: nobody at the World Order can agree who is threatening whom. Every plan is shelved and sanctions are lifted.', 'you'); s.notoriety = Math.min(100, s.notoriety + 6); }
   return { ok: true };
 }
@@ -1770,7 +1778,7 @@ window.GIAccounts = (() => {
     root.querySelectorAll('[data-sp]').forEach(b => b.addEventListener('click', () => { if (useSpecial(S, b.dataset.sp, b.dataset.t || null).ok) render(); }));
   }
 
-  const TREE_ORDER = ['ideo', 'eco', 'mil', 'dip', 'faith', 'covert', 'spin'];
+  const TREE_ORDER = ['ideo', 'eco', 'mil', 'dip', 'faith', 'covert', 'under', 'spin'];
   let rebrandArm = null; // two-step confirmation for Rebrand
   // Upgrades screen: level 0 = branch tiles, 1 = upgrade tiles of one branch, 2 = one upgrade (confirm here)
   let treeView = { level: 0, branch: null, up: null }, resumeSpeed = 0;
@@ -1816,12 +1824,12 @@ window.GIAccounts = (() => {
     const eyebrow = $('treeEyebrow'), title = $('treeTitle');
     if (v.level === 0) {
       eyebrow.textContent = 'Spend Clout'; title.textContent = 'Upgrades';
-      tree.innerHTML = `<details class="how"><summary>How upgrades work</summary><p>Choose a doctrine: Ideology or Economy, and Military or Diplomacy. The first upgrade of every branch is open to all; the second one commits you. Partners boost each other: Ideology and Diplomacy, Economy and Military, Faith and Covert Ops. Top-tier upgrades are one-off special actions. Each upgrade you own makes the next one 15% dearer. The game is paused while this screen is open.</p></details>
+      tree.innerHTML = `<details class="how"><summary>How upgrades work</summary><p>Choose a doctrine: Ideology or Economy, and Military or Diplomacy. The first upgrade of every branch is open to all; the second one commits you. Partners boost each other: Ideology and Diplomacy, Economy and Military, Faith and Covert Ops. Underworld and Spin work with any doctrine. Top-tier upgrades are one-off special actions. Each upgrade you own makes the next one 15% dearer. The game is paused while this screen is open.</p></details>
         <div class="tiles tiles-branches">` + TREE_ORDER.map(bid => {
           const br = BRANCHES.find(b => b.id === bid), st = branchState(bid);
           const ups = UPGRADES.filter(u => u.b === bid);
           const n = ups.filter(u => S.owned.includes(u.id)).length;
-          const sub = st.opp ? 'or ' + bname(st.opp) : bid === 'spin' ? 'any doctrine' : 'with ' + bname(br.partner);
+          const sub = st.opp ? 'or ' + bname(st.opp) : bid === 'spin' || bid === 'under' ? 'any doctrine' : 'with ' + bname(br.partner);
           const badge = st.mine ? '<span class="chip mine">Your doctrine</span>' : st.closed ? '<span class="chip closed">Closed</span>' : st.lock ? '<span class="chip closed">Locked</span>' : '';
           return `<button class="tile ${st.closed || st.lock ? 'dim' : ''} ${st.mine ? 'mine' : ''}" data-b="${bid}"><span class="tn">${br.name}</span><span class="ts">${sub}</span><span class="tp">${ups.map(u => `<i class="${S.owned.includes(u.id) ? 'on' : ''}"></i>`).join('')}<em>${n}/${ups.length}</em></span>${badge}</button>`;
         }).join('') + `</div>`;
