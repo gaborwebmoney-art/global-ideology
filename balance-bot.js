@@ -1,4 +1,5 @@
 const S = require('./sim.js');
+const CFG = process.env.GI_CFG ? JSON.parse(process.env.GI_CFG) : undefined;
 function botDecide(S, s, passive) {
   if (!s.pending) return;
   if (passive) { S.resolveDecision(s, 'b'); return; }
@@ -16,7 +17,7 @@ const PRIO = {
   quiet: ['s1','d1','i1','e1','d2','i2','s2','d3','e2','s3','f1','i3','e3','s4','d4','f2','e4','f3','f4','i4']
 };
 function play(start, seed, strat, maxW = 1500) {
-  const s = S.createState(start, seed);
+  const s = S.createState(start, seed, CFG);
   const prio = PRIO[strat] || [];
   while (!s.over && s.week < maxW) {
     S.step(s); botDecide(S, s, strat==='idle');
