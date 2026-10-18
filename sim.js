@@ -113,6 +113,107 @@ const OPS = [
   { id: 'dossier', name: 'Leaked Dossiers', branch: 'Covert Ops', cost: 10, cd: 45, text: 'Diplomatic and ideological resistance here drop to 0 for 20 weeks. A World Order member walks out and tears up its signature. Very loud.' }
 ];
 
+
+// ---- v10 prototype (cfg.v10): widened resistance profiles, domain power, 16 actions ----
+const V10_RES = {
+  borealis: { eco: .80, mil: .45, dip: .60, ideo: .15 }, aethelgard: { eco: .80, mil: .90, dip: .60, ideo: .10 },
+  laplata: { eco: .10, mil: .60, dip: .25, ideo: .40 }, isolde: { eco: .55, mil: .10, dip: .35, ideo: .80 },
+  guldor: { eco: .60, mil: .45, dip: .90, ideo: .25 }, celestia: { eco: .40, mil: .15, dip: .65, ideo: .85 },
+  helvetia: { eco: .90, mil: .10, dip: .60, ideo: .30 }, pannonia: { eco: .20, mil: .25, dip: .30, ideo: .60 },
+  koryn: { eco: .35, mil: .85, dip: .20, ideo: .70 }, tavaro: { eco: .85, mil: .60, dip: .25, ideo: .55 },
+  kestria: { eco: .25, mil: .40, dip: .35, ideo: .15 }, bharat: { eco: .40, mil: .55, dip: .30, ideo: .60 },
+  sinopeia: { eco: .85, mil: .65, dip: .30, ideo: .60 }, juche: { eco: .10, mil: .65, dip: .10, ideo: .95 },
+  nippon: { eco: .85, mil: .30, dip: .70, ideo: .55 }, pinguinia: { eco: .10, mil: .05, dip: .85, ideo: .85 }
+};
+function baseRes(s, id) { return s.cfg && s.cfg.v10 ? V10_RES[id] : byId(id).res; }
+// Share of the world's strength in a domain that you hold: progressive in support, weighted by sqrt(pop).
+function domainPower(s, t) {
+  let num = 0, den = 0;
+  COUNTRIES.forEach(c => { const w = Math.sqrt(c.pop) * resOf(s, c.id)[t]; den += w; num += w * Math.pow(s.inf[c.id] / 100, 1.5); });
+  return den ? Math.min(1, num / den) : 0;
+}
+const ACTIONS = [
+  { id: 'eco1', dom: 'eco', tier: 1, name: 'Foreign Investment', cost: 3, cd: 15 },
+  { id: 'eco2', dom: 'eco', tier: 2, name: 'Trade Deal', cost: 7, cd: 30 },
+  { id: 'eco3', dom: 'eco', tier: 3, name: 'Buyout', cost: 11, cd: 45 },
+  { id: 'eco4', dom: 'eco', tier: 4, name: 'Market Capture', cost: 16, cd: 80 },
+  { id: 'mil1', dom: 'mil', tier: 1, name: 'Show of Force', cost: 3, cd: 15 },
+  { id: 'mil2', dom: 'mil', tier: 2, name: 'Snap Exercise', cost: 7, cd: 30 },
+  { id: 'mil3', dom: 'mil', tier: 3, name: 'Proxy Garrison', cost: 11, cd: 45 },
+  { id: 'mil4', dom: 'mil', tier: 4, name: 'Regime Change', cost: 16, cd: 80 },
+  { id: 'dip1', dom: 'dip', tier: 1, name: 'Cultural Attache', cost: 3, cd: 15 },
+  { id: 'dip2', dom: 'dip', tier: 2, name: 'Summit', cost: 7, cd: 30 },
+  { id: 'dip3', dom: 'dip', tier: 3, name: 'Non-Aligned Pact', cost: 11, cd: 45 },
+  { id: 'dip4', dom: 'dip', tier: 4, name: 'Grand Accord', cost: 16, cd: 80 },
+  { id: 'ideo1', dom: 'ideo', tier: 1, name: 'Pamphlets', cost: 3, cd: 15 },
+  { id: 'ideo2', dom: 'ideo', tier: 2, name: 'Youth Movement', cost: 7, cd: 30 },
+  { id: 'ideo3', dom: 'ideo', tier: 3, name: 'Martyr Narrative', cost: 11, cd: 45 },
+  { id: 'ideo4', dom: 'ideo', tier: 4, name: 'Mass Awakening', cost: 16, cd: 80 }
+];
+function actEff(s, a, target) { return (1 - resBreakdown(s, target)[a.dom]) * (1 + domainPower(s, a.dom)); }
+function hasMod(s, id, kind) { return s.mods.some(m => m.id === id && m.kind === kind && m.until > s.week); }
+function modMul(s, id, kind) { return s.mods.filter(m => m.id === id && m.kind === kind && m.until > s.week).reduce((a, m) => a * m.mul, 1); }
+function cdKey(s, a, target) { return s.cfg && (s.cfg.cdMode === 'country' || s.cfg.cdMode === 'hybrid') ? a.id + '@' + target : a.id; }
+function nbMax(s, id) { return Math.max(0, ...neighbours(id).map(n => s.inf[n])); }
+function canAct(s, aid, target) {
+  const a = ACTIONS.find(x => x.id === aid);
+  if (s.over) return { ok: false, why: 'Game over' };
+  if (!target) return { ok: false, why: 'Pick a country' };
+  const k = cdKey(s, a, target); s.acd = s.acd || {};
+  if ((s.acd[k] || 0) > s.week) return { ok: false, why: `Ready in ${s.acd[k] - s.week} wk` };
+  if (s.cfg && s.cfg.cdMode === 'hybrid' && (s.acd['g:' + a.id] || 0) > s.week) return { ok: false, why: `Ready in ${s.acd['g:' + a.id] - s.week} wk` };
+  if (s.clout < a.cost) return { ok: false, why: 'Not enough Clout' };
+  if (s.week < s.utopiaUntil) return { ok: false, why: 'Utopia: no operations' };
+  if (s.cfg && s.cfg.gate && a.tier > 1) {
+    const n = s.owned.filter(id => UPGRADES.find(u => u.id === id).b === a.dom).length;
+    if (n < a.tier - 1) return { ok: false, why: `Needs ${a.tier - 1} ${TYPE_LABEL[a.dom]} upgrade${a.tier > 2 ? 's' : ''}` };
+  }
+  const v = s.inf[target], pend = pendingOn(s, target).length;
+  const W = s.wo;
+  if (['eco1', 'eco3', 'eco4', 'mil1', 'mil2', 'mil3', 'mil4', 'ideo1', 'ideo4'].includes(aid) && v >= 95) return { ok: false, why: 'Already yours' };
+  if (aid === 'eco2') {
+    const src = strongest(s, target);
+    if (s.inf[src.id] < 10) return { ok: false, why: 'Need 10%+ somewhere else first' };
+    if (tradeLinks(s, target).includes(src.id)) return { ok: false, why: 'Already trades with ' + src.name };
+  }
+  if (aid === 'mil1' && nbMax(s, target) < 15 && !pend) return { ok: false, why: 'Needs a neighbour at 15%+' };
+  if ((aid === 'mil2' || aid === 'mil3') && nbMax(s, target) < 25 && !pend) return { ok: false, why: 'Needs a neighbour at 25%+' };
+  if (aid === 'mil4' && nbMax(s, target) < 50) return { ok: false, why: 'Needs a neighbour at 50%+' };
+  if ((aid === 'ideo2' || aid === 'ideo3' || aid === 'eco3' || aid === 'eco4') && v <= 0) return { ok: false, why: 'No foothold here' };
+  if (aid === 'dip4' && (!W.members[target] || target === W.hq)) return { ok: false, why: 'Only a World Order member (not the HQ)' };
+  return { ok: true };
+}
+function pushSupport(s, id, amt) { if (amt <= 0) return; if (s.inf[id] <= 0) seed(s, id, 0.5, null); s.inf[id] = Math.min(100, s.inf[id] + amt); }
+function doAct(s, aid, target) {
+  const chk = canAct(s, aid, target); if (!chk.ok) return chk;
+  const a = ACTIONS.find(x => x.id === aid), e = actEff(s, a, target), W = s.wo, c = byId(target);
+  s.clout -= a.cost; s.acd[cdKey(s, a, target)] = s.week + a.cd; if (s.cfg.cdMode === 'hybrid') s.acd['g:' + a.id] = s.week + Math.round(a.cd / 3);
+  s.actLog = s.actLog || []; s.actLog.push(aid);
+  const cancel = kinds => { W.queue = W.queue.filter(q => !(q.target === target && (!kinds || kinds.includes(q.kind)))); };
+  const leave = id => { delete W.members[id]; delete W.signed[id]; W.queue = W.queue.filter(q => q.target !== id); };
+  const noto = n => addNoto(s, n);
+  switch (aid) {
+    case 'eco1': pushSupport(s, target, 3 * e); break;
+    case 'eco2': { const src = strongest(s, target); s.trade.push([src.id, target]); pushSupport(s, target, 2 * e); noto(1); break; }
+    case 'eco3': resMod(s, target, .5, 30, ['eco']); pushSupport(s, target, 6 * e); break;
+    case 'eco4': pushSupport(s, target, 12 * e); s.mods.push({ id: target, kind: 'tradeIn', mul: 2, until: s.week + 40 }); noto(1); break;
+    case 'mil1': pushSupport(s, target, 4 * e); noto(1); break;
+    case 'mil2': cancel(); pushSupport(s, target, 10 * e); noto(3); break;
+    case 'mil3': cancel(['invite', 'sign']); s.mods.push({ id: target, kind: 'noInvite', until: s.week + 40 }, { id: target, kind: 'noSign', until: s.week + 40 }); pushSupport(s, target, 6 * e); noto(3); break;
+    case 'mil4': pushSupport(s, target, 25 * e); if (W.members[target] && target !== W.hq) leave(target); delete W.signed[target]; noto(6); break;
+    case 'dip1': resMod(s, target, Math.max(.4, 1 - .15 * e), 20); break;
+    case 'dip2': resMod(s, target, Math.max(.3, 1 - .4 * e), 25); cancel(); noto(.5); break;
+    case 'dip3': [target, ...neighbours(target)].forEach(id => { s.mods.push({ id, kind: 'noInvite', until: s.week + 40 }); W.queue = W.queue.filter(q => !(q.target === id && q.kind === 'invite')); }); break;
+    case 'dip4': leave(target); s.treaty = Math.max(0, s.treaty - 10 * e); break;
+    case 'ideo1': pushSupport(s, target, 3 * e); break;
+    case 'ideo2': s.mods.push({ id: target, kind: 'growth', mul: 1 + e, until: s.week + 25 }); break;
+    case 'ideo3': s.mods.push({ id: target, kind: 'noCampaign', until: s.week + 40 }, { id: target, kind: 'growth', mul: 1 + .3 * e, until: s.week + 40 }); cancel(['campaign']); break;
+    case 'ideo4': pushSupport(s, target, 20 * e); neighboursOrTrade(s, target).forEach(n => pushSupport(s, n, 5 * actEff(s, a, n))); noto(4); break;
+  }
+  addNews(s, `${a.name} in ${c.name}.`, 'you');
+  return { ok: true };
+}
+
 const WIN_SHARE = 0.70;
 const SIGNATURES_TO_LOSE = 8;
 const SG = 'Secretary-General Horatio Quorum';
@@ -163,7 +264,7 @@ function perk(s) {
   (s.cond || []).forEach(id => add(CONDITIONS.find(c => c.id === id).fx));
   return p;
 }
-function resOf(s, id) { return (s.res && s.res[id]) || byId(id).res; }
+function resOf(s, id) { return (s.res && s.res[id]) || baseRes(s, id); }
 function signLimit(s, id) { return TUNE.signBelow - s.stats.shield + (Q(s, id).signDelta || 0); }
 
 function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
@@ -192,8 +293,8 @@ function createState(startId, seed, opts) {
     COUNTRIES.forEach(c => {
       s.res[c.id] = {};
       TYPES.forEach(t => {
-        let v = c.res[t] * (1 + (rng(s) - .5) * .3);
-        if (c.id === 'sinopeia' || c.id === 'bharat') v = Math.min(v, c.res[t] + .03);
+        const b0 = baseRes(s, c.id)[t]; let v = b0 * (1 + (rng(s) - .5) * .3);
+        if (c.id === 'sinopeia' || c.id === 'bharat') v = Math.min(v, b0 + .03);
         s.res[c.id][t] = Math.round(Math.min(.9, Math.max(.05, v)) * 100) / 100;
       });
     });
@@ -242,7 +343,7 @@ function step(s) {
   // 1. Internal growth (logistic)
   COUNTRIES.forEach(c => {
     const v = s.inf[c.id]; if (v <= 0) return;
-    const g = st.growth * (c.growthMul || 1) * (Q(s, c.id).gMul || 1) * pk.growth * (1 - R[c.id]) * (s.week < s.utopiaUntil ? 2 : 1) * (fxOn(s, 'growthMul') || 1);
+    const g = st.growth * (c.growthMul || 1) * (Q(s, c.id).gMul || 1) * pk.growth * (1 - R[c.id]) * (s.week < s.utopiaUntil ? 2 : 1) * (fxOn(s, 'growthMul') || 1) * modMul(s, c.id, 'growth') * (s.cfg.v10 ? 1 + .5 * domainPower(s, 'ideo') : 1);
     d[c.id] += g * v * (1 - v / 100) + 0.04 * (1 - R[c.id]);
   });
   // 1b. Quirk: support swings (unstable countries)
@@ -260,7 +361,7 @@ function step(s) {
       const sv = s.inf[src]; if (sv < 8) return;
       const inward = s.mods.some(m => m.id === src && m.inward && m.until > s.week) ? .5 : 1;
       const qIn = kind === 'trade' && Q(s, dst).tradeInMul !== undefined ? Q(s, dst).tradeInMul : (Q(s, dst).inMul || 1);
-      const pull = rate * inward * qIn * (Q(s, src).outMul || 1) * (sv / 100) * (1 - R[dst]);
+      const pull = rate * inward * qIn * (kind === 'trade' ? modMul(s, dst, 'tradeIn') : 1) * (Q(s, src).outMul || 1) * (sv / 100) * (1 - R[dst]);
       if (s.inf[dst] <= 0) {
         if (rng(s) < pull * 3) seed(s, dst, 1, src);
       } else if (s.inf[dst] < sv) {
@@ -278,7 +379,7 @@ function step(s) {
 
   const share = alignedShare(s); s.peakShare = Math.max(s.peakShare, share);
   // 4. Clout income + opportunity bubbles
-  s.clout += TUNE.income * Math.max(0.05, 0.12 + 0.06 * (st.income + pk.income)) * (1 + TUNE.shareIncome * share) * (s.week < s.utopiaUntil ? 2 : 1) * (fxOn(s, 'incomeMul') || 1);
+  s.clout += TUNE.income * Math.max(0.05, 0.12 + 0.06 * (st.income + pk.income)) * (1 + TUNE.shareIncome * share) * (s.week < s.utopiaUntil ? 2 : 1) * (fxOn(s, 'incomeMul') || 1) * (s.cfg.v10 ? 1 + domainPower(s, 'eco') : 1);
   s.bubbles = s.bubbles.filter(b => b.until > s.week);
   const held = COUNTRIES.filter(c => s.inf[c.id] > 0);
   if (held.length && rng(s) < 0.16 + 0.1 * share + pk.bubble) {
@@ -361,12 +462,12 @@ function woPlan(s) {
   const push = (kind, target, extra) => { W.queue.push(Object.assign({ key: ++W.seq, kind, target, at: s.week + lead, planned: s.week }, extra || {})); };
   // 1. Signatures, as far as the draft allows
   if (signedCount(s) + pendingSigns < signCapacity(s)) {
-    const c = members.filter(id => !W.signed[id] && !busy.has(id) && s.inf[id] < signLimit(s, id)).sort((a, b) => s.inf[a] - s.inf[b])[0];
+    const c = members.filter(id => !W.signed[id] && !busy.has(id) && !hasMod(s, id, 'noSign') && s.inf[id] < signLimit(s, id)).sort((a, b) => s.inf[a] - s.inf[b])[0];
     if (c) { push('sign', c); addNews(s, `${SG} schedules a signing ceremony in ${byId(c).name} in ${lead} weeks. Commemorative pens ordered.`, 'wo'); flag(s, 'important', c, `Signing in ${lead} wk`); return; }
   }
   // 2. Recruit members: biggest country that still resists you
   const r = rng(s);
-  const recruits = COUNTRIES.filter(c => !W.members[c.id] && !busy.has(c.id) && !Q(s, c.id).noRecruit && s.inf[c.id] < TUNE.joinBelow - s.stats.shield - 10 + (Q(s, c.id).recruitDelta || 0) && c.pop >= 1).sort((a, b) => b.pop - a.pop);
+  const recruits = COUNTRIES.filter(c => !W.members[c.id] && !busy.has(c.id) && !hasMod(s, c.id, 'noInvite') && !Q(s, c.id).noRecruit && s.inf[c.id] < TUNE.joinBelow - s.stats.shield - 10 + (Q(s, c.id).recruitDelta || 0) && c.pop >= 1).sort((a, b) => b.pop - a.pop);
   if (recruits.length && (r < 0.55 || memberCount(s) < SIGNATURES_TO_LOSE)) {
     const c = recruits[Math.floor(rng(s) * Math.min(3, recruits.length))];
     push('invite', c.id); addNews(s, `World Order invites ${c.name} to join. RSVP in ${lead} weeks.`, 'wo'); flag(s, 'important', c.id, `Invitation in ${lead} wk`); return;
@@ -380,7 +481,7 @@ function woPlan(s) {
   }
   // 4. Awareness campaign on your biggest foothold
   W.lastCampaign = W.lastCampaign || {};
-  const cc = COUNTRIES.filter(c => s.inf[c.id] >= 5 && s.inf[c.id] < 97 && !busy.has(c.id) && !(W.lastCampaign[c.id] > s.week - 20) && !(Q(s, c.id).immuneAt && s.inf[c.id] >= Q(s, c.id).immuneAt));
+  const cc = COUNTRIES.filter(c => s.inf[c.id] >= 5 && s.inf[c.id] < 97 && !busy.has(c.id) && !hasMod(s, c.id, 'noCampaign') && !(W.lastCampaign[c.id] > s.week - 20) && !(Q(s, c.id).immuneAt && s.inf[c.id] >= Q(s, c.id).immuneAt));
   if (cc.length) {
     const t = cc.reduce((a, c) => (c.pop * s.inf[c.id] > a.pop * s.inf[a.id] ? c : a));
     push('campaign', t.id); addNews(s, `World Order announces an awareness campaign for ${t.name} in ${lead} weeks.`, 'wo'); flag(s, 'important', t.id, `Campaign in ${lead} wk`);
@@ -415,7 +516,7 @@ function woTick(s) {
   W.queue.filter(q => q.at <= s.week).forEach(q => woExecute(s, q));
   W.queue = W.queue.filter(q => q.at > s.week);
   if (fxOn(s, 'woPause')) W.nextPlan = Math.max(W.nextPlan, s.week + 1);
-  else if (s.week >= W.nextPlan) { woPlan(s); W.nextPlan = s.week + Math.max(4, Math.round(TUNE.planBase - s.notoriety / 15) - perk(s).plan) * (fxOn(s, 'woSlow') ? 2 : 1); }
+  else if (s.week >= W.nextPlan) { woPlan(s); W.nextPlan = s.week + Math.max(4, Math.round(TUNE.planBase - s.notoriety / 15) - perk(s).plan + (s.cfg.v10 ? Math.round(3 * domainPower(s, 'dip')) : 0)) * (fxOn(s, 'woSlow') ? 2 : 1); }
 }
 
 function treatyNews(s) {
@@ -743,4 +844,4 @@ function resolveDecision(s, choice) {
 }
 
 // SIM-END
-if (typeof module !== 'undefined') module.exports = { TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };
+if (typeof module !== 'undefined') module.exports = { ACTIONS, canAct, doAct, domainPower, actEff, resBreakdown, TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };
