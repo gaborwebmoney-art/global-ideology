@@ -94,6 +94,33 @@ const OPPOSITE = { ideo: 'eco', eco: 'ideo', mil: 'dip', dip: 'mil' };
 // the tier-3 upgrade that boosts each branch (and gates its capstone)
 const SYNERGY = { ideo: 'd3', dip: 'i3', mil: 'e3', eco: 'm3', faith: 'c3', covert: 'f3' };
 const CAPSTONE_NEEDS = { i4: 'd3', d4: 'i3', m4: 'e3', e4: 'm3' };
+// v10 (cfg.pairs !== false): every non-opposed core branch is a partner. A branch is boosted by the tier-3 upgrade of
+// either partner, and each of the 4 legal pairs has its own pair bonus once both branches are doctrines (tier 2 owned).
+// Switches for testing: cfg.minor (opposed branch open up to tier 2 at +50% cost), cfg.softLock (no lock: opposed
+// upgrades past tier 1 cost +50% and add Notoriety).
+const CORE = ['ideo', 'eco', 'mil', 'dip'];
+const PAIRS = [
+  { id: 'ecodip', a: 'eco', b: 'dip', name: 'Dollar Diplomacy', text: 'Trade routes also carry border spread. Clout income strengthens Diplomacy actions' },
+  { id: 'ideomil', a: 'ideo', b: 'mil', name: 'Revolutionary Guard', text: 'Military actions also lift internal growth in the target for 20 weeks, and are half as loud' },
+  { id: 'ideodip', a: 'ideo', b: 'dip', name: 'Soft Power', text: 'Diplomacy actions also lift internal growth in the target for 20 weeks. Diplomatic strength adds to Ideology actions' },
+  { id: 'ecomil', a: 'eco', b: 'mil', name: 'War Economy', text: 'Military actions cost 25% less. Military strength adds to Clout income' }
+];
+const upg = id => UPGRADES.find(x => x.id === id);
+function v10Pairs(s) { return !!(s.cfg && s.cfg.v10 && s.cfg.pairs !== false); }
+function synergyOf(s, b) { return v10Pairs(s) && CORE.includes(b) ? CORE.filter(x => x !== b && x !== OPPOSITE[b]).map(x => x[0] + '3') : SYNERGY[b] ? [SYNERGY[b]] : []; }
+function hasT2(s, b) { return s.owned.some(id => { const u = upg(id); return u.b === b && u.tier >= 1; }); }
+// the doctrine of an opposed pair: whichever of the two branches reached tier 2 first
+function doctrineOf(s, b) { const o = OPPOSITE[b]; if (!o) return null; for (const id of s.owned) { const u = upg(id); if (u.tier >= 1 && (u.b === b || u.b === o)) return u.b; } return null; }
+// tier index from which branch b is closed, or null when open
+function closedFrom(s, b) { const o = OPPOSITE[b]; if (!o || s.cfg.softLock || doctrineOf(s, b) !== o) return null; return s.cfg.minor ? 2 : 1; }
+// an upgrade in the branch opposed to your doctrine (allowed only by cfg.minor or cfg.softLock)
+function offDoctrine(s, u) { const o = OPPOSITE[u.b]; return !!(o && u.tier >= 1 && (s.cfg.minor || s.cfg.softLock) && doctrineOf(s, u.b) === o); }
+function pairOn(s, pid) {
+  if (!v10Pairs(s)) return false;
+  const p = PAIRS.find(x => x.id === pid);
+  const doc = b => s.cfg.softLock ? hasT2(s, b) : doctrineOf(s, b) === b;
+  return doc(p.a) && doc(p.b);
+}
 const SPECIALS = {
   utopia: { name: 'Utopia', target: false },
   bribe: { name: 'Government Bribe', target: true },
@@ -126,7 +153,7 @@ const V10_RES = {
   nippon: { eco: .85, mil: .30, dip: .70, ideo: .55 }, pinguinia: { eco: .10, mil: .05, dip: .85, ideo: .85 }
 };
 // tuning knobs for the prototype (the bot overrides some via cfg.v10t)
-const V10 = { courtWeeks: 8, drain: 4, knockMul: 1, pushMul: 0.6, pnr: 66, t4Up: 10,
+const V10 = { edEff: 1.5, edTrade: 1.5, offCost: 1.5, offNoto: 3, courtWeeks: 8, drain: 4, knockMul: 1, pushMul: 0.6, pnr: 66, t4Up: 10,
   // Enforcement: growth malus per signature before ratification; weekly drains and income cut once ratified
   sigGrowth: .04, enfSigned: 1.5, enfMember: .75, enfOther: .5, enfIncome: .6, enfLoss: 'allSigned', enfShareFloor: .03, enfLimit: 0, enfCourtMul: 1, enfSlot: 0, enfRamp: .075, costs: [4, 7, 10, 14], cds: [15, 30, 45, 80] };
 function v10t(s, k) { return (s.cfg.v10t && s.cfg.v10t[k] !== undefined) ? s.cfg.v10t[k] : V10[k]; }
@@ -157,9 +184,12 @@ const ACTIONS = [
   { id: 'ideo4', dom: 'ideo', tier: 4, name: 'Popular Uprising', text: 'Courtship wiped, country cannot be courted 40 wk, +15 support' }
 ];
 ACTIONS.forEach(a => { a.cost = V10.costs[a.tier - 1]; a.cd = V10.cds[a.tier - 1]; });
-function actCost(s, a) { return v10t(s, 'costs')[a.tier - 1]; }
+function actCost(s, a) { const c = v10t(s, 'costs')[a.tier - 1]; return a.dom === 'mil' && pairOn(s, 'ecomil') ? Math.max(1, Math.round(c * .75)) : c; }
 function actCd(s, a) { return v10t(s, 'cds')[a.tier - 1]; }
-function actEff(s, a, target) { return (1 - resBreakdown(s, target)[a.dom]) * (1 + domainPower(s, a.dom)); }
+function actEff(s, a, target) {
+  const pair = a.dom === 'dip' && pairOn(s, 'ecodip') ? 1 + v10t(s, 'edEff') * domainPower(s, 'eco') : a.dom === 'ideo' && pairOn(s, 'ideodip') ? 1 + .5 * domainPower(s, 'dip') : 1;
+  return (1 - resBreakdown(s, target)[a.dom]) * (1 + domainPower(s, a.dom)) * pair;
+}
 function hasMod(s, id, kind) { return s.mods.some(m => m.id === id && m.kind === kind && m.until > s.week); }
 function modMul(s, id, kind) { return s.mods.filter(m => m.id === id && m.kind === kind && m.until > s.week).reduce((a, m) => a * m.mul, 1); }
 function cdKey(s, a, target) { return s.cfg && (s.cfg.cdMode === 'country' || s.cfg.cdMode === 'hybrid') ? a.id + '@' + target : a.id; }
@@ -205,8 +235,9 @@ function doAct(s, aid, target) {
   if (s.cfg.cdMode === 'hybrid') s.acd['g:' + a.id] = s.week + Math.round(actCd(s, a) / 3);
   s.actLog = s.actLog || []; s.actLog.push(aid);
   const leave = id => { delete W.members[id]; delete W.signed[id]; W.queue = W.queue.filter(q => q.target !== id); W.court = (W.court || []).filter(c => c.target !== id); };
-  const noto = n => addNoto(s, n);
+  const noto = n => addNoto(s, a.dom === 'mil' && pairOn(s, 'ideomil') ? n / 2 : n);
   const block = (id, wk) => s.mods.push({ id, kind: 'noCourt', until: s.week + wk });
+  if (target && ((a.dom === 'mil' && pairOn(s, 'ideomil')) || (a.dom === 'dip' && pairOn(s, 'ideodip')))) s.mods.push({ id: target, kind: 'growth', mul: 1.3, until: s.week + 20 });
   switch (aid) {
     case 'eco1': pushSupport(s, target, 2.5 * e); knock(s, target, 5, a); break;
     case 'eco2': { const src = strongest(s, target); s.trade.push([src.id, target]); pushSupport(s, target, 2 * e); noto(1); break; }
@@ -456,7 +487,7 @@ function step(s) {
     });
   };
   BORDERS.forEach(([a, b]) => spread(a, b, st.border * pk.border, 'border'));
-  s.trade.forEach(([a, b]) => { if (!isBlocked(s, a, b)) spread(a, b, st.trade * pk.trade * (fxOn(s, 'tradeMul') || 1), 'trade'); });
+  s.trade.forEach(([a, b]) => { if (!isBlocked(s, a, b)) spread(a, b, (st.trade * pk.trade + (pairOn(s, 'ecodip') ? v10t(s, 'edTrade') * st.border * pk.border : 0)) * (fxOn(s, 'tradeMul') || 1), 'trade'); });
   // 3. Faith reach: distant seeding
   if (st.reach > 0) COUNTRIES.forEach(c => {
     if (s.inf[c.id] <= 0 && rng(s) < st.reach * (1 + 6 * alignedShare(s)) * (1 - R[c.id])) seed(s, c.id, 1, null);
@@ -465,7 +496,7 @@ function step(s) {
 
   const share = alignedShare(s); s.peakShare = Math.max(s.peakShare, share);
   // 4. Clout income + opportunity bubbles
-  s.clout += TUNE.income * Math.max(0.05, 0.12 + 0.06 * (st.income + pk.income)) * (1 + TUNE.shareIncome * share) * (s.week < s.utopiaUntil ? 2 : 1) * (fxOn(s, 'incomeMul') || 1) * (s.cfg.v10 ? (1 + domainPower(s, 'eco')) * (ratified(s) ? v10t(s, 'enfIncome') : 1) : 1);
+  s.clout += TUNE.income * Math.max(0.05, 0.12 + 0.06 * (st.income + pk.income)) * (1 + TUNE.shareIncome * share) * (s.week < s.utopiaUntil ? 2 : 1) * (fxOn(s, 'incomeMul') || 1) * (s.cfg.v10 ? (1 + domainPower(s, 'eco')) * (pairOn(s, 'ecomil') ? 1 + .5 * domainPower(s, 'mil') : 1) * (ratified(s) ? v10t(s, 'enfIncome') : 1) : 1);
   s.bubbles = s.bubbles.filter(b => b.until > s.week);
   const held = COUNTRIES.filter(c => s.inf[c.id] > 0);
   if (held.length && rng(s) < 0.16 + 0.1 * share + pk.bubble) {
@@ -634,12 +665,12 @@ function milestoneNews(s, share) {
 }
 
 // ---- Player actions ----
-function upCost(s, u) { const base = s.cfg.v10 && u.special && ['ideo', 'eco', 'mil', 'dip'].includes(u.b) ? v10t(s, 't4Up') : u.cost; return Math.round(base * (1 + TUNE.costGrow * s.owned.length)); }
+function upCost(s, u) { const base = s.cfg.v10 && u.special && CORE.includes(u.b) ? v10t(s, 't4Up') : u.cost; return Math.round(base * (1 + TUNE.costGrow * s.owned.length) * (offDoctrine(s, u) ? v10t(s, 'offCost') : 1)); }
 function canBuy(s, u) {
   if (s.owned.includes(u.id)) return { ok: false, why: 'Owned' };
   if (u.req && !s.owned.includes(u.req)) return { ok: false, why: 'Needs ' + UPGRADES.find(x => x.id === u.req).name };
-  const opp = OPPOSITE[u.b];
-  if (opp && u.tier >= 1 && committed(s, opp)) return { ok: false, why: 'Closed: you chose ' + BRANCHES.find(b => b.id === opp).name };
+  const opp = OPPOSITE[u.b], cf = closedFrom(s, u.b);
+  if (cf !== null && u.tier >= cf) return { ok: false, why: cf === 2 ? 'Minor branch: tiers 1\u20132 only' : 'Closed: you chose ' + BRANCHES.find(b => b.id === opp).name };
   const lock = branchLock(s, u.b); if (lock) return { ok: false, why: lock };
   if (CAPSTONE_NEEDS[u.id] && !(s.cfg.v10 && s.cfg.capNeeds !== true) && !s.owned.includes(CAPSTONE_NEEDS[u.id])) return { ok: false, why: 'Needs ' + UPGRADES.find(x => x.id === CAPSTONE_NEEDS[u.id]).name };
   if (s.clout < upCost(s, u)) return { ok: false, why: 'Not enough Clout' };
@@ -651,7 +682,7 @@ function branchLock(s, b) {
   if (br.unlock === 'wo' && !s.coalition && !s.owned.some(id => id[0] === 'c')) return 'Opens when the World Order convenes';
   return null;
 }
-function boosted(s, u) { return !!(SYNERGY[u.b] && s.owned.includes(SYNERGY[u.b])); }
+function boosted(s, u) { return synergyOf(s, u.b).some(id => s.owned.includes(id)); }
 function recomputeStats(s) {
   const st = JSON.parse(JSON.stringify(s.base));
   const add = fx => Object.entries(fx || {}).forEach(([k, v]) => {
@@ -661,7 +692,7 @@ function recomputeStats(s) {
   s.owned.forEach(id => { const u = UPGRADES.find(x => x.id === id); add(u.fx); if (boosted(s, u)) add(u.boost); });
   s.stats = st;
 }
-function committed(s, b) { return s.owned.some(id => { const u = UPGRADES.find(x => x.id === id); return u.b === b && u.tier >= 1; }); }
+function committed(s, b) { return s.cfg && s.cfg.softLock ? hasT2(s, b) : doctrineOf(s, b) === b; }
 function doctrines(s) { return Object.keys(OPPOSITE).filter(b => committed(s, b)); }
 function canRebrand(s, b) {
   if (!committed(s, b)) return { ok: false, why: 'Not your doctrine' };
@@ -684,15 +715,21 @@ function rebrand(s, b) {
 }
 function buyUpgrade(s, id) {
   const u = UPGRADES.find(x => x.id === id); const chk = canBuy(s, u); if (!chk.ok) return chk;
+  const off = offDoctrine(s, u), pairsBefore = PAIRS.filter(p => pairOn(s, p.id)).map(p => p.id);
   s.clout -= upCost(s, u); s.owned.push(id);
+  if (off && s.cfg.softLock) addNoto(s, v10t(s, 'offNoto'));
   if (u.once && u.once.treaty) s.treaty = Math.max(0, s.treaty + u.once.treaty);
   if (u.once && u.once.seed) { const zeros = COUNTRIES.filter(c => s.inf[c.id] <= 0); for (let i = 0; i < u.once.seed && zeros.length; i++) seed(s, zeros.splice(Math.floor(rng(s) * zeros.length), 1)[0].id, 2, null); }
   if (u.special && s.cfg.v10 && TYPES.includes(u.b)) { const a = ACTIONS.find(x => x.dom === u.b && x.tier === 4); addNews(s, `${u.name} unlocks ${a.name}, a tier-4 action. Find it under Actions.`, 'you'); }
   else if (u.special) { s.specials[u.special] = 'ready'; addNews(s, `${u.name} is ready. Use it when the moment is right: it works once.`, 'you'); }
   recomputeStats(s);
-  const partnerOf = Object.keys(SYNERGY).find(b => SYNERGY[b] === id);
-  if (partnerOf && s.owned.some(x => x[0] === partnerOf[0] && UPGRADES.find(y => y.id === x).b === partnerOf)) addNews(s, `${u.name} strengthens your ${BRANCHES.find(b => b.id === partnerOf).name} upgrades.`, 'you');
-  if (u.tier === 1 && OPPOSITE[u.b]) addNews(s, `You commit to ${BRANCHES.find(b => b.id === u.b).name}. ${BRANCHES.find(b => b.id === OPPOSITE[u.b]).name} is off the table.`, 'you');
+  const bn = b => BRANCHES.find(x => x.id === b).name;
+  BRANCHES.filter(b => b.id !== u.b && synergyOf(s, b.id).includes(id) && s.owned.some(x => upg(x).b === b.id)).forEach(b => addNews(s, `${u.name} strengthens your ${b.name} upgrades.`, 'you'));
+  if (u.tier === 1 && OPPOSITE[u.b] && !off) {
+    const o = bn(OPPOSITE[u.b]);
+    addNews(s, `You commit to ${bn(u.b)}. ` + (s.cfg.softLock ? `${o} upgrades past tier 1 now cost 50% more and draw attention.` : s.cfg.minor ? `${o} stays open as a minor branch, tiers 1\u20132 at 50% more.` : `${o} is off the table.`), 'you');
+  }
+  PAIRS.filter(p => pairOn(s, p.id) && !pairsBefore.includes(p.id)).forEach(p => addNews(s, `${bn(p.a)} and ${bn(p.b)} combine: ${p.name}. ${p.text}.`, 'you'));
   return { ok: true };
 }
 function opCost(s, op) { return Math.max(1, (op.id === 'dossier' ? op.cost - s.stats.dossierDiscount : op.cost) - s.stats.opDiscount - perk(s).opDisc); }
@@ -936,4 +973,4 @@ function resolveDecision(s, choice) {
 }
 
 // SIM-END
-if (typeof module !== 'undefined') module.exports = { ratified, enforcementTick, sigGrowthMul, populated, courtOn, actCost, ACTIONS, canAct, doAct, domainPower, actEff, resBreakdown, TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };
+if (typeof module !== 'undefined') module.exports = { PAIRS, pairOn, synergyOf, doctrineOf, closedFrom, offDoctrine, hasT2, CORE, ratified, enforcementTick, sigGrowthMul, populated, courtOn, actCost, ACTIONS, canAct, doAct, domainPower, actEff, resBreakdown, TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };

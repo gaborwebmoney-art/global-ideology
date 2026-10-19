@@ -5,8 +5,10 @@ const S = require('./sim.js');
 const PER_START = +(process.argv[2] || 6);
 
 const BUILDS = { 'Ideo+Dip': ['ideo', 'dip'], 'Eco+Mil': ['eco', 'mil'], 'Ideo+Mil': ['ideo', 'mil'], 'Eco+Dip': ['eco', 'dip'] };
-const prioFor = ([a, b], rush) => { const ids = t => S.UPGRADES.filter(u => u.b === t).map(u => u.id); const A = ids(a), B = ids(b);
-  return rush ? [A[0], B[0], A[1], A[2], A[3], B[1], B[2], B[3]] : [0, 1, 2, 3].flatMap(i => [A[i], B[i]]); };
+// an optional 3rd branch (br[2]) is bought after the main two, capped at cap3 upgrades (minor branch = 2)
+const prioFor = ([a, b, c], rush, cap3) => { const ids = t => S.UPGRADES.filter(u => u.b === t).map(u => u.id); const A = ids(a), B = ids(b);
+  const main = rush ? [A[0], B[0], A[1], A[2], A[3], B[1], B[2], B[3]] : [0, 1, 2, 3].flatMap(i => [A[i], B[i]]);
+  return c ? main.concat(ids(c).slice(0, cap3 || 4)) : main; };
 
 // support-equivalent of the support-pushing actions, for the greedy spender
 const AMT = { eco1: 2.5, ideo1: 2.5, mil1: 3, eco2: 6, dip1: 4, mil2: 8, dip2: 9, ideo2: 8, eco3: 10, ideo3: 6 };
@@ -39,13 +41,14 @@ function bestAction(s) {
 
 function play(start, seed, cfg, build, sharp) {
   const s = S.createState(start, seed, Object.assign({ v10: true, cdMode: 'global', gate: true }, cfg));
-  const prio = prioFor(BUILDS[build], cfg.rush);
-  let w4 = 0, crisis = 0;
+  const prio = prioFor(BUILDS[build], cfg.rush, cfg.minor ? 2 : 4);
+  let w4 = 0, crisis = 0, pw = 0, t2b = 0;
   while (!s.over && s.week < 1500) {
     S.step(s);
     if (s.pending) { let c = 'a'; if (!S.canChoose(s, c).ok) c = 'b'; S.resolveDecision(s, c); }
     s.bubbles.slice().forEach(b => { if (sharp || Math.random() < 0.6) S.collectBubble(s, b.key); });
     if (!w4 && ['e4', 'm4', 'd4', 'i4'].some(id => s.owned.includes(id))) w4 = s.week;
+    if (!pw && S.PAIRS && S.PAIRS.some(p => S.pairOn(s, p.id))) pw = s.week; if (!t2b && s.owned.length >= 6) t2b = s.week;
     if ((s.wo.court || []).some(c => c.prog >= 66)) crisis++;
     if (!sharp && s.week % 4) continue;
     for (const id of prio) { if (s.owned.includes(id)) continue; const r = S.buyUpgrade(s, id); if (!r.ok && r.why === 'Not enough Clout') break; }
@@ -66,7 +69,7 @@ function play(start, seed, cfg, build, sharp) {
   }
   const log = s.actLog || [];
   const tiers = [1, 2, 3, 4].map(t => log.filter(id => +id.slice(-1) === t).length);
-  return { over: s.over || 'timeout', week: s.week, acts: log.length, tiers, t4: tiers[3] > 0, w4, crisis, ratAt: s.wo.ratifiedAt || 0, cb: s.comebacks || 0 };
+  return { pw, t2b, owned: s.owned.length, clout: Math.round(s.clout), over: s.over || 'timeout', week: s.week, acts: log.length, tiers, t4: tiers[3] > 0, w4, crisis, ratAt: s.wo.ratifiedAt || 0, cb: s.comebacks || 0 };
 }
 
 const T = { courtWeeks: 8, pushMul: 0.6 };

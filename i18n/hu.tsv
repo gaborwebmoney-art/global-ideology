@@ -791,3 +791,23 @@ No foothold here	Itt nincs hídfőd
 actions	akciókra
 Win by aligning 70% of the world, or by holding so many countries (60%+ support) that the World Order can never reach 8 signatures for 26 weeks. When 8 countries sign, the treaty is ratified and Enforcement drains your support everywhere until you break it or fade away.	Nyerj a világ 70%-ának összehangolásával, vagy annyi ország (60%+ támogatás) megtartásával, hogy a Világrend 26 hétig ne gyűjthessen 8 aláírást. Ha 8 ország aláír, a szerződést ratifikálják, és a Végrehajtás mindenhol apasztja a támogatásodat, amíg meg nem töröd, vagy el nem tűnsz.
 Upgrades lower resistances everywhere; actions hit one country.	A fejlesztések mindenhol csökkentik az ellenállást; az akciók egy országra hatnak.
+Choose a doctrine in each pair: Ideology or Economy, and Military or Diplomacy.	Minden párban válassz doktrínát: Ideológia vagy Gazdaság, és Katonai vagy Diplomácia.
+Any two doctrines work together: each branch is boosted by the tier-3 upgrade of either partner, and every combination has its own bonus once both doctrines are chosen (Dollar Diplomacy, Revolutionary Guard, Soft Power, War Economy).	Bármely két doktrína együttműködik: minden ágat bármelyik partnere 3. szintű fejlesztése erősít, és minden kombinációnak saját bónusza van, amint mindkét doktrínát kiválasztottad (Dollárdiplomácia, Forradalmi gárda, Puha hatalom, Hadigazdaság).
+A branch's tier-4 upgrade unlocks its tier-4 action.	Egy ág 4. szintű fejlesztése feloldja az ág 4. szintű akcióját.
+Each upgrade you own makes the next one dearer.	Minden megszerzett fejlesztés drágábbá teszi a következőt.
+Dollar Diplomacy	Dollárdiplomácia
+Revolutionary Guard	Forradalmi gárda
+Soft Power	Puha hatalom
+War Economy	Hadigazdaság
+Trade routes also carry border spread.	A kereskedelmi útvonalak a határon át terjedést is viszik.
+Clout income strengthens Diplomacy actions.	A befolyás-bevétel erősíti a Diplomácia akciókat.
+Military actions also lift internal growth in the target for 20 weeks, and are half as loud.	A Katonai akciók 20 hétig a belső növekedést is fokozzák a célországban, és feleannyira hangosak.
+Diplomacy actions also lift internal growth in the target for 20 weeks.	A Diplomácia akciók 20 hétig a belső növekedést is fokozzák a célországban.
+Diplomatic strength adds to Ideology actions.	A diplomáciai erő az Ideológia akciókat is erősíti.
+Military actions cost 25% less.	A Katonai akciók 25%-kal olcsóbbak.
+Military strength adds to Clout income.	A katonai erő növeli a befolyás-bevételt.
+{} and {} combine: {}.	{1} és {2} egyesül: {3}.
+Boosted by {} ({} tier 3) or {} ({} tier 3)	Erősíti: {1} ({2} 3. szint) vagy {3} ({4} 3. szint)
+★ Boosted by {} ({} tier 3) or {} ({} tier 3)	★ Erősíti: {1} ({2} 3. szint) vagy {3} ({4} 3. szint)
+With {} or {}: {}	{1} vagy {2} mellett: {3}
+★ With {}: {}	★ {1} mellett: {2}
