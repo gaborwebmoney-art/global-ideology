@@ -811,3 +811,34 @@ Boosted by {} ({} tier 3) or {} ({} tier 3)	Erősíti: {1} ({2} 3. szint) vagy {
 ★ Boosted by {} ({} tier 3) or {} ({} tier 3)	★ Erősíti: {1} ({2} 3. szint) vagy {3} ({4} 3. szint)
 With {} or {}: {}	{1} vagy {2} mellett: {3}
 ★ With {}: {}	★ {1} mellett: {2}
+Clout income up. Trade spread up. Foreign Investment costs 1 Clout less	A befolyás-bevétel nő. A kereskedelmi terjedés nő. A Külföldi befektetés 1 befolyással olcsóbb
+Trade spread up. Economic resistance −20%. Trade Deal recharges 10 weeks faster	A kereskedelmi terjedés nő. Gazdasági ellenállás −20%. A Kereskedelmi megállapodás 10 héttel gyorsabban töltődik újra
+Clout income up a lot. Economic resistance −20%, diplomatic −10%. Buyout also gives +3 support in the target’s trade partners	A befolyás-bevétel sokat nő. Gazdasági ellenállás −20%, diplomáciai −10%. A Felvásárlás a célország kereskedelmi partnereiben is +3 támogatást ad
+Military resistance −20%, ideological −5%. Louder. Show of Force needs only a 10% neighbour	Katonai ellenállás −20%, ideológiai −5%. Hangosabb. Az Erődemonstrációhoz elég egy 10%-os szomszéd
+Diplomatic resistance −10%. Growth and border spread up. 20% of World Order campaigns and sanctions fail. Snap Exercise knocks courtships back 50% harder	Diplomáciai ellenállás −10%. A növekedés és a határ menti terjedés nő. A Világrend kampányainak és szankcióinak 20%-a kudarcot vall. A Hirtelen hadgyakorlat 50%-kal jobban visszaveti az udvarlást
+another 10% fail	még 10% kudarc
+Border spread up. Countries need 15 points less of your support to refuse the World Order. Louder. Proxy Garrison blocks courtship for 25 weeks	A határ menti terjedés nő. Az országoknak 15 ponttal kevesebb támogatás kell, hogy elutasítsák a Világrendet. Hangosabb. A Helytartó helyőrség 25 hétre megakadályozza az udvarlást
+Consulates	Konzulátusok
+Border spread up. Embassy makes a country resist 15% less for good (was 10%)	A határ menti terjedés nő. A Nagykövetség után az ország végleg 15%-kal kevésbé áll ellen (eddig 10%)
+Summit Circuit	Csúcstalálkozó-sorozat
+Border spread up. Diplomatic resistance −15%. Summit lasts 35 weeks	A határ menti terjedés nő. Diplomáciai ellenállás −15%. A Csúcstalálkozó 35 hétig tart
+Border spread up. Notoriety grows 10% slower. World Order campaigns hit 30% softer. Non-Aligned Pact blocks courtship for 30 weeks	A határ menti terjedés nő. A Hírhedtség 10%-kal lassabban nő. A Világrend kampányai 30%-kal gyengébben találnak. Az El nem kötelezett paktum 30 hétre megakadályozza az udvarlást
+Internal growth +25%. Pamphlets give +1 support	Belső növekedés +25%. A Röplapok +1 támogatást adnak
+Internal growth +25%. Ideological resistance −15%. Youth Movement lasts 35 weeks	Belső növekedés +25%. Ideológiai ellenállás −15%. Az Ifjúsági mozgalom 35 hétig tart
+Internal growth +35%. Clout income up. Martyr Narrative recharges 15 weeks faster	Belső növekedés +35%. A befolyás-bevétel nő. A Mártírnarratíva 15 héttel gyorsabban töltődik újra
+Unlocks {}, the Economy tier-4 action	Feloldja: {1}, a Gazdaság 4. szintű akciója
+Unlocks {}, the Military tier-4 action	Feloldja: {1}, a Katonai ág 4. szintű akciója
+Unlocks {}, the Diplomacy tier-4 action	Feloldja: {1}, a Diplomácia 4. szintű akciója
+Unlocks {}, the Ideology tier-4 action	Feloldja: {1}, az Ideológia 4. szintű akciója
+{} is ready: a tier-4 action.	{1} kész: egy 4. szintű akció.
+costs 1 Clout less	1 befolyással olcsóbb
+recharges 10 weeks faster	10 héttel gyorsabban töltődik újra
+recharges 15 weeks faster	15 héttel gyorsabban töltődik újra
++3 support in the target’s trade partners	+3 támogatás a célország kereskedelmi partnereiben
+needs only a 10% neighbour	elég egy 10%-os szomszéd
+knocks courtships back 50% harder	50%-kal jobban visszaveti az udvarlást
+blocks courtship for 25 weeks	25 hétre megakadályozza az udvarlást
+blocks courtship for 30 weeks	30 hétre megakadályozza az udvarlást
+resistance −15% for good	végleg −15% ellenállás
+lasts 35 weeks	35 hétig tart
++1 support	+1 támogatás

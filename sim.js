@@ -49,25 +49,25 @@ const BRANCHES = [
   { id: 'spin', name: 'Spin', blurb: 'Keeps the World Order busy.' }
 ];
 const UPGRADES = [
-  { id: 'i1', b: 'ideo', name: 'Charismatic Leadership', cost: 5, fx: { growth: .025 }, boost: { growth: .01 }, text: 'Internal growth +25%', btext: 'another +10%' },
-  { id: 'i2', b: 'ideo', name: 'Doctrinal Purity', cost: 9, fx: { growth: .025, pen: { ideo: .15 } }, boost: { pen: { ideo: .05 } }, text: 'Internal growth +25%. Ideological resistance −15%', btext: 'another −5% ideological' },
-  { id: 'i3', b: 'ideo', name: 'Social Engineering', cost: 15, fx: { growth: .035, income: 1 }, boost: { growth: .025, income: .5 }, text: 'Internal growth +35%. Clout income up', btext: 'more growth and income' },
-  { id: 'i4', b: 'ideo', name: 'Utopia', cost: 16, special: 'utopia', text: 'Special action: for 26 weeks internal growth and Clout income double, but you cannot run operations' },
+  { id: 'i1', b: 'ideo', name: 'Charismatic Leadership', cost: 5, fx: { growth: .025 }, boost: { growth: .01 }, text: 'Internal growth +25%. Pamphlets give +1 support', btext: 'another +10%' },
+  { id: 'i2', b: 'ideo', name: 'Doctrinal Purity', cost: 9, fx: { growth: .025, pen: { ideo: .15 } }, boost: { pen: { ideo: .05 } }, text: 'Internal growth +25%. Ideological resistance −15%. Youth Movement lasts 35 weeks', btext: 'another −5% ideological' },
+  { id: 'i3', b: 'ideo', name: 'Social Engineering', cost: 15, fx: { growth: .035, income: 1 }, boost: { growth: .025, income: .5 }, text: 'Internal growth +35%. Clout income up. Martyr Narrative recharges 15 weeks faster', btext: 'more growth and income' },
+  { id: 'i4', b: 'ideo', name: 'Popular Uprising', cost: 16, special: 'utopia', text: 'Unlocks Popular Uprising, the Ideology tier-4 action' },
 
-  { id: 'e1', b: 'eco', name: 'Trade Deals', cost: 5, fx: { income: .7, trade: .02 }, boost: { trade: .015 }, text: 'Clout income up. Trade spread up', btext: 'trade spread up more' },
-  { id: 'e2', b: 'eco', name: 'Resource Leverage', cost: 9, fx: { trade: .03, pen: { eco: .2 } }, boost: { pen: { eco: .1 }, trade: .01 }, text: 'Trade spread up. Economic resistance −20%', btext: 'another −10% economic, more trade spread' },
-  { id: 'e3', b: 'eco', name: 'Monopolization', cost: 14, fx: { income: 1, pen: { eco: .2, dip: .1 } }, boost: { income: .6 }, text: 'Clout income up a lot. Economic resistance −20%, diplomatic −10%', btext: 'more income' },
-  { id: 'e4', b: 'eco', name: 'Government Bribe', cost: 16, special: 'bribe', text: 'Special action: a World Order member of your choice (not the HQ) quits, tears up its signature, and gives you +25% support there' },
+  { id: 'e1', b: 'eco', name: 'Trade Deals', cost: 5, fx: { income: .7, trade: .02 }, boost: { trade: .015 }, text: 'Clout income up. Trade spread up. Foreign Investment costs 1 Clout less', btext: 'trade spread up more' },
+  { id: 'e2', b: 'eco', name: 'Resource Leverage', cost: 9, fx: { trade: .03, pen: { eco: .2 } }, boost: { pen: { eco: .1 }, trade: .01 }, text: 'Trade spread up. Economic resistance −20%. Trade Deal recharges 10 weeks faster', btext: 'another −10% economic, more trade spread' },
+  { id: 'e3', b: 'eco', name: 'Monopolization', cost: 14, fx: { income: 1, pen: { eco: .2, dip: .1 } }, boost: { income: .6 }, text: 'Clout income up a lot. Economic resistance −20%, diplomatic −10%. Buyout also gives +3 support in the target’s trade partners', btext: 'more income' },
+  { id: 'e4', b: 'eco', name: 'Run on the Bank', cost: 16, special: 'bribe', text: 'Unlocks Run on the Bank, the Economy tier-4 action' },
 
-  { id: 'm1', b: 'mil', name: 'Military Parade', cost: 5, fx: { pen: { mil: .2, ideo: .05 }, border: .01, loud: .01 }, boost: { pen: { mil: .1 }, border: .01 }, text: 'Military resistance −20%, ideological −5%. Louder', btext: 'another −10% military, more border spread' },
-  { id: 'm2', b: 'mil', name: 'Cyber Operations', cost: 9, fx: { pen: { dip: .1 }, growth: .03, border: .02, snapBoost: 1 }, boost: { sabotage: .25 }, text: 'Diplomatic resistance −10%. Growth and border spread up. Snap Exercises push 50% harder', btext: '25% of World Order campaigns and sanctions fail' },
-  { id: 'm3', b: 'mil', name: 'Sovereign Intervention', cost: 14, fx: { border: .03, pen: { mil: .2 }, shield: 15, loud: .01 }, boost: { shield: 10 }, text: 'Border spread up. Countries need 15 points less of your support to refuse the World Order. Louder', btext: '10 points more' },
-  { id: 'm4', b: 'mil', name: 'Stoppage Order', cost: 16, special: 'stoppage', text: 'Special action: freezes the World Order for 10 weeks. No drafting, no new moves, and planned moves wait' },
+  { id: 'm1', b: 'mil', name: 'Military Parade', cost: 5, fx: { pen: { mil: .2, ideo: .05 }, border: .01, loud: .01 }, boost: { pen: { mil: .1 }, border: .01 }, text: 'Military resistance −20%, ideological −5%. Louder. Show of Force needs only a 10% neighbour', btext: 'another −10% military, more border spread' },
+  { id: 'm2', b: 'mil', name: 'Cyber Operations', cost: 9, fx: { pen: { dip: .1 }, growth: .03, border: .02, sabotage: .2 }, boost: { sabotage: .1 }, text: 'Diplomatic resistance −10%. Growth and border spread up. 20% of World Order campaigns and sanctions fail. Snap Exercise knocks courtships back 50% harder', btext: 'another 10% fail' },
+  { id: 'm3', b: 'mil', name: 'Sovereign Intervention', cost: 14, fx: { border: .03, pen: { mil: .2 }, shield: 15, loud: .01 }, boost: { shield: 10 }, text: 'Border spread up. Countries need 15 points less of your support to refuse the World Order. Louder. Proxy Garrison blocks courtship for 25 weeks', btext: '10 points more' },
+  { id: 'm4', b: 'mil', name: 'Regime Change', cost: 16, special: 'stoppage', text: 'Unlocks Regime Change, the Military tier-4 action' },
 
-  { id: 'd1', b: 'dip', name: 'Embassy', cost: 4, fx: { border: .02 }, boost: { border: .015 }, text: 'Border spread up', btext: 'more border spread' },
-  { id: 'd2', b: 'dip', name: 'Regional Summit', cost: 9, fx: { border: .03, pen: { dip: .15 }, summitCd: 12 }, boost: { pen: { dip: .1 } }, text: 'Border spread up. Diplomatic resistance −15%. Summits recharge faster', btext: 'another −10% diplomatic' },
-  { id: 'd3', b: 'dip', name: 'Sanctions Hammer', cost: 14, fx: { border: .02, vis: -.1, fcRed: .3 }, boost: { fcRed: .2, border: .01 }, text: 'Border spread up. Notoriety grows 10% slower. World Order campaigns hit 30% softer', btext: '20% softer again' },
-  { id: 'd4', b: 'dip', name: 'Alliance Breaker', cost: 16, special: 'breaker', text: 'Special action: a World Order member of your choice (not the HQ) leaves, and every resistance in the world drops 8% for good' },
+  { id: 'd1', b: 'dip', name: 'Consulates', cost: 4, fx: { border: .02 }, boost: { border: .015 }, text: 'Border spread up. Embassy makes a country resist 15% less for good (was 10%)', btext: 'more border spread' },
+  { id: 'd2', b: 'dip', name: 'Summit Circuit', cost: 9, fx: { border: .03, pen: { dip: .15 } }, boost: { pen: { dip: .1 } }, text: 'Border spread up. Diplomatic resistance −15%. Summit lasts 35 weeks', btext: 'another −10% diplomatic' },
+  { id: 'd3', b: 'dip', name: 'Sanctions Hammer', cost: 14, fx: { border: .02, vis: -.1, fcRed: .3 }, boost: { fcRed: .2, border: .01 }, text: 'Border spread up. Notoriety grows 10% slower. World Order campaigns hit 30% softer. Non-Aligned Pact blocks courtship for 30 weeks', btext: '20% softer again' },
+  { id: 'd4', b: 'dip', name: 'Endless Negotiations', cost: 16, special: 'breaker', text: 'Unlocks Endless Negotiations, the Diplomacy tier-4 action' },
 
   { id: 'f1', b: 'faith', name: 'Word of God', cost: 6, fx: { reach: .007, pen: { ideo: .1 } }, boost: { reach: .002 }, text: 'Can take root in distant countries. Ideological resistance −10%', btext: 'further reach' },
   { id: 'f2', b: 'faith', name: 'Congregations', cost: 10, fx: { reach: .008, growth: .01, trade: .02, income: 1 }, boost: { income: .5 }, text: 'Distant reach up. Growth, trade spread and Clout income up a little', btext: 'more income' },
@@ -184,8 +184,15 @@ const ACTIONS = [
   { id: 'ideo4', dom: 'ideo', tier: 4, name: 'Popular Uprising', text: 'Courtship wiped, country cannot be courted 40 wk, +15 support' }
 ];
 ACTIONS.forEach(a => { a.cost = V10.costs[a.tier - 1]; a.cd = V10.cds[a.tier - 1]; });
-function actCost(s, a) { const c = v10t(s, 'costs')[a.tier - 1]; return a.dom === 'mil' && pairOn(s, 'ecomil') ? Math.max(1, Math.round(c * .75)) : c; }
-function actCd(s, a) { return v10t(s, 'cds')[a.tier - 1]; }
+const own = (s, id) => s.owned.includes(id);
+// upgrade -> action hooks, listed on the action detail screen when owned
+const HOOKS = { e1: ['eco1', 'costs 1 Clout less'], e2: ['eco2', 'recharges 10 weeks faster'], e3: ['eco3', '+3 support in the target\u2019s trade partners'],
+  m1: ['mil1', 'needs only a 10% neighbour'], m2: ['mil2', 'knocks courtships back 50% harder'], m3: ['mil3', 'blocks courtship for 25 weeks'],
+  d1: ['dip1', 'resistance \u221215% for good'], d2: ['dip2', 'lasts 35 weeks'], d3: ['dip3', 'blocks courtship for 30 weeks'],
+  i1: ['ideo1', '+1 support'], i2: ['ideo2', 'lasts 35 weeks'], i3: ['ideo3', 'recharges 15 weeks faster'] };
+function hooksFor(s, aid) { return Object.entries(HOOKS).filter(([u, [a]]) => a === aid && own(s, u)).map(([u, [, t]]) => ({ up: upg(u).name, text: t })); }
+function actCost(s, a) { const c = v10t(s, 'costs')[a.tier - 1] - (a.id === 'eco1' && own(s, 'e1') ? 1 : 0); return a.dom === 'mil' && pairOn(s, 'ecomil') ? Math.max(1, Math.round(c * .75)) : c; }
+function actCd(s, a) { return v10t(s, 'cds')[a.tier - 1] - (a.id === 'eco2' && own(s, 'e2') ? 10 : 0) - (a.id === 'ideo3' && own(s, 'i3') ? 15 : 0); }
 function actEff(s, a, target) {
   const pair = a.dom === 'dip' && pairOn(s, 'ecodip') ? 1 + v10t(s, 'edEff') * domainPower(s, 'eco') : a.dom === 'ideo' && pairOn(s, 'ideodip') ? 1 + .5 * domainPower(s, 'dip') : 1;
   return (1 - resBreakdown(s, target)[a.dom]) * (1 + domainPower(s, a.dom)) * pair;
@@ -218,7 +225,7 @@ function canAct(s, aid, target) {
     if (s.inf[src.id] < 10) return { ok: false, why: 'Need 10%+ somewhere else first' };
     if (tradeLinks(s, target).includes(src.id)) return { ok: false, why: 'Already trades with ' + src.name };
   }
-  if (aid === 'mil1' && nbMax(s, target) < 15 && !ct) return { ok: false, why: 'Needs a neighbour at 15%+' };
+  if (aid === 'mil1' && nbMax(s, target) < (own(s, 'm1') ? 10 : 15) && !ct) return { ok: false, why: `Needs a neighbour at ${own(s, 'm1') ? 10 : 15}%+` };
   if ((aid === 'mil2' || aid === 'mil3') && nbMax(s, target) < 25 && !ct) return { ok: false, why: 'Needs a neighbour at 25%+' };
   if (aid === 'mil4' && nbMax(s, target) < 50) return { ok: false, why: 'Needs a neighbour at 50%+' };
   if (aid === 'mil4' && v >= 50 && !W.members[target] && !W.signed[target]) return { ok: false, why: 'Already 50%+ and outside the World Order' };
@@ -241,21 +248,21 @@ function doAct(s, aid, target) {
   switch (aid) {
     case 'eco1': pushSupport(s, target, 2.5 * e); knock(s, target, 5, a); break;
     case 'eco2': { const src = strongest(s, target); s.trade.push([src.id, target]); pushSupport(s, target, 2 * e); noto(1); break; }
-    case 'eco3': resMod(s, target, .5, 30, ['eco']); pushSupport(s, target, 8 * e); knock(s, target, 35, a); break;
+    case 'eco3': resMod(s, target, .5, 30, ['eco']); pushSupport(s, target, 8 * e); knock(s, target, 35, a); if (own(s, 'e3')) tradeLinks(s, target).forEach(id => pushSupport(s, id, 3)); break;
     case 'eco4': s.treaty = Math.max(0, s.treaty - 15); s.woBankUntil = s.week + 25; timed(s, 'incomeMul', 15, .7); break;
     case 'mil1': pushSupport(s, target, 3 * e); knock(s, target, 5, a); noto(1); break;
-    case 'mil2': pushSupport(s, target, 8 * e); knock(s, target, 25, a); noto(3); break;
-    case 'mil3': knock(s, target, 50, a); s.mods.push({ id: target, kind: 'courtSlow', mul: .5, until: s.week + 15 }); block(target, 15); pushSupport(s, target, 6 * e); noto(3); break;
+    case 'mil2': pushSupport(s, target, 8 * e); knock(s, target, own(s, 'm2') ? 37.5 : 25, a); noto(3); break;
+    case 'mil3': knock(s, target, 50, a); s.mods.push({ id: target, kind: 'courtSlow', mul: .5, until: s.week + 15 }); block(target, own(s, 'm3') ? 25 : 15); pushSupport(s, target, 6 * e); noto(3); break;
     case 'mil4': s.inf[target] = Math.max(s.inf[target], 50); if (W.members[target] && target !== W.hq) leave(target); delete W.signed[target]; W.court = (W.court || []).filter(c => c.target !== target);
       neighbours(target).forEach(n => resMod(s, n, 1.2, 30)); noto(10); break;
-    case 'dip1': pushSupport(s, target, 2 * e); if (!hasMod(s, target, 'embassy')) { s.mods.push({ id: target, kind: 'embassy', until: 1e9 }); resMod(s, target, .9, 1e9); }
+    case 'dip1': pushSupport(s, target, 2 * e); if (!hasMod(s, target, 'embassy')) { s.mods.push({ id: target, kind: 'embassy', until: 1e9 }); resMod(s, target, own(s, 'd1') ? .85 : .9, 1e9); }
       knock(s, target, 5, a); break;
-    case 'dip2': resMod(s, target, Math.max(.3, 1 - .4 * e), 25); knock(s, target, 30, a); noto(.5); break;
-    case 'dip3': [target, ...neighbours(target)].forEach(id => { knock(s, id, 40, a); block(id, 20); }); break;
+    case 'dip2': resMod(s, target, Math.max(.3, 1 - .4 * e), own(s, 'd2') ? 35 : 25); knock(s, target, 30, a); noto(.5); break;
+    case 'dip3': [target, ...neighbours(target)].forEach(id => { knock(s, id, 40, a); block(id, own(s, 'd3') ? 30 : 20); }); break;
     case 'dip4': if (ratified(s) && W.signed[target] && !courtOn(s, target)) { delete W.signed[target]; block(target, 30); s.woNoNewUntil = s.week + 30; addNews(s, `${byId(target).name}'s signature goes back to committee. Nobody expects it back soon.`, 'you'); break; }
       s.mods.push({ id: target, kind: 'courtSlow', mul: 1 / 3, until: s.week + 30 }); s.woNoNewUntil = s.week + 30; break;
-    case 'ideo1': pushSupport(s, target, 2.5 * e); knock(s, target, 5, a); break;
-    case 'ideo2': s.mods.push({ id: target, kind: 'growth', mul: 1 + e, until: s.week + 25 }); knock(s, target, 10, a); break;
+    case 'ideo1': pushSupport(s, target, 2.5 * e); if (own(s, 'i1')) s.inf[target] = Math.min(100, s.inf[target] + 1); knock(s, target, 5, a); break;
+    case 'ideo2': s.mods.push({ id: target, kind: 'growth', mul: 1 + e, until: s.week + (own(s, 'i2') ? 35 : 25) }); knock(s, target, 10, a); break;
     case 'ideo3': s.mods.push({ id: target, kind: 'noCampaign', until: s.week + 40 }, { id: target, kind: 'growth', mul: 1 + .3 * e, until: s.week + 40 }); W.queue = W.queue.filter(q => !(q.target === target && q.kind === 'campaign')); knock(s, target, 30, a); break;
     case 'ideo4': W.court = W.court.filter(c => c.target !== target); block(target, 40); pushSupport(s, target, 15); noto(4); break;
   }
@@ -390,7 +397,7 @@ function createState(startId, seed, opts) {
   const cfg = Object.assign({ traits: true, random: true }, opts || {});
   const s = {
     cfg, res: null, cond: [],
-    v: 5, pending: null, ev: { next: 18, nextDecision: 70, fx: {}, temp: [], seen: {}, log: [], endorsed: null, loudOp: null }, seed: seed >>> 0, rngCalls: 0, week: 0, clout: 5, startId,
+    v: opts && opts.v10 ? 6 : 5, pending: null, ev: { next: 18, nextDecision: 70, fx: {}, temp: [], seen: {}, log: [], endorsed: null, loudOp: null }, seed: seed >>> 0, rngCalls: 0, week: 0, clout: 5, startId,
     inf: {}, mods: [], trade: TRADE.map(t => t.slice()),
     stats: { growth: .05, border: .02, trade: .015, reach: 0, income: 0, vis: 1, loud: 0, treatySlow: 0, fcRed: 0, summitCd: 0, snapBoost: 0, dossierDiscount: 0, shield: 0, sabotage: 0, hiCut: 0, opDiscount: 0, pen: { eco: 0, mil: 0, dip: 0, ideo: 0 } },
     specials: {}, utopiaUntil: 0, frozenUntil: 0, noSanctionUntil: 0,
@@ -720,7 +727,7 @@ function buyUpgrade(s, id) {
   if (off && s.cfg.softLock) addNoto(s, v10t(s, 'offNoto'));
   if (u.once && u.once.treaty) s.treaty = Math.max(0, s.treaty + u.once.treaty);
   if (u.once && u.once.seed) { const zeros = COUNTRIES.filter(c => s.inf[c.id] <= 0); for (let i = 0; i < u.once.seed && zeros.length; i++) seed(s, zeros.splice(Math.floor(rng(s) * zeros.length), 1)[0].id, 2, null); }
-  if (u.special && s.cfg.v10 && TYPES.includes(u.b)) { const a = ACTIONS.find(x => x.dom === u.b && x.tier === 4); addNews(s, `${u.name} unlocks ${a.name}, a tier-4 action. Find it under Actions.`, 'you'); }
+  if (u.special && s.cfg.v10 && TYPES.includes(u.b)) { const a = ACTIONS.find(x => x.dom === u.b && x.tier === 4); addNews(s, `${a.name} is ready: a tier-4 action. Find it under Actions.`, 'you'); }
   else if (u.special) { s.specials[u.special] = 'ready'; addNews(s, `${u.name} is ready. Use it when the moment is right: it works once.`, 'you'); }
   recomputeStats(s);
   const bn = b => BRANCHES.find(x => x.id === b).name;
@@ -973,4 +980,4 @@ function resolveDecision(s, choice) {
 }
 
 // SIM-END
-if (typeof module !== 'undefined') module.exports = { PAIRS, pairOn, synergyOf, doctrineOf, closedFrom, offDoctrine, hasT2, CORE, ratified, enforcementTick, sigGrowthMul, populated, courtOn, actCost, ACTIONS, canAct, doAct, domainPower, actEff, resBreakdown, TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };
+if (typeof module !== 'undefined') module.exports = { HOOKS, hooksFor, PAIRS, pairOn, synergyOf, doctrineOf, closedFrom, offDoctrine, hasT2, CORE, ratified, enforcementTick, sigGrowthMul, populated, courtOn, actCost, ACTIONS, canAct, doAct, domainPower, actEff, resBreakdown, TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };
