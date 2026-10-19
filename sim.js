@@ -159,7 +159,7 @@ const V10 = { edEff: 1.5, edTrade: 1.5, offCost: 1.5, offNoto: 3, courtWeeks: 7,
   // Economy action strengths (step 5 balance knobs)
   eco1Amt: 3.5, eco1Knock: 5, eco2Amt: 2, eco2Knock: 0, eco3Amt: 12, eco3Knock: 45, eco3Res: .5, eco4Treaty: 15, eco4Weeks: 25, eco4Income: .7, ecoTrade: 2,
   // step 5 (2026-10-19): v10-only economy and World Order pace (v9 keeps TUNE); Trade Deals income .7 -> 1.5
-  income: 2.8, costGrow: .04, planBase: 5, upFx: { e1: { income: 1.5 } } };
+  income: 2.8, costGrow: .04, planBase: 5, upFx: { e1: { income: 1.5 } }, collapseFloor: .4 };
 function v10t(s, k) { return (s.cfg.v10t && s.cfg.v10t[k] !== undefined) ? s.cfg.v10t[k] : V10[k]; }
 function baseRes(s, id) { return s.cfg && s.cfg.v10 ? V10_RES[id] : byId(id).res; }
 // Share of the world's strength in a domain that you hold: progressive in support, weighted by sqrt(pop).
@@ -639,7 +639,8 @@ function possibleSignatures(s) { return signedCount(s) + COUNTRIES.filter(c => !
 function woTick(s) {
   const W = s.wo;
   // Treaty collapse: if the World Order can no longer reach 8 signatures for 26 weeks, it dissolves.
-  if (!(s.cfg.v10 && W.ratifiedAt) && possibleSignatures(s) < SIGNATURES_TO_LOSE) {
+  // v10: the treaty can only collapse while you hold at least collapseFloor of the world (no idle collapse wins)
+  if (!(s.cfg.v10 && W.ratifiedAt) && possibleSignatures(s) < SIGNATURES_TO_LOSE && !(s.cfg.v10 && alignedShare(s) < v10t(s, 'collapseFloor'))) {
     W.hopeless = (W.hopeless || 0) + 1;
     if (W.hopeless === 1) addNews(s, `${SG} counts the remaining undecided nations and asks for a glass of water. Unless 8 signatures become possible within 26 weeks, the treaty collapses.`, 'you'); flag(s, 'important', null, 'Treaty failing');
   } else if (W.hopeless) { W.hopeless = 0; addNews(s, 'The World Order finds enough undecided nations to keep the treaty alive.', 'wo'); flag(s, 'important'); }
