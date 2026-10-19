@@ -1,4 +1,4 @@
 {
-  "live": "v10-core",
-  "beta": "release/v10.2"
+  "live": "release/v10.3",
+  "beta": "v10-core"
 }
