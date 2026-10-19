@@ -401,6 +401,8 @@ body { overscroll-behavior: none; -webkit-tap-highlight-color: transparent; }
   .mapwrap.fit { height: auto; aspect-ratio: 1000 / 580; overflow: hidden; }
   .mapwrap.fit #map { width: 100%; height: 100%; aspect-ratio: auto; }
   .mapwrap.fit .fitbtn { position: absolute; left: 6px; bottom: 6px; margin: 0; }
+  .fitbtn { position: sticky; top: 6px; left: 8px; margin: 6px 0 0 8px; z-index: 5; }
+  .mapwrap:not(.fit) .pickbar { position: sticky; bottom: 8px; left: auto; right: auto; transform: none; margin: 0 8px 8px; width: calc(100% - 16px); max-width: none; box-sizing: border-box; z-index: 5; }
   .map-hint { position: absolute; padding: 0; left: auto; right: 8px; top: 6px; font-size: 10px; }
   .speed button { min-height: 36px; padding: 6px 10px; }
   .bar .btn { min-height: 36px; padding: 6px 10px; }
