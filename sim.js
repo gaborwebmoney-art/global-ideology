@@ -153,13 +153,13 @@ const V10_RES = {
   nippon: { eco: .85, mil: .30, dip: .70, ideo: .55 }, pinguinia: { eco: .10, mil: .05, dip: .85, ideo: .85 }
 };
 // tuning knobs for the prototype (the bot overrides some via cfg.v10t)
-const V10 = { edEff: 1.5, edTrade: 1.5, offCost: 1.5, offNoto: 3, courtWeeks: 7, drain: 4, knockMul: 1, pushMul: 0.6, pnr: 66, t4Up: 10,
+const V10 = { edEff: 1.5, edTrade: 1.5, offCost: 1.5, offNoto: 3, courtWeeks: 13, drain: 4, knockMul: 1, pushMul: 0.6, pnr: 66, t4Up: 10,
   // Enforcement: growth malus per signature before ratification; weekly drains and income cut once ratified
-  sigGrowth: .04, enfSigned: 1.5, enfMember: .75, enfOther: .5, enfIncome: .6, enfLoss: 'allSigned', enfShareFloor: .03, enfLimit: 0, enfCourtMul: 1, enfSlot: 0, enfRamp: .075, costs: [4, 7, 10, 14], cds: [15, 30, 45, 80],
+  sigGrowth: .04, enfSigned: 1.5, enfMember: .75, enfOther: .5, enfIncome: .6, enfLoss: 'allSigned', enfShareFloor: .03, enfLimit: 0, enfCourtMul: 1, baseGrowth: .042, enfSlot: 0, enfRamp: .075, costs: [4, 7, 10, 14], cds: [15, 30, 45, 80],
   // Economy action strengths (step 5 balance knobs)
   eco1Amt: 3.5, eco1Knock: 5, eco2Amt: 2, eco2Knock: 0, eco3Amt: 12, eco3Knock: 45, eco3Res: .5, eco4Treaty: 15, eco4Weeks: 25, eco4Income: .7, ecoTrade: 2,
   // step 5 (2026-10-19): v10-only economy and World Order pace (v9 keeps TUNE); Trade Deals income .7 -> 1.5
-  income: 2.8, costGrow: .04, planBase: 5, upFx: { e1: { income: 1.5 } }, collapseFloor: .4 };
+  income: 2.5, costGrow: .04, planBase: 5, upFx: { e1: { income: 1.5 } }, collapseFloor: .4 };
 function v10t(s, k) { return (s.cfg.v10t && s.cfg.v10t[k] !== undefined) ? s.cfg.v10t[k] : V10[k]; }
 function baseRes(s, id) { return s.cfg && s.cfg.v10 ? V10_RES[id] : byId(id).res; }
 // Share of the world's strength in a domain that you hold: progressive in support, weighted by sqrt(pop).
@@ -270,7 +270,7 @@ function doAct(s, aid, target) {
     case 'ideo3': s.mods.push({ id: target, kind: 'noCampaign', until: s.week + 40 }, { id: target, kind: 'growth', mul: 1 + .3 * e, until: s.week + 40 }); W.queue = W.queue.filter(q => !(q.target === target && q.kind === 'campaign')); knock(s, target, 30, a); break;
     case 'ideo4': W.court = W.court.filter(c => c.target !== target); block(target, 40); pushSupport(s, target, 15); noto(4); break;
   }
-  addNews(s, `${a.name}${target ? ': ' + byId(target).name : ''}.`, 'you');
+  addNews(s, `${a.name}${target ? ': ' + byId(target).name : ''}.${aid === 'eco4' ? ` Every courtship at half speed for ${v10t(s, 'eco4Weeks')} weeks, treaty draft \u2212${v10t(s, 'eco4Treaty')}.` : aid === 'dip4' ? ' No new World Order courtships anywhere for 30 weeks.' : ''}`, 'you');
   return { ok: true };
 }
 // World Order courtships: one target at a time (two from Notoriety 50). Progress fills each week; it drains while
@@ -403,7 +403,7 @@ function createState(startId, seed, opts) {
     cfg, res: null, cond: [],
     v: opts && opts.v10 ? 6 : 5, pending: null, ev: { next: 18, nextDecision: 70, fx: {}, temp: [], seen: {}, log: [], endorsed: null, loudOp: null }, seed: seed >>> 0, rngCalls: 0, week: 0, clout: 5, startId,
     inf: {}, mods: [], trade: TRADE.map(t => t.slice()),
-    stats: { growth: .05, border: .02, trade: .015, reach: 0, income: 0, vis: 1, loud: 0, treatySlow: 0, fcRed: 0, summitCd: 0, snapBoost: 0, dossierDiscount: 0, shield: 0, sabotage: 0, hiCut: 0, opDiscount: 0, pen: { eco: 0, mil: 0, dip: 0, ideo: 0 } },
+    stats: { growth: cfg.v10 ? ((cfg.v10t && cfg.v10t.baseGrowth) || V10.baseGrowth) : .05, border: .02, trade: .015, reach: 0, income: 0, vis: 1, loud: 0, treatySlow: 0, fcRed: 0, summitCd: 0, snapBoost: 0, dossierDiscount: 0, shield: 0, sabotage: 0, hiCut: 0, opDiscount: 0, pen: { eco: 0, mil: 0, dip: 0, ideo: 0 } },
     specials: {}, utopiaUntil: 0, frozenUntil: 0, noSanctionUntil: 0,
     owned: [], rebranded: false, ready: {}, notoriety: 0, treaty: 0, coalition: false, nextCounter: 0,
     wo: { hq: null, members: {}, signed: {}, queue: [], nextPlan: 0, seq: 0 }, blocked: [],
