@@ -1,3 +1,4 @@
+// v10.3
 // Offline cache for the PWA. The deploy workflow stamps CACHE with the commit, so every deploy (or rollback) refreshes phones.
 const CACHE = 'gi-v5';  // replaced at deploy
 const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png',
