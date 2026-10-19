@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-HHEcq9LqmR92jL6+3wWBb5KkrwKsOSX9R+auO7vcgLI=' 'sha256-isXUKIom3eDXMvgzfR9lDXh9r8EMWid8ddpFsQhQX6U=' 'sha256-Yylg2cA2oyuck0pzKyosUcOGDQLkDcBq1GUuQ/Z72cE=' 'sha256-FahilpJ0b7ml9m+ukmFrcdOJW8U0AX0G2bgzpb9ypFs=' 'sha256-hNTcHA1I5XAAfMZPFKw+GYRbFMwxv5qawgW8x0AtQaE=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-HHEcq9LqmR92jL6+3wWBb5KkrwKsOSX9R+auO7vcgLI=' 'sha256-isXUKIom3eDXMvgzfR9lDXh9r8EMWid8ddpFsQhQX6U=' 'sha256-bItn8BLI4uy2ulfq+JIQ0BFdisWDSl0OPjogzrClkRI=' 'sha256-FahilpJ0b7ml9m+ukmFrcdOJW8U0AX0G2bgzpb9ypFs=' 'sha256-hNTcHA1I5XAAfMZPFKw+GYRbFMwxv5qawgW8x0AtQaE=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#0d1820">
 <meta name="mobile-web-app-capable" content="yes">
@@ -395,6 +395,9 @@ body { overscroll-behavior: none; -webkit-tap-highlight-color: transparent; }
 @media (max-width: 600px) and (orientation: portrait) {
   .main { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); gap: 6px; }
   .mapwrap { height: 40dvh; overflow: auto; }
+  .side { position: fixed; left: 0; right: 0; bottom: 0; top: auto; max-height: 62dvh; overflow-y: auto; z-index: 30; border-radius: 12px 12px 0 0; border-bottom: 0; padding-bottom: calc(12px + env(safe-area-inset-bottom)); transform: translateY(105%); transition: transform .2s ease; box-shadow: 0 -8px 24px rgba(0,0,0,.45); }
+  .side.open { transform: none; }
+  .side-close { display: block; margin: 0 0 8px auto; min-height: 36px; padding: 6px 12px; }
   .mapwrap.fit { height: auto; aspect-ratio: 1000 / 580; overflow: hidden; }
   .mapwrap.fit #map { width: 100%; height: 100%; aspect-ratio: auto; }
   .mapwrap.fit .fitbtn { position: absolute; left: 6px; bottom: 6px; margin: 0; }
@@ -2150,7 +2153,7 @@ window.GIAccounts = (() => {
       }).join('') + `</div>`;
     }
     if (S && !picking) html += specialsPanel(c.id);
-    side.innerHTML = html;
+    side.innerHTML = (PHONE() ? '<button class="btn side-close" aria-label="Close dossier">Close</button>' : '') + html;
     side.querySelectorAll('.op').forEach(b => b.addEventListener('click', () => { doOp(S, b.dataset.op, c.id); render(); }));
     if (isV10()) bindActions(side, c.id);
     bindMoves(side);
@@ -2334,6 +2337,7 @@ window.GIAccounts = (() => {
     }
     COUNTRIES.forEach(c => nodeEls[c.id].g.classList.toggle('sel', c.id === id));
     renderSide();
+    if (PHONE()) $('side').classList.add('open');
     centreOn(id);
   }
 
@@ -2370,6 +2374,7 @@ window.GIAccounts = (() => {
     if (['1', '2', '3'].includes(e.key)) setSpeed(+e.key);
   });
   $('openTree').addEventListener('click', openTree);
+  $('side').addEventListener('click', e => { if (e.target.closest('.side-close')) $('side').classList.remove('open'); });
   $('closeTree').addEventListener('click', treeBack);
   $('treeOv').addEventListener('click', e => { if (e.target.id === 'treeOv') closeTree(true); });
   $('introGo').addEventListener('click', () => { $('introOv').hidden = true; picking = true; $('mapHint').textContent = 'Choose your starting country'; });
