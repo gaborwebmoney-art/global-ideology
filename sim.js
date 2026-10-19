@@ -54,7 +54,7 @@ const UPGRADES = [
   { id: 'i3', b: 'ideo', name: 'Social Engineering', cost: 15, fx: { growth: .035, income: 1 }, boost: { growth: .025, income: .5 }, text: 'Internal growth +35%. Clout income up. Martyr Narrative recharges 15 weeks faster', btext: 'more growth and income' },
   { id: 'i4', b: 'ideo', name: 'Popular Uprising', cost: 16, special: 'utopia', text: 'Unlocks Popular Uprising, the Ideology tier-4 action' },
 
-  { id: 'e1', b: 'eco', name: 'Trade Deals', cost: 5, fx: { income: .7, trade: .02 }, boost: { trade: .015 }, text: 'Clout income up. Trade spread up. Foreign Investment costs 1 Clout less', btext: 'trade spread up more' },
+  { id: 'e1', b: 'eco', name: 'Trade Deals', cost: 5, fx: { income: .7, trade: .02 }, boost: { trade: .015 }, text: 'Clout income up a lot. Trade spread up. Foreign Investment costs 1 Clout less', btext: 'trade spread up more' },
   { id: 'e2', b: 'eco', name: 'Resource Leverage', cost: 9, fx: { trade: .03, pen: { eco: .2 } }, boost: { pen: { eco: .1 }, trade: .01 }, text: 'Trade spread up. Economic resistance −20%. Trade Deal recharges 10 weeks faster', btext: 'another −10% economic, more trade spread' },
   { id: 'e3', b: 'eco', name: 'Monopolization', cost: 14, fx: { income: 1, pen: { eco: .2, dip: .1 } }, boost: { income: .6 }, text: 'Clout income up a lot. Economic resistance −20%, diplomatic −10%. Buyout also gives +3 support in the target’s trade partners', btext: 'more income' },
   { id: 'e4', b: 'eco', name: 'Run on the Bank', cost: 16, special: 'bribe', text: 'Unlocks Run on the Bank, the Economy tier-4 action' },
@@ -153,9 +153,13 @@ const V10_RES = {
   nippon: { eco: .85, mil: .30, dip: .70, ideo: .55 }, pinguinia: { eco: .10, mil: .05, dip: .85, ideo: .85 }
 };
 // tuning knobs for the prototype (the bot overrides some via cfg.v10t)
-const V10 = { edEff: 1.5, edTrade: 1.5, offCost: 1.5, offNoto: 3, courtWeeks: 8, drain: 4, knockMul: 1, pushMul: 0.6, pnr: 66, t4Up: 10,
+const V10 = { edEff: 1.5, edTrade: 1.5, offCost: 1.5, offNoto: 3, courtWeeks: 7, drain: 4, knockMul: 1, pushMul: 0.6, pnr: 66, t4Up: 10,
   // Enforcement: growth malus per signature before ratification; weekly drains and income cut once ratified
-  sigGrowth: .04, enfSigned: 1.5, enfMember: .75, enfOther: .5, enfIncome: .6, enfLoss: 'allSigned', enfShareFloor: .03, enfLimit: 0, enfCourtMul: 1, enfSlot: 0, enfRamp: .075, costs: [4, 7, 10, 14], cds: [15, 30, 45, 80] };
+  sigGrowth: .04, enfSigned: 1.5, enfMember: .75, enfOther: .5, enfIncome: .6, enfLoss: 'allSigned', enfShareFloor: .03, enfLimit: 0, enfCourtMul: 1, enfSlot: 0, enfRamp: .075, costs: [4, 7, 10, 14], cds: [15, 30, 45, 80],
+  // Economy action strengths (step 5 balance knobs)
+  eco1Amt: 3.5, eco1Knock: 5, eco2Amt: 2, eco2Knock: 0, eco3Amt: 12, eco3Knock: 45, eco3Res: .5, eco4Treaty: 15, eco4Weeks: 25, eco4Income: .7, ecoTrade: 2,
+  // step 5 (2026-10-19): v10-only economy and World Order pace (v9 keeps TUNE); Trade Deals income .7 -> 1.5
+  income: 2.8, costGrow: .04, planBase: 5, upFx: { e1: { income: 1.5 } } };
 function v10t(s, k) { return (s.cfg.v10t && s.cfg.v10t[k] !== undefined) ? s.cfg.v10t[k] : V10[k]; }
 function baseRes(s, id) { return s.cfg && s.cfg.v10 ? V10_RES[id] : byId(id).res; }
 // Share of the world's strength in a domain that you hold: progressive in support, weighted by sqrt(pop).
@@ -168,7 +172,7 @@ function domainPower(s, t) {
 const ACTIONS = [
   { id: 'eco1', dom: 'eco', tier: 1, name: 'Foreign Investment', text: '+support (can seed). Slight courtship knock-back' },
   { id: 'eco2', dom: 'eco', tier: 2, name: 'Trade Deal', text: 'Opens a trade route into the target from your strongest country' },
-  { id: 'eco3', dom: 'eco', tier: 3, name: 'Buyout', text: 'Economic resistance halved 30 wk, +support, courtship −35' },
+  { id: 'eco3', dom: 'eco', tier: 3, name: 'Buyout', text: 'Economic resistance halved 30 wk, +support, courtship −45' },
   { id: 'eco4', dom: 'eco', tier: 4, name: 'Run on the Bank', text: 'Treaty −15, every courtship at half speed for 25 wk. Your income −30% for 15 wk', global: true },
   { id: 'mil1', dom: 'mil', tier: 1, name: 'Show of Force', text: '+support next to a 15%+ country. Slight courtship knock-back' },
   { id: 'mil2', dom: 'mil', tier: 2, name: 'Snap Exercise', text: '+support, courtship −25. Loud' },
@@ -246,10 +250,10 @@ function doAct(s, aid, target) {
   const block = (id, wk) => s.mods.push({ id, kind: 'noCourt', until: s.week + wk });
   if (target && ((a.dom === 'mil' && pairOn(s, 'ideomil')) || (a.dom === 'dip' && pairOn(s, 'ideodip')))) s.mods.push({ id: target, kind: 'growth', mul: 1.3, until: s.week + 20 });
   switch (aid) {
-    case 'eco1': pushSupport(s, target, 2.5 * e); knock(s, target, 5, a); break;
-    case 'eco2': { const src = strongest(s, target); s.trade.push([src.id, target]); pushSupport(s, target, 2 * e); noto(1); break; }
-    case 'eco3': resMod(s, target, .5, 30, ['eco']); pushSupport(s, target, 8 * e); knock(s, target, 35, a); if (own(s, 'e3')) tradeLinks(s, target).forEach(id => pushSupport(s, id, 3)); break;
-    case 'eco4': s.treaty = Math.max(0, s.treaty - 15); s.woBankUntil = s.week + 25; timed(s, 'incomeMul', 15, .7); break;
+    case 'eco1': pushSupport(s, target, v10t(s, 'eco1Amt') * e); knock(s, target, v10t(s, 'eco1Knock'), a); break;
+    case 'eco2': { const src = strongest(s, target); s.trade.push([src.id, target]); pushSupport(s, target, v10t(s, 'eco2Amt') * e); if (v10t(s, 'eco2Knock')) knock(s, target, v10t(s, 'eco2Knock'), a); noto(1); break; }
+    case 'eco3': resMod(s, target, v10t(s, 'eco3Res'), 30, ['eco']); pushSupport(s, target, v10t(s, 'eco3Amt') * e); knock(s, target, v10t(s, 'eco3Knock'), a); if (own(s, 'e3')) tradeLinks(s, target).forEach(id => pushSupport(s, id, 3)); break;
+    case 'eco4': s.treaty = Math.max(0, s.treaty - v10t(s, 'eco4Treaty')); s.woBankUntil = s.week + v10t(s, 'eco4Weeks'); if (v10t(s, 'eco4Income') < 1) timed(s, 'incomeMul', 15, v10t(s, 'eco4Income')); break;
     case 'mil1': pushSupport(s, target, 3 * e); knock(s, target, 5, a); noto(1); break;
     case 'mil2': pushSupport(s, target, 8 * e); knock(s, target, own(s, 'm2') ? 37.5 : 25, a); noto(3); break;
     case 'mil3': knock(s, target, 50, a); s.mods.push({ id: target, kind: 'courtSlow', mul: .5, until: s.week + 15 }); block(target, own(s, 'm3') ? 25 : 15); pushSupport(s, target, 6 * e); noto(3); break;
@@ -494,7 +498,7 @@ function step(s) {
     });
   };
   BORDERS.forEach(([a, b]) => spread(a, b, st.border * pk.border, 'border'));
-  s.trade.forEach(([a, b]) => { if (!isBlocked(s, a, b)) spread(a, b, (st.trade * pk.trade + (pairOn(s, 'ecodip') ? v10t(s, 'edTrade') * st.border * pk.border : 0)) * (fxOn(s, 'tradeMul') || 1), 'trade'); });
+  s.trade.forEach(([a, b]) => { if (!isBlocked(s, a, b)) spread(a, b, (st.trade * pk.trade + (pairOn(s, 'ecodip') ? v10t(s, 'edTrade') * st.border * pk.border : 0)) * (fxOn(s, 'tradeMul') || 1) * (s.cfg.v10 ? 1 + v10t(s, 'ecoTrade') * domainPower(s, 'eco') : 1), 'trade'); });
   // 3. Faith reach: distant seeding
   if (st.reach > 0) COUNTRIES.forEach(c => {
     if (s.inf[c.id] <= 0 && rng(s) < st.reach * (1 + 6 * alignedShare(s)) * (1 - R[c.id])) seed(s, c.id, 1, null);
@@ -503,7 +507,7 @@ function step(s) {
 
   const share = alignedShare(s); s.peakShare = Math.max(s.peakShare, share);
   // 4. Clout income + opportunity bubbles
-  s.clout += TUNE.income * Math.max(0.05, 0.12 + 0.06 * (st.income + pk.income)) * (1 + TUNE.shareIncome * share) * (s.week < s.utopiaUntil ? 2 : 1) * (fxOn(s, 'incomeMul') || 1) * (s.cfg.v10 ? (1 + domainPower(s, 'eco')) * (pairOn(s, 'ecomil') ? 1 + .5 * domainPower(s, 'mil') : 1) * (ratified(s) ? v10t(s, 'enfIncome') : 1) : 1);
+  s.clout += (s.cfg.v10 ? v10t(s, 'income') : TUNE.income) * Math.max(0.05, 0.12 + 0.06 * (st.income + pk.income)) * (1 + TUNE.shareIncome * share) * (s.week < s.utopiaUntil ? 2 : 1) * (fxOn(s, 'incomeMul') || 1) * (s.cfg.v10 ? (1 + domainPower(s, 'eco')) * (pairOn(s, 'ecomil') ? 1 + .5 * domainPower(s, 'mil') : 1) * (ratified(s) ? v10t(s, 'enfIncome') : 1) : 1);
   s.bubbles = s.bubbles.filter(b => b.until > s.week);
   const held = COUNTRIES.filter(c => s.inf[c.id] > 0);
   if (held.length && rng(s) < 0.16 + 0.1 * share + pk.bubble) {
@@ -645,7 +649,7 @@ function woTick(s) {
   W.queue.filter(q => q.at <= s.week).forEach(q => woExecute(s, q));
   W.queue = W.queue.filter(q => q.at > s.week);
   if (fxOn(s, 'woPause')) W.nextPlan = Math.max(W.nextPlan, s.week + 1);
-  else if (s.week >= W.nextPlan) { woPlan(s); W.nextPlan = s.week + Math.max(4, Math.round(TUNE.planBase - s.notoriety / 15) - perk(s).plan + (s.cfg.v10 ? Math.round(3 * domainPower(s, 'dip')) : 0)) * (fxOn(s, 'woSlow') ? 2 : 1); }
+  else if (s.week >= W.nextPlan) { woPlan(s); W.nextPlan = s.week + Math.max(4, Math.round((s.cfg.v10 ? v10t(s, 'planBase') : TUNE.planBase) - s.notoriety / 15) - perk(s).plan + (s.cfg.v10 ? Math.round(3 * domainPower(s, 'dip')) : 0)) * (fxOn(s, 'woSlow') ? 2 : 1); }
 }
 
 function treatyNews(s) {
@@ -672,7 +676,7 @@ function milestoneNews(s, share) {
 }
 
 // ---- Player actions ----
-function upCost(s, u) { const base = s.cfg.v10 && u.special && CORE.includes(u.b) ? v10t(s, 't4Up') : u.cost; return Math.round(base * (1 + TUNE.costGrow * s.owned.length) * (offDoctrine(s, u) ? v10t(s, 'offCost') : 1)); }
+function upCost(s, u) { const base = s.cfg.v10 && u.special && CORE.includes(u.b) ? v10t(s, 't4Up') : u.cost; return Math.round(base * (1 + (s.cfg.v10 ? v10t(s, 'costGrow') : TUNE.costGrow) * s.owned.length) * (offDoctrine(s, u) ? v10t(s, 'offCost') : 1)); }
 function canBuy(s, u) {
   if (s.owned.includes(u.id)) return { ok: false, why: 'Owned' };
   if (u.req && !s.owned.includes(u.req)) return { ok: false, why: 'Needs ' + UPGRADES.find(x => x.id === u.req).name };
@@ -696,7 +700,7 @@ function recomputeStats(s) {
     if (k === 'pen') Object.entries(v).forEach(([t, p]) => { st.pen[t] += p; });
     else st[k] += (['growth', 'border', 'trade', 'reach'].includes(k) ? v * TUNE.fxScale : v);
   });
-  s.owned.forEach(id => { const u = UPGRADES.find(x => x.id === id); add(u.fx); if (boosted(s, u)) add(u.boost); });
+  s.owned.forEach(id => { const u = UPGRADES.find(x => x.id === id), vf = s.cfg.v10 && v10t(s, 'upFx')[id]; add(vf ? Object.assign({}, u.fx, vf) : u.fx); if (boosted(s, u)) add(u.boost); });
   s.stats = st;
 }
 function committed(s, b) { return s.cfg && s.cfg.softLock ? hasT2(s, b) : doctrineOf(s, b) === b; }
@@ -980,4 +984,4 @@ function resolveDecision(s, choice) {
 }
 
 // SIM-END
-if (typeof module !== 'undefined') module.exports = { HOOKS, hooksFor, PAIRS, pairOn, synergyOf, doctrineOf, closedFrom, offDoctrine, hasT2, CORE, ratified, enforcementTick, sigGrowthMul, populated, courtOn, actCost, ACTIONS, canAct, doAct, domainPower, actEff, resBreakdown, TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };
+if (typeof module !== 'undefined') module.exports = { V10, HOOKS, hooksFor, PAIRS, pairOn, synergyOf, doctrineOf, closedFrom, offDoctrine, hasT2, CORE, ratified, enforcementTick, sigGrowthMul, populated, courtOn, actCost, ACTIONS, canAct, doAct, domainPower, actEff, resBreakdown, TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };

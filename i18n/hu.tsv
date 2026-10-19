@@ -685,7 +685,7 @@ Beta version: progress is kept on this device only, separate from the main game.
 # ---- v10: actions, domain power, courtships, Enforcement ----
 Your power	Az erőd
 Your share of the world’s strength in each domain. Every point makes that domain’s actions and bonus stronger.	A világ erejéből rád eső rész doménenként. Minden pont erősebbé teszi az adott domén akcióit és bónuszát.
-More Clout income	Több befolyás-bevétel
+More Clout income, faster trade spread	Több befolyás-bevétel, gyorsabb kereskedelmi terjedés
 Stronger military actions	Erősebb katonai akciók
 Stronger diplomatic actions, slower World Order	Erősebb diplomáciai akciók, lassabb Világrend
 Stronger ideological actions, faster growth	Erősebb ideológiai akciók, gyorsabb növekedés
@@ -765,7 +765,7 @@ Martyr Narrative	Mártírnarratíva
 Popular Uprising	Népfelkelés
 +support (can seed). Slight courtship knock-back	+támogatás (új hídfőt is nyithat). Kicsit visszaveti a győzködést
 Opens a trade route into the target from your strongest country	Kereskedelmi útvonalat nyit a célpontba a legerősebb országodból
-Economic resistance halved 30 wk, +support, courtship −35	Gazdasági ellenállás feleződik 30 hétre, +támogatás, győzködés −35
+Economic resistance halved 30 wk, +support, courtship −45	Gazdasági ellenállás feleződik 30 hétre, +támogatás, győzködés −45
 Treaty −15, every courtship at half speed for 25 wk. Your income −30% for 15 wk	Szerződés −15, minden győzködés fele sebességgel 25 hétig. Bevételed −30% 15 hétig
 +support next to a 15%+ country. Slight courtship knock-back	+támogatás egy 15%+ ország mellett. Kicsit visszaveti a győzködést
 +support, courtship −25. Loud	+támogatás, győzködés −25. Feltűnő
@@ -811,7 +811,7 @@ Boosted by {} ({} tier 3) or {} ({} tier 3)	Erősíti: {1} ({2} 3. szint) vagy {
 ★ Boosted by {} ({} tier 3) or {} ({} tier 3)	★ Erősíti: {1} ({2} 3. szint) vagy {3} ({4} 3. szint)
 With {} or {}: {}	{1} vagy {2} mellett: {3}
 ★ With {}: {}	★ {1} mellett: {2}
-Clout income up. Trade spread up. Foreign Investment costs 1 Clout less	A befolyás-bevétel nő. A kereskedelmi terjedés nő. A Külföldi befektetés 1 befolyással olcsóbb
+Clout income up a lot. Trade spread up. Foreign Investment costs 1 Clout less	A befolyás-bevétel sokat nő. A kereskedelmi terjedés nő. A Külföldi befektetés 1 befolyással olcsóbb
 Trade spread up. Economic resistance −20%. Trade Deal recharges 10 weeks faster	A kereskedelmi terjedés nő. Gazdasági ellenállás −20%. A Kereskedelmi megállapodás 10 héttel gyorsabban töltődik újra
 Clout income up a lot. Economic resistance −20%, diplomatic −10%. Buyout also gives +3 support in the target’s trade partners	A befolyás-bevétel sokat nő. Gazdasági ellenállás −20%, diplomáciai −10%. A Felvásárlás a célország kereskedelmi partnereiben is +3 támogatást ad
 Military resistance −20%, ideological −5%. Louder. Show of Force needs only a 10% neighbour	Katonai ellenállás −20%, ideológiai −5%. Hangosabb. Az Erődemonstrációhoz elég egy 10%-os szomszéd

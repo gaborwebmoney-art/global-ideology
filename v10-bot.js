@@ -12,6 +12,9 @@ const prioFor = ([a, b, c], rush, cap3) => { const ids = t => S.UPGRADES.filter(
 
 // support-equivalent of the support-pushing actions, for the greedy spender
 const AMT = { eco1: 2.5, ideo1: 2.5, mil1: 3, eco2: 6, dip1: 4, mil2: 8, dip2: 9, ideo2: 8, eco3: 10, ideo3: 6 };
+// eco amounts follow the live knobs (cfg.v10t overrides), so the bot values tuned Economy actions correctly
+const knob = (s, k) => (s.cfg.v10t && s.cfg.v10t[k] !== undefined ? s.cfg.v10t[k] : S.V10[k]);
+const amt = (s, id) => id === 'eco1' ? knob(s, 'eco1Amt') : id === 'eco3' ? knob(s, 'eco3Amt') : id === 'eco2' ? 4 + knob(s, 'eco2Amt') : AMT[id];
 const NEEDS_FOOTHOLD = { ideo2: 1, ideo3: 1, dip1: 1, dip2: 1, eco3: 1 };
 // answers to a courtship, by how far it has got
 const PNR = s => (s.cfg.v10t && s.cfg.v10t.pnr) || 66;
@@ -32,7 +35,7 @@ function bestAction(s) {
       if (v >= 85) continue;
       if (NEEDS_FOOTHOLD[a.id] && (v < 3 || v > 80)) continue;
       if (!S.canAct(s, a.id, c.id).ok) continue;
-      const score = AMT[a.id] * S.actEff(s, a, c.id) * Math.sqrt(c.pop) * (1 - v / 100) / cost;
+      const score = amt(s, a.id) * S.actEff(s, a, c.id) * Math.sqrt(c.pop) * (1 - v / 100) / cost;
       if (!best || score > best.score) best = { a: a.id, t: c.id, score };
     }
   }
@@ -69,7 +72,8 @@ function play(start, seed, cfg, build, sharp) {
   }
   const log = s.actLog || [];
   const tiers = [1, 2, 3, 4].map(t => log.filter(id => +id.slice(-1) === t).length);
-  return { pw, t2b, owned: s.owned.length, clout: Math.round(s.clout), over: s.over || 'timeout', week: s.week, acts: log.length, tiers, t4: tiers[3] > 0, w4, crisis, ratAt: s.wo.ratifiedAt || 0, cb: s.comebacks || 0 };
+  const dom = { eco: 0, mil: 0, dip: 0, ideo: 0 }; log.forEach(id => { dom[id.replace(/\d$/, '')]++; });
+  return { dom, pw, t2b, owned: s.owned.length, clout: Math.round(s.clout), over: s.over || 'timeout', week: s.week, acts: log.length, tiers, t4: tiers[3] > 0, w4, crisis, ratAt: s.wo.ratifiedAt || 0, cb: s.comebacks || 0 };
 }
 
 const T = { courtWeeks: 8, pushMul: 0.6 };
