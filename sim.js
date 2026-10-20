@@ -220,7 +220,7 @@ function canAct(s, aid, target) {
   if (s.week < s.utopiaUntil) return { ok: false, why: 'Utopia: no operations' };
   const nOwned = s.owned.filter(id => UPGRADES.find(u => u.id === id).b === a.dom).length;
   if (a.tier === 4 && !s.owned.includes(a.dom[0] + '4') && !(a.dom === 'ideo' && s.owned.includes('i4'))) return { ok: false, why: `Needs the tier-4 ${TYPE_LABEL[a.dom]} upgrade` };
-  if (s.cfg.gate !== false && a.tier > 1 && a.tier < 4 && nOwned < a.tier - 1) return { ok: false, why: `Needs ${a.tier - 1} ${TYPE_LABEL[a.dom]} upgrade${a.tier > 2 ? 's' : ''}` };
+  if (s.cfg.gate !== false && a.tier > 1 && a.tier < 4 && nOwned < a.tier) return { ok: false, why: `Needs ${a.tier} ${TYPE_LABEL[a.dom]} upgrades` };
   if (a.global) return { ok: true };
   const v = s.inf[target], W = s.wo, ct = courtOn(s, target);
   if (['eco1', 'eco3', 'mil1', 'mil2', 'mil3', 'ideo1'].includes(aid) && v >= 95) return { ok: false, why: 'Already yours' };
