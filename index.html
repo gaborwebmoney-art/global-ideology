@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-UxFcmA0NaRBkrMeZlW6QzwP9hETHEbYn/tjgqW3cM8U=' 'sha256-isXUKIom3eDXMvgzfR9lDXh9r8EMWid8ddpFsQhQX6U=' 'sha256-9WVOJaAvemkZleh2FnecVNrMUy9fkem9JNMP9BT3fcI=' 'sha256-FahilpJ0b7ml9m+ukmFrcdOJW8U0AX0G2bgzpb9ypFs=' 'sha256-hNTcHA1I5XAAfMZPFKw+GYRbFMwxv5qawgW8x0AtQaE=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-UxFcmA0NaRBkrMeZlW6QzwP9hETHEbYn/tjgqW3cM8U=' 'sha256-isXUKIom3eDXMvgzfR9lDXh9r8EMWid8ddpFsQhQX6U=' 'sha256-+PWCC9LDLfyYpJ9jeEubAAfHkeWnFwwQBkgqg5qnDag=' 'sha256-FahilpJ0b7ml9m+ukmFrcdOJW8U0AX0G2bgzpb9ypFs=' 'sha256-hNTcHA1I5XAAfMZPFKw+GYRbFMwxv5qawgW8x0AtQaE=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#0d1820">
 <meta name="mobile-web-app-capable" content="yes">
@@ -393,8 +393,10 @@ body { overscroll-behavior: none; -webkit-tap-highlight-color: transparent; }
 }
 /* phone, portrait: bar, map, hud, scrolling dossier */
 @media (max-width: 600px) and (orientation: portrait) {
-  .main { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); gap: 6px; }
-  .mapwrap { height: 40dvh; overflow: auto; }
+  .main { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); gap: 6px; }
+  .mapwrap { height: 100%; overflow: auto; }
+  .mapwrap:not(.fit) #map { height: 100%; min-height: 441px; width: auto; aspect-ratio: 1000 / 580; }
+  .mapwrap.fit { align-self: start; }
   .side { position: fixed; left: 0; right: 0; bottom: 0; top: auto; max-height: 62dvh; overflow-y: auto; z-index: 30; border-radius: 12px 12px 0 0; border-bottom: 0; padding-bottom: calc(12px + env(safe-area-inset-bottom)); transform: translateY(105%); transition: transform .2s ease; box-shadow: 0 -8px 24px rgba(0,0,0,.45); }
   .side.open { transform: none; }
   .side-close { display: block; margin: 0 0 8px auto; min-height: 36px; padding: 6px 12px; }
@@ -2345,7 +2347,7 @@ window.GIAccounts = (() => {
   }
   function centreOn(id) {
     const w = $('mapwrap'); if (!PHONE() || w.classList.contains('fit')) return;
-    const c = byId(id); w.scrollLeft = Math.max(0, c.x * 0.76 - w.clientWidth / 2);
+    const c = byId(id), k = $('map').getBoundingClientRect().width / 1000; w.scrollLeft = Math.max(0, c.x * k - w.clientWidth / 2); w.scrollTop = Math.max(0, c.y * k - w.clientHeight / 2);
   }
   $('fitMap').addEventListener('click', () => setFit(!$('mapwrap').classList.contains('fit')));
   (() => { let v = null; try { v = localStorage.getItem('gi.fit'); } catch { /* storage blocked */ } setFit(v !== '0'); })();
