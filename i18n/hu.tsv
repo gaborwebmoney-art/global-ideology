@@ -876,3 +876,33 @@ Trade route to {} closed	A(z) {1} felé vezető kereskedelmi út lezárva
 Info	Infó
 Close dossier	Dosszié bezárása
 Skip intro	Intró átugrása
+League of Mild Alarm	Enyhe Riadalom Ligája
+Pact of Concerned Neighbours	Aggódó Szomszédok Paktuma
+Coalition of the Wary	Óvatosak Koalíciója
+Axis of Caution	Az Óvatosság Tengelye
+Mutual Unease Treaty	Kölcsönös Nyugtalanság Szerződése
+Committee for Continued Concern	Folyamatos Aggodalom Bizottsága
+Alliance of Raised Eyebrows	Felvont Szemöldökök Szövetsége
+Union of Second Thoughts	Kételyek Uniója
+New alliance: {} ({}). Their stated goal: keeping an eye on you.	Új szövetség: {1} ({2}). Kimondott céljuk: szemmel tartani téged.
+{} trades the {} for the World Order.	{1} otthagyja ezt: {2}, és a Világrendhez csatlakozik.
+{} now mostly agrees with you and walks out of the {}.	{1} már nagyjából egyetért veled, és kilép innen: {2}.
+The {} quietly dissolves. Nobody can find the minutes.	Csendben feloszlik: {1}. Senki sem találja a jegyzőkönyvet.
+The {} falls apart over who pays for the coffee.	Széthullik: {1}. Azon vesztek össze, ki fizeti a kávét.
+Your envoys in {} sow doubt about the {}. Cohesion {}%.	Követeid itt: {1} kételyeket ébresztenek ezzel kapcsolatban: {2}. Összetartás: {3}%.
+{} argues about the {} on prime-time television. Cohesion {}%.	{1} főműsoridőben vitatkozik erről: {2}. Összetartás: {3}%.
+The {} falls apart. Its members blame each other, then you, then each other again.	Széthullik: {1}. A tagok egymást hibáztatják, aztán téged, aztán megint egymást.
+The {} closes ranks behind {}. Resistance rises in every member country for {} weeks.	{1} felsorakozik {2} mögé. Minden tagországban nő az ellenállás {3} hétre.
+{} rallies its neighbours into a mutual-concern pact. Concern is mutual.	{1} kölcsönös aggodalmi paktumba tömöríti a szomszédait. Az aggodalom kölcsönös.
+{} calls its neighbours about you. Nobody picks up.	{1} felhívja miattad a szomszédait. Senki sem veszi fel.
+Alliance	Szövetség
+Cohesion	Összetartás
+Wary of you	Tart tőled
+Economy and Military actions here make the whole alliance resist you.	Az itteni Gazdasági és Katonai akciók miatt az egész szövetség ellenáll neked.
+Diplomacy and Ideology actions here erode its cohesion. Below 20% it falls apart.	Az itteni Diplomáciai és Ideológiai akciók gyengítik az összetartását. 20% alatt széthullik.
+Dotted rings and links: countries that banded together against you. Economy and Military actions on a member trigger retaliation; Diplomacy and Ideology erode cohesion.	Pontozott gyűrűk és vonalak: ellened összefogott országok. A tagok elleni Gazdasági és Katonai akciók megtorlást váltanak ki; a Diplomácia és az Ideológia gyengíti az összetartást.
+Alliance formed	Szövetség alakult
+Left alliance	Kilépett a szövetségből
+Alliance dissolved	Szövetség feloszlott
+Retaliation	Megtorlás
+Cohesion down	Gyengül az összetartás

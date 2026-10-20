@@ -272,6 +272,7 @@ function doAct(s, aid, target) {
     case 'ideo4': W.court = W.court.filter(c => c.target !== target); block(target, 40); pushSupport(s, target, 15); noto(4); break;
   }
   addNews(s, `${a.name}${target ? ': ' + byId(target).name : ''}.${aid === 'eco4' ? ` Every courtship at half speed for ${v10t(s, 'eco4Weeks')} weeks, treaty draft \u2212${v10t(s, 'eco4Treaty')}.` : aid === 'dip4' ? ' No new World Order courtships anywhere for 30 weeks.' : ''}`, 'you');
+  allianceOnAct(s, a, target);
   tagMods(s, m0, a.name);
   return { ok: true };
 }
@@ -329,7 +330,7 @@ function courtTick(s) {
     if (c.kind === 'sign' && !W.members[c.target]) { c.done = true; return; }
     if (v >= lim) c.prog -= v10t(s, 'drain');
     else {
-      let sp = (100 / v10t(s, 'courtWeeks')) * (0.6 + s.notoriety / 100) * (1 + .03 * memberCount(s)) * (1 - 0.7 * v / lim) * modMul(s, c.target, 'courtSlow') * (s.week < (s.woBankUntil || 0) ? .5 : 1) * (ratified(s) ? v10t(s, 'enfCourtMul') : 1);
+      let sp = (100 / v10t(s, 'courtWeeks')) * (0.6 + s.notoriety / 100) * (1 + .03 * memberCount(s)) * (1 - 0.7 * v / lim) * modMul(s, c.target, 'courtSlow') * (s.week < (s.woBankUntil || 0) ? .5 : 1) * (ratified(s) ? v10t(s, 'enfCourtMul') : 1) * (c.kind === 'invite' ? allyCourtMul(s, c.target) : 1);
       if (Q(s, c.target).woFail) sp *= 1 - Q(s, c.target).woFail;
       c.prog += sp;
     }
@@ -527,6 +528,7 @@ function step(s) {
     woTick(s);
   }
   if (s.cfg.v10 && s.coalition) enforcementTick(s);
+  if (s.coalition) allianceTick(s);
   milestoneNews(s, share);
   eventsTick(s);
   s.mods = s.mods.filter(m => m.until > s.week);
@@ -880,10 +882,10 @@ const EVENTS = [
     fire: s => { const id = pick(s, COUNTRIES.filter(c => c.pop >= 1)).id; resMod(s, id, 1.2, 20, null, { inward: true }); return `Floods in ${nm(id)}. Politics postponed: it resists and stops passing ideas on for 20 weeks.`; } },
   { id: 'crisis', good: false, name: 'Diplomatic Crisis', ok: s => yours(s, 10).length > 0,
     fire: s => { const id = pick(s, yours(s, 10)); resMod(s, id, 1.2, 20); return `${nm(id)} recalls its ambassadors over a seating plan. Resistance there rises for 20 weeks.`; } },
-  { id: 'alliance', good: false, name: 'Defensive Alliance', ok: s => s.coalition && Object.keys(s.wo.members).some(m => neighbours(m).some(n => !s.wo.members[n] && s.inf[n] < TUNE.joinBelow)),
-    fire: s => { const m = pick(s, Object.keys(s.wo.members).filter(m => neighbours(m).some(n => !s.wo.members[n] && s.inf[n] < TUNE.joinBelow)));
-      const joiners = neighbours(m).filter(n => !s.wo.members[n] && s.inf[n] < TUNE.joinBelow).slice(0, 2); joiners.forEach(n => { s.wo.members[n] = true; });
-      return `${joiners.map(nm).join(' and ')} sign a mutual-concern pact with ${nm(m)} and join the World Order. Concern is mutual.`; } },
+  { id: 'alliance', good: false, name: 'Defensive Alliance', ok: s => s.coalition && COUNTRIES.some(c => allyFree(s, c.id) && (s.wary && s.wary[c.id] || 0) >= 25 && COUNTRIES.some(o => o.id !== c.id && allyFree(s, o.id) && isNear(s, c.id, o.id) && (s.wary[o.id] || 0) >= 15)),
+    fire: s => { const f = COUNTRIES.filter(c => allyFree(s, c.id) && (s.wary[c.id] || 0) >= 25).sort((a, b) => s.wary[b.id] - s.wary[a.id])[0].id;
+      COUNTRIES.forEach(o => { if (o.id !== f && allyFree(s, o.id) && isNear(s, f, o.id)) s.wary[o.id] = Math.max(s.wary[o.id] || 0, ALLY.thr[stanceOf(o.id)] * ALLY.partner); });
+      const al = formAlliance(s, f); return al ? `${nm(f)} rallies its neighbours into a mutual-concern pact. Concern is mutual.` : `${nm(f)} calls its neighbours about you. Nobody picks up.`; } },
   { id: 'emergency', good: false, name: 'State of Emergency', ok: s => yours(s, 20).length > 0,
     fire: s => { const id = pick(s, yours(s, 20)); s.inf[id] *= .5; resMod(s, id, 1.25, 30, ['mil']); return `${nm(id)} declares a state of emergency. Your posters are declared “non-essential”. Support there halves.`; } },
   { id: 'posts', good: false, name: 'Old Posts Resurface', ok: s => s.coalition,
@@ -991,6 +993,110 @@ function resolveDecision(s, choice) {
   s.pending = null; s.ev.nextDecision = s.week + 25 + Math.floor(rng(s) * 11);
   return { ok: true, text };
 }
+
+// ---------- v10.6: alliances (the world fights back in blocs) ----------
+// Countries grow wary of a loud movement next door. Wary neighbours band together into small fixed alliances;
+// attacking a member (Economy or Military actions) triggers collective retaliation. Diplomacy and Ideology
+// actions erode an alliance's cohesion; below SPLIT it dissolves. The World Order is the one bloc that grows:
+// it can poach alliance members, more easily as their alliance's cohesion falls.
+const STANCE = { aethelgard: 'aligned', guldor: 'aligned', borealis: 'aligned', nippon: 'aligned', celestia: 'aligned',
+  juche: 'isolationist', helvetia: 'isolationist', isolde: 'isolationist', pinguinia: 'isolationist' };   // everyone else: neutral
+const ALLY = { wk: 2.2, decay: .985, thr: { aligned: 45, neutral: 60 }, mult: { aligned: 1.3, neutral: 1, isolationist: .6 },
+  partner: .6, maxMembers: 4, freeBelow: 40, leaveAt: 60, cohBase: .25, cohSize: .1, cohConvert: .5, split: 20,
+  dipHit: 14, ideoHit: 9, retRes: 1.12, retWeeks: 12, retGap: 8, retNoto: 2, milWary: 100, milSpill: 30, nearDist: 320 };
+const ALLIANCE_NAMES = ['League of Mild Alarm', 'Pact of Concerned Neighbours', 'Coalition of the Wary', 'Axis of Caution',
+  'Mutual Unease Treaty', 'Committee for Continued Concern', 'Alliance of Raised Eyebrows', 'Union of Second Thoughts'];
+const stanceOf = id => STANCE[id] || 'neutral';
+function alInit(s) { if (!s.al) s.al = { list: [], next: 1 }; if (!s.wary) s.wary = {}; return s.al; }
+function allianceOf(s, id) { return s.al ? s.al.list.find(a => a.members.includes(id)) : null; }
+function distOf(a, b) { const A = byId(a), B = byId(b); return Math.hypot(A.x - B.x, A.y - B.y); }
+function isNear(s, a, b) { return neighbours(a).includes(b) || tradeLinks(s, a).includes(b) || distOf(a, b) < ALLY.nearDist; }
+// how close a country is to the movement: 1 next to a country you hold, less along trade, little across the map
+function proximity(s, id) {
+  let p = 0;
+  COUNTRIES.forEach(h => {
+    if (h.id === id || s.inf[h.id] < 25) return;
+    const q = neighbours(id).includes(h.id) ? 1 : tradeLinks(s, id).includes(h.id) ? .7 : Math.max(0, 1 - distOf(id, h.id) / 450) * .6;
+    p = Math.max(p, q);
+  });
+  return p;
+}
+const allyFree = (s, id) => !allianceOf(s, id) && !s.wo.members[id] && s.inf[id] < ALLY.freeBelow && byId(id).pop >= 1 && stanceOf(id) !== 'isolationist';
+function formAlliance(s, founder, reason) {
+  const A = alInit(s), thr = ALLY.thr[stanceOf(founder)];
+  const partners = COUNTRIES.filter(c => c.id !== founder && allyFree(s, c.id) && isNear(s, founder, c.id) && (s.wary[c.id] || 0) >= ALLY.thr[stanceOf(c.id)] * ALLY.partner)
+    .sort((a, b) => (s.wary[b.id] || 0) - (s.wary[a.id] || 0)).slice(0, ALLY.maxMembers - 1).map(c => c.id);
+  if (!partners.length) return null;
+  const members = [founder, ...partners], name = ALLIANCE_NAMES[(A.next - 1) % ALLIANCE_NAMES.length];
+  const leader = members.slice().sort((a, b) => byId(b).pop - byId(a).pop)[0];
+  const al = { id: 'a' + A.next++, name, leaderId: leader, members, cohesion: 100, formed: s.week, retUntil: 0 };
+  A.list.push(al);
+  members.forEach(m => { s.wary[m] = Math.max(s.wary[m] || 0, thr); });
+  addNews(s, `New alliance: ${name} (${members.map(nm).join(', ')}). Their stated goal: keeping an eye on you.`, 'wo');
+  flag(s, 'critical', leader, 'Alliance formed');
+  return al;
+}
+function leaveAlliance(s, al, id, text) {
+  al.members = al.members.filter(m => m !== id);
+  if (text) { addNews(s, text, 'you'); flag(s, 'important', id, 'Left alliance'); }
+  if (al.members.length < 2) dissolveAlliance(s, al, null);
+}
+function dissolveAlliance(s, al, text) {
+  s.al.list = s.al.list.filter(a => a !== al);
+  addNews(s, text || `The ${al.name} quietly dissolves. Nobody can find the minutes.`, 'you');
+  flag(s, 'important', al.leaderId, 'Alliance dissolved');
+}
+function allianceTick(s) {
+  const A = alInit(s);
+  // wariness: notoriety × proximity × stance, decaying
+  COUNTRIES.forEach(c => {
+    const w = s.wary[c.id] || 0;
+    const gain = s.inf[c.id] >= ALLY.freeBelow || s.wo.members[c.id] ? 0 : (s.notoriety / 100) * proximity(s, c.id) * ALLY.mult[stanceOf(c.id)] * ALLY.wk;
+    s.wary[c.id] = Math.min(100, w * ALLY.decay + gain);
+  });
+  // members leave: won over by you, or recruited by the World Order
+  A.list.slice().forEach(al => {
+    al.members.slice().forEach(m => {
+      if (!A.list.includes(al)) return;
+      if (s.wo.members[m]) leaveAlliance(s, al, m, `${nm(m)} trades the ${al.name} for the World Order.`);
+      else if (s.inf[m] >= ALLY.leaveAt) leaveAlliance(s, al, m, `${nm(m)} now mostly agrees with you and walks out of the ${al.name}.`);
+    });
+  });
+  // cohesion
+  A.list.slice().forEach(al => {
+    const converting = al.members.filter(m => s.inf[m] >= 40).length;
+    al.cohesion -= ALLY.cohBase + ALLY.cohSize * al.members.length + ALLY.cohConvert * converting;
+    if (al.cohesion < ALLY.split) dissolveAlliance(s, al, `The ${al.name} falls apart over who pays for the coffee.`);
+  });
+  // formation: the warier the country, the sooner it looks for friends
+  const founder = COUNTRIES.filter(c => allyFree(s, c.id) && (s.wary[c.id] || 0) >= ALLY.thr[stanceOf(c.id)])
+    .sort((a, b) => s.wary[b.id] - s.wary[a.id])[0];
+  if (founder) formAlliance(s, founder.id);
+}
+// called from doAct after the action resolved
+function allianceOnAct(s, a, target) {
+  if (!target) return;
+  const A = alInit(s);
+  if (a.dom === 'mil') {   // a show of force alarms the target and its neighbours
+    s.wary[target] = Math.max(s.wary[target] || 0, ALLY.milWary);
+    neighbours(target).forEach(n => { s.wary[n] = Math.min(100, (s.wary[n] || 0) + ALLY.milSpill); });
+  }
+  const al = allianceOf(s, target); if (!al) return;
+  if (a.dom === 'dip' || a.dom === 'ideo') {
+    al.cohesion -= a.dom === 'dip' ? ALLY.dipHit : ALLY.ideoHit;
+    addNews(s, a.dom === 'dip' ? `Your envoys in ${nm(target)} sow doubt about the ${al.name}. Cohesion ${Math.max(0, Math.round(al.cohesion))}%.` : `${nm(target)} argues about the ${al.name} on prime-time television. Cohesion ${Math.max(0, Math.round(al.cohesion))}%.`, 'you');
+    flag(s, 'ping', target, 'Cohesion down');
+    if (al.cohesion < ALLY.split) dissolveAlliance(s, al, `The ${al.name} falls apart. Its members blame each other, then you, then each other again.`);
+  } else if (s.week >= al.retUntil) {   // Economy or Military against a member: everyone responds
+    al.retUntil = s.week + ALLY.retGap;
+    al.members.forEach(m => resMod(s, m, ALLY.retRes, ALLY.retWeeks, null, { src: al.name }));
+    addNoto(s, ALLY.retNoto);
+    addNews(s, `The ${al.name} closes ranks behind ${nm(target)}. Resistance rises in every member country for ${ALLY.retWeeks} weeks.`, 'wo');
+    flag(s, 'important', target, 'Retaliation');
+  }
+}
+// World Order courtship of an alliance member: loyal while the bloc is solid, eager when it is sinking (Pavel, option C)
+function allyCourtMul(s, id) { const al = allianceOf(s, id); return al ? .5 + 1.5 * (1 - Math.max(0, al.cohesion) / 100) : 1; }
 
 // SIM-END
 if (typeof module !== 'undefined') module.exports = { V10, HOOKS, hooksFor, PAIRS, pairOn, synergyOf, doctrineOf, closedFrom, offDoctrine, hasT2, CORE, ratified, enforcementTick, sigGrowthMul, populated, courtOn, actCost, ACTIONS, canAct, doAct, domainPower, actEff, resBreakdown, TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };
