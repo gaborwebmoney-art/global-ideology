@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-iikutf8OAcB0Mr3wJcnLNjIyEFY/+TrOdgk7odiEDmg=' 'sha256-isXUKIom3eDXMvgzfR9lDXh9r8EMWid8ddpFsQhQX6U=' 'sha256-Wgz0lLaIMg1a+sY/XOmgrDMgGQHyNh5dGikLvMC4+Fc=' 'sha256-LPkpXGg5EBBZSfk0hd7uvQAynREz8o7tUfHk14ahBsM=' 'sha256-hNTcHA1I5XAAfMZPFKw+GYRbFMwxv5qawgW8x0AtQaE=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-iikutf8OAcB0Mr3wJcnLNjIyEFY/+TrOdgk7odiEDmg=' 'sha256-isXUKIom3eDXMvgzfR9lDXh9r8EMWid8ddpFsQhQX6U=' 'sha256-Ntnhu6NK5usvX2hbYYYSnfD+olbWWIjEtRwOtB0q1as=' 'sha256-LPkpXGg5EBBZSfk0hd7uvQAynREz8o7tUfHk14ahBsM=' 'sha256-hNTcHA1I5XAAfMZPFKw+GYRbFMwxv5qawgW8x0AtQaE=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#0d1820">
 <meta name="mobile-web-app-capable" content="yes">
@@ -2465,6 +2465,10 @@ window.GIAccounts = (() => {
   // ---------- v10.5: news bubble + log, reading gate, map effect highlights ----------
   const isImp = n => n.level === 'important' || n.level === 'critical' || !!n.ev;
   const newsBad = n => n.ev === 'bad' || (n.kind === 'wo' && n.level === 'critical');
+  // Only milestones and bad random events pause the game; WO plans, outcomes and good news
+  // still light the bubble and the map, but never stop play (was ~1 pause per 3 weeks).
+  const GATE_TAGS = new Set(['Treaty ratified', 'Enforcement resumes', 'Signed treaty', 'Joined World Order', 'World Order HQ']);
+  const isGate = n => n.ev === 'bad' || (n.level === 'critical' && GATE_TAGS.has(n.tag));
   function newsIds(n) {
     const ids = n.id ? [n.id] : [];
     COUNTRIES.forEach(c => { if (!ids.includes(c.id) && String(n.text).includes(c.name)) ids.push(c.id); });
@@ -2475,14 +2479,15 @@ window.GIAccounts = (() => {
   const readSeq = () => (S ? (S.readSeq === undefined ? (S.readSeq = S.newsSeq || 0) : S.readSeq) : 0);
   const unread = () => (S ? S.news.filter(n => n.seq > readSeq()) : []);
   const unreadImp = () => unread().filter(isImp);
+  const unreadGate = () => unread().filter(isGate);
   function newsArrived(fresh) {
-    if (!fresh.some(isImp) || !gateOn() || !speed || S.over) return;
+    if (!fresh.some(isGate) || !gateOn() || !speed || S.over) return;
     if (!$('treeOv').hidden || !$('decOv').hidden) return;
     gateResume = speed; setSpeed(0);
   }
   function requestSpeed(i) {
     if (!S || S.over) return;
-    if (i > 0 && gateOn() && unreadImp().length) { gateResume = i; openNews(); return; }
+    if (i > 0 && gateOn() && unreadGate().length) { gateResume = i; openNews(); return; }
     setSpeed(i);
   }
   function placeFab() {
@@ -2502,7 +2507,7 @@ window.GIAccounts = (() => {
   function openNews() {
     if (!S) return;
     const rs = readSeq();
-    $('newsGateNote').hidden = !(gateResume && unreadImp().length);
+    $('newsGateNote').hidden = !(gateResume && unreadGate().length);
     $('newsLog').innerHTML = S.news.length ? S.news.map((n, k) => {
       const ids = newsIds(n);
       const cls = [isImp(n) ? 'imp' : '', newsBad(n) ? 'bad' : '', n.kind === 'wo' ? 'wo' : '', n.seq > rs ? 'unread' : ''].join(' ');
@@ -2515,7 +2520,7 @@ window.GIAccounts = (() => {
     $('newsOv').hidden = true;
     if (S && markRead !== false) S.readSeq = S.newsSeq || 0;
     renderFab();
-    if (gateResume && S && !S.over && !unreadImp().length) setSpeed(gateResume);
+    if (gateResume && S && !S.over && !unreadGate().length) setSpeed(gateResume);
     gateResume = 0;
   }
   $('newsFab').addEventListener('click', openNews);
