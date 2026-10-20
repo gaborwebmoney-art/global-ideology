@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-iikutf8OAcB0Mr3wJcnLNjIyEFY/+TrOdgk7odiEDmg=' 'sha256-isXUKIom3eDXMvgzfR9lDXh9r8EMWid8ddpFsQhQX6U=' 'sha256-Ntnhu6NK5usvX2hbYYYSnfD+olbWWIjEtRwOtB0q1as=' 'sha256-LPkpXGg5EBBZSfk0hd7uvQAynREz8o7tUfHk14ahBsM=' 'sha256-hNTcHA1I5XAAfMZPFKw+GYRbFMwxv5qawgW8x0AtQaE=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-iikutf8OAcB0Mr3wJcnLNjIyEFY/+TrOdgk7odiEDmg=' 'sha256-isXUKIom3eDXMvgzfR9lDXh9r8EMWid8ddpFsQhQX6U=' 'sha256-Y8NB2Bq8Jbb81gCFaA0M11J7iWq8bY/M2ju8QowsDgM=' 'sha256-LPkpXGg5EBBZSfk0hd7uvQAynREz8o7tUfHk14ahBsM=' 'sha256-hNTcHA1I5XAAfMZPFKw+GYRbFMwxv5qawgW8x0AtQaE=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#0d1820">
 <meta name="mobile-web-app-capable" content="yes">
@@ -400,6 +400,8 @@ body { overscroll-behavior: none; -webkit-tap-highlight-color: transparent; }
   .side { position: fixed; left: 0; right: 0; bottom: 0; top: auto; max-height: 62dvh; overflow-y: auto; z-index: 30; border-radius: 12px 12px 0 0; border-bottom: 0; padding-bottom: calc(12px + env(safe-area-inset-bottom)); transform: translateY(105%); transition: transform .2s ease; box-shadow: 0 -8px 24px rgba(0,0,0,.45); }
   .side.open { transform: none; }
   .side-top { position: sticky; top: 0; z-index: 3; display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin: 0 0 8px; }
+  /* the sticky row spans the sheet width but only its buttons should take taps (it was swallowing Back underneath) */
+  .side-top { pointer-events: none; } .side-top > * { pointer-events: auto; }
   .side-top .btn { min-height: 36px; padding: 6px 12px; box-shadow: 0 2px 10px rgba(0,0,0,.5); }
   .side-close { background: var(--panel-2); }
   .mapwrap.fit { height: auto; aspect-ratio: 1000 / 580; overflow: hidden; }
@@ -457,7 +459,7 @@ body { overscroll-behavior: none; -webkit-tap-highlight-color: transparent; }
 .atiles .tile { min-height: 84px; padding: 10px; }
 .atiles .tile .ts { overflow-wrap: anywhere; }
 .ahead { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.aback { font: inherit; font-size: 13px; color: var(--text); background: var(--panel-2); border: 1px solid var(--line); border-radius: 4px; padding: 6px 10px; min-height: 36px; cursor: pointer; }
+.aback { font: inherit; font-size: 14px; color: var(--text); background: var(--panel-2); border: 1px solid var(--line); border-radius: 4px; padding: 8px 14px; min-height: 44px; min-width: 72px; cursor: pointer; touch-action: manipulation; }
 .aname { margin: 0 0 4px; font-size: 17px; }
 .courts { display: grid; gap: 6px; }
 .court { display: grid; gap: 4px; padding: 6px 8px; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; font-size: 12px; }
@@ -2262,7 +2264,19 @@ window.GIAccounts = (() => {
       if (doAct(S, a.id, a.global ? null : target).ok) { actView = { dom: actView.dom, act: null }; render(); }
     }));
   }
+  // The game loop re-renders the dossier every tick. Rebuilding it between a finger's press and
+  // release swaps the button underneath, so the tap is lost (Back, action tiles). Hold rebuilds
+  // while a pointer is down on the sheet and catch up right after release.
+  let sideHold = false, sidePending = false;
+  (() => {
+    const sideEl = $('side');
+    const release = () => { if (!sideHold) return; setTimeout(() => { sideHold = false; if (sidePending) { sidePending = false; renderSide(); } }, 0); };
+    sideEl.addEventListener('pointerdown', () => { sideHold = true; });
+    ['pointerup', 'pointercancel'].forEach(t => sideEl.addEventListener(t, release));
+    window.addEventListener('pointerup', release); window.addEventListener('blur', release);
+  })();
   function renderSide() {
+    if (sideHold) { sidePending = true; return; }
     const side = $('side');
     if (!selected) {
       side.innerHTML = '<div class="zm">' + woCard() + powerPanel() + specialsPanel(null) + `<div class="eyebrow">Dossier</div><p class="empty">Click a country on the map to see its resistances and ${isV10() ? 'take actions' : 'run operations'} there.</p>
