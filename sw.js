@@ -28,3 +28,4 @@ self.addEventListener('fetch', e => {
     return hit || net;
   }));
 });
+// deploy trigger: live -> v10.4 (2026-10-20)
