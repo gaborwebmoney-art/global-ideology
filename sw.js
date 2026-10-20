@@ -32,3 +32,4 @@ self.addEventListener('fetch', e => {
 // deploy trigger: beta -> v10.5 (2026-10-20)
 // deploy trigger: live -> v10.5 (2026-10-20)
 // deploy trigger: beta -> v10.6 (2026-10-20)
+// deploy trigger: live -> v10.6 (2026-10-20)
