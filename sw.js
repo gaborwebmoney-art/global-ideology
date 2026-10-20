@@ -29,3 +29,4 @@ self.addEventListener('fetch', e => {
   }));
 });
 // deploy trigger: live -> v10.4 (2026-10-20)
+// deploy trigger: beta -> v10.5 (2026-10-20)
