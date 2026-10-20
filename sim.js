@@ -241,6 +241,7 @@ function canAct(s, aid, target) {
 function pushSupport(s, id, amt) { amt *= v10t(s, 'pushMul'); if (amt <= 0) return; if (s.inf[id] <= 0) seed(s, id, 0.5, null); s.inf[id] = Math.min(100, s.inf[id] + amt); }
 function doAct(s, aid, target) {
   const chk = canAct(s, aid, target); if (!chk.ok) return chk;
+  const m0 = s.mods.length;
   const a = ACTIONS.find(x => x.id === aid), W = s.wo, e = target ? actEff(s, a, target) : 0;
   s.clout -= actCost(s, a); s.acd[cdKey(s, a, target)] = s.week + actCd(s, a);
   if (s.cfg.cdMode === 'hybrid') s.acd['g:' + a.id] = s.week + Math.round(actCd(s, a) / 3);
@@ -271,6 +272,7 @@ function doAct(s, aid, target) {
     case 'ideo4': W.court = W.court.filter(c => c.target !== target); block(target, 40); pushSupport(s, target, 15); noto(4); break;
   }
   addNews(s, `${a.name}${target ? ': ' + byId(target).name : ''}.${aid === 'eco4' ? ` Every courtship at half speed for ${v10t(s, 'eco4Weeks')} weeks, treaty draft \u2212${v10t(s, 'eco4Treaty')}.` : aid === 'dip4' ? ' No new World Order courtships anywhere for 30 weeks.' : ''}`, 'you');
+  tagMods(s, m0, a.name);
   return { ok: true };
 }
 // World Order courtships: one target at a time (two from Notoriety 50). Progress fills each week; it drains while
@@ -555,7 +557,7 @@ function counterCampaign(s, target) {
   const fc = Math.min(.9, s.stats.fcRed + perk(s).fc);
   const t = byId(target);
   s.inf[t.id] = Math.max(0, s.inf[t.id] - 10 * (1 - fc));
-  s.mods.push({ id: t.id, kind: 'counter', until: s.week + Math.round(25 * (1 - fc / 2)) });
+  s.mods.push({ id: t.id, kind: 'counter', src: 'World Order campaign', until: s.week + Math.round(25 * (1 - fc / 2)) });
   const lines = [
     `World Order launches awareness campaign in ${t.name}. Leaflets feature a stern owl.`,
     `Fact-checkers descend on ${t.name}. Your slogans rated \u201cmostly vibes\u201d.`,
@@ -771,6 +773,7 @@ function canOp(s, opId, target) {
 }
 function doOp(s, opId, target) {
   const chk = canOp(s, opId, target); if (!chk.ok) return chk;
+  const m0 = s.mods.length;
   const op = OPS.find(o => o.id === opId); const c = byId(target);
   s.clout -= opCost(s, op); s.ready[opId] = s.week + opCooldown(s, op);
   if (opId === 'summit') {
@@ -787,6 +790,7 @@ function doOp(s, opId, target) {
   if (opId === 'dossier') { s.mods.push({ id: target, kind: 'dossier', until: s.week + 20 }); s.notoriety += 8;
     if (s.wo.members[target] && target !== s.wo.hq) { delete s.wo.members[target]; delete s.wo.signed[target]; s.wo.queue = s.wo.queue.filter(q => q.target !== target); addNews(s, `${c.name} storms out of the World Order after the leaks.`, 'you'); } addNews(s, `Leaked dossiers embarrass ${c.name}’s cabinet. The PDFs were suspiciously well formatted.`, 'wo'); }
   s.notoriety = Math.min(100, s.notoriety);
+  tagMods(s, m0, OPS.find(o => o.id === opId).name);
   return { ok: true };
 }
 function canSpecial(s, key, target) {
@@ -803,6 +807,7 @@ function canSpecial(s, key, target) {
   return { ok: true };
 }
 function useSpecial(s, key, target) {
+  const m0 = s.mods.length;
   const chk = canSpecial(s, key, target); if (!chk.ok) return chk;
   s.specials[key] = 'used'; const W = s.wo; const c = target ? byId(target) : null;
   const leave = id => { delete W.members[id]; delete W.signed[id]; W.queue = W.queue.filter(q => q.target !== id); };
@@ -819,6 +824,7 @@ function useSpecial(s, key, target) {
   }
   if (key === 'collapse') { COUNTRIES.forEach(c => resMod(s, c.id, .6, 20)); s.notoriety = Math.min(100, s.notoriety + 8); addNews(s, 'Engineered Collapse: every government wakes to rumours, shortages and unmarked vans. Resistance falls everywhere for 20 weeks.', 'you'); }
   if (key === 'hybrid') { s.blocked = []; W.queue = []; s.noSanctionUntil = s.week + 40; if (s.owned.includes('f3')) s.treaty = Math.max(0, s.treaty - 10); addNews(s, 'Hybrid Threat: nobody at the World Order can agree who is threatening whom. Every plan is shelved and sanctions are lifted.', 'you'); s.notoriety = Math.min(100, s.notoriety + 6); }
+  tagMods(s, m0, key === 'collapse' ? 'Engineered Collapse' : key);
   return { ok: true };
 }
 // ---- v5: random world events (background) and decision events ----
@@ -830,6 +836,8 @@ const biggest = s => COUNTRIES.reduce((a, c) => (c.pop * s.inf[c.id] > a.pop * s
 const strongestId = s => COUNTRIES.reduce((a, c) => (s.inf[c.id] > s.inf[a.id] ? c : a)).id;
 const nonMembers = s => COUNTRIES.filter(c => !s.wo.members[c.id] && c.pop >= 1).map(c => c.id);
 const membersNotHq = s => Object.keys(s.wo.members).filter(id => id !== s.wo.hq);
+// label every timed effect added since index `from` with its source (shown on the map and in the dossier)
+function tagMods(s, from, src) { for (let i = from; i < s.mods.length; i++) if (!s.mods[i].src) s.mods[i].src = src; }
 function resMod(s, id, mul, weeks, types, extra) { s.mods.push(Object.assign({ id, kind: 'res', mul, types: types || null, until: s.week + weeks }, extra || {})); }
 function notoTxt(s, n, pre) { return s.coalition ? `${pre || ' '}+${n} Notoriety.` : ''; }
 function addNoto(s, n) { if (s.coalition) s.notoriety = Math.min(100, s.notoriety + n); }
@@ -957,7 +965,7 @@ function eventsTick(s) {
     pBad = Math.min(.8, Math.max(.3, pBad));
     const good = rng(s) >= pBad;
     const pool = EVENTS.filter(e => e.good === good && e.ok(s));
-    if (pool.length) { const e = pick(s, pool); const text = e.fire(s); addNews(s, `${e.name}: ${text}`, good ? 'you' : 'wo'); s.news[0].ev = good ? 'good' : 'bad'; flag(s, 'important', newsCountry(text), e.name); E.log.unshift({ week: s.week, id: e.id, good }); }
+    if (pool.length) { const e = pick(s, pool); const m0 = s.mods.length; const text = e.fire(s); tagMods(s, m0, e.name); addNews(s, `${e.name}: ${text}`, good ? 'you' : 'wo'); s.news[0].ev = good ? 'good' : 'bad'; flag(s, 'important', newsCountry(text), e.name); E.log.unshift({ week: s.week, id: e.id, good }); }
     E.next = s.week + TUNE.evGap + Math.floor(rng(s) * 9);
   }
   if (!s.pending && s.week >= E.nextDecision) {
@@ -978,7 +986,7 @@ function canChoose(s, choice) {
 function resolveDecision(s, choice) {
   const chk = canChoose(s, choice); if (!chk.ok) return chk;
   const p = s.pending; const d = DECISIONS.find(x => x.id === p.id);
-  const text = d[choice](s, p);
+  const m0 = s.mods.length; const text = d[choice](s, p); tagMods(s, m0, p.name);
   addNews(s, `${p.name}: ${text}`, 'you'); s.news[0].ev = 'dec'; flag(s, 'important', p.target || newsCountry(text), p.name);
   s.pending = null; s.ev.nextDecision = s.week + 25 + Math.floor(rng(s) * 11);
   return { ok: true, text };
