@@ -15,6 +15,10 @@
   const cache = new Map(), misses = new Set();
   function core(s) {
     if (EXACT.has(s)) return EXACT.get(s);
+    // "Headline: body" (event/decision news): split on the known headline first, so a short
+    // generic pattern such as "{} and {}." cannot swallow the whole line and leave it half English.
+    const hd = /^([▲▼★] )?([^:.!?]{2,60}): ([\s\S]+)$/.exec(s);
+    if (hd && EXACT.has(hd[2])) return (hd[1] || '') + EXACT.get(hd[2]) + ': ' + tr(hd[3]);
     for (const p of PATS) { const m = p.re.exec(s); if (m) return p.hu.replace(/\{(\d+)\}/g, (_, i) => tr(m[i])); }
     if (!/[A-Za-z]{2}/.test(s)) return s;
     const dots = s.split(' · ');

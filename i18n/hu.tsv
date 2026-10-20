@@ -230,6 +230,7 @@ Campaign in {} wk	Kampány {1} hét múlva
 The World Order’s {} in {} falls through. Nobody can say who was meant to book the room.	A Világrend {1} {2} országban elmarad. Senki sem tudja, kinek kellett volna lefoglalnia a termet.
 signing ceremony	aláírási ceremónia
 invitation	meghívás
+campaign	kampány
 Fell through	Elmaradt
 {} signs the Containment Treaty. {} of {} signatures.	{1} aláírja a Megfékezési Szerződést. Aláírások: {2}/{3}.
 Signed treaty	Aláírt szerződés
@@ -387,6 +388,7 @@ Stay out	Kimaradsz
 Nothing happens.	Semmi sem történik.
 Your candidate wins in {}. Support +12.	A jelöltetek nyer itt: {1}. Támogatás +12.
 Your candidate loses in {}, loudly. Support −6.{}	A jelöltetek veszít itt: {1}, hangosan. Támogatás −6.{2}
+Your candidate loses in {}, loudly. Support −6.	A jelöltetek veszít itt: {1}, hangosan. Támogatás −6.
 You watch the {} election from a safe distance.	Biztonságos távolságból nézed a(z) {1} választást.
 Viral Campaign	Vírus kampány
 Your campaign in {} is going viral. You can ride the wave or keep it quiet.	A kampányod itt: {1} vírusként terjed. Meglovagolhatod a hullámot, vagy csendben tarthatod.
