@@ -906,3 +906,22 @@ Left alliance	Kilépett a szövetségből
 Alliance dissolved	Szövetség feloszlott
 Retaliation	Megtorlás
 Cohesion down	Gyengül az összetartás
+Clout income up a lot. Market Access: Clout bubbles also appear in countries that trade with one you hold 25%+, and collecting a bubble gives +1 support there. Foreign Investment costs 1 Clout less	A befolyás-bevétel sokat nő. Piacra jutás: befolyás-buborékok azokban az országokban is megjelennek, amelyek kereskednek egy általad 25%+ fölött tartott országgal, és egy buborék begyűjtése ott +1 támogatást ad. A Külföldi befektetés 1 befolyással olcsóbb
+Economic resistance −20%. Sanction-proof contracts: routes opened by Trade Deal can no longer be closed by sanctions or strikes. Trade Deal recharges 10 weeks faster	Gazdasági ellenállás −20%. Szankcióbiztos szerződések: a Kereskedelmi megállapodással nyitott útvonalakat szankciók és sztrájkok sem zárhatják le. A Kereskedelmi megállapodás 10 héttel gyorsabban töltődik újra
+Economic resistance −20%, diplomatic −10%. Dependency: World Order members that trade with a country you hold 50%+ cannot sign the treaty. Buyout also gives +3 support in the target’s trade partners	Gazdasági ellenállás −20%, diplomáciai −10%. Függőség: azok a Világrend-tagok, amelyek kereskednek egy általad 50%+ fölött tartott országgal, nem írhatják alá a szerződést. A Felvásárlás a célpont kereskedelmi partnereiben is +3 támogatást ad
+Sanctions on the {}–{} route bounce off your contracts. The lawyers send their regards.	A(z) {1}–{2} útvonalra kivetett szankciók lepattannak a szerződéseidről. Az ügyvédek üdvözletüket küldik.
+{} cannot risk its trade with you and skips the signing ceremony.	{1} nem kockáztathatja a veled folytatott kereskedelmet, és kihagyja az aláírási ceremóniát.
+{} now depends on trade with you. Its diplomats suddenly cannot find a pen.	{1} mostantól a veled folytatott kereskedelemtől függ. A diplomatái hirtelen nem találnak tollat.
+a consortium nobody has heard of buys a stadium in {}.	egy senki által nem ismert konzorcium stadiont vesz itt: {1}.
+{} gets a shiny new bridge. The plaque mentions you.	{1} vadonatúj hidat kap. Az emléktábla téged említ.
+your venture fund opens an office in {}. The coffee is free; the ideas are not.	a kockázati alapod irodát nyit itt: {1}. A kávé ingyenes, az eszmék nem.
+{} and {} sign a deal nobody has read.	{1} és {2} aláír egy megállapodást, amelyet senki sem olvasott el.
+container ships from {} reach {}, packed with goods and pamphlets.	konténerhajók érkeznek innen: {1}, ide: {2}, áruval és röplapokkal megrakva.
+{} discovers it cannot live without exports from {}.	{1} rájön, hogy nem élhet {2} exportja nélkül.
+you quietly buy the largest newspaper in {}. Editorials improve overnight.	csendben megveszed a legnagyobb újságot itt: {1}. A vezércikkek egyik napról a másikra javulnak.
+the national airline of {} is now yours. The in-flight magazine is very on-message.	{1} nemzeti légitársasága mostantól a tiéd. A fedélzeti magazin nagyon üzenetközpontú.
+half the banks in {} change hands over a long weekend.	{1} bankjainak fele egy hosszú hétvége alatt gazdát cserél.
+Cannot sign	Nem írhat alá
+Dependent	Függő
+Sanctions bounced	Szankció lepattant
+while trade lasts	amíg a kereskedelem tart
