@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-UxFcmA0NaRBkrMeZlW6QzwP9hETHEbYn/tjgqW3cM8U=' 'sha256-isXUKIom3eDXMvgzfR9lDXh9r8EMWid8ddpFsQhQX6U=' 'sha256-K+/c+ynU4bH5RqYTleTJltyxEZq8MBG8+h01Js7faoQ=' 'sha256-OznHXIsg38q5etN+r6P0DbIopBAueSmX7uq0YY0Zb2I=' 'sha256-hNTcHA1I5XAAfMZPFKw+GYRbFMwxv5qawgW8x0AtQaE=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-UxFcmA0NaRBkrMeZlW6QzwP9hETHEbYn/tjgqW3cM8U=' 'sha256-isXUKIom3eDXMvgzfR9lDXh9r8EMWid8ddpFsQhQX6U=' 'sha256-5Ii7yiqZe8Gp+Hof4dTzztCO1m4dzp8Dd/TgB8CkxtA=' 'sha256-OznHXIsg38q5etN+r6P0DbIopBAueSmX7uq0YY0Zb2I=' 'sha256-hNTcHA1I5XAAfMZPFKw+GYRbFMwxv5qawgW8x0AtQaE=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#0d1820">
 <meta name="mobile-web-app-capable" content="yes">
@@ -399,7 +399,9 @@ body { overscroll-behavior: none; -webkit-tap-highlight-color: transparent; }
   .mapwrap.fit { align-self: start; }
   .side { position: fixed; left: 0; right: 0; bottom: 0; top: auto; max-height: 62dvh; overflow-y: auto; z-index: 30; border-radius: 12px 12px 0 0; border-bottom: 0; padding-bottom: calc(12px + env(safe-area-inset-bottom)); transform: translateY(105%); transition: transform .2s ease; box-shadow: 0 -8px 24px rgba(0,0,0,.45); }
   .side.open { transform: none; }
-  .side-close { display: block; margin: 0 0 8px auto; min-height: 36px; padding: 6px 12px; position: sticky; top: 0; z-index: 3; flex: none; background: var(--panel-2); box-shadow: 0 2px 10px rgba(0,0,0,.5); }
+  .side-top { position: sticky; top: 0; z-index: 3; display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin: 0 0 8px; }
+  .side-top .btn { min-height: 36px; padding: 6px 12px; box-shadow: 0 2px 10px rgba(0,0,0,.5); }
+  .side-close { background: var(--panel-2); }
   .mapwrap.fit { height: auto; aspect-ratio: 1000 / 580; overflow: hidden; }
   .mapwrap.fit #map { width: 100%; height: 100%; aspect-ratio: auto; }
   .mapwrap.fit .fitbtn { position: absolute; left: 6px; bottom: 6px; top: auto; margin: 0; }
@@ -2200,7 +2202,7 @@ window.GIAccounts = (() => {
     }
     if (S && !picking) html += specialsPanel(c.id);
     if (SHEET() && S) html += powerPanel();
-    side.innerHTML = '<div class="zm">' + (SHEET() ? '<button class="btn side-close" aria-label="Close dossier">Close</button>' : '') + html + '</div>';
+    side.innerHTML = '<div class="zm">' + (SHEET() ? '<div class="side-top">' + (picking ? '<button class="btn primary side-start">Start here</button>' : '') + '<button class="btn side-close" aria-label="Close dossier">Close</button></div>' : '') + html + '</div>';
     side.querySelectorAll('.op').forEach(b => b.addEventListener('click', () => { doOp(S, b.dataset.op, c.id); render(); }));
     if (isV10()) bindActions(side, c.id);
     bindMoves(side);
@@ -2451,7 +2453,7 @@ window.GIAccounts = (() => {
     if (['1', '2', '3'].includes(e.key)) setSpeed(+e.key);
   });
   $('openTree').addEventListener('click', openTree);
-  $('side').addEventListener('click', e => { if (e.target.closest('.side-close')) $('side').classList.remove('open'); });
+  $('side').addEventListener('click', e => { if (e.target.closest('.side-close')) $('side').classList.remove('open'); if (e.target.closest('.side-start') && picking && selected) { $('side').classList.remove('open'); startGame(selected); } });
   $('closeTree').addEventListener('click', treeBack);
   $('treeOv').addEventListener('click', e => { if (e.target.id === 'treeOv') closeTree(true); });
   $('introGo').addEventListener('click', () => { $('introOv').hidden = true; picking = true; $('mapHint').textContent = 'Choose your starting country'; });
