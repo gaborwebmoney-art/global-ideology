@@ -860,8 +860,8 @@ Nothing yet.	Még nincs semmi.
 More	Továbbiak
 Settings	Beállítások
 Settings and map legend	Beállítások és jelmagyarázat
-Require reading important news	Fontos hírek elolvasása kötelező
-The game pauses when important news arrives and carries on once you have read it.	A játék megáll, amikor fontos hír érkezik, és elolvasás után folytatódik.
+Pause on important news	Megállás fontos híreknél
+The game pauses when important news arrives. Pick a speed to carry on.	A játék megáll, amikor fontos hír érkezik. Válassz sebességet a folytatáshoz.
 Map markers	Térképjelek
 Helps you	Neked kedvez
 Locked	Lezárva
