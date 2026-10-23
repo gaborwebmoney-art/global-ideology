@@ -195,8 +195,8 @@ const HOOKS = { e1: ['eco1', 'costs 1 Clout less'], e2: ['eco2', 'recharges 10 w
   d1: ['dip1', 'resistance \u221215% for good'], d2: ['dip2', 'lasts 35 weeks'], d3: ['dip3', 'blocks courtship for 30 weeks'],
   i1: ['ideo1', '+1 support'], i2: ['ideo2', 'lasts 35 weeks'], i3: ['ideo3', 'recharges 15 weeks faster'] };
 function hooksFor(s, aid) { return Object.entries(HOOKS).filter(([u, [a]]) => a === aid && own(s, u)).map(([u, [, t]]) => ({ up: upg(u).name, text: t })); }
-function actCost(s, a) { const c = v10t(s, 'costs')[a.tier - 1] - (a.id === 'eco1' && own(s, 'e1') ? 1 : 0); return a.dom === 'mil' && pairOn(s, 'ecomil') ? Math.max(1, Math.round(c * .75)) : c; }
-function actCd(s, a) { return v10t(s, 'cds')[a.tier - 1] - (a.id === 'eco2' && own(s, 'e2') ? 10 : 0) - (a.id === 'ideo3' && own(s, 'i3') ? 15 : 0); }
+function actCost(s, a) { const c = v10t(s, 'costs')[a.tier - 1] - (a.id === 'eco1' && own(s, 'e1') ? 1 : 0); return Math.max(1, (a.dom === 'mil' && pairOn(s, 'ecomil') ? Math.max(1, Math.round(c * .75)) : c) - (rulesOn(s) ? perk(s).opDisc : 0)); }
+function actCd(s, a) { return Math.max(5, v10t(s, 'cds')[a.tier - 1] - (a.id === 'eco2' && own(s, 'e2') ? 10 : 0) - (a.id === 'ideo3' && own(s, 'i3') ? 15 : 0) - (rulesOn(s) ? perk(s).opCd : 0)); }
 function actEff(s, a, target) {
   const pair = a.dom === 'dip' && pairOn(s, 'ecodip') ? 1 + v10t(s, 'edEff') * domainPower(s, 'eco') : a.dom === 'ideo' && pairOn(s, 'ideodip') ? 1 + .5 * domainPower(s, 'dip') : 1;
   return (1 - resBreakdown(s, target)[a.dom]) * (1 + domainPower(s, a.dom)) * pair;
@@ -208,7 +208,7 @@ function nbMax(s, id) { return Math.max(0, ...neighbours(id).map(n => s.inf[n]))
 function courtOn(s, id) { return ((s.wo && s.wo.court) || []).find(c => c.target === id); }
 function joinLimit(s, id) { return TUNE.joinBelow - s.stats.shield + (Q(s, id).recruitDelta || 0); }
 // past the point of no return (pnr) only a T4 or support above the refuse line stops a courtship
-function knock(s, id, pts, a) { const c = courtOn(s, id); if (c && c.prog < v10t(s, 'pnr')) c.prog = Math.max(0, c.prog - pts * v10t(s, 'knockMul') * (1 + domainPower(s, a.dom))); }
+function knock(s, id, pts, a) { const k = ruleKind(s, id, a.dom); if (k === 'noKnock') return; const c = courtOn(s, id); if (c && c.prog < v10t(s, 'pnr')) c.prog = Math.max(0, c.prog - pts * v10t(s, 'knockMul') * (1 + domainPower(s, a.dom)) * (k === 'knock2' ? 2 : 1)); }
 function canAct(s, aid, target) {
   const a = ACTIONS.find(x => x.id === aid);
   if (s.over) return { ok: false, why: 'Game over' };
@@ -222,7 +222,9 @@ function canAct(s, aid, target) {
   if (a.tier === 4 && !s.owned.includes(a.dom[0] + '4') && !(a.dom === 'ideo' && s.owned.includes('i4'))) return { ok: false, why: `Needs the tier-4 ${TYPE_LABEL[a.dom]} upgrade` };
   if (s.cfg.gate !== false && a.tier < 4 && nOwned < a.tier) return { ok: false, why: `Needs ${a.tier} ${TYPE_LABEL[a.dom]} upgrade${a.tier > 1 ? 's' : ''}` };
   if (a.global) return { ok: true };
-  const v = s.inf[target], W = s.wo, ct = courtOn(s, target);
+  const rl = ruleAt(s, target, a.dom);
+  if (rl && rl.kind === 'ban') return { ok: false, why: `${rl.name}: no ${TYPE_LABEL[a.dom]} actions here` };
+  const v = s.inf[target], W = s.wo, ct = courtOn(s, target) || (rl && rl.kind === 'anyNb');
   if (['eco1', 'eco3', 'mil1', 'mil2', 'mil3', 'ideo1'].includes(aid) && v >= 95) return { ok: false, why: 'Already yours' };
   if (aid === 'eco2') {
     const src = strongest(s, target);
@@ -243,12 +245,14 @@ function doAct(s, aid, target) {
   const chk = canAct(s, aid, target); if (!chk.ok) return chk;
   const m0 = s.mods.length;
   const a = ACTIONS.find(x => x.id === aid), W = s.wo, e = target ? actEff(s, a, target) : 0;
-  s.clout -= actCost(s, a); s.acd[cdKey(s, a, target)] = s.week + actCd(s, a);
+  const cost0 = actCost(s, a); s.clout -= cost0; s.acd[cdKey(s, a, target)] = s.week + actCd(s, a);
   if (s.cfg.cdMode === 'hybrid') s.acd['g:' + a.id] = s.week + Math.round(actCd(s, a) / 3);
   s.actLog = s.actLog || []; s.actLog.push(aid);
   const leave = id => { delete W.members[id]; delete W.signed[id]; W.queue = W.queue.filter(q => q.target !== id); W.court = (W.court || []).filter(c => c.target !== id); };
   const noto = n => addNoto(s, a.dom === 'mil' && pairOn(s, 'ideomil') ? n / 2 : n);
   const block = (id, wk) => s.mods.push({ id, kind: 'noCourt', until: s.week + wk });
+  const rl = target ? ruleAt(s, target, a.dom) : null, before = target ? s.inf[target] : 0, paid = cost0;
+  if (rl && rl.kind === 'fizzle' && rng(s) < .5) { addNews(s, `${a.name} in ${byId(target).name} fizzles. ${rl.name}: nobody turns up. The Clout is spent.`, 'wo'); flag(s, 'ping', target, rl.name); tagMods(s, m0, a.name); return { ok: true, fizzled: true }; }
   if (target && ((a.dom === 'mil' && pairOn(s, 'ideomil')) || (a.dom === 'dip' && pairOn(s, 'ideodip')))) s.mods.push({ id: target, kind: 'growth', mul: 1.3, until: s.week + 20 });
   switch (aid) {
     case 'eco1': pushSupport(s, target, v10t(s, 'eco1Amt') * e); knock(s, target, v10t(s, 'eco1Knock'), a); break;
@@ -273,6 +277,7 @@ function doAct(s, aid, target) {
   }
   const hl = actHeadline(s, aid, target, aid === 'eco2' && s.trade.length ? s.trade[s.trade.length - 1][0] : null);
   if (hl) addNews(s, hl, 'you'); else addNews(s, `${a.name}${target ? ': ' + byId(target).name : ''}.${aid === 'eco4' ? ` Every courtship at half speed for ${v10t(s, 'eco4Weeks')} weeks, treaty draft \u2212${v10t(s, 'eco4Treaty')}.` : aid === 'dip4' ? ' No new World Order courtships anywhere for 30 weeks.' : ''}`, 'you');
+  if (rl) applyRule(s, rl, a, target, before, paid);
   allianceOnAct(s, a, target);
   tagMods(s, m0, a.name);
   return { ok: true };
@@ -282,6 +287,20 @@ function doAct(s, aid, target) {
 // ---- Enforcement (v10): 8 signatures ratify the treaty. While ratified (8+ signed), support drains weekly and income drops.
 // Falling back under 8 (withdrawal at 70%, Regime Change) suspends it. After the first ratification the draft is complete:
 // every member may be courted to sign. Loss: extinction, or every populated country signed.
+// country rules that fire after an action resolves (weak spot or wall)
+function applyRule(s, rl, a, target, before, paid) {
+  const c = byId(target), gain = s.inf[target] - before;
+  switch (rl.kind) {
+    case 'echo': if (gain > 0) { const ns = neighboursOrTrade(s, target); ns.forEach(id => { if (s.inf[id] <= 0) seed(s, id, gain * .5, target); else s.inf[id] = Math.min(100, s.inf[id] + gain * .5); }); if (ns.length) { addNews(s, `${rl.name}: ${a.name} in ${c.name} echoes into ${ns.length} more countr${ns.length === 1 ? 'y' : 'ies'}.`, 'you'); flag(s, 'ping', target, rl.name); } } break;
+    case 'lock': s.mods.push({ id: target, kind: 'noCourt', until: s.week + 20, src: rl.name }); addNews(s, `${rl.name}: the World Order cannot court ${c.name} for 20 weeks.`, 'you'); flag(s, 'ping', target, rl.name); break;
+    case 'refund': { const r = Math.max(1, Math.floor(paid / 2)); s.clout += r; addNews(s, `${rl.name}: ${a.name} in ${c.name} pays back ${r} Clout.`, 'you'); break; }
+    case 'bubble': spawnBubble(s, target, 2); break;
+    case 'knock2': if (courtOn(s, target)) addNews(s, `${rl.name}: ${a.name} hits the World Order’s courtship of ${c.name} twice as hard.`, 'you'); break;
+    case 'harden': resMod(s, target, 1.25, 20, [a.dom], { src: rl.name }); addNews(s, `${rl.name}: ${c.name} digs in. ${TYPE_LABEL[a.dom]} resistance +25% for 20 weeks.`, 'wo'); flag(s, 'ping', target, rl.name); break;
+    case 'loud': s.notoriety = Math.min(100, s.notoriety + 4); addNews(s, `${rl.name}: ${a.name} in ${c.name} makes headlines. +4 Notoriety.`, 'wo'); break;
+    case 'reverse': s.inf[target] = Math.max(0, Math.min(s.inf[target], before) - 5); addNews(s, `${rl.name}: ${a.name} backfires in ${c.name}. −5 support.`, 'wo'); flag(s, 'ping', target, rl.name); break;
+  }
+}
 function ratified(s) { return !!(s.cfg.v10 && s.wo.ratifiedAt && signedCount(s) >= SIGNATURES_TO_LOSE); }
 function populated() { return COUNTRIES.filter(c => c.pop >= 1); }
 function sigGrowthMul(s) { return s.cfg.v10 ? Math.max(0, 1 - v10t(s, 'sigGrowth') * Math.min(SIGNATURES_TO_LOSE, signedCount(s))) : 1; }
@@ -388,12 +407,75 @@ const CONDITIONS = [
   { id: 'fragmented', name: 'Fragmented diplomacy', text: 'Treaty drafting 15% slower', fx: { treatySlow: .15 } },
   { id: 'austerity', name: 'Austerity', text: 'Clout income −30%', fx: { income: -.5 } }
 ];
+// ---- v10.8 (Step 7): country asymmetry. Every country has a weak spot (one domain whose actions get an extra rule there),
+// a wall (one domain whose actions misfire there) and a base bonus (when you start there). Applies to v10 games (cfg.rules !== false).
+// weak kinds: echo, knock2, lock, refund, anyNb, bubble.  wall kinds: harden, loud, fizzle, noKnock, ban, reverse.
+// base kinds: free (first upgrade of a branch free), clout, upSwings, quiet, perk (held-perk active from week 0), seedNb, start8, noCourt, noCampaign.
+const RULES = {
+  borealis:   { weak: ['ideo', 'echo', 'Provincial politics', 'Ideology actions here also spread half their gain to neighbours and trade partners.'],
+                wall: ['eco', 'harden', 'Resource nationalism', 'Economy actions here raise its economic resistance by 25% for 20 weeks.'],
+                base: ['free', 'Your first Ideology upgrade is free.', 'ideo'] },
+  aethelgard: { weak: ['ideo', 'knock2', 'Culture wars', 'Ideology actions here knock World Order courtships back twice as hard.'],
+                wall: ['mil', 'loud', 'Superpower pride', 'Military actions here cost +4 Notoriety.'],
+                base: ['clout', 'You start with 15 Clout instead of 5.'] },
+  laplata:    { weak: ['eco', 'refund', 'Commodity boom', 'Economy actions here refund half their Clout cost.'],
+                wall: ['dip', 'fizzle', 'Revolving governments', 'Diplomacy actions here fail half the time. The Clout is spent anyway.'],
+                base: ['upSwings', 'Support swings in your base only go up.'] },
+  isolde:     { weak: ['dip', 'lock', 'Close-knit', 'Diplomacy actions here also stop World Order courtship for 20 weeks.'],
+                wall: ['ideo', 'harden', 'Proud heritage', 'Ideology actions here raise its ideological resistance by 25% for 20 weeks.'],
+                base: ['quiet', 'Notoriety grows 20% slower.'] },
+  guldor:     { weak: ['eco', 'echo', 'Old money', 'Economy actions here also spread half their gain to neighbours and trade partners.'],
+                wall: ['dip', 'noKnock', 'Ancient treaties', 'Diplomacy actions here do not slow World Order courtships.'],
+                base: ['perk', 'Financier is active from the start: Clout income up.'] },
+  celestia:   { weak: ['mil', 'anyNb', 'Soft army', 'Military actions here need no neighbour support.'],
+                wall: ['ideo', 'harden', 'Philosophers', 'Ideology actions here raise its ideological resistance by 25% for 20 weeks. Someone always writes a rebuttal.'],
+                base: ['free', 'Your first Diplomacy upgrade is free.', 'dip'] },
+  helvetia:   { weak: ['dip', 'refund', 'Neutral venue', 'Diplomacy actions here refund half their Clout cost.'],
+                wall: ['mil', 'ban', 'Armed neutrality', 'No Military actions here.'],
+                base: ['perk', 'Discreet banking is active from the start: every action costs 1 Clout less.'] },
+  pannonia:   { weak: ['eco', 'knock2', 'Pragmatists', 'Economy actions here knock World Order courtships back twice as hard.'],
+                wall: ['dip', 'fizzle', 'Contrarian', 'Diplomacy actions here fail half the time. The Clout is spent anyway.'],
+                base: ['seedNb', 'You start with 2% support in every neighbour.'] },
+  koryn:      { weak: ['mil', 'lock', 'Respects strength', 'Military actions here also stop World Order courtship for 20 weeks.'],
+                wall: ['eco', 'harden', 'Sanction-hardened', 'Economy actions here raise its economic resistance by 25% for 20 weeks.'],
+                base: ['free', 'Your first Military upgrade is free.', 'mil'] },
+  tavaro:     { weak: ['mil', 'refund', 'Arms bazaar', 'Military actions here refund half their Clout cost.'],
+                wall: ['eco', 'loud', 'Oil cartel', 'Economy actions here cost +4 Notoriety.'],
+                base: ['perk', 'Oil is active from the start: Clout income up.'] },
+  kestria:    { weak: ['ideo', 'bubble', 'Viral', 'Ideology actions here drop a 2-Clout bubble.'],
+                wall: ['mil', 'reverse', 'Youth protests', 'Military actions here cost you 5 support instead of adding it.'],
+                base: ['start8', 'You start with 8% support instead of 3%.'] },
+  bharat:     { weak: ['dip', 'knock2', 'Coalition politics', 'Diplomacy actions here knock World Order courtships back twice as hard.'],
+                wall: ['eco', 'fizzle', 'Red tape', 'Economy actions here fail half the time. The Clout is spent anyway.'],
+                base: ['perk', 'Digital reach is active from the start: internal growth +10% everywhere.'] },
+  sinopeia:   { weak: ['dip', 'echo', 'Face', 'Diplomacy actions here also spread half their gain to neighbours and trade partners.'],
+                wall: ['ideo', 'ban', 'Great Firewall', 'No Ideology actions here.'],
+                base: ['noCourt', 'The World Order can never court your base.'] },
+  juche:      { weak: ['mil', 'anyNb', 'Brittle regime', 'Military actions here need no neighbour support.'],
+                wall: ['ideo', 'reverse', 'Portrait backlash', 'Ideology actions here cost you 5 support instead of adding it.'],
+                base: ['noCampaign', 'The World Order cannot run campaigns in your base.'] },
+  nippon:     { weak: ['ideo', 'echo', 'Trendsetters', 'Ideology actions here also spread half their gain to neighbours and trade partners.'],
+                wall: ['mil', 'reverse', 'Pacifist constitution', 'Military actions here cost you 5 support instead of adding it.'],
+                base: ['perk', 'Hyper-advanced is active from the start: every action recharges 6 weeks faster.'] },
+  pinguinia:  { weak: ['eco', 'bubble', 'Research grants', 'Economy actions here drop a 2-Clout bubble.'],
+                wall: ['mil', 'ban', 'Antarctic Treaty', 'No Military actions here.'],
+                base: ['free', 'Your first Economy upgrade is free.', 'eco'] }
+};
+function rulesOn(s) { return !!(s && s.cfg && s.cfg.v10 && s.cfg.rules !== false); }
+// the rule a domain meets in a country: { side: 'weak'|'wall', kind, name, text } or null
+function ruleAt(s, id, dom) {
+  if (!rulesOn(s) || !id || !RULES[id]) return null;
+  for (const side of ['weak', 'wall']) { const r = RULES[id][side]; if (r[0] === dom) return { side, dom, kind: r[1], name: r[2], text: r[3] }; }
+  return null;
+}
+const ruleKind = (s, id, dom) => { const r = ruleAt(s, id, dom); return r ? r.kind : null; };
+function baseRule(s) { return rulesOn(s) && RULES[s.startId] ? RULES[s.startId].base : null; }
 const MULT_KEYS = ['growth', 'trade', 'border'];
 function Q(s, id) { return (s.cfg && s.cfg.traits === false) ? {} : ((TRAITS[id] && TRAITS[id].q) || {}); }
 function perk(s) {
   const p = { income: 0, growth: 1, trade: 1, border: 1, vis: 0, fc: 0, opDisc: 0, opCd: 0, bubble: 0, treatySlow: 0, memberRes: 0, plan: 0 };
   const add = fx => Object.entries(fx || {}).forEach(([k, v]) => { if (MULT_KEYS.includes(k)) p[k] *= v; else p[k] += v; });
-  if (!s.cfg || s.cfg.traits !== false) COUNTRIES.forEach(c => { if (s.inf[c.id] >= CONTROL && TRAITS[c.id]) add(TRAITS[c.id].fx); });
+  if (!s.cfg || s.cfg.traits !== false) COUNTRIES.forEach(c => { if (TRAITS[c.id] && (s.inf[c.id] >= CONTROL || (c.id === s.startId && (baseRule(s) || [])[0] === 'perk'))) add(TRAITS[c.id].fx); });
   (s.cond || []).forEach(id => add(CONDITIONS.find(c => c.id === id).fx));
   return p;
 }
@@ -435,7 +517,19 @@ function createState(startId, seed, opts) {
     for (let i = 0; i < 2; i++) s.cond.push(pool.splice(Math.floor(rng(s) * pool.length), 1)[0].id);
     addNews(s, `World conditions this game: ${s.cond.map(id => CONDITIONS.find(c => c.id === id).name).join(' and ')}.`, 'world');
   }
+  applyBase(s);
   return s;
+}
+function applyBase(s) {
+  const b = baseRule(s); if (!b) return;
+  const id = s.startId, src = 'Base: ' + byId(id).name;
+  if (b[0] === 'free') s.freeUp = b[2];
+  if (b[0] === 'clout') s.clout = 15;
+  if (b[0] === 'quiet') { s.base.vis -= .2; s.stats.vis -= .2; }
+  if (b[0] === 'start8') s.inf[id] = 8;
+  if (b[0] === 'seedNb') neighbours(id).forEach(n => { s.inf[n] = 2; s.flags['seed_' + n] = true; });
+  if (b[0] === 'noCourt' || b[0] === 'noCampaign') s.mods.push({ id, kind: b[0], until: 1e9, src });
+  addNews(s, `Base bonus, ${byId(id).name}: ${b[1]}`, 'you');
 }
 function rng(s) { const r = mulberry32(s.seed + s.rngCalls * 7919)(); s.rngCalls++; return r; }
 function byId(id) { return COUNTRIES.find(c => c.id === id); }
@@ -483,7 +577,7 @@ function step(s) {
   COUNTRIES.forEach(c => {
     const sw = Q(s, c.id).swing; if (!sw || s.inf[c.id] < 8) return;
     if (rng(s) < sw) {
-      const delta = (rng(s) < .5 ? -1 : 1) * (4 + 6 * rng(s));
+      const delta = (rng(s) < .5 && !(c.id === s.startId && (baseRule(s) || [])[0] === 'upSwings') ? -1 : 1) * (4 + 6 * rng(s));
       d[c.id] += delta;
       if (s.inf[c.id] >= 5) { addNews(s, delta > 0 ? `A populist wave in ${c.name} lifts your movement.` : `A scandal in ${c.name} knocks your movement back.`, delta > 0 ? 'you' : 'wo'); flag(s, 'ping', c.id, delta > 0 ? 'Swing up' : 'Swing down'); }
     }
@@ -690,7 +784,7 @@ function milestoneNews(s, share) {
 }
 
 // ---- Player actions ----
-function upCost(s, u) { const base = s.cfg.v10 && u.special && CORE.includes(u.b) ? v10t(s, 't4Up') : u.cost; return Math.round(base * (1 + (s.cfg.v10 ? v10t(s, 'costGrow') : TUNE.costGrow) * s.owned.length) * (offDoctrine(s, u) ? v10t(s, 'offCost') : 1)); }
+function upCost(s, u) { if (s.freeUp && s.freeUp === u.b && u.tier === 0) return 0; const base = s.cfg.v10 && u.special && CORE.includes(u.b) ? v10t(s, 't4Up') : u.cost; return Math.round(base * (1 + (s.cfg.v10 ? v10t(s, 'costGrow') : TUNE.costGrow) * s.owned.length) * (offDoctrine(s, u) ? v10t(s, 'offCost') : 1)); }
 function canBuy(s, u) {
   if (s.owned.includes(u.id)) return { ok: false, why: 'Owned' };
   if (u.req && !s.owned.includes(u.req)) return { ok: false, why: 'Needs ' + UPGRADES.find(x => x.id === u.req).name };
@@ -741,7 +835,7 @@ function rebrand(s, b) {
 function buyUpgrade(s, id) {
   const u = UPGRADES.find(x => x.id === id); const chk = canBuy(s, u); if (!chk.ok) return chk;
   const off = offDoctrine(s, u), pairsBefore = PAIRS.filter(p => pairOn(s, p.id)).map(p => p.id);
-  s.clout -= upCost(s, u); s.owned.push(id);
+  s.clout -= upCost(s, u); s.owned.push(id); if (s.freeUp === u.b) s.freeUp = null;
   if (off && s.cfg.softLock) addNoto(s, v10t(s, 'offNoto'));
   if (u.once && u.once.treaty) s.treaty = Math.max(0, s.treaty + u.once.treaty);
   if (u.once && u.once.seed) { const zeros = COUNTRIES.filter(c => s.inf[c.id] <= 0); for (let i = 0; i < u.once.seed && zeros.length; i++) seed(s, zeros.splice(Math.floor(rng(s) * zeros.length), 1)[0].id, 2, null); }
@@ -1131,4 +1225,4 @@ function actHeadline(s, aid, target, src) {
 }
 
 // SIM-END
-if (typeof module !== 'undefined') module.exports = { V10, HOOKS, hooksFor, PAIRS, pairOn, synergyOf, doctrineOf, closedFrom, offDoctrine, hasT2, CORE, ratified, enforcementTick, sigGrowthMul, populated, courtOn, actCost, ACTIONS, canAct, doAct, domainPower, actEff, resBreakdown, TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };
+if (typeof module !== 'undefined') module.exports = { RULES, ruleAt, baseRule, rulesOn, V10, HOOKS, hooksFor, PAIRS, pairOn, synergyOf, doctrineOf, closedFrom, offDoctrine, hasT2, CORE, ratified, enforcementTick, sigGrowthMul, populated, courtOn, actCost, ACTIONS, canAct, doAct, domainPower, actEff, resBreakdown, TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };

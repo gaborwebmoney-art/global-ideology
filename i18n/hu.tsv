@@ -932,3 +932,95 @@ Quit and start over	Kilépés és új kezdés
 Cancel	Mégse
 Results	Eredmények
 Game over, week {}	Vége a játéknak, {1}. hét
+Weak spot	Gyenge pont
+Wall	Fal
+✕ Wall	✕ Fal
+Your base	A bázisod
+Start here	Ha itt kezdesz
+Free	Ingyenes
+Free: your base bonus.	Ingyenes: a bázisbónuszod.
+Confirm upgrade · free	Fejlesztés megerősítése · ingyenes
+Base bonus, {}: {}	Bázisbónusz, {1}: {2}
+no {} actions here	itt nincsenek {1} akciók
+Provincial politics	Tartományi politika
+Resource nationalism	Erőforrás-nacionalizmus
+Culture wars	Kultúrharc
+Superpower pride	Szuperhatalmi büszkeség
+Commodity boom	Nyersanyag-konjunktúra
+Revolving governments	Forgóajtós kormányok
+Close-knit	Összetartó közösség
+Proud heritage	Büszke örökség
+Ancient treaties	Ősi szerződések
+Soft army	Puha hadsereg
+Philosophers	Filozófusok
+Neutral venue	Semleges helyszín
+Armed neutrality	Fegyveres semlegesség
+Pragmatists	Pragmatikusok
+Contrarian	Örök ellenzék
+Respects strength	Tiszteli az erőt
+Sanction-hardened	Szankcióedzett
+Arms bazaar	Fegyverbazár
+Oil cartel	Olajkartell
+Viral	Virális
+Youth protests	Ifjúsági tüntetések
+Coalition politics	Koalíciós politika
+Red tape	Bürokrácia
+Face	Arcmegőrzés
+Great Firewall	Nagy Tűzfal
+Brittle regime	Törékeny rezsim
+Portrait backlash	A portré visszavág
+Trendsetters	Trenddiktátorok
+Pacifist constitution	Pacifista alkotmány
+Research grants	Kutatási ösztöndíjak
+Antarctic Treaty	Antarktisz-egyezmény
+Ideology actions here also spread half their gain to neighbours and trade partners.	Az itteni Ideológia-akciók nyereségük felét a szomszédokra és a kereskedelmi partnerekre is átterjesztik.
+Economy actions here also spread half their gain to neighbours and trade partners.	Az itteni Gazdaság-akciók nyereségük felét a szomszédokra és a kereskedelmi partnerekre is átterjesztik.
+Diplomacy actions here also spread half their gain to neighbours and trade partners.	Az itteni Diplomácia-akciók nyereségük felét a szomszédokra és a kereskedelmi partnerekre is átterjesztik.
+Economy actions here raise its economic resistance by 25% for 20 weeks.	Az itteni Gazdaság-akciók 20 hétre 25%-kal növelik az ország gazdasági ellenállását.
+Ideology actions here raise its ideological resistance by 25% for 20 weeks.	Az itteni Ideológia-akciók 20 hétre 25%-kal növelik az ország ideológiai ellenállását.
+Someone always writes a rebuttal.	Valaki mindig ír egy cáfolatot.
+Ideology actions here knock World Order courtships back twice as hard.	Az itteni Ideológia-akciók kétszer olyan erősen vetik vissza a Világrend udvarlásait.
+Economy actions here knock World Order courtships back twice as hard.	Az itteni Gazdaság-akciók kétszer olyan erősen vetik vissza a Világrend udvarlásait.
+Diplomacy actions here knock World Order courtships back twice as hard.	Az itteni Diplomácia-akciók kétszer olyan erősen vetik vissza a Világrend udvarlásait.
+Military actions here cost +4 Notoriety.	Az itteni Katonai akciók +4 Hírhedtséggel járnak.
+Economy actions here cost +4 Notoriety.	Az itteni Gazdaság-akciók +4 Hírhedtséggel járnak.
+Economy actions here refund half their Clout cost.	Az itteni Gazdaság-akciók Befolyás-költségük felét visszaadják.
+Diplomacy actions here refund half their Clout cost.	Az itteni Diplomácia-akciók Befolyás-költségük felét visszaadják.
+Military actions here refund half their Clout cost.	Az itteni Katonai akciók Befolyás-költségük felét visszaadják.
+Diplomacy actions here fail half the time. The Clout is spent anyway.	Az itteni Diplomácia-akciók az esetek felében kudarcot vallanak. A Befolyás akkor is elfogy.
+Economy actions here fail half the time. The Clout is spent anyway.	Az itteni Gazdaság-akciók az esetek felében kudarcot vallanak. A Befolyás akkor is elfogy.
+Diplomacy actions here also stop World Order courtship for 20 weeks.	Az itteni Diplomácia-akciók 20 hétre a Világrend udvarlását is leállítják.
+Military actions here also stop World Order courtship for 20 weeks.	Az itteni Katonai akciók 20 hétre a Világrend udvarlását is leállítják.
+Diplomacy actions here do not slow World Order courtships.	Az itteni Diplomácia-akciók nem lassítják a Világrend udvarlásait.
+Military actions here need no neighbour support.	Az itteni Katonai akciókhoz nem kell támogatás a szomszédban.
+No Military actions here.	Itt nincsenek Katonai akciók.
+No Ideology actions here.	Itt nincsenek Ideológia-akciók.
+Ideology actions here drop a 2-Clout bubble.	Az itteni Ideológia-akciók egy 2 Befolyást érő buborékot dobnak.
+Economy actions here drop a 2-Clout bubble.	Az itteni Gazdaság-akciók egy 2 Befolyást érő buborékot dobnak.
+Military actions here cost you 5 support instead of adding it.	Az itteni Katonai akciók 5 támogatásba kerülnek ahelyett, hogy növelnék.
+Ideology actions here cost you 5 support instead of adding it.	Az itteni Ideológia-akciók 5 támogatásba kerülnek ahelyett, hogy növelnék.
+Your first Ideology upgrade is free.	Az első Ideológia-fejlesztésed ingyenes.
+Your first Diplomacy upgrade is free.	Az első Diplomácia-fejlesztésed ingyenes.
+Your first Military upgrade is free.	Az első Katonai fejlesztésed ingyenes.
+Your first Economy upgrade is free.	Az első Gazdaság-fejlesztésed ingyenes.
+You start with 15 Clout instead of 5.	5 helyett 15 Befolyással kezdesz.
+Support swings in your base only go up.	A bázisodban a támogatás kilengései csak felfelé visznek.
+Notoriety grows 20% slower.	A Hírhedtség 20%-kal lassabban nő.
+Financier is active from the start: Clout income up.	A Pénzember az elejétől aktív: nő a Befolyás-bevétel.
+Discreet banking is active from the start: every action costs 1 Clout less.	A Diszkrét bankolás az elejétől aktív: minden akció 1 Befolyással olcsóbb.
+You start with 2% support in every neighbour.	Minden szomszédban 2% támogatással kezdesz.
+Oil is active from the start: Clout income up.	Az Olaj az elejétől aktív: nő a Befolyás-bevétel.
+You start with 8% support instead of 3%.	3% helyett 8% támogatással kezdesz.
+Digital reach is active from the start: internal growth +10% everywhere.	A Digitális elérés az elejétől aktív: belső növekedés +10% mindenhol.
+The World Order can never court your base.	A Világrend soha nem udvarolhat a bázisodnak.
+The World Order cannot run campaigns in your base.	A Világrend nem indíthat kampányt a bázisodban.
+Hyper-advanced is active from the start: every action recharges 6 weeks faster.	A Hiper-fejlett az elejétől aktív: minden akció 6 héttel gyorsabban töltődik újra.
+{} in {} fizzles. {}: nobody turns up. The Clout is spent.	{1} itt: {2} – kudarc. {3}: senki sem jön el. A Befolyás elfogyott.
+{} in {} echoes into {} more countries.	{1} itt: {2} – további {3} országba gyűrűzik át.
+{} in {} echoes into 1 more country.	{1} itt: {2} – további 1 országba gyűrűzik át.
+the World Order cannot court {} for 20 weeks.	a Világrend 20 hétig nem udvarolhat neki: {1}.
+{} in {} pays back {} Clout.	{1} itt: {2} – {3} Befolyás visszajár.
+{} hits the World Order’s courtship of {} twice as hard.	{1} kétszer olyan erősen sújtja a Világrend udvarlását itt: {2}.
+{} digs in. {} resistance +25% for 20 weeks.	{1} beássa magát. {2} ellenállás +25% 20 hétre.
+{} in {} makes headlines. +4 Notoriety.	{1} itt: {2} – címlapra kerül. +4 Hírhedtség.
+{} backfires in {}. −5 support.	{1} visszafelé sül el itt: {2}. −5 támogatás.

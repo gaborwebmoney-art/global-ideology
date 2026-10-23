@@ -24,6 +24,9 @@ const ANSWER = [
   [20, ['dip2', 'mil2', 'ideo2']]
 ];
 
+// v10.8 country rules: a rule-aware bot favours weak spots and avoids walls (cfg.ruleBlind = old behaviour)
+const RULE_MUL = { echo: 1.6, refund: 1.5, bubble: 1.3, lock: 1.2, knock2: 1.1, anyNb: 1, harden: .6, loud: .6, fizzle: .5, noKnock: 1, reverse: 0 };
+function ruleMul(s, id, dom) { if (s.cfg.ruleBlind || !S.ruleAt) return 1; const r = S.ruleAt(s, id, dom); return r ? RULE_MUL[r.kind] : 1; }
 function bestAction(s) {
   let best = null;
   for (const a of S.ACTIONS) {
@@ -35,7 +38,7 @@ function bestAction(s) {
       if (v >= 85) continue;
       if (NEEDS_FOOTHOLD[a.id] && (v < 3 || v > 80)) continue;
       if (!S.canAct(s, a.id, c.id).ok) continue;
-      const score = amt(s, a.id) * S.actEff(s, a, c.id) * Math.sqrt(c.pop) * (1 - v / 100) / cost;
+      const score = amt(s, a.id) * S.actEff(s, a, c.id) * Math.sqrt(c.pop) * (1 - v / 100) / cost * ruleMul(s, c.id, a.dom);
       if (!best || score > best.score) best = { a: a.id, t: c.id, score };
     }
   }
