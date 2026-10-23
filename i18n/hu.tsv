@@ -330,7 +330,7 @@ Tech Breakthrough	Technológiai áttörés
 Your supporters invent an app. It mostly sends reminders about you. Clout income +50% for 20 weeks.	A támogatóid kitalálnak egy appot. Főleg rólad szóló emlékeztetőket küld. Befolyás-bevétel +50% 20 hétig.
 Sec-Gen on Sabbatical	A főtitkár szabadságon
 {} takes a sabbatical to write his memoirs, in committee. The World Order moves at half speed for 15 weeks.	{1} szabadságot vesz ki, hogy bizottságban írja meg az emlékiratait. A Világrend fél sebességgel működik 15 hétig.
-Political Unrest	Politikai nyugtalanság
+General Strike	Általános sztrájk
 Strikes in {}. Everyone blames everyone, including you. Support there falls by a quarter.	Sztrájkok itt: {1}. Mindenki mindenkit hibáztat, téged is. A támogatás ott a negyedével csökken.
 Natural Disaster	Természeti katasztrófa
 Floods in {}. Politics postponed: it resists and stops passing ideas on for 20 weeks.	Áradás itt: {1}. A politika elhalasztva: ellenáll, és 20 hétig nem ad tovább eszméket.
@@ -1091,3 +1091,74 @@ Earn 2 or more stars on Normal or Brutal from 8 different start countries.	Szere
 Collect 10 stars on Brutal (your best per country).	Gyűjts 10 csillagot Brutális szinten (a legjobb eredményed országonként).
 Unlock goal: {} {} / {}	Feloldási cél: {1} {2} / {3}
 {} of 3 stars	{1} / 3 csillag
+# v10.12 Step 8.1 unrest + uprisings
+Holding is not owning.	Megszerezni nem ugyanaz, mint megtartani.
+Countries where you have a foothold but have not settled grow restless, and at 100 unrest they rise up against you.	Ahol van támaszpontod, de még nem szilárdítottad meg, ott nő a nyugtalanság, és 100-nál fellázadnak ellened.
+Garrison them with Military or calm them with Pamphlets.	Állíts helyőrséget Katonai akcióval, vagy csillapítsd Röplapokkal.
+You get a short briefing the first time it happens.	Az első alkalommal rövid eligazítást kapsz.
+How it works	Hogyan működik
+Unrest and uprisings	Nyugtalanság és felkelések
+Unrest	Nyugtalanság
+Uprising	Felkelés
+New threat	Új veszély
+Amber flame: unrest 50+.	Borostyán láng: nyugtalanság 50+.
+Red: 75+, an uprising is coming.	Piros: 75+, felkelés közeleg.
+Garrison with Military or calm with Pamphlets.	Helyőrség Katonai akcióval, csillapítás Röplapokkal.
+Countries where you have 25%+ support but have not settled (85%+) grow restless.	Ahol 25%+ a támogatásod, de még nem szilárdult meg (85%+), ott nő a nyugtalanság.
+Notoriety, World Order courtship and being cut off from your held countries make it faster.	A Hírhedtség, a Világrend udvarlása és az, ha el vannak vágva a megtartott országaidtól, gyorsítja.
+Your base never rises.	A bázisod sosem lázad fel.
+At 100 unrest the country rises up: support −25 and its neighbours grow restless.	100-as nyugtalanságnál az ország fellázad: támogatás −25, és a szomszédai is nyugtalanok lesznek.
+A country you held that falls below 55% counts as lost, which costs the third star.	Ha egy megtartott országod 55% alá esik, elvesztettnek számít, ez a harmadik csillagba kerül.
+Garrison: any Military action on a country you hold (60%+) cuts unrest by 60 and stops it for 30 weeks, but adds 2 Notoriety.	Helyőrség: bármely Katonai akció egy megtartott (60%+) országban 60-nal csökkenti a nyugtalanságot és 30 hétre megállítja, de +2 Hírhedtség.
+Calm: Pamphlets cut unrest by 30, quietly.	Csillapítás: a Röplapok csendben 30-cal csökkentik a nyugtalanságot.
+Martyr Narrative stops it for 40 weeks.	A Mártírnarratíva 40 hétre megállítja.
+Don’t show again	Ne mutasd többé
+Show me {}	Mutasd: {1}
+Got it	Értem
+Military below 60% is no garrison: it adds 2 unrest.	60% alatt a Katonai akció nem helyőrség: +2 nyugtalanság.
+Where a country bans Military actions, only Pamphlets help; where its wall reverses them, a garrison adds unrest.	Ahol tilos a Katonai akció, csak a Röplapok segítenek; ahol a fal visszafordítja, ott a helyőrség növeli a nyugtalanságot.
+More Ideology power and settled countries calm down by themselves.	Nagyobb Ideológiai erő mellett a megszilárdult országok maguktól lecsillapodnak.
+Brutal adds unrest faster, Casual slower.	Brutális szinten gyorsabban nő a nyugtalanság, Laza szinten lassabban.
+Unrest in {}: {}	Nyugtalanság itt: {1}: {2}
+How unrest works	Hogyan működik a nyugtalanság
+Uprising in about {} wk	Felkelés kb. {1} hét múlva
+Uprising in about {}	Felkelés kb. {1} hét múlva
+Garrisoned: no new unrest for {} wk	Helyőrség: {1} hétig nincs új nyugtalanság
+Garrisoned: no new unrest for {}	Helyőrség: {1} hétig nincs új nyugtalanság
+Calmed: no new unrest for {} wk	Lecsillapítva: {1} hétig nincs új nyugtalanság
+Calmed: no new unrest for {}	Lecsillapítva: {1} hétig nincs új nyugtalanság
+Calming down	Csillapodik
+Steady	Változatlan
++ Not settled (below 80%)	+ Nem szilárdult meg (80% alatt)
++ Notoriety	+ Hírhedtség
++ World Order courts or holds it	+ A Világrend udvarol neki vagy tagja
++ Cut off from your held countries	+ El van vágva a megtartott országaidtól
+− Settled (85%+)	− Megszilárdult (85%+)
+− Too little support to rise	− Túl kevés a támogatás a lázadáshoz
+Garrison (any Military action): unrest −60	Helyőrség (bármely Katonai akció): nyugtalanság −60
+Calm (Pamphlets): unrest −30	Csillapítás (Röplapok): nyugtalanság −30
+Garrison needs 60%+ support	A helyőrséghez 60%+ támogatás kell
+No garrison here ({})	Itt nincs helyőrség ({1})
+Garrison makes it worse here ({})	Itt a helyőrség ront a helyzeten ({1})
+Garrison: unrest −60, no new unrest for 30 weeks.	Helyőrség: nyugtalanság −60, 30 hétig nincs új nyugtalanság.
++2 Notoriety.	+2 Hírhedtség.
+Garrison backfires here: unrest +15.	Itt a helyőrség visszafelé sül el: nyugtalanság +15.
+Below 60% this is no garrison: unrest +2 here.	60% alatt ez nem helyőrség: itt +2 nyugtalanság.
+Calm: unrest −30.	Csillapítás: nyugtalanság −30.
+No new unrest here for 40 weeks.	Itt 40 hétig nincs új nyugtalanság.
+Unrest in {}: uprising in about {} weeks.	Nyugtalanság itt: {1}: felkelés kb. {2} hét múlva.
+Unrest in {}.	Nyugtalanság itt: {1}.
+Garrison it (any Military action) or calm it (Pamphlets).	Állíts helyőrséget (bármely Katonai akció), vagy csillapítsd (Röplapok).
+Garrison in {}: unrest −60, no new unrest for 30 weeks.	Helyőrség itt: {1}: nyugtalanság −60, 30 hétig nincs új nyugtalanság.
+The tanks are mostly decorative.	A tankok főleg dekorációk.
+Uprising in {}.	Felkelés itt: {1}.
+Your local office is now a souvenir shop.	A helyi irodád mostantól ajándékbolt.
+Support −{}, a neighbour grows restless.	Támogatás −{1}, egy szomszéd is nyugtalan lesz.
+Support −{}, neighbours grow restless.	Támogatás −{1}, a szomszédok is nyugtalanok lesznek.
+Support −{}.	Támogatás −{1}.
+It counts as a lost country.	Elvesztett országnak számít.
+{}: soldiers in {} make things worse.	{1}: a katonák csak rontanak a helyzeten itt: {2}.
+Unrest +15.	Nyugtalanság +15.
+Garrison: no unrest	Helyőrség: nincs nyugtalanság
+No unrest	Nincs nyugtalanság
+Lost to uprisings: {}	Felkelésben elvesztve: {1}

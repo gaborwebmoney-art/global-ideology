@@ -70,13 +70,20 @@ function play(start, seed, cfg, build, sharp) {
       const top = Object.keys(s.wo.signed).sort((a, b) => s.inf[b] - s.inf[a])[0];
       if (top) for (const aid of ['eco3', 'ideo3', 'dip2', 'mil2', 'ideo2', 'eco1', 'ideo1', 'mil1', 'dip1']) S.doAct(s, aid, top);
     }
+    // v10.12 unrest: garrison (cheapest Military) or calm (Pamphlets, Martyr Narrative) before an uprising (cfg.unrestBlind = ignore)
+    if (S.unrestOn && S.unrestOn(s) && !cfg.unrestBlind) for (const [id, u] of Object.entries(s.unrest || {}).sort((x, y) => y[1] - x[1])) {
+      if (u < 60) break;
+      const order = s.inf[id] >= 60 ? ['mil1', 'ideo1', 'mil2', 'ideo3', 'mil3'] : ['ideo1', 'ideo3'];
+      const rk = (S.ruleAt(s, id, 'mil') || {}).kind;
+      for (const aid of order) { if (aid[0] === 'm' && rk === 'reverse') continue; if (S.canAct(s, aid, id).ok) { S.doAct(s, aid, id); break; } }
+    }
     if (s.treaty > 70 || (s.wo.court || []).reduce((x, c) => x + c.prog, 0) > 120) S.doAct(s, 'eco4');
     for (let i = 0; i < 4; i++) { const b = bestAction(s); if (!b || b.score <= 0) break; S.doAct(s, b.a, b.t); }
   }
   const log = s.actLog || [];
   const tiers = [1, 2, 3, 4].map(t => log.filter(id => +id.slice(-1) === t).length);
   const dom = { eco: 0, mil: 0, dip: 0, ideo: 0 }; log.forEach(id => { dom[id.replace(/\d$/, '')]++; });
-  return { res: S.runResult ? S.runResult(s) : null, dom, pw, t2b, owned: s.owned.length, clout: Math.round(s.clout), over: s.over || 'timeout', week: s.week, acts: log.length, tiers, t4: tiers[3] > 0, w4, crisis, ratAt: s.wo.ratifiedAt || 0, cb: s.comebacks || 0 };
+  return { ups: (s.uprisings || []).length, upLost: (s.uprisings || []).filter(u => u.lost).length, res: S.runResult ? S.runResult(s) : null, dom, pw, t2b, owned: s.owned.length, clout: Math.round(s.clout), over: s.over || 'timeout', week: s.week, acts: log.length, tiers, t4: tiers[3] > 0, w4, crisis, ratAt: s.wo.ratifiedAt || 0, cb: s.comebacks || 0 };
 }
 
 const T = { courtWeeks: 8, pushMul: 0.6 };

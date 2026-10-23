@@ -161,12 +161,14 @@ const V10 = { edEff: 1.5, edTrade: 1.5, offCost: 1.5, offNoto: 3, courtWeeks: 13
   // step 5 (2026-10-19): v10-only economy and World Order pace (v9 keeps TUNE); Trade Deals income .7 -> 1.5
   income: 2.5, costGrow: .04, planBase: 5, upFx: { e1: { income: 1.5 } }, collapseFloor: .4,
   // v10.9 difficulty: World Order uses perks of member countries you hold below CONTROL (inverted); extra announced campaigns
-  woPerks: 0, crackAmt: 0, crackGap: 8, crackN: 2 };
+  woPerks: 0, crackAmt: 0, crackGap: 8, crackN: 2,
+  // v10.12 Step 8.1 unrest: gain multiplier per level (old saves without a level = casual)
+  unrestMul: 1 };
 // Difficulty levels (v10.9). Each level is a set of V10 knob overrides; cfg.v10t (bot experiments) still wins.
 const LEVELS = {
-  casual: { v10t: { woPerks: 1 } },
+  casual: { v10t: { woPerks: 1, unrestMul: .85 } },
   normal: { v10t: { woPerks: 1, crackAmt: 5, crackGap: 8, crackN: 2 } },
-  brutal: { v10t: { woPerks: 1, crackAmt: 12, crackGap: 7, crackN: 2, courtWeeks: 8, planBase: 3 } }
+  brutal: { v10t: { woPerks: 1, unrestMul: 1.15, crackAmt: 12, crackGap: 7, crackN: 2, courtWeeks: 8, planBase: 3 } }
 };
 const LEVEL_IDS = ['casual', 'normal', 'brutal'];
 function levelOf(s) { return (s.cfg && LEVELS[s.cfg.level]) ? s.cfg.level : 'casual'; }
@@ -235,14 +237,15 @@ function canAct(s, aid, target) {
   const rl = ruleAt(s, target, a.dom);
   if (rl && rl.kind === 'ban') return { ok: false, why: `${rl.name}: no ${TYPE_LABEL[a.dom]} actions here` };
   const v = s.inf[target], W = s.wo, ct = courtOn(s, target) || (rl && rl.kind === 'anyNb');
-  if (['eco1', 'eco3', 'mil1', 'mil2', 'mil3', 'ideo1'].includes(aid) && v >= 95) return { ok: false, why: 'Already yours' };
+  const gar = unrestOn(s) && a.dom === 'mil' && a.tier < 4 && v >= CONTROL, calm = unrestOn(s) && aid === 'ideo1' && v >= UNREST.min;
+  if (['eco1', 'eco3', 'mil1', 'mil2', 'mil3', 'ideo1'].includes(aid) && v >= 95 && !((gar || calm) && unrestOf(s, target) >= UNREST.busyAt)) return { ok: false, why: 'Already yours' };
   if (aid === 'eco2') {
     const src = strongest(s, target);
     if (s.inf[src.id] < 10) return { ok: false, why: 'Need 10%+ somewhere else first' };
     if (tradeLinks(s, target).includes(src.id)) return { ok: false, why: 'Already trades with ' + src.name };
   }
-  if (aid === 'mil1' && nbMax(s, target) < (own(s, 'm1') ? 10 : 15) && !ct) return { ok: false, why: `Needs a neighbour at ${own(s, 'm1') ? 10 : 15}%+` };
-  if ((aid === 'mil2' || aid === 'mil3') && nbMax(s, target) < 25 && !ct) return { ok: false, why: 'Needs a neighbour at 25%+' };
+  if (aid === 'mil1' && nbMax(s, target) < (own(s, 'm1') ? 10 : 15) && !ct && !gar) return { ok: false, why: `Needs a neighbour at ${own(s, 'm1') ? 10 : 15}%+` };
+  if ((aid === 'mil2' || aid === 'mil3') && nbMax(s, target) < 25 && !ct && !gar) return { ok: false, why: 'Needs a neighbour at 25%+' };
   if (aid === 'mil4' && nbMax(s, target) < 50) return { ok: false, why: 'Needs a neighbour at 50%+' };
   if (aid === 'mil4' && v >= 50 && !W.members[target] && !W.signed[target]) return { ok: false, why: 'Already 50%+ and outside the World Order' };
   if ((aid === 'ideo2' || aid === 'ideo3' || aid === 'eco3') && v <= 0) return { ok: false, why: 'No foothold here' };
@@ -288,6 +291,7 @@ function doAct(s, aid, target) {
   const hl = actHeadline(s, aid, target, aid === 'eco2' && s.trade.length ? s.trade[s.trade.length - 1][0] : null);
   if (hl) addNews(s, hl, 'you'); else addNews(s, `${a.name}${target ? ': ' + byId(target).name : ''}.${aid === 'eco4' ? ` Every courtship at half speed for ${v10t(s, 'eco4Weeks')} weeks, treaty draft \u2212${v10t(s, 'eco4Treaty')}.` : aid === 'dip4' ? ' No new World Order courtships anywhere for 30 weeks.' : ''}`, 'you');
   if (rl) applyRule(s, rl, a, target, before, paid);
+  if (target && unrestOn(s)) unrestOnAct(s, a, target, before, rl);
   allianceOnAct(s, a, target);
   tagMods(s, m0, a.name);
   return { ok: true };
@@ -645,6 +649,7 @@ function step(s) {
   if (s.coalition) dependencyTick(s);
   milestoneNews(s, share);
   eventsTick(s);
+  unrestTick(s);
   s.mods = s.mods.filter(m => m.until > s.week);
   s.blocked = s.blocked.filter(b => b.until > s.week);
   // 6. End conditions
@@ -654,6 +659,80 @@ function step(s) {
   else if (COUNTRIES.every(c => s.inf[c.id] <= 0)) { s.over = 'extinct'; addNews(s, 'Your movement has vanished. Historians shrug.', 'wo'); }
 }
 
+// ---- Step 8.1 (v10.12): unrest + uprisings. Countries you have a stake in (>= UNREST.min) but have not settled
+// (< settled) build unrest; at 100 they rise: support drops, neighbours get restless. Not in your base (8.2 legitimacy).
+// Counterplay: Military action on a held country = Garrison; Pamphlets = Calm; Martyr Narrative = no unrest gain; Ideology power speeds decay.
+const UNREST = { min: 25, settled: 85, contested: 80, base: .2, notoDiv: 300, wo: .4, isolated: .25, swingMul: 1.5, decay: 1, lowDecay: 2,
+  warnAt: 75, markAt: 50, busyAt: 40, crack: 15, milHit: 2, garrison: 60, garrisonWeeks: 30, garrisonNoto: 2, reverseHit: 15, calm: 30,
+  rise: 25, floor: 10, after: 30, contagion: 15 };
+function unrestOn(s) { return !!(s.cfg && s.cfg.v10 && s.cfg.unrest !== false); }
+function unrestOf(s, id) { return (s.unrest && s.unrest[id]) || 0; }
+function addUnrest(s, id, n) { if (!unrestOn(s) || id === s.startId || s.inf[id] < UNREST.min) return; s.unrest = s.unrest || {}; s.unrest[id] = Math.max(0, Math.min(100, unrestOf(s, id) + n)); }
+function isolated(s, id) {
+  if (neighbours(id).includes(s.startId)) return false;
+  return !neighbours(id).some(n => s.inf[n] >= CONTROL) && !tradeLinks(s, id).some(n => s.inf[n] >= CONTROL && !isBlocked(s, id, n));
+}
+// weekly change and its parts (the UI shows the parts as causes)
+function unrestParts(s, id) {
+  const v = s.inf[id], U = UNREST, P = [];
+  if (!unrestOn(s) || id === s.startId) return { net: 0, parts: P, frozen: false };
+  if (v < U.min) return { net: -U.lowDecay, parts: [['low', -U.lowDecay]], frozen: false };
+  const frozen = hasMod(s, id, 'garrison') || hasMod(s, id, 'noUnrest');
+  const mul = v10t(s, 'unrestMul') * (Q(s, id).swing ? U.swingMul : 1);
+  if (!frozen) {
+    if (v < U.contested) P.push(['contested', U.base * mul]);
+    if (s.notoriety > 0) P.push(['noto', s.notoriety / U.notoDiv * mul]);
+    if (s.wo && (s.wo.members[id] || courtOn(s, id))) P.push(['wo', U.wo * mul]);
+    if (isolated(s, id)) P.push(['isolated', U.isolated * mul]);
+  }
+  if (v >= U.settled) P.push(['settled', -U.decay * (1 + domainPower(s, 'ideo'))]);
+  return { net: P.reduce((a, p) => a + p[1], 0), parts: P, frozen, mul };
+}
+function unrestEta(s, id) { const p = unrestParts(s, id); if (p.net <= 0 || p.frozen) return null; return Math.ceil((100 - unrestOf(s, id)) / p.net); }
+function unrestTick(s) {
+  if (!unrestOn(s)) return;
+  s.unrest = s.unrest || {}; s.uprisings = s.uprisings || [];
+  COUNTRIES.forEach(c => {
+    const id = c.id, u0 = unrestOf(s, id);
+    if (id === s.startId) { delete s.unrest[id]; return; }
+    const p = unrestParts(s, id);
+    if (!u0 && p.net <= 0) return;
+    const u = Math.max(0, Math.min(100, u0 + p.net));
+    if (u <= 0) { delete s.unrest[id]; return; }
+    s.unrest[id] = u;
+    if (u0 < UNREST.warnAt && u >= UNREST.warnAt) {
+      const eta = unrestEta(s, id);
+      addNews(s, `Unrest in ${c.name}${eta ? `: uprising in about ${eta} weeks` : ''}. Garrison it (any Military action) or calm it (Pamphlets).`, 'wo');
+      flag(s, 'important', id, 'Unrest'); s.news[0].unrest = id;
+    }
+    if (u >= 100) uprising(s, id);
+  });
+}
+function uprising(s, id) {
+  const c = byId(id), U = UNREST, before = s.inf[id];
+  s.inf[id] = Math.max(Math.min(before, U.floor), before - U.rise);
+  s.unrest[id] = U.after;
+  const ns = neighbours(id).filter(n => n !== s.startId && s.inf[n] >= U.min);
+  ns.forEach(n => addUnrest(s, n, U.contagion));
+  const lost = before >= CONTROL - LOST_MARGIN && s.inf[id] < CONTROL - LOST_MARGIN && s.held && s.held[id];
+  s.uprisings.push({ id, week: s.week, from: Math.round(before), lost: !!lost });
+  addNews(s, `Uprising in ${c.name}. Your local office is now a souvenir shop. Support −${Math.round(before - s.inf[id])}${ns.length ? `, ${ns.length === 1 ? 'a neighbour grows' : 'neighbours grow'} restless` : ''}.${lost ? ' It counts as a lost country.' : ''}`, 'wo');
+  flag(s, 'critical', id, 'Uprising'); s.news[0].unrest = id;
+}
+// after one of your actions: Military on a held country = Garrison; elsewhere Military breeds resentment; Pamphlets calm
+function unrestOnAct(s, a, target, before, rl) {
+  const c = byId(target);
+  if (a.dom === 'mil' && a.tier < 4 && before >= CONTROL && target !== s.startId) {
+    if (rl && rl.kind === 'reverse') { addUnrest(s, target, UNREST.reverseHit); addNews(s, `${rl.name}: soldiers in ${c.name} make things worse. Unrest +${UNREST.reverseHit}.`, 'wo'); return; }
+    s.unrest = s.unrest || {}; if (s.unrest[target]) s.unrest[target] = Math.max(0, s.unrest[target] - UNREST.garrison);
+    s.mods.push({ id: target, kind: 'garrison', until: s.week + UNREST.garrisonWeeks });
+    addNoto(s, UNREST.garrisonNoto);
+    addNews(s, `Garrison in ${c.name}: unrest −${UNREST.garrison}, no new unrest for ${UNREST.garrisonWeeks} weeks. The tanks are mostly decorative.`, 'you');
+    s.calmed = (s.calmed || 0) + 1;
+  } else if (a.dom === 'mil' && target !== s.startId) addUnrest(s, target, UNREST.milHit);
+  if (a.id === 'ideo1' && unrestOf(s, target) > 0) { s.unrest[target] = Math.max(0, s.unrest[target] - UNREST.calm); s.calmed = (s.calmed || 0) + 1; }
+  if (a.id === 'ideo3') s.mods.push({ id: target, kind: 'noUnrest', until: s.week + 40 });
+}
 // Score + stars (v10.10). A country counts as lost once you held it (>= CONTROL) and it later fell below CONTROL - LOST_MARGIN.
 // Notoriety in the score is the run average: peak notoriety hits 100 in most Normal/Brutal wins, so it would not tell runs apart.
 const PAR = { casual: 175, normal: 213, brutal: 245 };
@@ -783,7 +862,7 @@ function woExecute(s, q) {
   if ((q.kind === 'sanction' || q.kind === 'campaign') && s.stats.sabotage && rng(s) < s.stats.sabotage) { addNews(s, `The World Order\u2019s ${q.kind === 'sanction' ? 'sanctions' : 'campaign'} in ${c.name} collapses amid mysterious scheduling conflicts.`, 'you'); return; }
   if (q.kind === 'sanction' && immuneRoute(s, q.route[0], q.route[1])) { s.bounced = (s.bounced || []).concat([q.route[0] + '|' + q.route[1]]); addNews(s, `Sanctions on the ${byId(q.route[0]).name}\u2013${byId(q.route[1]).name} route bounce off your contracts. The lawyers send their regards.`, 'you'); flag(s, 'important', q.route[1], 'Sanctions bounced'); return; }
   if (q.kind === 'sanction') { s.blocked.push({ a: q.route[0], b: q.route[1], until: s.week + 30 }); addNews(s, `Sanctions close the ${byId(q.route[0]).name}\u2013${byId(q.route[1]).name} trade route for 30 weeks.`, 'wo'); flag(s, 'critical', q.route[0], 'Route closed'); }
-  if (q.kind === 'campaign') { counterCampaign(s, q.target, q.amt); W.lastCampaign = W.lastCampaign || {}; W.lastCampaign[q.target] = s.week; }
+  if (q.kind === 'campaign') { counterCampaign(s, q.target, q.amt); if (q.crack) addUnrest(s, q.target, UNREST.crack); W.lastCampaign = W.lastCampaign || {}; W.lastCampaign[q.target] = s.week; }
 }
 function possibleSignatures(s) { return signedCount(s) + COUNTRIES.filter(c => !s.wo.signed[c.id] && s.inf[c.id] < signLimit(s, c.id)).length; }
 function woTick(s) {
@@ -1043,7 +1122,7 @@ const EVENTS = [
     fire: s => { timed(s, 'woSlow', 15); return `${SG} takes a sabbatical to write his memoirs, in committee. The World Order moves at half speed for 15 weeks.`; } },
 
   // ---- bad for you ----
-  { id: 'unrest', good: false, name: 'Political Unrest', ok: s => yours(s, 10).length > 0,
+  { id: 'strike', good: false, name: 'General Strike', ok: s => yours(s, 10).length > 0,
     fire: s => { const id = pick(s, yours(s, 10)); s.inf[id] *= .75; return `Strikes in ${nm(id)}. Everyone blames everyone, including you. Support there falls by a quarter.`; } },
   { id: 'disaster', good: false, name: 'Natural Disaster', ok: s => true,
     fire: s => { const id = pick(s, COUNTRIES.filter(c => c.pop >= 1)).id; resMod(s, id, 1.2, 20, null, { inward: true }); return `Floods in ${nm(id)}. Politics postponed: it resists and stops passing ideas on for 20 weeks.`; } },
@@ -1289,4 +1368,4 @@ function actHeadline(s, aid, target, src) {
 }
 
 // SIM-END
-if (typeof module !== 'undefined') module.exports = { PAR, SCORE_BASE, runResult, trackRun, LEVELS, LEVEL_IDS, levelOf, woPerkIds, RULES, ruleAt, baseRule, rulesOn, V10, HOOKS, hooksFor, PAIRS, pairOn, synergyOf, doctrineOf, closedFrom, offDoctrine, hasT2, CORE, ratified, enforcementTick, sigGrowthMul, populated, courtOn, actCost, ACTIONS, canAct, doAct, domainPower, actEff, resBreakdown, TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };
+if (typeof module !== 'undefined') module.exports = { UNREST, unrestOn, unrestOf, unrestParts, unrestEta, addUnrest, PAR, SCORE_BASE, runResult, trackRun, LEVELS, LEVEL_IDS, levelOf, woPerkIds, RULES, ruleAt, baseRule, rulesOn, V10, HOOKS, hooksFor, PAIRS, pairOn, synergyOf, doctrineOf, closedFrom, offDoctrine, hasT2, CORE, ratified, enforcementTick, sigGrowthMul, populated, courtOn, actCost, ACTIONS, canAct, doAct, domainPower, actEff, resBreakdown, TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };
