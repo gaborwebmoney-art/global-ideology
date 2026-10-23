@@ -1024,3 +1024,38 @@ the World Order cannot court {} for 20 weeks.	a Világrend 20 hétig nem udvarol
 {} digs in. {} resistance +25% for 20 weeks.	{1} beássa magát. {2} ellenállás +25% 20 hétre.
 {} in {} makes headlines. +4 Notoriety.	{1} itt: {2} – címlapra kerül. +4 Hírhedtség.
 {} backfires in {}. −5 support.	{1} visszafelé sül el itt: {2}. −5 támogatás.
+Crackdown	Leszámolás
+Crackdown in {} wk	Leszámolás {1} hét múlva
+World Order schedules a crackdown in {} in {} weeks: up to −{} support. Volunteers are being volunteered.	A Világrend leszámolást ütemez itt: {1}, {2} hét múlva: legfeljebb −{3} támogatás. Az önkénteseket önkéntesnek jelölték ki.
+loses up to {} points of support and gains resistance	legfeljebb {1} pont támogatást veszít és ellenállást nyer
+loses support and gains resistance	támogatást veszít és ellenállást nyer
+The World Order now uses {}’s {} against you: {}.	A Világrend mostantól ellened fordítja: {1} – {2}: {3}.
+The World Order loses {}’s {}. Its staff are reassigned to a working group.	A Világrend elveszíti: {1} – {2}. A stábot munkacsoportba helyezik át.
+WO perk	VR-előny
+WO perk lost	VR-előny elveszett
+World Order uses {}’s perk: {}	A Világrend használja ezt az előnyt ({1}): {2}
+Uses perks against you	Ellened fordított előnyök
+World Order uses it now:	A Világrend most ellened használja:
+If the World Order recruits it:	Ha a Világrend beszervezi:
+Start bonus:	Kezdő bónusz:
+Perk at {}%:	Előny {1}%-nál:
+Difficulty	Nehézség
+Casual	Laza
+Normal	Normál
+Brutal	Brutális
+Today’s game. The World Order turns recruited countries’ perks against you.	A mostani játék. A Világrend a beszervezett országok előnyeit ellened fordítja.
+Plus World Order crackdowns on your two biggest footholds every 8 weeks.	Plusz: a Világrend 8 hetente leszámol a két legnagyobb bázisoddal.
+Harder crackdowns every 7 weeks, faster courtships and plans. Longer games.	Keményebb leszámolások 7 hetente, gyorsabb udvarlás és tervezés. Hosszabb játszmák.
+Week {} · {}	{1}. hét · {2}
+your Clout income down a little	a befolyás-bevételed kissé csökken
+your Clout income down	a befolyás-bevételed csökken
+World Order campaigns hit you 30% harder	a Világrend kampányai 30%-kal erősebben találnak
+your trade spread −15%	a kereskedelmi terjedésed −15%
+Notoriety grows 10% faster	a hírhedtség 10%-kal gyorsabban nő
+your actions cost 1 Clout more	az akcióid 1 befolyással többe kerülnek
+your border spread −10%	a határon át terjedésed −10%
+fewer opportunity bubbles	kevesebb lehetőség-buborék
+your internal growth −10% everywhere	a belső növekedésed mindenhol −10%
+treaty drafting 5% faster	a szerződés kidolgozása 5%-kal gyorsabb
+your cooldowns 6 weeks longer	a várakozási idők 6 héttel hosszabbak
+World Order members resist 5 points more	a Világrend tagjai 5 ponttal jobban ellenállnak

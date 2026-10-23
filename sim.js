@@ -159,8 +159,18 @@ const V10 = { edEff: 1.5, edTrade: 1.5, offCost: 1.5, offNoto: 3, courtWeeks: 13
   // Economy action strengths (step 5 balance knobs)
   eco1Amt: 3.5, eco1Knock: 5, eco2Amt: 2, eco2Knock: 0, eco3Amt: 12, eco3Knock: 45, eco3Res: .5, eco4Treaty: 15, eco4Weeks: 25, eco4Income: .7, ecoTrade: 2,
   // step 5 (2026-10-19): v10-only economy and World Order pace (v9 keeps TUNE); Trade Deals income .7 -> 1.5
-  income: 2.5, costGrow: .04, planBase: 5, upFx: { e1: { income: 1.5 } }, collapseFloor: .4 };
-function v10t(s, k) { return (s.cfg.v10t && s.cfg.v10t[k] !== undefined) ? s.cfg.v10t[k] : V10[k]; }
+  income: 2.5, costGrow: .04, planBase: 5, upFx: { e1: { income: 1.5 } }, collapseFloor: .4,
+  // v10.9 difficulty: World Order uses perks of member countries you hold below CONTROL (inverted); extra announced campaigns
+  woPerks: 0, crackAmt: 0, crackGap: 8, crackN: 2 };
+// Difficulty levels (v10.9). Each level is a set of V10 knob overrides; cfg.v10t (bot experiments) still wins.
+const LEVELS = {
+  casual: { v10t: { woPerks: 1 } },
+  normal: { v10t: { woPerks: 1, crackAmt: 5, crackGap: 8, crackN: 2 } },
+  brutal: { v10t: { woPerks: 1, crackAmt: 12, crackGap: 7, crackN: 2, courtWeeks: 8, planBase: 3 } }
+};
+const LEVEL_IDS = ['casual', 'normal', 'brutal'];
+function levelOf(s) { return (s.cfg && LEVELS[s.cfg.level]) ? s.cfg.level : 'casual'; }
+function v10t(s, k) { if (s.cfg.v10t && s.cfg.v10t[k] !== undefined) return s.cfg.v10t[k]; const L = s.cfg.level && LEVELS[s.cfg.level]; return (L && L.v10t[k] !== undefined) ? L.v10t[k] : V10[k]; }
 function baseRes(s, id) { return s.cfg && s.cfg.v10 ? V10_RES[id] : byId(id).res; }
 // Share of the world's strength in a domain that you hold: progressive in support, weighted by sqrt(pop).
 function domainPower(s, t) {
@@ -381,22 +391,22 @@ const CONTROL = 60; // % support at which a country counts as "held"
 // fx keys: income (+Clout points), growth/trade/border (multipliers), vis (notoriety growth, added), fc (campaign softening),
 // opDisc (Clout off each operation), opCd (weeks off each cooldown), bubble (+bubble chance), treatySlow, memberRes (World Order member resistance reduction).
 const TRAITS = {
-  borealis:   { quirk: 'Federal: the World Order can only recruit it below 20% support.', q: { recruitDelta: -20 }, perkName: 'Resource-rich', perk: 'Clout income up a little', fx: { income: .5 } },
-  aethelgard: { quirk: 'Divided politics: random support swings of 4–10 points.', q: { swing: .015 }, perkName: 'Superpower ally', perk: 'World Order campaigns hit 30% softer', fx: { fc: .3 } },
-  laplata:    { quirk: 'Unstable: frequent support swings, up or down.', q: { swing: .02 }, perkName: 'Breadbasket', perk: 'Trade spread +15%', fx: { trade: 1.15 } },
-  isolde:     { quirk: 'Remote: the World Order never recruits it.', q: { noRecruit: true }, perkName: 'Hideout', perk: 'Clout income up a little', fx: { income: .2 } },
-  guldor:     { quirk: 'Old money: ideas travel out of Guldor 50% faster.', q: { outMul: 1.5 }, perkName: 'Financier', perk: 'Clout income up', fx: { income: 1 } },
-  celestia:   { quirk: 'Cultural power: ideas travel out of Celestia 40% faster.', q: { outMul: 1.4 }, perkName: 'Soft power', perk: 'Notoriety grows 10% slower', fx: { vis: -.1 } },
-  helvetia:   { quirk: 'Neutral: the World Order cannot run campaigns here.', q: { immuneAt: 1 }, perkName: 'Discreet banking', perk: 'Operations cost 1 Clout less', fx: { opDisc: 1 } },
-  pannonia:   { quirk: 'Unpredictable: 40% of World Order moves here fall through.', q: { woFail: .4 }, perkName: 'Landlocked hub', perk: 'Border spread +10%', fx: { border: 1.1 } },
-  koryn:      { quirk: 'Authoritarian: slow to convert (−15% growth), but immune to campaigns once you hold 50%.', q: { gMul: .85, immuneAt: 50 }, perkName: 'Resource-rich', perk: 'Clout income up a little', fx: { income: .5 } },
-  tavaro:     { quirk: 'Crossroads: spread through Tavaro is 40% faster out, 20% faster in.', q: { outMul: 1.4, inMul: 1.2 }, perkName: 'Oil', perk: 'Clout income up', fx: { income: 1 } },
-  kestria:    { quirk: 'Young population: +25% internal growth.', q: {}, perkName: 'Youth movement', perk: 'More opportunity bubbles', fx: { bubble: .06 } },
-  bharat:     { quirk: 'Colossal democracy: slow to convert (−15% growth), and needs 10 points less support to refuse a signing.', q: { gMul: .85, signDelta: -10 }, perkName: 'Digital reach', perk: 'Internal growth +10% everywhere', fx: { growth: 1.1 } },
-  sinopeia:   { quirk: 'Paperwork: spread into Sinopeia is halved, but out of it +30%.', q: { inMul: .5, outMul: 1.3 }, perkName: 'Manufacturing giant', perk: 'Clout income up', fx: { income: 1 } },
-  juche:      { quirk: 'Isolated: no trade spread in, border spread halved, but Leaked Dossiers break every defence.', q: { inMul: .5, tradeInMul: 0, dossierAll: true }, perkName: 'Fanatics', perk: 'Treaty drafting 5% slower', fx: { treatySlow: .05 } },
-  nippon:     { quirk: 'Hyper-connected: +15% internal growth.', q: { gMul: 1.15 }, perkName: 'Hyper-advanced', perk: 'Every cooldown 6 weeks shorter', fx: { opCd: 6 } },
-  pinguinia:  { quirk: 'Polar: nothing happens here, for now.', q: {}, perkName: 'Neutral scientists', perk: 'World Order members resist 5 points less', fx: { memberRes: .05 } }
+  borealis:   { quirk: 'Federal: the World Order can only recruit it below 20% support.', q: { recruitDelta: -20 }, perkName: 'Resource-rich', perk: 'Clout income up a little', fx: { income: .5 }, woPerk: 'your Clout income down a little' },
+  aethelgard: { quirk: 'Divided politics: random support swings of 4–10 points.', q: { swing: .015 }, perkName: 'Superpower ally', perk: 'World Order campaigns hit 30% softer', fx: { fc: .3 }, woPerk: 'World Order campaigns hit you 30% harder' },
+  laplata:    { quirk: 'Unstable: frequent support swings, up or down.', q: { swing: .02 }, perkName: 'Breadbasket', perk: 'Trade spread +15%', fx: { trade: 1.15 }, woPerk: 'your trade spread −15%' },
+  isolde:     { quirk: 'Remote: the World Order never recruits it.', q: { noRecruit: true }, perkName: 'Hideout', perk: 'Clout income up a little', fx: { income: .2 }, woPerk: 'your Clout income down a little' },
+  guldor:     { quirk: 'Old money: ideas travel out of Guldor 50% faster.', q: { outMul: 1.5 }, perkName: 'Financier', perk: 'Clout income up', fx: { income: 1 }, woPerk: 'your Clout income down' },
+  celestia:   { quirk: 'Cultural power: ideas travel out of Celestia 40% faster.', q: { outMul: 1.4 }, perkName: 'Soft power', perk: 'Notoriety grows 10% slower', fx: { vis: -.1 }, woPerk: 'Notoriety grows 10% faster' },
+  helvetia:   { quirk: 'Neutral: the World Order cannot run campaigns here.', q: { immuneAt: 1 }, perkName: 'Discreet banking', perk: 'Operations cost 1 Clout less', fx: { opDisc: 1 }, woPerk: 'your actions cost 1 Clout more' },
+  pannonia:   { quirk: 'Unpredictable: 40% of World Order moves here fall through.', q: { woFail: .4 }, perkName: 'Landlocked hub', perk: 'Border spread +10%', fx: { border: 1.1 }, woPerk: 'your border spread −10%' },
+  koryn:      { quirk: 'Authoritarian: slow to convert (−15% growth), but immune to campaigns once you hold 50%.', q: { gMul: .85, immuneAt: 50 }, perkName: 'Resource-rich', perk: 'Clout income up a little', fx: { income: .5 }, woPerk: 'your Clout income down a little' },
+  tavaro:     { quirk: 'Crossroads: spread through Tavaro is 40% faster out, 20% faster in.', q: { outMul: 1.4, inMul: 1.2 }, perkName: 'Oil', perk: 'Clout income up', fx: { income: 1 }, woPerk: 'your Clout income down' },
+  kestria:    { quirk: 'Young population: +25% internal growth.', q: {}, perkName: 'Youth movement', perk: 'More opportunity bubbles', fx: { bubble: .06 }, woPerk: 'fewer opportunity bubbles' },
+  bharat:     { quirk: 'Colossal democracy: slow to convert (−15% growth), and needs 10 points less support to refuse a signing.', q: { gMul: .85, signDelta: -10 }, perkName: 'Digital reach', perk: 'Internal growth +10% everywhere', fx: { growth: 1.1 }, woPerk: 'your internal growth −10% everywhere' },
+  sinopeia:   { quirk: 'Paperwork: spread into Sinopeia is halved, but out of it +30%.', q: { inMul: .5, outMul: 1.3 }, perkName: 'Manufacturing giant', perk: 'Clout income up', fx: { income: 1 }, woPerk: 'your Clout income down' },
+  juche:      { quirk: 'Isolated: no trade spread in, border spread halved, but Leaked Dossiers break every defence.', q: { inMul: .5, tradeInMul: 0, dossierAll: true }, perkName: 'Fanatics', perk: 'Treaty drafting 5% slower', fx: { treatySlow: .05 }, woPerk: 'treaty drafting 5% faster' },
+  nippon:     { quirk: 'Hyper-connected: +15% internal growth.', q: { gMul: 1.15 }, perkName: 'Hyper-advanced', perk: 'Every cooldown 6 weeks shorter', fx: { opCd: 6 }, woPerk: 'your cooldowns 6 weeks longer' },
+  pinguinia:  { quirk: 'Polar: nothing happens here, for now.', q: {}, perkName: 'Neutral scientists', perk: 'World Order members resist 5 points less', fx: { memberRes: .05 }, woPerk: 'World Order members resist 5 points more' }
 };
 // Two of these are drawn for every game.
 const CONDITIONS = [
@@ -476,8 +486,14 @@ function perk(s) {
   const p = { income: 0, growth: 1, trade: 1, border: 1, vis: 0, fc: 0, opDisc: 0, opCd: 0, bubble: 0, treatySlow: 0, memberRes: 0, plan: 0 };
   const add = fx => Object.entries(fx || {}).forEach(([k, v]) => { if (MULT_KEYS.includes(k)) p[k] *= v; else p[k] += v; });
   if (!s.cfg || s.cfg.traits !== false) COUNTRIES.forEach(c => { if (TRAITS[c.id] && (s.inf[c.id] >= CONTROL || (c.id === s.startId && (baseRule(s) || [])[0] === 'perk'))) add(TRAITS[c.id].fx); });
+  woPerkIds(s).forEach(id => Object.entries(TRAITS[id].fx).forEach(([k, v]) => { if (MULT_KEYS.includes(k)) p[k] /= v; else p[k] -= v; }));
   (s.cond || []).forEach(id => add(CONDITIONS.find(c => c.id === id).fx));
   return p;
+}
+// Countries whose perk the World Order turns against you: members you hold below CONTROL.
+function woPerkIds(s) {
+  if (!s.cfg || !s.cfg.v10 || s.cfg.traits === false || !s.wo || !v10t(s, 'woPerks')) return [];
+  return COUNTRIES.filter(c => TRAITS[c.id] && TRAITS[c.id].woPerk && s.wo.members[c.id] && s.inf[c.id] < CONTROL).map(c => c.id);
 }
 function resOf(s, id) { return (s.res && s.res[id]) || baseRes(s, id); }
 function signLimit(s, id) { return TUNE.signBelow - s.stats.shield + (Q(s, id).signDelta || 0); }
@@ -654,10 +670,10 @@ function collectBubble(s, key) {
   return v;
 }
 
-function counterCampaign(s, target) {
+function counterCampaign(s, target, amt) {
   const fc = Math.min(.9, s.stats.fcRed + perk(s).fc);
   const t = byId(target);
-  s.inf[t.id] = Math.max(0, s.inf[t.id] - 10 * (1 - fc));
+  s.inf[t.id] = Math.max(0, s.inf[t.id] - (amt || 10) * (1 - fc));
   s.mods.push({ id: t.id, kind: 'counter', src: 'World Order campaign', until: s.week + Math.round(25 * (1 - fc / 2)) });
   const lines = [
     `World Order launches awareness campaign in ${t.name}. Leaflets feature a stern owl.`,
@@ -740,7 +756,7 @@ function woExecute(s, q) {
   if ((q.kind === 'sanction' || q.kind === 'campaign') && s.stats.sabotage && rng(s) < s.stats.sabotage) { addNews(s, `The World Order\u2019s ${q.kind === 'sanction' ? 'sanctions' : 'campaign'} in ${c.name} collapses amid mysterious scheduling conflicts.`, 'you'); return; }
   if (q.kind === 'sanction' && immuneRoute(s, q.route[0], q.route[1])) { s.bounced = (s.bounced || []).concat([q.route[0] + '|' + q.route[1]]); addNews(s, `Sanctions on the ${byId(q.route[0]).name}\u2013${byId(q.route[1]).name} route bounce off your contracts. The lawyers send their regards.`, 'you'); flag(s, 'important', q.route[1], 'Sanctions bounced'); return; }
   if (q.kind === 'sanction') { s.blocked.push({ a: q.route[0], b: q.route[1], until: s.week + 30 }); addNews(s, `Sanctions close the ${byId(q.route[0]).name}\u2013${byId(q.route[1]).name} trade route for 30 weeks.`, 'wo'); flag(s, 'critical', q.route[0], 'Route closed'); }
-  if (q.kind === 'campaign') { counterCampaign(s, q.target); W.lastCampaign = W.lastCampaign || {}; W.lastCampaign[q.target] = s.week; }
+  if (q.kind === 'campaign') { counterCampaign(s, q.target, q.amt); W.lastCampaign = W.lastCampaign || {}; W.lastCampaign[q.target] = s.week; }
 }
 function possibleSignatures(s) { return signedCount(s) + COUNTRIES.filter(c => !s.wo.signed[c.id] && s.inf[c.id] < signLimit(s, c.id)).length; }
 function woTick(s) {
@@ -754,12 +770,33 @@ function woTick(s) {
   // withdrawals: signed countries that turned to you
   Object.keys(W.signed).forEach(id => { if (s.inf[id] >= TUNE.withdrawAt) { delete W.signed[id]; addNews(s, `${byId(id).name} withdraws its treaty signature. ${SG} is \u201cdisappointed, procedurally\u201d.`, 'you'); flag(s, 'important', id, 'Signature withdrawn'); } });
   if (s.cfg.v10) courtTick(s);
+  if (s.cfg.v10) { woCrackdown(s); woPerkNews(s); }
   W.queue.filter(q => q.at <= s.week).forEach(q => woExecute(s, q));
   W.queue = W.queue.filter(q => q.at > s.week);
   if (fxOn(s, 'woPause')) W.nextPlan = Math.max(W.nextPlan, s.week + 1);
   else if (s.week >= W.nextPlan) { woPlan(s); W.nextPlan = s.week + Math.max(4, Math.round((s.cfg.v10 ? v10t(s, 'planBase') : TUNE.planBase) - s.notoriety / 15) - perk(s).plan + (s.cfg.v10 ? Math.round(3 * domainPower(s, 'dip')) : 0)) * (fxOn(s, 'woSlow') ? 2 : 1); }
 }
 
+// v10.9: extra announced campaigns on your two largest contested footholds (never your base). Ideology softens them by up to half.
+function woCrackdown(s) {
+  const W = s.wo; if (!s.coalition || !v10t(s, 'crackAmt') || s.week < (W.nextCrack || 0)) return;
+  W.nextCrack = s.week + v10t(s, 'crackGap');
+  const busy = new Set(W.queue.map(q => q.target));
+  const cand = COUNTRIES.filter(c => c.id !== s.startId && c.pop >= 1 && s.inf[c.id] >= 15 && s.inf[c.id] < 95 && !busy.has(c.id) && !hasMod(s, c.id, 'noCampaign') && !(Q(s, c.id).immuneAt && s.inf[c.id] >= Q(s, c.id).immuneAt))
+    .sort((a, b) => b.pop * s.inf[b.id] - a.pop * s.inf[a.id]).slice(0, v10t(s, 'crackN'));
+  cand.forEach(c => {
+    const amt = Math.round(v10t(s, 'crackAmt') * (1 - .5 * domainPower(s, 'ideo')));
+    W.queue.push({ key: ++W.seq, kind: 'campaign', target: c.id, at: s.week + TUNE.lead, planned: s.week, amt, crack: true });
+    addNews(s, `World Order schedules a crackdown in ${c.name} in ${TUNE.lead} weeks: up to −${amt} support. Volunteers are being volunteered.`, 'wo'); flag(s, 'important', c.id, `Crackdown in ${TUNE.lead} wk`);
+  });
+}
+// News when the World Order starts or stops using a country's perk against you.
+function woPerkNews(s) {
+  const now = woPerkIds(s), prev = s.wo.perks || [];
+  now.filter(id => !prev.includes(id)).forEach(id => { addNews(s, `The World Order now uses ${byId(id).name}’s ${TRAITS[id].perkName} against you: ${TRAITS[id].woPerk}.`, 'wo'); flag(s, 'important', id, 'WO perk'); });
+  prev.filter(id => !now.includes(id)).forEach(id => { addNews(s, `The World Order loses ${byId(id).name}’s ${TRAITS[id].perkName}. Its staff are reassigned to a working group.`, 'you'); flag(s, 'important', id, 'WO perk lost'); });
+  s.wo.perks = now;
+}
 function treatyNews(s) {
   const steps = [
     [10, 'Treaty working group forms a subcommittee to agree the name of the working group.'],
@@ -1225,4 +1262,4 @@ function actHeadline(s, aid, target, src) {
 }
 
 // SIM-END
-if (typeof module !== 'undefined') module.exports = { RULES, ruleAt, baseRule, rulesOn, V10, HOOKS, hooksFor, PAIRS, pairOn, synergyOf, doctrineOf, closedFrom, offDoctrine, hasT2, CORE, ratified, enforcementTick, sigGrowthMul, populated, courtOn, actCost, ACTIONS, canAct, doAct, domainPower, actEff, resBreakdown, TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };
+if (typeof module !== 'undefined') module.exports = { LEVELS, LEVEL_IDS, levelOf, woPerkIds, RULES, ruleAt, baseRule, rulesOn, V10, HOOKS, hooksFor, PAIRS, pairOn, synergyOf, doctrineOf, closedFrom, offDoctrine, hasT2, CORE, ratified, enforcementTick, sigGrowthMul, populated, courtOn, actCost, ACTIONS, canAct, doAct, domainPower, actEff, resBreakdown, TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };
