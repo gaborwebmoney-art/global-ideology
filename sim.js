@@ -621,6 +621,7 @@ function step(s) {
   COUNTRIES.forEach(c => { s.inf[c.id] = Math.max(0, Math.min(100, s.inf[c.id] + d[c.id])); });
 
   const share = alignedShare(s); s.peakShare = Math.max(s.peakShare, share);
+  trackRun(s);
   // 4. Clout income + opportunity bubbles
   s.clout += (s.cfg.v10 ? v10t(s, 'income') : TUNE.income) * Math.max(0.05, 0.12 + 0.06 * (st.income + pk.income)) * (1 + TUNE.shareIncome * share) * (s.week < s.utopiaUntil ? 2 : 1) * (fxOn(s, 'incomeMul') || 1) * (s.cfg.v10 ? (1 + domainPower(s, 'eco')) * (pairOn(s, 'ecomil') ? 1 + .5 * domainPower(s, 'mil') : 1) * (ratified(s) ? v10t(s, 'enfIncome') : 1) : 1);
   s.bubbles = s.bubbles.filter(b => b.until > s.week);
@@ -651,6 +652,32 @@ function step(s) {
   else if (s.coalition && s.wo.hopeless >= 26 && !(s.cfg.v10 && s.wo.ratifiedAt)) { s.over = 'collapse'; addNews(s, 'The Containment Treaty collapses. The World Order rebrands as a book club.', 'you'); }
   else if (s.cfg.v10 ? enforcementLost(s) : signedCount(s) >= SIGNATURES_TO_LOSE) { s.over = 'treaty'; addNews(s, `Containment Treaty ratified by ${SIGNATURES_TO_LOSE} nations. ${SG} weeps with joy into a fountain pen.`, 'wo'); }
   else if (COUNTRIES.every(c => s.inf[c.id] <= 0)) { s.over = 'extinct'; addNews(s, 'Your movement has vanished. Historians shrug.', 'wo'); }
+}
+
+// Score + stars (v10.10). A country counts as lost once you held it (>= CONTROL) and it later fell below CONTROL - LOST_MARGIN.
+// Notoriety in the score is the run average: peak notoriety hits 100 in most Normal/Brutal wins, so it would not tell runs apart.
+const PAR = { casual: 175, normal: 213, brutal: 245 };
+const SCORE_BASE = { casual: 1000, normal: 1500, brutal: 2500 };
+const LOST_MARGIN = 5; // dips of a few points around 60% are noise, not a lost country
+function trackRun(s) {
+  s.held = s.held || {}; s.lost = s.lost || {};
+  s.peakNoto = Math.max(s.peakNoto || 0, s.notoriety); s.notoSum = (s.notoSum || 0) + s.notoriety;
+  COUNTRIES.forEach(c => {
+    const v = s.inf[c.id];
+    if (v >= CONTROL) s.held[c.id] = true;
+    else if (s.held[c.id] && v < CONTROL - LOST_MARGIN && !s.lost[c.id]) s.lost[c.id] = true;
+  });
+}
+function runResult(s) {
+  const level = levelOf(s), win = s.over === 'win' || s.over === 'collapse';
+  const lostN = Object.keys(s.lost || {}).length, peakNoto = Math.round(s.peakNoto || s.notoriety || 0), par = PAR[level];
+  const avgNoto = Math.round((s.notoSum || 0) / Math.max(1, s.week));
+  const r = { avgNoto, level, win, over: s.over, weeks: s.week, par, lostN, peakNoto, stars: 0, score: 0, parts: null };
+  if (!win) return r;
+  r.stars = 1 + (s.week <= par ? 1 : 0) + (s.week <= par && !lostN ? 1 : 0);
+  const parts = { base: SCORE_BASE[level], speed: Math.max(0, par - s.week) * 10, noto: -avgNoto * 10, lost: -lostN * 50 };
+  r.parts = parts; r.score = Math.max(0, parts.base + parts.speed + parts.noto + parts.lost);
+  return r;
 }
 
 function seed(s, id, amount, src) {
@@ -1262,4 +1289,4 @@ function actHeadline(s, aid, target, src) {
 }
 
 // SIM-END
-if (typeof module !== 'undefined') module.exports = { LEVELS, LEVEL_IDS, levelOf, woPerkIds, RULES, ruleAt, baseRule, rulesOn, V10, HOOKS, hooksFor, PAIRS, pairOn, synergyOf, doctrineOf, closedFrom, offDoctrine, hasT2, CORE, ratified, enforcementTick, sigGrowthMul, populated, courtOn, actCost, ACTIONS, canAct, doAct, domainPower, actEff, resBreakdown, TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };
+if (typeof module !== 'undefined') module.exports = { PAR, SCORE_BASE, runResult, trackRun, LEVELS, LEVEL_IDS, levelOf, woPerkIds, RULES, ruleAt, baseRule, rulesOn, V10, HOOKS, hooksFor, PAIRS, pairOn, synergyOf, doctrineOf, closedFrom, offDoctrine, hasT2, CORE, ratified, enforcementTick, sigGrowthMul, populated, courtOn, actCost, ACTIONS, canAct, doAct, domainPower, actEff, resBreakdown, TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };
