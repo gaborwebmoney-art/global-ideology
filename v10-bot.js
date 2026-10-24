@@ -98,13 +98,14 @@ function play(start, seed, cfg, build, sharp) {
         if (S.canAct(s, aid, base).ok) { S.doAct(s, aid, base); break; }
       }
     }
+    if (s.week % 25 === 0) { s._hs = s._hs || {}; s._hs[s.week] = S.COUNTRIES.filter(c => s.inf[c.id] >= 60).length; }
     if (s.treaty > 70 || (s.wo.court || []).reduce((x, c) => x + c.prog, 0) > 120) S.doAct(s, 'eco4');
     for (let i = 0; i < 4; i++) { const b = bestAction(s); if (!b || b.score <= 0) break; S.doAct(s, b.a, b.t); }
   }
   const log = s.actLog || [];
   const tiers = [1, 2, 3, 4].map(t => log.filter(id => +id.slice(-1) === t).length);
   const dom = { eco: 0, mil: 0, dip: 0, ideo: 0 }; log.forEach(id => { dom[id.replace(/\d$/, '')]++; });
-  return { rel: (s.relocLog || []).length, planBought: !!s.plan, minL, guard: !!s.guard, guardUsed: !!s.guardUsed, ups: (s.uprisings || []).length, upLost: (s.uprisings || []).filter(u => u.lost).length, res: S.runResult ? S.runResult(s) : null, dom, pw, t2b, owned: s.owned.length, clout: Math.round(s.clout), over: s.over || 'timeout', week: s.week, acts: log.length, tiers, t4: tiers[3] > 0, w4, crisis, ratAt: s.wo.ratifiedAt || 0, cb: s.comebacks || 0 };
+  return { hs: s._hs || {}, rel: (s.relocLog || []).length, planBought: !!s.plan, minL, guard: !!s.guard, guardUsed: !!s.guardUsed, ups: (s.uprisings || []).length, upLost: (s.uprisings || []).filter(u => u.lost).length, res: S.runResult ? S.runResult(s) : null, dom, pw, t2b, owned: s.owned.length, clout: Math.round(s.clout), over: s.over || 'timeout', week: s.week, acts: log.length, tiers, t4: tiers[3] > 0, w4, crisis, ratAt: s.wo.ratifiedAt || 0, cb: s.comebacks || 0 };
 }
 
 const T = { courtWeeks: 8, pushMul: 0.6 };
