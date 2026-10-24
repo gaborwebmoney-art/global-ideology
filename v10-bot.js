@@ -78,6 +78,17 @@ function play(start, seed, cfg, build, sharp) {
       const rk = (S.ruleAt(s, id, 'mil') || {}).kind;
       for (const aid of order) { if (aid[0] === 'm' && rk === 'reverse') continue; if (S.canAct(s, aid, id).ok) { S.doAct(s, aid, id); break; } }
     }
+    // v10.15 overextension: Development aid (Economy T1/T3) on held countries when stretched or restless (cfg.overBlind = ignore)
+    if (S.overOn && S.overOn(s) && !cfg.overBlind) {
+      const held = S.heldIds(s), stretched = held.length >= (cfg.aidAt || 7);
+      let n = 0;
+      for (const id of held.sort((a, b) => ((s.unrest || {})[b] || 0) - ((s.unrest || {})[a] || 0))) {
+        if (n >= 2) break;
+        if (!(stretched || ((s.unrest || {})[id] || 0) >= 40) || S.aided(s, id)) continue;
+        if (S.canAct(s, 'eco1', id).ok && S.doAct(s, 'eco1', id).ok) n++;
+        else if (S.canAct(s, 'eco3', id).ok && S.doAct(s, 'eco3', id).ok) n++;
+      }
+    }
     // v10.13 legitimacy: prop up the base at <= 40 (cfg.legitBlind = ignore); Loyal Guard as insurance (cfg.noGuard = never buy)
     if (S.legitOn && S.legitOn(s) && !cfg.legitBlind) {
       const L = S.legitOf(s), base = S.baseOf(s);
@@ -105,7 +116,7 @@ function play(start, seed, cfg, build, sharp) {
   const log = s.actLog || [];
   const tiers = [1, 2, 3, 4].map(t => log.filter(id => +id.slice(-1) === t).length);
   const dom = { eco: 0, mil: 0, dip: 0, ideo: 0 }; log.forEach(id => { dom[id.replace(/\d$/, '')]++; });
-  return { hs: s._hs || {}, rel: (s.relocLog || []).length, planBought: !!s.plan, minL, guard: !!s.guard, guardUsed: !!s.guardUsed, ups: (s.uprisings || []).length, upLost: (s.uprisings || []).filter(u => u.lost).length, res: S.runResult ? S.runResult(s) : null, dom, pw, t2b, owned: s.owned.length, clout: Math.round(s.clout), over: s.over || 'timeout', week: s.week, acts: log.length, tiers, t4: tiers[3] > 0, w4, crisis, ratAt: s.wo.ratifiedAt || 0, cb: s.comebacks || 0 };
+  return { aids: s.aids || 0, hs: s._hs || {}, rel: (s.relocLog || []).length, planBought: !!s.plan, minL, guard: !!s.guard, guardUsed: !!s.guardUsed, ups: (s.uprisings || []).length, upLost: (s.uprisings || []).filter(u => u.lost).length, res: S.runResult ? S.runResult(s) : null, dom, pw, t2b, owned: s.owned.length, clout: Math.round(s.clout), over: s.over || 'timeout', week: s.week, acts: log.length, tiers, t4: tiers[3] > 0, w4, crisis, ratAt: s.wo.ratifiedAt || 0, cb: s.comebacks || 0 };
 }
 
 const T = { courtWeeks: 8, pushMul: 0.6 };

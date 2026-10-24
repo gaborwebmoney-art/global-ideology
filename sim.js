@@ -165,12 +165,14 @@ const V10 = { edEff: 1.5, edTrade: 1.5, offCost: 1.5, offNoto: 3, courtWeeks: 13
   // v10.12 Step 8.1 unrest: gain multiplier per level (old saves without a level = casual)
   unrestMul: 1, legitMul: 1,
   // v10.14 Step 8.3 relocation: weeks the move takes
-  relocWeeks: 8 };
+  relocWeeks: 8,
+  // v10.15 Step 8.4 overextension: upkeep multiplier per level
+  upkeepMul: 1 };
 // Difficulty levels (v10.9). Each level is a set of V10 knob overrides; cfg.v10t (bot experiments) still wins.
 const LEVELS = {
-  casual: { v10t: { woPerks: 1, unrestMul: .85, legitMul: .7, relocWeeks: 6 } },
+  casual: { v10t: { woPerks: 1, unrestMul: .85, legitMul: .7, relocWeeks: 6, upkeepMul: .6 } },
   normal: { v10t: { woPerks: 1, legitMul: 1, crackAmt: 5, crackGap: 8, crackN: 2 } },
-  brutal: { v10t: { woPerks: 1, unrestMul: 1.15, legitMul: 1.15, relocWeeks: 10, crackAmt: 12, crackGap: 7, crackN: 2, courtWeeks: 8, planBase: 3 } }
+  brutal: { v10t: { woPerks: 1, unrestMul: 1.15, legitMul: 1.15, relocWeeks: 10, upkeepMul: 1.2, crackAmt: 12, crackGap: 7, crackN: 2, courtWeeks: 8, planBase: 3 } }
 };
 const LEVEL_IDS = ['casual', 'normal', 'brutal'];
 function levelOf(s) { return (s.cfg && LEVELS[s.cfg.level]) ? s.cfg.level : 'casual'; }
@@ -241,7 +243,7 @@ function canAct(s, aid, target) {
   const v = s.inf[target], W = s.wo, ct = courtOn(s, target) || (rl && rl.kind === 'anyNb');
   const gar = unrestOn(s) && a.dom === 'mil' && a.tier < 4 && v >= CONTROL, calm = unrestOn(s) && aid === 'ideo1' && v >= UNREST.min;
   const bAct = baseActOk(s, a, target);
-  if (['eco1', 'eco3', 'mil1', 'mil2', 'mil3', 'ideo1'].includes(aid) && v >= 95 && !((gar || calm) && unrestOf(s, target) >= UNREST.busyAt) && !bAct) return { ok: false, why: 'Already yours' };
+  if (['eco1', 'eco3', 'mil1', 'mil2', 'mil3', 'ideo1'].includes(aid) && v >= 95 && !((gar || calm) && unrestOf(s, target) >= UNREST.busyAt) && !bAct && !aidOk(s, aid, target)) return { ok: false, why: 'Already yours' };
   if (aid === 'eco2') {
     const src = strongest(s, target);
     if (s.inf[src.id] < 10) return { ok: false, why: 'Need 10%+ somewhere else first' };
@@ -296,6 +298,7 @@ function doAct(s, aid, target) {
   if (rl && !(target === baseOf(s) && legitOn(s) && rl.kind === 'reverse')) applyRule(s, rl, a, target, before, paid);
   if (target && unrestOn(s)) unrestOnAct(s, a, target, before, rl);
   if (target && legitOn(s)) legitOnAct(s, a, target, rl);
+  if (target && overOn(s)) overOnAct(s, a, target, before);
   allianceOnAct(s, a, target);
   tagMods(s, m0, a.name);
   return { ok: true };
@@ -634,7 +637,7 @@ function step(s) {
   const share = alignedShare(s); s.peakShare = Math.max(s.peakShare, share);
   trackRun(s);
   // 4. Clout income + opportunity bubbles
-  s.clout += (s.cfg.v10 ? v10t(s, 'income') : TUNE.income) * Math.max(0.05, 0.12 + 0.06 * (st.income + pk.income)) * (1 + TUNE.shareIncome * share) * (s.week < s.utopiaUntil ? 2 : 1) * (fxOn(s, 'incomeMul') || 1) * (s.cfg.v10 ? (1 + domainPower(s, 'eco')) * (pairOn(s, 'ecomil') ? 1 + .5 * domainPower(s, 'mil') : 1) * (ratified(s) ? v10t(s, 'enfIncome') : 1) : 1);
+  s.clout += (1 - upkeepOf(s).frac) * (s.cfg.v10 ? v10t(s, 'income') : TUNE.income) * Math.max(0.05, 0.12 + 0.06 * (st.income + pk.income)) * (1 + TUNE.shareIncome * share) * (s.week < s.utopiaUntil ? 2 : 1) * (fxOn(s, 'incomeMul') || 1) * (s.cfg.v10 ? (1 + domainPower(s, 'eco')) * (pairOn(s, 'ecomil') ? 1 + .5 * domainPower(s, 'mil') : 1) * (ratified(s) ? v10t(s, 'enfIncome') : 1) : 1);
   s.bubbles = s.bubbles.filter(b => b.until > s.week);
   const held = COUNTRIES.filter(c => s.inf[c.id] > 0 || (own(s, 'e1') && tradeLinks(s, c.id).some(h => s.inf[h] >= 25 && !isBlocked(s, c.id, h))));
   if (held.length && rng(s) < 0.16 + 0.1 * share + pk.bubble) {
@@ -658,6 +661,7 @@ function step(s) {
   eventsTick(s);
   unrestTick(s);
   legitTick(s);
+  overTick(s);
   s.mods = s.mods.filter(m => m.until > s.week);
   s.blocked = s.blocked.filter(b => b.until > s.week);
   // 6. End conditions
@@ -874,6 +878,44 @@ function buyGuard(s) {
   s.clout -= guardCost(s); s.guard = true;
   addNews(s, `${byId(baseOf(s)).name} swears in a Loyal Guard. Their oath fits on a business card.`, 'you');
   return { ok: true };
+}
+// ---- Overextension (v10.15, Step 8.4): holding many countries costs Clout income. Counterplay: Economy power, settled countries,
+// Development aid (Economy tier 1 / 3 on a country you hold).
+const OVER = { free: 4, rate: .06, cap: .5, settled: .5, settledAt: 85, aidWeeks: 25, aidUnrest: 20, ecoCut: .1, ecoCutMax: .5, warnAt: 6, critAt: 10 };
+function overOn(s) { return !!(s.cfg && s.cfg.v10 && s.cfg.over !== false); }
+function heldIds(s) { return COUNTRIES.filter(c => c.id !== baseOf(s) && s.inf[c.id] >= CONTROL).map(c => c.id); }
+function aided(s, id) { return hasMod(s, id, 'aid'); }
+// weight of one held country: aided 0, settled half, otherwise 1
+function upkeepWeight(s, id) { return aided(s, id) ? 0 : s.inf[id] >= OVER.settledAt ? OVER.settled : 1; }
+function upkeepOf(s) {
+  if (!overOn(s)) return { frac: 0, n: 0, units: 0, free: OVER.free, cut: 0 };
+  const ids = heldIds(s), units = ids.reduce((a, id) => a + upkeepWeight(s, id), 0);
+  const cut = Math.min(OVER.ecoCutMax, OVER.ecoCut * domainPower(s, 'eco'));
+  const frac = Math.min(OVER.cap, OVER.rate * Math.max(0, units - OVER.free) * (1 - cut) * v10t(s, 'upkeepMul'));
+  return { frac, n: ids.length, units, free: OVER.free, cut };
+}
+// Development aid: Economy tier 1 or 3 on a held country (before the action) that is not already aided
+function aidOk(s, aid, target) { return overOn(s) && (aid === 'eco1' || aid === 'eco3') && s.inf[target] >= CONTROL && target !== baseOf(s) && !aided(s, target); }
+function overOnAct(s, a, target, before) {
+  if (!(a.id === 'eco1' || a.id === 'eco3') || before < CONTROL || target === baseOf(s) || aided(s, target)) return;
+  s.mods.push({ id: target, kind: 'aid', until: s.week + OVER.aidWeeks });
+  const u = unrestOf(s, target); if (s.unrest && u > 0) s.unrest[target] = Math.max(0, u - OVER.aidUnrest);
+  s.aids = (s.aids || 0) + 1;
+  addNews(s, `Development aid in ${byId(target).name}: unrest −${OVER.aidUnrest}, upkeep waived for ${OVER.aidWeeks} weeks. The roads are almost finished.`, 'you');
+}
+function overTick(s) {
+  if (!overOn(s)) return;
+  const n = heldIds(s).length, lvl = s.overLvl || 0;
+  if (n < OVER.warnAt - 1) s.overLvl = 0;
+  else if (n >= OVER.critAt && lvl < 2) {
+    s.overLvl = 2; const u = upkeepOf(s);
+    addNews(s, `Overstretched: ${n} countries held and the paperwork is eating the movement. Upkeep takes ${Math.round(u.frac * 100)}% of your Clout income. Development aid waives it per country.`, 'wo');
+    flag(s, 'critical', null, 'Overstretched'); s.news[0].over = 1;
+  } else if (n >= OVER.warnAt && lvl < 1) {
+    s.overLvl = 1; const u = upkeepOf(s);
+    addNews(s, `Your administration is stretched: ${n} countries held, ${OVER.free} are free. Upkeep takes ${Math.round(u.frac * 100)}% of your Clout income. Economy power, settled countries and Development aid cut it.`, 'wo');
+    flag(s, 'important', null, 'Stretched'); s.news[0].over = 1;
+  }
 }
 // ---- Relocation (v10.14, Step 8.3): Contingency Plan (standalone upgrade, needs Summit Circuit) + move the base to a held country
 const RELOC = { planCost: 20, cost: 15, noto: 5, newLegit: 50, abandonUnrest: 20, minSupport: 60, abortBelow: 55, maxUnrest: 50, needs: 'd2' };
@@ -1578,4 +1620,4 @@ function actHeadline(s, aid, target, src) {
 }
 
 // SIM-END
-if (typeof module !== 'undefined') module.exports = { LEGIT, LEGIT_WHY, legitOn, legitOf, legitParts, legitEta, legitFrozen, addLegit, baseEstablished, baseActOk, legitActLine, baseLostIn, guardCost, canGuard, buyGuard, baseOf, RELOC, planCost, relocCost, canPlan, buyPlan, canReloc, relocEta, startReloc, UNREST, unrestOn, unrestOf, unrestParts, unrestEta, addUnrest, PAR, SCORE_BASE, runResult, trackRun, LEVELS, LEVEL_IDS, levelOf, woPerkIds, RULES, ruleAt, baseRule, rulesOn, V10, HOOKS, hooksFor, PAIRS, pairOn, synergyOf, doctrineOf, closedFrom, offDoctrine, hasT2, CORE, ratified, enforcementTick, sigGrowthMul, populated, courtOn, actCost, ACTIONS, canAct, doAct, domainPower, actEff, resBreakdown, TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };
+if (typeof module !== 'undefined') module.exports = { LEGIT, LEGIT_WHY, legitOn, legitOf, legitParts, legitEta, legitFrozen, addLegit, baseEstablished, baseActOk, legitActLine, baseLostIn, guardCost, canGuard, buyGuard, OVER, overOn, heldIds, aided, upkeepOf, aidOk, overTick, baseOf, RELOC, planCost, relocCost, canPlan, buyPlan, canReloc, relocEta, startReloc, UNREST, unrestOn, unrestOf, unrestParts, unrestEta, addUnrest, PAR, SCORE_BASE, runResult, trackRun, LEVELS, LEVEL_IDS, levelOf, woPerkIds, RULES, ruleAt, baseRule, rulesOn, V10, HOOKS, hooksFor, PAIRS, pairOn, synergyOf, doctrineOf, closedFrom, offDoctrine, hasT2, CORE, ratified, enforcementTick, sigGrowthMul, populated, courtOn, actCost, ACTIONS, canAct, doAct, domainPower, actEff, resBreakdown, TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };

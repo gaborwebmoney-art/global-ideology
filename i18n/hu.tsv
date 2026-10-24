@@ -1349,3 +1349,32 @@ It does not count toward branch tiers and does not raise other prices.	Nem szám
 The move itself costs {}+ Clout and +{} Notoriety.	Maga a költözés {1}+ befolyásba és +{2} Hírhedtségbe kerül.
 Where it helps: a base that is falling to low support or about to fall to a coup.	Mikor segít: ha a bázis alacsony támogatás miatt esik, vagy puccs fenyegeti.
 How moving the base works	Hogyan működik a bázis áthelyezése
+# v10.15 Step 8.4 overextension
+Development aid in {}: unrest −{}, upkeep waived for {} weeks. The roads are almost finished.	Fejlesztési segély itt: {1}: a nyugtalanság −{2}, a fenntartási költség {3} hétre elengedve. Az utak majdnem kész vannak.
+Overstretched: {} countries held and the paperwork is eating the movement. Upkeep takes {}% of your Clout income. Development aid waives it per country.	Túlfeszítve: {1} ország a kezedben, és a papírmunka felemészti a mozgalmat. A fenntartás a befolyás-bevételed {2}%-át viszi el. A fejlesztési segély országonként elengedi.
+Your administration is stretched: {} countries held, {} are free. Upkeep takes {}% of your Clout income. Economy power, settled countries and Development aid cut it.	Az adminisztrációd megfeszült: {1} ország a kezedben, ebből {2} ingyenes. A fenntartás a befolyás-bevételed {3}%-át viszi el. A Gazdasági erő, a megszilárdult országok és a fejlesztési segély csökkenti.
+Stretched	Megfeszítve
+Overstretched	Túlfeszítve
+Upkeep −{}%	Fenntartás −{1}%
+Overextension: {} countries held, {} free. Click for how it works.	Túlterjeszkedés: {1} ország a kezedben, {2} ingyenes. Kattints a működéséhez.
+Overextension	Túlterjeszkedés
+New cost	Új költség
+Upkeep	Fenntartás
+Aided: no upkeep for {} wk.	Segélyezve: {1} hétig nincs fenntartás.
+Settled ({}%+): half upkeep.	Megszilárdult ({1}%+): fele fenntartás.
+Counts toward upkeep.	Beleszámít a fenntartásba.
+{} held, {} free: Clout income −{}%.	{1} a kezedben, {2} ingyenes: befolyás-bevétel −{3}%.
+Development aid: unrest −{}, upkeep waived {} weeks.	Fejlesztési segély: nyugtalanság −{1}, a fenntartás {2} hétre elengedve.
+Already aided: upkeep waived for {} more weeks.	Már segélyezve: a fenntartás még {1} hétig elengedve.
+How overextension works	Hogyan működik a túlterjeszkedés
+Holding countries costs upkeep.	Az országok tartása fenntartási költséggel jár.
+Every country you hold ({}%+, your base not counted) beyond {} free ones takes {}% of your weekly Clout income, up to {}%.	Minden általad tartott ország ({1}%+, a bázisod nélkül) a {2} ingyenes után a heti befolyás-bevételed {3}%-át viszi el, legfeljebb {4}%-ig.
+Settled countries ({}%+) cost half.	A megszilárdult országok ({1}%+) feleannyiba kerülnek.
+Economy power cuts upkeep by {}% per point, at most half off.	A Gazdasági erő pontonként {1}%-kal csökkenti a fenntartást, legfeljebb a felére.
+Brutal charges more, Casual less.	Brutális szinten drágább, Laza szinten olcsóbb.
+Development aid: Foreign Investment or Buyout on a country you hold cuts its unrest by {} and waives its upkeep for {} weeks.	Fejlesztési segély: egy általad tartott országban a Külföldi befektetés vagy Felvásárlás {1}-gyel csökkenti a nyugtalanságot, és {2} hétre elengedi a fenntartást.
+It works even on a country at 95%+ that would otherwise be "Already yours".	Működik akkor is, ha az ország 95%+ és egyébként "Már a tiéd" lenne.
+Upkeep never takes more than {}% of your income.	A fenntartás sosem visz el a bevételed {1}%-ánál többet.
+Aid cannot be stacked on a country that is already aided.	A segély nem halmozható egy már segélyezett országon.
+Holding many countries costs Clout upkeep.	Sok ország tartása befolyás-fenntartással jár.
+Development aid	Fejlesztési segély
