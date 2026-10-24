@@ -80,8 +80,17 @@ function play(start, seed, cfg, build, sharp) {
     }
     // v10.13 legitimacy: prop up the base at <= 40 (cfg.legitBlind = ignore); Loyal Guard as insurance (cfg.noGuard = never buy)
     if (S.legitOn && S.legitOn(s) && !cfg.legitBlind) {
-      const L = S.legitOf(s), base = s.startId;
+      const L = S.legitOf(s), base = S.baseOf(s);
       if (!cfg.noGuard && !s.guard && L < 35 && S.canGuard(s).ok) S.buyGuard(s);
+      // v10.14 relocation: when the base is in trouble, buy Contingency Plan (Summit Circuit first) and move to the strongest calm held country (cfg.noReloc = never)
+      if (!cfg.noReloc && S.canReloc && !s.reloc && !s.relocUsed && S.baseEstablished(s) && (s.inf[base] < 45 || L < 30)) {
+        if (!s.plan && !s.owned.includes('d2')) { for (const id of ['d1', 'd2']) if (!s.owned.includes(id)) S.buyUpgrade(s, id); }
+        if (!s.plan && S.canPlan(s).ok) S.buyPlan(s);
+        if (s.plan) {
+          const cands = S.COUNTRIES.filter(c => S.canReloc(s, c.id).ok && s.inf[c.id] >= 65).sort((a, b) => s.inf[b.id] - s.inf[a.id]);
+          if (cands.length) S.startReloc(s, cands[0].id);
+        }
+      }
       if (S.baseEstablished(s) && s.inf[base] < 50) for (const aid of ['eco3', 'ideo3', 'dip2', 'mil2', 'ideo2', 'eco1', 'ideo1', 'mil1', 'dip1']) {
         const rk = (S.ruleAt(s, base, aid.slice(0, -1)) || {}).kind; if (rk === 'reverse' || rk === 'fizzle') continue; S.doAct(s, aid, base); }
       if (L <= (cfg.legitAt || 30) && !S.legitFrozen(s)) for (const aid of ['eco3', 'ideo2', 'dip2', 'eco1', 'ideo1', 'dip1', 'ideo3', 'mil1', 'mil2']) {
@@ -95,7 +104,7 @@ function play(start, seed, cfg, build, sharp) {
   const log = s.actLog || [];
   const tiers = [1, 2, 3, 4].map(t => log.filter(id => +id.slice(-1) === t).length);
   const dom = { eco: 0, mil: 0, dip: 0, ideo: 0 }; log.forEach(id => { dom[id.replace(/\d$/, '')]++; });
-  return { minL, guard: !!s.guard, guardUsed: !!s.guardUsed, ups: (s.uprisings || []).length, upLost: (s.uprisings || []).filter(u => u.lost).length, res: S.runResult ? S.runResult(s) : null, dom, pw, t2b, owned: s.owned.length, clout: Math.round(s.clout), over: s.over || 'timeout', week: s.week, acts: log.length, tiers, t4: tiers[3] > 0, w4, crisis, ratAt: s.wo.ratifiedAt || 0, cb: s.comebacks || 0 };
+  return { rel: (s.relocLog || []).length, planBought: !!s.plan, minL, guard: !!s.guard, guardUsed: !!s.guardUsed, ups: (s.uprisings || []).length, upLost: (s.uprisings || []).filter(u => u.lost).length, res: S.runResult ? S.runResult(s) : null, dom, pw, t2b, owned: s.owned.length, clout: Math.round(s.clout), over: s.over || 'timeout', week: s.week, acts: log.length, tiers, t4: tiers[3] > 0, w4, crisis, ratAt: s.wo.ratifiedAt || 0, cb: s.comebacks || 0 };
 }
 
 const T = { courtWeeks: 8, pushMul: 0.6 };

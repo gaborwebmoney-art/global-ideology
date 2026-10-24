@@ -1290,3 +1290,62 @@ Martial law: legitimacy frozen {} wk, then −{}.	Statárium: a legitimitás {1}
 Casualties abroad: legitimacy −{}.	Külföldi áldozatok: legitimitás −{1}.
 At your peak you had {}% of the world.	A csúcson a világ {1}%-át tartottad.
 Martial law: legitimacy frozen {} wk, then −{}. +{} Notoriety.	Statárium: a legitimitás {1} hétig befagyasztva, utána −{2}. +{3} Hírhedtség.
+# v10.14 Step 8.3 relocation
+Your movement drafts a Contingency Plan. Page one: a second headquarters. Page two: a van.	A mozgalmad Vészterv készül. Első oldal: egy második főhadiszállás. Második oldal: egy furgon.
+{}: the headquarters leaves in a van marked "documents". Next stop: {}, in {} weeks.	{1}: a főhadiszállás egy "iratok" feliratú furgonban távozik. Következő megálló: {2}, {3} hét múlva.
+The move to {} collapses: support there fell below {}%. The van turns around. The Clout is gone, the old base stays.	A költözés ide: {1} meghiúsul: a támogatottság {2}% alá esett. A furgon megfordul. A befolyás odavan, a régi bázis marad.
+{} is now the home of the movement. {} is told the headquarters "will be back in a minute". Legitimacy {}.	{1} mostantól a mozgalom otthona. {2} azt mondják, a főhadiszállás "mindjárt visszajön". Legitimitás {3}.
+Relocating	Költözés
+Base moved	Bázis áthelyezve
+Move aborted	Költözés megszakadt
+New base	Új bázis
+New option	Új lehetőség
+Moving your base	A bázis áthelyezése
+Move your base	Helyezd át a bázisodat
+Becoming your base	Bázisoddá válik
+Contingency Plan	Vészterv
+Contingency Plan (Upgrades screen, {}+ Clout, needs Summit Circuit) lets you move your base once per game.	A Vészterv (Fejlesztések képernyő, {1}+ befolyás, Csúcskör kell hozzá) lehetővé teszi, hogy játékonként egyszer áthelyezd a bázisodat.
+Open any country you hold ({}%+ support, calm) and press Make this your base.	Nyiss meg egy általad tartott országot ({1}%+ támogatás, nyugodt), és nyomd meg: Legyen ez a bázisod.
+It costs {}+ Clout and +{} Notoriety.	{1}+ befolyásba és +{2} Hírhedtségbe kerül.
+The move takes 6 weeks on Casual, 8 on Normal, 10 on Brutal.	A költözés Laza szinten 6, Normálon 8, Brutálison 10 hétig tart.
+While it runs, losing the base to low support and coups are paused.	Amíg tart, a bázis alacsony támogatás miatti elvesztése és a puccsok szünetelnek.
+If support in the new country falls below {}%, the move is aborted and the Clout is lost.	Ha az új országban a támogatás {1}% alá esik, a költözés megszakad, és a befolyás elvész.
+After the move: legitimacy starts at {}.	A költözés után: a legitimitás {1}-ról indul.
+The crown ring, the base actions and the no-unrest rule move to the new country.	A korona-gyűrű, a bázis-akciók és a nyugtalanság-mentesség átkerül az új országba.
+The old base becomes an ordinary country with {} unrest and no longer counts as a lost country.	A régi bázis szokásos országgá válik {1} nyugtalansággal, és már nem számít elvesztett országnak.
+Base bonuses that stay on (perk, quiet, no courting, no campaigns, support swings) follow the base.	Az állandó bázis-bónuszok (előny, csendes működés, nincs udvarlás, nincs kampány, támogatás-ingadozás) követik a bázist.
+One-off bonuses (free upgrade, starting Clout, starting support, seeded neighbours) do not repeat.	Az egyszeri bónuszok (ingyenes fejlesztés, induló befolyás, induló támogatás, a szomszédokban elvetett támogatás) nem ismétlődnek.
+A Contingency Plan lets you move the base once.	A Vészterv lehetővé teszi, hogy egyszer áthelyezd a bázist.
+Moving to {}: {} wk left.	Költözés ide: {1}: még {2} hét.
+Coup and base loss are paused.	A puccs és a bázis elvesztése szünetel.
+In {} wk.	{1} hét múlva.
+Keep support above {}% or the move is aborted.	Tartsd a támogatást {1}% felett, különben a költözés megszakad.
+The move is done. Used for this game.	A költözés megtörtént. Ebben a játékban felhasználva.
+Ready.	Kész.
+Open a country you hold ({}%+ support) to move the base there.	Nyiss meg egy általad tartott országot ({1}%+ támogatás), hogy oda helyezd a bázist.
+{} weeks.	{1} hét.
+Coup and base loss are paused during the move.	A költözés alatt a puccs és a bázis elvesztése szünetel.
+New legitimacy {}.	Új legitimitás: {1}.
+Base rule gained: {}	Megszerzett bázis-szabály: {1}
+Base rule lost: {}	Elvesztett bázis-szabály: {1}
+Cost {} Clout, +{} Notoriety.	Ára {1} befolyás, +{2} Hírhedtség.
+{} becomes an ordinary country (unrest +{}).	{1} szokásos országgá válik (nyugtalanság +{2}).
+Make this your base · {} Clout	Legyen ez a bázisod · {1} befolyás
+Needs Contingency Plan	Vészterv kell hozzá
+Already relocating	Már költözik
+Already your base	Már a bázisod
+Needs {}% support	{1}% támogatás kell
+Too much unrest	Túl nagy a nyugtalanság
+Needs Summit Circuit	Csúcskör kell hozzá
+Relocating to {}: {} wk. Coup and base loss paused	Költözés ide: {1}: {2} hét. A puccs és a bázis elvesztése szünetel
+Your base · needs Summit Circuit	A bázisod · Csúcskör kell hozzá
+Used: the base has moved	Felhasználva: a bázis áthelyezve
+Relocation in progress	Költözés folyamatban
+Owned: open a country you hold and press Make this your base	Megvan: nyiss meg egy általad tartott országot, és nyomd meg: Legyen ez a bázisod
+Lets you move your base once per game to a country you hold ({}%+ support, calm).	Lehetővé teszi, hogy játékonként egyszer áthelyezd a bázisodat egy általad tartott országba ({1}%+ támogatás, nyugodt).
+The move takes weeks; coups and base loss are paused while it runs.	A költözés hetekig tart; közben a puccsok és a bázis elvesztése szünetel.
+Outside the branches, but it needs Summit Circuit (Diplomacy).	Az ágakon kívül van, de Csúcskör (Diplomácia) kell hozzá.
+It does not count toward branch tiers and does not raise other prices.	Nem számít bele az ágak szintjeibe, és nem emeli a többi árat.
+The move itself costs {}+ Clout and +{} Notoriety.	Maga a költözés {1}+ befolyásba és +{2} Hírhedtségbe kerül.
+Where it helps: a base that is falling to low support or about to fall to a coup.	Mikor segít: ha a bázis alacsony támogatás miatt esik, vagy puccs fenyegeti.
+How moving the base works	Hogyan működik a bázis áthelyezése
