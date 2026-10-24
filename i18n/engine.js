@@ -16,6 +16,8 @@
   const cache = new Map(), misses = new Set();
   function core(s) {
     if (EXACT.has(s)) return EXACT.get(s);
+    // a long, specific pattern for the whole line beats the headline split below ("Coup plot: below {}, act now")
+    for (const p of PATS) { if (p.len < 24) continue; const m = p.re.exec(s); if (m && !m.slice(1).some(x => SENT_BREAK.test(x))) return p.hu.replace(/\{(\d+)\}/g, (_, i) => tr(m[i])); }
     // "Headline: body" (event/decision news): split on the known headline first, so a short
     // generic pattern such as "{} and {}." cannot swallow the whole line and leave it half English.
     const hd = /^([▲▼★] )?([^:.!?]{2,60}): ([\s\S]+)$/.exec(s);

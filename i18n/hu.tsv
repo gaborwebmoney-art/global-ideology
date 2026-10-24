@@ -1162,3 +1162,131 @@ Unrest +15.	Nyugtalanság +15.
 Garrison: no unrest	Helyőrség: nincs nyugtalanság
 No unrest	Nincs nyugtalanság
 Lost to uprisings: {}	Felkelésben elvesztve: {1}
+# v10.13 Step 8.2 base legitimacy + coup
+Legitimacy	Legitimitás
+Your base.	A bázisod.
+A coup at 0	0-nál puccs
+Coup at 0	0-nál puccs
+{}: steady or rising.	{1}: stabil vagy emelkedik.
+{}: falling, coup at 0	{1}: csökken, 0-nál puccs
+{} below {}%: base lost in {} wk	{1} {2}% alatt: a bázis {3} hét múlva elvész
+Martial law: cannot fall for {} wk	Statárium: {1} hétig nem csökkenhet
+Shielded: cannot fall for {} wk	Védve: {1} hétig nem csökkenhet
+Coup plot: coup in about {} wk	Puccskísérlet készül: puccs kb. {1} hét múlva
+Coup plot: below {}, act now	Puccskísérlet készül: {1} alatt, cselekedj most
+Guard your base.	Védd a bázisodat.
+Its legitimacy (the crown ring on the map and the meter at the bottom) rises with victories and prosperity and falls with uprisings, lost countries and casualties abroad.	A legitimitása (korona-gyűrű a térképen és mérő alul) nő a győzelmekkel és a jóléttel, és csökken a felkelésekkel, az elvesztett országokkal és a külföldi áldozatokkal.
+At 0 the army takes over and you lose.	0-nál a hadsereg átveszi a hatalmat, és vesztesz.
+Once your base reaches 60%, letting it fall below 35% for 10 weeks also loses the game.	Ha a bázisod elérte a 60%-ot, és 10 hétig 35% alá esik, az is vereség.
+Actions on your own base restore legitimacy.	A saját bázisodon végzett akciók helyreállítják a legitimitást.
+Crown ring: base legitimacy.	Korona-gyűrű: a bázis legitimitása.
+Green 50+, amber below 50, red pulsing below {}, a coup is near.	Zöld 50+, borostyán 50 alatt, villogó piros {1} alatt: közel a puccs.
+Your base: legitimacy	A bázisod: legitimitás
+Your base is your movement’s home.	A bázis a mozgalmad otthona.
+Instead of unrest it has legitimacy (0–100, the crown ring on the map and the Legitimacy meter).	Nyugtalanság helyett legitimitása van (0–100, korona-gyűrű a térképen és a Legitimitás mérő).
+At 0 the army takes over: a coup, and you lose.	0-nál a hadsereg átveszi a hatalmat: puccs, és vesztesz.
+Below {} a coup plot is announced.	{1} alatt puccskísérletről érkezik hír.
+It rises with victories (every new country you hold, 25% and 50% of the world), a settled base (85%+) and Economy power.	Nő a győzelmekkel (minden újonnan megtartott ország, a világ 25%-a és 50%-a), a megszilárdult bázissal (85%+) és a Gazdasági erővel.
+It falls with uprisings, lost countries, Military actions abroad (casualties), failed actions, scandals at home and, while the World Order is awake, slowly every week, faster with every treaty signature.	Csökken a felkelésekkel, az elvesztett országokkal, a külföldi Katonai akciókkal (áldozatok), a kudarcba fulladt akciókkal, az otthoni botrányokkal, és amíg a Világrend ébren van, hetente lassan, minden aláírással gyorsabban.
+Fix it with an action on your own base, allowed at any support while legitimacy is below 70.	Javítsd egy akcióval a saját bázisodon; ez bármilyen támogatásnál megengedett, amíg a legitimitás 70 alatt van.
+Prosperity: Foreign Investment +{}, Buyout +{}.	Jólét: Külföldi befektetés +{1}, Felvásárlás +{2}.
+Rally: Pamphlets +{}, Youth Movement +{}.	Nagygyűlés: Röplapok +{1}, Ifjúsági mozgalom +{2}.
+Recognition: Embassy +{}, Summit +{}.	Elismerés: Nagykövetség +{1}, Csúcstalálkozó +{2}.
+Martial law (Military) freezes it for {} weeks, then −{}.	A Statárium (Katonai) {1} hétre befagyasztja, utána −{2}.
+Martyr Narrative on your base: legitimacy cannot fall for {} weeks.	Mártír-narratíva a bázisodon: a legitimitás {1} hétig nem csökkenhet.
+A Summit on your base also stops the World Order drain for {} weeks.	Egy Csúcstalálkozó a bázisodon {1} hétre a Világrend nyomását is leállítja.
+Where your base’s wall reverses a domain, that action costs {} legitimacy instead.	Ahol a bázisod fala visszafordít egy területet, ott az az akció inkább {1} legitimitásba kerül.
+Loyal Guard (Upgrades screen, {}+ Clout, once per game): the first coup fails.	Hű Gárda (Fejlesztések képernyő, {1}+ befolyás, játékonként egyszer): az első puccs elbukik.
+Legitimacy returns to {} and Notoriety +{}.	A legitimitás visszaáll {1}-ra, Hírhedtség +{2}.
+Losing the base itself: once your base has reached {}%, it must not stay below {}% support for {} weeks.	Maga a bázis elvesztése: ha a bázisod elérte a {1}%-ot, nem maradhat {3} hétig {2}% támogatás alatt.
+Brutal wears legitimacy down faster, Casual slower.	Brutális szinten gyorsabban kopik a legitimitás, Laza szinten lassabban.
+How legitimacy works	Hogyan működik a legitimitás
+Base below {}%: lost in {} wk unless support recovers	A bázis {1}% alatt: {2} hét múlva elvész, ha a támogatás nem áll helyre
+Martial law: frozen {} wk, then −{}	Statárium: {1} hétig befagyasztva, utána −{2}
+Coup in about {} wk at this rate	Ilyen ütemben puccs kb. {1} hét múlva
+Slowly falling	Lassan csökken
+Rising	Emelkedik
++ Settled base (85%+)	+ Megszilárdult bázis (85%+)
++ Prosperity (Economy power)	+ Jólét (Gazdasági erő)
+− World Order pressure	− A Világrend nyomása
+− Treaty signatures	− Szerződés-aláírások
+Victory	Győzelem
+Milestone	Mérföldkő
+Uprising	Felkelés
+Lost country	Elvesztett ország
+Casualties abroad	Külföldi áldozatok
+Regime change	Rendszerváltás
+Failed action	Kudarcba fulladt akció
+Backfire	Visszafelé sült el
+Scandal at home	Botrány otthon
+Bad news at home	Rossz hír otthon
+Martial law ends	Véget ér a statárium
+Your action	A te akciód
+Loyal Guard	Hű Gárda
+Fix	Javítás
+Prosperity (Economy)	Jólét (Gazdasági)
+Rally (Pamphlets, Youth Movement)	Nagygyűlés (Röplapok, Ifjúsági mozgalom)
+Recognition (Embassy, Summit)	Elismerés (Nagykövetség, Csúcstalálkozó)
+Martial law (Military)	Statárium (Katonai)
+{} backfires here ({})	{1} itt visszafelé sül el ({2})
+Loyal Guard: ready, stops one coup	Hű Gárda: készen áll, megállít egy puccsot
+Loyal Guard: used	Hű Gárda: felhasználva
+Your base · any doctrine	A bázisod · bármely doktrína
+Used	Felhasználva
+Used: it stopped a coup	Felhasználva: megállított egy puccsot
+Owned: ready to stop one coup	Megvan: készen áll egy puccs megállítására
+The first coup against you fails: legitimacy returns to {}, +{} Notoriety.	Az első ellened irányuló puccs elbukik: a legitimitás visszaáll {1}-ra, +{2} Hírhedtség.
+Once per game.	Játékonként egyszer.
+Outside the branches: any doctrine can buy it, it does not count toward branch tiers and does not raise other prices.	Az ágakon kívül: bármely doktrína megveheti, nem számít bele az ágak szintjeibe, és nem emeli a többi árat.
+It does not stop the base from being lost to low support.	Nem védi meg a bázist attól, hogy alacsony támogatás miatt elvesszen.
+Legitimacy now {}.	Legitimitás most: {1}.
+Martial law	Statárium
+Legitimacy shielded	Legitimitás védve
+No World Order drain	Nincs világrendi nyomás
+Coup at home	Puccs otthon
+Base lost	Elveszett a bázis
+In week {} the army in {} took over your movement’s home.	A(z) {1}. héten a hadsereg átvette a hatalmat {2} országban, a mozgalmad otthonában.
+Next time, watch the legitimacy meter: Rally, Prosperity or Recognition on your base restore it, and a Loyal Guard stops one coup.	Legközelebb figyeld a legitimitás mérőt: a bázisodon a Nagygyűlés, a Jólét vagy az Elismerés helyreállítja, a Hű Gárda pedig megállít egy puccsot.
+Your base {} stayed below {}% support for {} weeks and the movement lost its home in week {}.	A bázisod, {1}, {3} hétig {2}% támogatás alatt maradt, és a mozgalom a(z) {4}. héten elvesztette az otthonát.
+Next time, push support back at home as soon as the warning comes.	Legközelebb amint jön a figyelmeztetés, növeld újra a támogatást otthon.
+Coup plot	Puccskísérlet
+Base at risk	Veszélyben a bázis
+Base falling	Elesik a bázis
+Coup crushed	Puccs leverve
+Coup plot in {}: generals were seen measuring the palace curtains.	Puccskísérlet készül itt: {1}: tábornokokat láttak, amint a palota függönyeit méricskélik.
+Coup in about {} weeks at this rate.	Ilyen ütemben puccs kb. {1} hét múlva.
+Raise legitimacy with an action on your base.	Növeld a legitimitást egy akcióval a bázisodon.
+{}: martial law ends.	{1}: véget ér a statárium.
+The curfew is lifted; the grudges are not.	A kijárási tilalmat feloldják, a sérelmeket nem.
+Legitimacy −{}.	Legitimitás −{1}.
+Your base {} is slipping: {}% support.	A bázisod, {1}, csúszik: {2}% támogatás.
+Below {}% the movement loses its home and the game.	{1}% alatt a mozgalom elveszíti az otthonát és a játékot.
+{} is falling: your base is under {}% support.	{1} elesőben: a bázisod {2}% támogatás alatt van.
+Get it back above {}% within {} weeks or lose the game.	Hozd vissza {1}% fölé {2} héten belül, különben vesztesz.
+{} sees a coup attempt!	Puccskísérlet itt: {1}!
+The Loyal Guard holds the palace and the plotters are reassigned to stamp counting.	A Hű Gárda megtartja a palotát, az összeesküvőket bélyegszámlálásra helyezik át.
+Legitimacy {}, +{} Notoriety.	Legitimitás {1}, +{2} Hírhedtség.
+{} falls to a coup.	Puccs itt: {1}.
+The new junta promises stability, elections and a slightly larger flag.	Az új junta stabilitást, választásokat és egy kicsit nagyobb zászlót ígér.
+{} is lost: your movement has no home.	{1} elveszett: a mozgalmadnak nincs otthona.
+The headquarters is now a co-working space.	A főhadiszállás most coworking iroda.
+{} at home backfires on you ({}).	{1} otthon visszafelé sül el ({2}).
+Legitimacy −{}, support −{}.	Legitimitás −{1}, támogatás −{2}.
+Prosperity in {}: legitimacy +{}.	Jólét itt: {1}: legitimitás +{2}.
+Rally in {}: legitimacy +{}.	Nagygyűlés itt: {1}: legitimitás +{2}.
+Recognition in {}: legitimacy +{}.	Elismerés itt: {1}: legitimitás +{2}.
+Martyr Narrative at home: legitimacy cannot fall for {} weeks.	Mártír-narratíva otthon: a legitimitás {1} hétig nem csökkenhet.
+Martial law in {}: legitimacy frozen for {} weeks, −{} when it ends.	Statárium itt: {1}: a legitimitás {2} hétre befagyasztva, a végén −{3}.
+The anthem now plays every hour.	A himnusz mostantól óránként szól.
+{} swears in a Loyal Guard.	Felesküdött a Hű Gárda itt: {1}.
+Their oath fits on a business card.	Az esküjük elfér egy névjegykártyán.
+Rally: legitimacy +{}.	Nagygyűlés: legitimitás +{1}.
+Prosperity: legitimacy +{}.	Jólét: legitimitás +{1}.
+Recognition: legitimacy +{}.	Elismerés: legitimitás +{1}.
+Recognition: legitimacy +{}, no World Order drain {} wk.	Elismerés: legitimitás +{1}, {2} hétig nincs világrendi nyomás.
+Legitimacy cannot fall for {} wk.	A legitimitás {1} hétig nem csökkenhet.
+Martial law: legitimacy frozen {} wk, then −{}.	Statárium: a legitimitás {1} hétig befagyasztva, utána −{2}.
+{}: legitimacy −{}.	{1}: legitimitás −{2}.
+Casualties abroad: legitimacy −{}.	Külföldi áldozatok: legitimitás −{1}.
+At your peak you had {}% of the world.	A csúcson a világ {1}%-át tartottad.
+Martial law: legitimacy frozen {} wk, then −{}. +{} Notoriety.	Statárium: a legitimitás {1} hétig befagyasztva, utána −{2}. +{3} Hírhedtség.

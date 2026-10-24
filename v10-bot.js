@@ -48,7 +48,7 @@ function bestAction(s) {
 function play(start, seed, cfg, build, sharp) {
   const s = S.createState(start, seed, Object.assign({ v10: true, cdMode: 'global', gate: true }, cfg));
   const prio = prioFor(BUILDS[build], cfg.rush, cfg.minor ? 2 : 4);
-  let w4 = 0, crisis = 0, pw = 0, t2b = 0;
+  let w4 = 0, crisis = 0, pw = 0, t2b = 0, minL = 100;
   while (!s.over && s.week < 1500) {
     S.step(s);
     if (s.pending) { let c = 'a'; if (!S.canChoose(s, c).ok) c = 'b'; S.resolveDecision(s, c); }
@@ -56,6 +56,7 @@ function play(start, seed, cfg, build, sharp) {
     if (!w4 && ['e4', 'm4', 'd4', 'i4'].some(id => s.owned.includes(id))) w4 = s.week;
     if (!pw && S.PAIRS && S.PAIRS.some(p => S.pairOn(s, p.id))) pw = s.week; if (!t2b && s.owned.length >= 6) t2b = s.week;
     if ((s.wo.court || []).some(c => c.prog >= 66)) crisis++;
+    if (s.legit !== undefined) minL = Math.min(minL, s.legit);
     if (!sharp && s.week % 4) continue;
     for (const id of prio) { if (s.owned.includes(id)) continue; const r = S.buyUpgrade(s, id); if (!r.ok && r.why === 'Not enough Clout') break; }
     // answer courtships
@@ -77,13 +78,24 @@ function play(start, seed, cfg, build, sharp) {
       const rk = (S.ruleAt(s, id, 'mil') || {}).kind;
       for (const aid of order) { if (aid[0] === 'm' && rk === 'reverse') continue; if (S.canAct(s, aid, id).ok) { S.doAct(s, aid, id); break; } }
     }
+    // v10.13 legitimacy: prop up the base at <= 40 (cfg.legitBlind = ignore); Loyal Guard as insurance (cfg.noGuard = never buy)
+    if (S.legitOn && S.legitOn(s) && !cfg.legitBlind) {
+      const L = S.legitOf(s), base = s.startId;
+      if (!cfg.noGuard && !s.guard && L < 35 && S.canGuard(s).ok) S.buyGuard(s);
+      if (S.baseEstablished(s) && s.inf[base] < 50) for (const aid of ['eco3', 'ideo3', 'dip2', 'mil2', 'ideo2', 'eco1', 'ideo1', 'mil1', 'dip1']) {
+        const rk = (S.ruleAt(s, base, aid.slice(0, -1)) || {}).kind; if (rk === 'reverse' || rk === 'fizzle') continue; S.doAct(s, aid, base); }
+      if (L <= (cfg.legitAt || 30) && !S.legitFrozen(s)) for (const aid of ['eco3', 'ideo2', 'dip2', 'eco1', 'ideo1', 'dip1', 'ideo3', 'mil1', 'mil2']) {
+        const rk = (S.ruleAt(s, base, aid.slice(0, -1)) || {}).kind; if (rk === 'reverse' || rk === 'fizzle') continue;
+        if (S.canAct(s, aid, base).ok) { S.doAct(s, aid, base); break; }
+      }
+    }
     if (s.treaty > 70 || (s.wo.court || []).reduce((x, c) => x + c.prog, 0) > 120) S.doAct(s, 'eco4');
     for (let i = 0; i < 4; i++) { const b = bestAction(s); if (!b || b.score <= 0) break; S.doAct(s, b.a, b.t); }
   }
   const log = s.actLog || [];
   const tiers = [1, 2, 3, 4].map(t => log.filter(id => +id.slice(-1) === t).length);
   const dom = { eco: 0, mil: 0, dip: 0, ideo: 0 }; log.forEach(id => { dom[id.replace(/\d$/, '')]++; });
-  return { ups: (s.uprisings || []).length, upLost: (s.uprisings || []).filter(u => u.lost).length, res: S.runResult ? S.runResult(s) : null, dom, pw, t2b, owned: s.owned.length, clout: Math.round(s.clout), over: s.over || 'timeout', week: s.week, acts: log.length, tiers, t4: tiers[3] > 0, w4, crisis, ratAt: s.wo.ratifiedAt || 0, cb: s.comebacks || 0 };
+  return { minL, guard: !!s.guard, guardUsed: !!s.guardUsed, ups: (s.uprisings || []).length, upLost: (s.uprisings || []).filter(u => u.lost).length, res: S.runResult ? S.runResult(s) : null, dom, pw, t2b, owned: s.owned.length, clout: Math.round(s.clout), over: s.over || 'timeout', week: s.week, acts: log.length, tiers, t4: tiers[3] > 0, w4, crisis, ratAt: s.wo.ratifiedAt || 0, cb: s.comebacks || 0 };
 }
 
 const T = { courtWeeks: 8, pushMul: 0.6 };

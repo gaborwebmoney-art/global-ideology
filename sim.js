@@ -163,12 +163,12 @@ const V10 = { edEff: 1.5, edTrade: 1.5, offCost: 1.5, offNoto: 3, courtWeeks: 13
   // v10.9 difficulty: World Order uses perks of member countries you hold below CONTROL (inverted); extra announced campaigns
   woPerks: 0, crackAmt: 0, crackGap: 8, crackN: 2,
   // v10.12 Step 8.1 unrest: gain multiplier per level (old saves without a level = casual)
-  unrestMul: 1 };
+  unrestMul: 1, legitMul: 1 };
 // Difficulty levels (v10.9). Each level is a set of V10 knob overrides; cfg.v10t (bot experiments) still wins.
 const LEVELS = {
-  casual: { v10t: { woPerks: 1, unrestMul: .85 } },
-  normal: { v10t: { woPerks: 1, crackAmt: 5, crackGap: 8, crackN: 2 } },
-  brutal: { v10t: { woPerks: 1, unrestMul: 1.15, crackAmt: 12, crackGap: 7, crackN: 2, courtWeeks: 8, planBase: 3 } }
+  casual: { v10t: { woPerks: 1, unrestMul: .85, legitMul: .7 } },
+  normal: { v10t: { woPerks: 1, legitMul: 1, crackAmt: 5, crackGap: 8, crackN: 2 } },
+  brutal: { v10t: { woPerks: 1, unrestMul: 1.15, legitMul: 1.15, crackAmt: 12, crackGap: 7, crackN: 2, courtWeeks: 8, planBase: 3 } }
 };
 const LEVEL_IDS = ['casual', 'normal', 'brutal'];
 function levelOf(s) { return (s.cfg && LEVELS[s.cfg.level]) ? s.cfg.level : 'casual'; }
@@ -238,14 +238,15 @@ function canAct(s, aid, target) {
   if (rl && rl.kind === 'ban') return { ok: false, why: `${rl.name}: no ${TYPE_LABEL[a.dom]} actions here` };
   const v = s.inf[target], W = s.wo, ct = courtOn(s, target) || (rl && rl.kind === 'anyNb');
   const gar = unrestOn(s) && a.dom === 'mil' && a.tier < 4 && v >= CONTROL, calm = unrestOn(s) && aid === 'ideo1' && v >= UNREST.min;
-  if (['eco1', 'eco3', 'mil1', 'mil2', 'mil3', 'ideo1'].includes(aid) && v >= 95 && !((gar || calm) && unrestOf(s, target) >= UNREST.busyAt)) return { ok: false, why: 'Already yours' };
+  const bAct = baseActOk(s, a, target);
+  if (['eco1', 'eco3', 'mil1', 'mil2', 'mil3', 'ideo1'].includes(aid) && v >= 95 && !((gar || calm) && unrestOf(s, target) >= UNREST.busyAt) && !bAct) return { ok: false, why: 'Already yours' };
   if (aid === 'eco2') {
     const src = strongest(s, target);
     if (s.inf[src.id] < 10) return { ok: false, why: 'Need 10%+ somewhere else first' };
     if (tradeLinks(s, target).includes(src.id)) return { ok: false, why: 'Already trades with ' + src.name };
   }
-  if (aid === 'mil1' && nbMax(s, target) < (own(s, 'm1') ? 10 : 15) && !ct && !gar) return { ok: false, why: `Needs a neighbour at ${own(s, 'm1') ? 10 : 15}%+` };
-  if ((aid === 'mil2' || aid === 'mil3') && nbMax(s, target) < 25 && !ct && !gar) return { ok: false, why: 'Needs a neighbour at 25%+' };
+  if (aid === 'mil1' && nbMax(s, target) < (own(s, 'm1') ? 10 : 15) && !ct && !gar && !bAct) return { ok: false, why: `Needs a neighbour at ${own(s, 'm1') ? 10 : 15}%+` };
+  if ((aid === 'mil2' || aid === 'mil3') && nbMax(s, target) < 25 && !ct && !gar && !bAct) return { ok: false, why: 'Needs a neighbour at 25%+' };
   if (aid === 'mil4' && nbMax(s, target) < 50) return { ok: false, why: 'Needs a neighbour at 50%+' };
   if (aid === 'mil4' && v >= 50 && !W.members[target] && !W.signed[target]) return { ok: false, why: 'Already 50%+ and outside the World Order' };
   if ((aid === 'ideo2' || aid === 'ideo3' || aid === 'eco3') && v <= 0) return { ok: false, why: 'No foothold here' };
@@ -265,7 +266,7 @@ function doAct(s, aid, target) {
   const noto = n => addNoto(s, a.dom === 'mil' && pairOn(s, 'ideomil') ? n / 2 : n);
   const block = (id, wk) => s.mods.push({ id, kind: 'noCourt', until: s.week + wk });
   const rl = target ? ruleAt(s, target, a.dom) : null, before = target ? s.inf[target] : 0, paid = cost0;
-  if (rl && rl.kind === 'fizzle' && rng(s) < .5) { addNews(s, `${a.name} in ${byId(target).name} fizzles. ${rl.name}: nobody turns up. The Clout is spent.`, 'wo'); flag(s, 'ping', target, rl.name); tagMods(s, m0, a.name); return { ok: true, fizzled: true }; }
+  if (rl && rl.kind === 'fizzle' && rng(s) < .5) { addNews(s, `${a.name} in ${byId(target).name} fizzles. ${rl.name}: nobody turns up. The Clout is spent.`, 'wo'); flag(s, 'ping', target, rl.name); addLegit(s, -LEGIT.fizzle, 'fizzle'); tagMods(s, m0, a.name); return { ok: true, fizzled: true }; }
   if (target && ((a.dom === 'mil' && pairOn(s, 'ideomil')) || (a.dom === 'dip' && pairOn(s, 'ideodip')))) s.mods.push({ id: target, kind: 'growth', mul: 1.3, until: s.week + 20 });
   switch (aid) {
     case 'eco1': pushSupport(s, target, v10t(s, 'eco1Amt') * e); knock(s, target, v10t(s, 'eco1Knock'), a); break;
@@ -290,8 +291,9 @@ function doAct(s, aid, target) {
   }
   const hl = actHeadline(s, aid, target, aid === 'eco2' && s.trade.length ? s.trade[s.trade.length - 1][0] : null);
   if (hl) addNews(s, hl, 'you'); else addNews(s, `${a.name}${target ? ': ' + byId(target).name : ''}.${aid === 'eco4' ? ` Every courtship at half speed for ${v10t(s, 'eco4Weeks')} weeks, treaty draft \u2212${v10t(s, 'eco4Treaty')}.` : aid === 'dip4' ? ' No new World Order courtships anywhere for 30 weeks.' : ''}`, 'you');
-  if (rl) applyRule(s, rl, a, target, before, paid);
+  if (rl && !(target === s.startId && legitOn(s) && rl.kind === 'reverse')) applyRule(s, rl, a, target, before, paid);
   if (target && unrestOn(s)) unrestOnAct(s, a, target, before, rl);
+  if (target && legitOn(s)) legitOnAct(s, a, target, rl);
   allianceOnAct(s, a, target);
   tagMods(s, m0, a.name);
   return { ok: true };
@@ -312,7 +314,7 @@ function applyRule(s, rl, a, target, before, paid) {
     case 'knock2': if (courtOn(s, target)) addNews(s, `${rl.name}: ${a.name} hits the World Order’s courtship of ${c.name} twice as hard.`, 'you'); break;
     case 'harden': resMod(s, target, 1.25, 20, [a.dom], { src: rl.name }); addNews(s, `${rl.name}: ${c.name} digs in. ${TYPE_LABEL[a.dom]} resistance +25% for 20 weeks.`, 'wo'); flag(s, 'ping', target, rl.name); break;
     case 'loud': s.notoriety = Math.min(100, s.notoriety + 4); addNews(s, `${rl.name}: ${a.name} in ${c.name} makes headlines. +4 Notoriety.`, 'wo'); break;
-    case 'reverse': s.inf[target] = Math.max(0, Math.min(s.inf[target], before) - 5); addNews(s, `${rl.name}: ${a.name} backfires in ${c.name}. −5 support.`, 'wo'); flag(s, 'ping', target, rl.name); break;
+    case 'reverse': s.inf[target] = Math.max(0, Math.min(s.inf[target], before) - 5); addNews(s, `${rl.name}: ${a.name} backfires in ${c.name}. −5 support.`, 'wo'); flag(s, 'ping', target, rl.name); addLegit(s, -LEGIT.reverse, 'reverse'); break;
   }
 }
 function ratified(s) { return !!(s.cfg.v10 && s.wo.ratifiedAt && signedCount(s) >= SIGNATURES_TO_LOSE); }
@@ -599,6 +601,7 @@ function step(s) {
     if (rng(s) < sw) {
       const delta = (rng(s) < .5 && !(c.id === s.startId && (baseRule(s) || [])[0] === 'upSwings') ? -1 : 1) * (4 + 6 * rng(s));
       d[c.id] += delta;
+      if (delta < 0 && c.id === s.startId) addLegit(s, -LEGIT.scandal, 'scandal');
       if (s.inf[c.id] >= 5) { addNews(s, delta > 0 ? `A populist wave in ${c.name} lifts your movement.` : `A scandal in ${c.name} knocks your movement back.`, delta > 0 ? 'you' : 'wo'); flag(s, 'ping', c.id, delta > 0 ? 'Swing up' : 'Swing down'); }
     }
   });
@@ -650,12 +653,14 @@ function step(s) {
   milestoneNews(s, share);
   eventsTick(s);
   unrestTick(s);
+  legitTick(s);
   s.mods = s.mods.filter(m => m.until > s.week);
   s.blocked = s.blocked.filter(b => b.until > s.week);
   // 6. End conditions
   if (share >= WIN_SHARE) { s.over = 'win'; addNews(s, 'The world wakes up aligned. Nobody remembers agreeing to it.', 'you'); }
   else if (s.coalition && s.wo.hopeless >= 26 && !(s.cfg.v10 && s.wo.ratifiedAt)) { s.over = 'collapse'; addNews(s, 'The Containment Treaty collapses. The World Order rebrands as a book club.', 'you'); }
   else if (s.cfg.v10 ? enforcementLost(s) : signedCount(s) >= SIGNATURES_TO_LOSE) { s.over = 'treaty'; addNews(s, `Containment Treaty ratified by ${SIGNATURES_TO_LOSE} nations. ${SG} weeps with joy into a fountain pen.`, 'wo'); }
+  else if (legitOn(s) && legitEnd(s)) { /* s.over set by legitEnd */ }
   else if (COUNTRIES.every(c => s.inf[c.id] <= 0)) { s.over = 'extinct'; addNews(s, 'Your movement has vanished. Historians shrug.', 'wo'); }
 }
 
@@ -716,6 +721,7 @@ function uprising(s, id) {
   ns.forEach(n => addUnrest(s, n, U.contagion));
   const lost = before >= CONTROL - LOST_MARGIN && s.inf[id] < CONTROL - LOST_MARGIN && s.held && s.held[id];
   s.uprisings.push({ id, week: s.week, from: Math.round(before), lost: !!lost });
+  addLegit(s, -LEGIT.uprising, 'uprising');
   addNews(s, `Uprising in ${c.name}. Your local office is now a souvenir shop. Support −${Math.round(before - s.inf[id])}${ns.length ? `, ${ns.length === 1 ? 'a neighbour grows' : 'neighbours grow'} restless` : ''}.${lost ? ' It counts as a lost country.' : ''}`, 'wo');
   flag(s, 'critical', id, 'Uprising'); s.news[0].unrest = id;
 }
@@ -733,6 +739,136 @@ function unrestOnAct(s, a, target, before, rl) {
   if (a.id === 'ideo1' && unrestOf(s, target) > 0) { s.unrest[target] = Math.max(0, s.unrest[target] - UNREST.calm); s.calmed = (s.calmed || 0) + 1; }
   if (a.id === 'ideo3') s.mods.push({ id: target, kind: 'noUnrest', until: s.week + 40 });
 }
+// ---- Step 8.2 (v10.13): base legitimacy + coup. Your base has its own meter instead of unrest. Victories and prosperity
+// raise it; uprisings, lost countries, casualties abroad, failed actions, scandals and the World Order wear it down.
+// Legitimacy 0 = coup (unless Loyal Guard, once). Base support below lostAt after the base was established = base lost.
+// Counterplay = core 4 actions on your own base (allowed at any support while legitimacy < actBelow).
+const LEGIT = { start: 60, settled: 85, home: .15, eco: .2, wo: .1, sig: .03, held: 3, shares: [.25, .5], shareGain: 5,
+  uprising: 6, lost: 4, milAbroad: 1.5, regime: 5, fizzle: 3, reverse: 3, scandal: 5, badEvent: 4, reverseBase: 10,
+  warnAt: 30, coachAt: 50, actBelow: 70, gain: { eco1: 8, eco3: 15, ideo1: 8, ideo2: 12, dip1: 6, dip2: 10 },
+  martialWeeks: 20, martialAfter: 10, martialNoto: 3, shieldWeeks: 40, summitWeeks: 25,
+  guardCost: 25, guardTo: 30, guardNoto: 10, estAt: 60, riskAt: 45, lostAt: 35, lostWeeks: 10 };
+const LEGIT_WHY = { held: 'Victory', share: 'Milestone', uprising: 'Uprising', lost: 'Lost country', mil: 'Casualties abroad', regime: 'Regime change',
+  fizzle: 'Failed action', reverse: 'Backfire', scandal: 'Scandal at home', event: 'Bad news at home', martialEnd: 'Martial law ends', act: 'Your action', guard: 'Loyal Guard' };
+function legitOn(s) { return !!(s.cfg && s.cfg.v10 && s.cfg.legit !== false); }
+function legitOf(s) { return s.legit === undefined ? LEGIT.start : s.legit; }
+function legitFrozen(s) { return hasMod(s, s.startId, 'martial') || hasMod(s, s.startId, 'legitShield'); }
+function addLegit(s, n, why) {
+  if (!legitOn(s) || !n || s.over) return;
+  if (n < 0) { if (legitFrozen(s)) return; n *= v10t(s, 'legitMul'); }
+  const v0 = legitOf(s); s.legit = Math.max(0, Math.min(100, v0 + n)); if (s.legit <= 0) s.coupDue = true;
+  s.legitLog = [{ week: s.week, n: Math.round((s.legit - v0) * 10) / 10, why }].concat(s.legitLog || []).slice(0, 6);
+  legitWarn(s, v0);
+}
+function baseEstablished(s) { return !!(s.held && s.held[s.startId]); }
+// weekly drift and its parts (shown as causes in the base dossier)
+function legitParts(s) {
+  const L = LEGIT, P = [], id = s.startId;
+  if (!legitOn(s)) return { net: 0, parts: P, frozen: false };
+  const frozen = legitFrozen(s);
+  if (s.inf[id] >= L.settled) P.push(['home', L.home]);
+  if (domainPower(s, 'eco') > 0) P.push(['eco', L.eco * domainPower(s, 'eco')]);
+  if (!frozen && s.coalition && !hasMod(s, id, 'noWoDrift')) {
+    P.push(['wo', -L.wo * v10t(s, 'legitMul')]);
+    const n = signedCount(s); if (n) P.push(['sig', -L.sig * n * v10t(s, 'legitMul')]);
+  }
+  return { net: P.reduce((a, p) => a + p[1], 0), parts: P, frozen };
+}
+function legitEta(s) { const p = legitParts(s); if (p.net >= 0 || p.frozen) return null; return Math.ceil(legitOf(s) / -p.net); }
+function legitWarn(s, v0) {
+  const v = legitOf(s), c = byId(s.startId);
+  if (v0 >= LEGIT.warnAt && v < LEGIT.warnAt) {
+    const eta = legitEta(s);
+    addNews(s, `Coup plot in ${c.name}: generals were seen measuring the palace curtains${eta && eta <= 100 ? `. Coup in about ${eta} weeks at this rate` : ''}. Raise legitimacy with an action on your base.`, 'wo');
+    flag(s, 'critical', s.startId, 'Coup plot'); s.news[0].legit = 1;
+  }
+}
+function legitTick(s) {
+  if (!legitOn(s)) return;
+  if (s.legit === undefined) s.legit = LEGIT.start;
+  const p = legitParts(s), v0 = s.legit;
+  s.legit = Math.max(0, Math.min(100, s.legit + p.net)); if (s.legit <= 0) s.coupDue = true; legitWarn(s, v0);
+  if (s.martialEnd && s.week >= s.martialEnd) { s.martialEnd = 0; addLegit(s, -LEGIT.martialAfter / v10t(s, 'legitMul'), 'martialEnd'); addNews(s, `${byId(s.startId).name}: martial law ends. The curfew is lifted; the grudges are not. Legitimacy −${LEGIT.martialAfter}.`, 'wo'); }
+  const v = s.inf[s.startId];
+  if (baseEstablished(s) && v < LEGIT.riskAt && !s.baseRisk) { s.baseRisk = true; addNews(s, `Your base ${byId(s.startId).name} is slipping: ${Math.round(v)}% support. Below ${LEGIT.lostAt}% the movement loses its home and the game.`, 'wo'); flag(s, 'critical', s.startId, 'Base at risk'); s.news[0].legit = 2; }
+  if (v >= LEGIT.riskAt + 5) s.baseRisk = false;
+  if (baseEstablished(s) && v < LEGIT.lostAt) {
+    if (!s.baseLowSince) { s.baseLowSince = s.week; addNews(s, `${byId(s.startId).name} is falling: your base is under ${LEGIT.lostAt}% support. Get it back above ${LEGIT.lostAt}% within ${LEGIT.lostWeeks} weeks or lose the game.`, 'wo'); flag(s, 'critical', s.startId, 'Base falling'); s.news[0].legit = 2; }
+  } else s.baseLowSince = 0;
+}
+function baseLostIn(s) { return s.baseLowSince ? Math.max(0, s.baseLowSince + LEGIT.lostWeeks - s.week) : null; }
+// returns true (and sets s.over) when the base falls
+function legitEnd(s) {
+  if (legitOf(s) <= 0 || s.coupDue) {
+    s.coupDue = false;
+    if (s.guard && !s.guardUsed) {
+      s.guardUsed = true; s.legit = LEGIT.guardTo; addNoto(s, LEGIT.guardNoto);
+      s.legitLog = [{ week: s.week, n: LEGIT.guardTo, why: 'guard' }].concat(s.legitLog || []).slice(0, 6);
+      addNews(s, `${byId(s.startId).name} sees a coup attempt! The Loyal Guard holds the palace and the plotters are reassigned to stamp counting. Legitimacy ${LEGIT.guardTo}, +${LEGIT.guardNoto} Notoriety.`, 'you');
+      flag(s, 'critical', s.startId, 'Coup crushed'); s.news[0].legit = 1;
+      return false;
+    }
+    s.over = 'coup'; addNews(s, `${byId(s.startId).name} falls to a coup. The new junta promises stability, elections and a slightly larger flag.`, 'wo'); return true;
+  }
+  if (baseEstablished(s) && s.baseLowSince && s.week - s.baseLowSince >= LEGIT.lostWeeks) { s.over = 'baseLost'; addNews(s, `${byId(s.startId).name} is lost: your movement has no home. The headquarters is now a co-working space.`, 'wo'); return true; }
+  return false;
+}
+// is this action on your base a legitimacy action? (lifts "Already yours" and neighbour checks)
+function baseActOk(s, a, target) {
+  return legitOn(s) && target === s.startId && legitOf(s) < LEGIT.actBelow && (LEGIT.gain[a.id] !== undefined || a.id === 'ideo3' || (a.dom === 'mil' && a.tier < 4));
+}
+function legitActLine(s, aid, target) {
+  if (!legitOn(s) || target !== s.startId) return null;
+  const a = ACTIONS.find(x => x.id === aid), rl = ruleAt(s, target, a.dom);
+  if (rl && rl.kind === 'reverse' && (LEGIT.gain[aid] !== undefined || a.dom === 'mil')) return `${rl.name}: legitimacy −${LEGIT.reverseBase}`;
+  if (LEGIT.gain[aid] !== undefined) return `${({ eco: 'Prosperity', ideo: 'Rally', dip: 'Recognition' })[a.dom]}: legitimacy +${LEGIT.gain[aid]}${aid === 'dip2' ? `, no World Order drain ${LEGIT.summitWeeks} wk` : ''}`;
+  if (aid === 'ideo3') return `Legitimacy cannot fall for ${LEGIT.shieldWeeks} wk`;
+  if (a.dom === 'mil' && a.tier < 4) return `Martial law: legitimacy frozen ${LEGIT.martialWeeks} wk, then −${LEGIT.martialAfter}. +${LEGIT.martialNoto} Notoriety`;
+  return null;
+}
+function legitOnAct(s, a, target, rl) {
+  const c = byId(target);
+  if (target !== s.startId) {
+    if (a.dom === 'mil') addLegit(s, -(a.tier === 4 ? LEGIT.regime : LEGIT.milAbroad), a.tier === 4 ? 'regime' : 'mil');
+    return;
+  }
+  const g = LEGIT.gain[a.id], isMil = a.dom === 'mil' && a.tier < 4;
+  if (rl && rl.kind === 'reverse' && (g !== undefined || isMil)) {
+    s.inf[target] = Math.max(0, s.inf[target] - 5);
+    addLegit(s, -LEGIT.reverseBase / v10t(s, 'legitMul'), 'reverse');
+    addNews(s, `${a.name} at home backfires on you (${rl.name}). Legitimacy −${LEGIT.reverseBase}, support −5.`, 'wo'); flag(s, 'ping', target, rl.name); return;
+  }
+  if (g !== undefined) {
+    const v0 = legitOf(s); s.legit = Math.min(100, v0 + g);
+    s.legitLog = [{ week: s.week, n: Math.round(s.legit - v0), why: 'act' }].concat(s.legitLog || []).slice(0, 6);
+    if (a.id === 'dip2') s.mods.push({ id: target, kind: 'noWoDrift', until: s.week + LEGIT.summitWeeks });
+    addNews(s, `${({ eco: 'Prosperity', ideo: 'Rally', dip: 'Recognition' })[a.dom]} in ${c.name}: legitimacy +${Math.round(s.legit - v0)}.`, 'you');
+    s.legitActs = (s.legitActs || 0) + 1;
+  } else if (a.id === 'ideo3') {
+    s.mods.push({ id: target, kind: 'legitShield', until: s.week + LEGIT.shieldWeeks });
+    addNews(s, `Martyr Narrative at home: legitimacy cannot fall for ${LEGIT.shieldWeeks} weeks.`, 'you'); s.legitActs = (s.legitActs || 0) + 1;
+  } else if (isMil) {
+    s.mods.push({ id: target, kind: 'martial', until: s.week + LEGIT.martialWeeks }); s.martialEnd = s.week + LEGIT.martialWeeks;
+    addNoto(s, LEGIT.martialNoto);
+    addNews(s, `Martial law in ${c.name}: legitimacy frozen for ${LEGIT.martialWeeks} weeks, −${LEGIT.martialAfter} when it ends. The anthem now plays every hour.`, 'you');
+    s.legitActs = (s.legitActs || 0) + 1;
+  }
+}
+// Loyal Guard: a standalone upgrade outside the branches (no doctrine, no branch lock, does not raise other prices)
+function guardCost(s) { return Math.round(LEGIT.guardCost * (1 + v10t(s, 'costGrow') * s.owned.length)); }
+function canGuard(s) {
+  if (!legitOn(s)) return { ok: false, why: 'Off' };
+  if (s.guard) return { ok: false, why: s.guardUsed ? 'Used' : 'Owned' };
+  if (s.over) return { ok: false, why: 'Game over' };
+  if (s.clout < guardCost(s)) return { ok: false, why: 'Not enough Clout' };
+  return { ok: true };
+}
+function buyGuard(s) {
+  const chk = canGuard(s); if (!chk.ok) return chk;
+  s.clout -= guardCost(s); s.guard = true;
+  addNews(s, `${byId(s.startId).name} swears in a Loyal Guard. Their oath fits on a business card.`, 'you');
+  return { ok: true };
+}
 // Score + stars (v10.10). A country counts as lost once you held it (>= CONTROL) and it later fell below CONTROL - LOST_MARGIN.
 // Notoriety in the score is the run average: peak notoriety hits 100 in most Normal/Brutal wins, so it would not tell runs apart.
 const PAR = { casual: 175, normal: 213, brutal: 245 };
@@ -743,9 +879,10 @@ function trackRun(s) {
   s.peakNoto = Math.max(s.peakNoto || 0, s.notoriety); s.notoSum = (s.notoSum || 0) + s.notoriety;
   COUNTRIES.forEach(c => {
     const v = s.inf[c.id];
-    if (v >= CONTROL) s.held[c.id] = true;
-    else if (s.held[c.id] && v < CONTROL - LOST_MARGIN && !s.lost[c.id]) s.lost[c.id] = true;
+    if (v >= CONTROL) { if (!s.held[c.id] && legitOn(s)) addLegit(s, LEGIT.held, 'held'); s.held[c.id] = true; }
+    else if (s.held[c.id] && v < CONTROL - LOST_MARGIN && !s.lost[c.id]) { s.lost[c.id] = true; addLegit(s, -LEGIT.lost, 'lost'); }
   });
+  if (legitOn(s)) LEGIT.shares.forEach(x => { const k = 'legitShare' + x; if (!s.flags[k] && alignedShare(s) >= x) { s.flags[k] = true; addLegit(s, LEGIT.shareGain, 'share'); } });
 }
 function runResult(s) {
   const level = levelOf(s), win = s.over === 'win' || s.over === 'collapse';
@@ -1213,7 +1350,7 @@ function eventsTick(s) {
     pBad = Math.min(.8, Math.max(.3, pBad));
     const good = rng(s) >= pBad;
     const pool = EVENTS.filter(e => e.good === good && e.ok(s));
-    if (pool.length) { const e = pick(s, pool); const m0 = s.mods.length; const text = e.fire(s); tagMods(s, m0, e.name); addNews(s, `${e.name}: ${text}`, good ? 'you' : 'wo'); s.news[0].ev = good ? 'good' : 'bad'; flag(s, 'important', newsCountry(text), e.name); E.log.unshift({ week: s.week, id: e.id, good }); }
+    if (pool.length) { const e = pick(s, pool); const m0 = s.mods.length; const text = e.fire(s); tagMods(s, m0, e.name); addNews(s, `${e.name}: ${text}`, good ? 'you' : 'wo'); s.news[0].ev = good ? 'good' : 'bad'; flag(s, 'important', newsCountry(text), e.name); E.log.unshift({ week: s.week, id: e.id, good }); if (!good && newsCountry(text) === s.startId) addLegit(s, -LEGIT.badEvent, 'event'); }
     E.next = s.week + TUNE.evGap + Math.floor(rng(s) * 9);
   }
   if (!s.pending && s.week >= E.nextDecision) {
@@ -1368,4 +1505,4 @@ function actHeadline(s, aid, target, src) {
 }
 
 // SIM-END
-if (typeof module !== 'undefined') module.exports = { UNREST, unrestOn, unrestOf, unrestParts, unrestEta, addUnrest, PAR, SCORE_BASE, runResult, trackRun, LEVELS, LEVEL_IDS, levelOf, woPerkIds, RULES, ruleAt, baseRule, rulesOn, V10, HOOKS, hooksFor, PAIRS, pairOn, synergyOf, doctrineOf, closedFrom, offDoctrine, hasT2, CORE, ratified, enforcementTick, sigGrowthMul, populated, courtOn, actCost, ACTIONS, canAct, doAct, domainPower, actEff, resBreakdown, TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };
+if (typeof module !== 'undefined') module.exports = { LEGIT, LEGIT_WHY, legitOn, legitOf, legitParts, legitEta, legitFrozen, addLegit, baseEstablished, baseActOk, legitActLine, baseLostIn, guardCost, canGuard, buyGuard, UNREST, unrestOn, unrestOf, unrestParts, unrestEta, addUnrest, PAR, SCORE_BASE, runResult, trackRun, LEVELS, LEVEL_IDS, levelOf, woPerkIds, RULES, ruleAt, baseRule, rulesOn, V10, HOOKS, hooksFor, PAIRS, pairOn, synergyOf, doctrineOf, closedFrom, offDoctrine, hasT2, CORE, ratified, enforcementTick, sigGrowthMul, populated, courtOn, actCost, ACTIONS, canAct, doAct, domainPower, actEff, resBreakdown, TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };
