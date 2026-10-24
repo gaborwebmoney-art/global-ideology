@@ -468,6 +468,9 @@ body { overscroll-behavior: none; -webkit-tap-highlight-color: transparent; }
   .mapwrap.fit { align-self: start; }
   .side { position: fixed; left: 0; right: 0; bottom: 0; top: auto; max-height: 62dvh; overflow-y: auto; z-index: 30; border-radius: 12px 12px 0 0; border-bottom: 0; padding-bottom: calc(12px + env(safe-area-inset-bottom)); transform: translateY(105%); transition: transform .2s ease; box-shadow: 0 -8px 24px rgba(0,0,0,.45); }
   .side.open { transform: none; }
+  /* country pick: the start bar (z 40) sat on top of the opened dossier; lift the sheet and hide the bar while it is open (sheet has its own Start here) */
+  .side.open { z-index: 45; }
+  body:has(.side.open) .pickbar { visibility: hidden; }
   .side-top { position: sticky; top: 0; z-index: 3; display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin: 0 0 8px; }
   /* the sticky row spans the sheet width but only its buttons should take taps (it was swallowing Back underneath) */
   .side-top { pointer-events: none; } .side-top > * { pointer-events: auto; }
