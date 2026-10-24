@@ -12,6 +12,7 @@
   try { const v = localStorage.getItem(KEY); lang = v === 'hu' || v === 'en' ? v : (/^hu/i.test(navigator.language || '') ? 'hu' : 'en'); } catch (e) { /* storage blocked */ }
 
   const NAME = /^[A-Z][A-Za-z’']*( [A-Z][A-Za-z’']*)*$/;
+  const SENT_BREAK = /[.!?”]\s+[A-Z“"–−+(\d]/;
   const cache = new Map(), misses = new Set();
   function core(s) {
     if (EXACT.has(s)) return EXACT.get(s);
@@ -19,12 +20,17 @@
     // generic pattern such as "{} and {}." cannot swallow the whole line and leave it half English.
     const hd = /^([▲▼★] )?([^:.!?]{2,60}): ([\s\S]+)$/.exec(s);
     if (hd && EXACT.has(hd[2])) return (hd[1] || '') + EXACT.get(hd[2]) + ': ' + tr(hd[3]);
-    for (const p of PATS) { const m = p.re.exec(s); if (m) return p.hu.replace(/\{(\d+)\}/g, (_, i) => tr(m[i])); }
+    // Short generic patterns ("{} and {}.", "in {}", ...) must not swallow multi-sentence text: skip them when a capture
+    // contains a sentence boundary, so the sentence splitter below translates each sentence on its own.
+    for (const p of PATS) { const m = p.re.exec(s); if (m) { if (p.len < 15 && m.slice(1).some(x => SENT_BREAK.test(x))) continue; return p.hu.replace(/\{(\d+)\}/g, (_, i) => tr(m[i])); } }
     if (!/[A-Za-z]{2}/.test(s)) return s;
     const dots = s.split(' · ');
     if (dots.length > 1) { const o = dots.map(tr); if (o.some((x, i) => x !== dots[i])) return o.join(' · '); }
     const pre = /^([▲▼★] )([\s\S]+)$/.exec(s);
     if (pre) { const r = tr(pre[2]); if (r !== pre[2]) return pre[1] + r; }
+    // trailing status mark, e.g. the action tiles "Economy ★" / "Diplomacy ✕" (weak spot / wall)
+    const suf = /^([\s\S]*[A-Za-z]) ([★✕✓✗▲▼●○])$/.exec(s);
+    if (suf) { const r = tr(suf[1]); if (r !== suf[1]) return r + ' ' + suf[2]; }
     const col = /^([^:.!?]{2,60}): ([\s\S]+)$/.exec(s);
     if (col) { const a = tr(col[1]); if (a !== col[1]) return a + ': ' + tr(col[2]); }
     const sents = s.split(/(?<=[.!?”])\s+(?=[A-Z“"–−+(\d])/);
