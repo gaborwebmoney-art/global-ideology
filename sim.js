@@ -1627,6 +1627,8 @@ function actHeadline(s, aid, target, src) {
 // End the game now from the menu. It is not a win or a loss: the results screen shows where the world stood.
 function endEarly(s) {
   if (!s || s.over) return { ok: false, why: 'Game over' };
+  // After "Continue playing" the win is already earned: ending early finishes it as that win, with its frozen score.
+  if (s.cont) { s.over = s.cont.over; addNews(s, 'You call it here. The world is yours and nobody argues.', 'you'); return { ok: true }; }
   s.over = 'retired'; addNews(s, 'You step down. The movement carries on without you, mostly out of habit.', 'you');
   return { ok: true };
 }
