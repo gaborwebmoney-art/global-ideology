@@ -388,6 +388,8 @@ function courtTick(s) {
 }
 
 const WIN_SHARE = 0.70;
+// v10.17: after "Continue playing" the game ends only at a (near) perfect world, or on a real loss.
+const PERFECT_SHARE = 0.99;
 const SIGNATURES_TO_LOSE = 8;
 const SG = 'Secretary-General Horatio Quorum';
 const TUNE = { evBad: .65, evGap: 12, milNoSummit: true, fxScale: 0.4, treaty: 2.6, memberRes: 0.15, signBelow: 60, joinBelow: 50, withdrawAt: 70, lead: 6, planBase: 6, founders: 2, noto: 1.5, reachNoto: 0.12, pressure: 6, coalitionAt: 8, costGrow: 0.03, income: 3, shareIncome: 1.5 };
@@ -665,8 +667,9 @@ function step(s) {
   s.mods = s.mods.filter(m => m.until > s.week);
   s.blocked = s.blocked.filter(b => b.until > s.week);
   // 6. End conditions
-  if (share >= ((s.cfg && s.cfg.winShare) || WIN_SHARE)) { s.over = 'win'; addNews(s, 'The world wakes up aligned. Nobody remembers agreeing to it.', 'you'); }
-  else if (s.coalition && s.wo.hopeless >= 26 && !(s.cfg.v10 && s.wo.ratifiedAt)) { s.over = 'collapse'; addNews(s, 'The Containment Treaty collapses. The World Order rebrands as a book club.', 'you'); }
+  if (s.cont && share >= PERFECT_SHARE) { s.over = 'perfect'; addNews(s, 'Not a single country disagrees. A committee is formed to find out how this happened.', 'you'); }
+  else if (!s.cont && share >= ((s.cfg && s.cfg.winShare) || WIN_SHARE)) { s.over = 'win'; addNews(s, 'The world wakes up aligned. Nobody remembers agreeing to it.', 'you'); }
+  else if (!s.cont && s.coalition && s.wo.hopeless >= 26 && !(s.cfg.v10 && s.wo.ratifiedAt)) { s.over = 'collapse'; addNews(s, 'The Containment Treaty collapses. The World Order rebrands as a book club.', 'you'); }
   else if (s.cfg.v10 ? enforcementLost(s) : signedCount(s) >= SIGNATURES_TO_LOSE) { s.over = 'treaty'; addNews(s, `Containment Treaty ratified by ${SIGNATURES_TO_LOSE} nations. ${SG} weeps with joy into a fountain pen.`, 'wo'); }
   else if (legitOn(s) && legitEnd(s)) { /* s.over set by legitEnd */ }
   else if (COUNTRIES.every(c => s.inf[c.id] <= 0)) { s.over = 'extinct'; addNews(s, 'Your movement has vanished. Historians shrug.', 'wo'); }
@@ -1000,7 +1003,7 @@ function trackRun(s) {
   if (legitOn(s)) LEGIT.shares.forEach(x => { const k = 'legitShare' + x; if (!s.flags[k] && alignedShare(s) >= x) { s.flags[k] = true; addLegit(s, LEGIT.shareGain, 'share'); } });
 }
 function runResult(s) {
-  const level = levelOf(s), win = s.over === 'win' || s.over === 'collapse';
+  const level = levelOf(s), win = s.over === 'win' || s.over === 'collapse' || s.over === 'perfect';
   const lostN = Object.keys(s.lost || {}).length, peakNoto = Math.round(s.peakNoto || s.notoriety || 0), par = PAR[level];
   const avgNoto = Math.round((s.notoSum || 0) / Math.max(1, s.week));
   const r = { avgNoto, level, win, over: s.over, weeks: s.week, par, lostN, peakNoto, stars: 0, score: 0, parts: null };
@@ -1619,5 +1622,24 @@ function actHeadline(s, aid, target, src) {
   return v[k].replace('{c}', nm(target)).replace('{src}', src ? nm(src) : '');
 }
 
+
+// ---- v10.17: leave early / keep playing after a win
+// End the game now from the menu. It is not a win or a loss: the results screen shows where the world stood.
+function endEarly(s) {
+  if (!s || s.over) return { ok: false, why: 'Game over' };
+  s.over = 'retired'; addNews(s, 'You step down. The movement carries on without you, mostly out of habit.', 'you');
+  return { ok: true };
+}
+// After a win (70% aligned, or the treaty collapsing) the player may keep going for the whole world. The win and its
+// score are frozen at that moment; from then on only a real loss (Enforcement, a coup, losing the base) or a
+// near-perfect world (PERFECT_SHARE) ends the game.
+function canContinue(s) { return !!s && !s.cont && (s.over === 'win' || s.over === 'collapse'); }
+function continuePlaying(s) {
+  if (!canContinue(s)) return { ok: false, why: 'Nothing to continue' };
+  s.cont = { week: s.week, over: s.over, share: alignedShare(s), result: runResult(s) };
+  s.over = null; s.endShown = false;
+  addNews(s, 'The world is yours, and you are not done. From here only a real loss or a perfect world ends the game.', 'you');
+  return { ok: true };
+}
 // SIM-END
-if (typeof module !== 'undefined') module.exports = { LEGIT, LEGIT_WHY, legitOn, legitOf, legitParts, legitEta, legitFrozen, addLegit, baseEstablished, baseActOk, legitActLine, baseLostIn, guardCost, canGuard, buyGuard, OVER, overOn, heldIds, aided, upkeepOf, aidOk, overTick, baseOf, RELOC, planCost, relocCost, canPlan, buyPlan, canReloc, relocEta, startReloc, UNREST, unrestOn, unrestOf, unrestParts, unrestEta, addUnrest, PAR, SCORE_BASE, runResult, trackRun, LEVELS, LEVEL_IDS, levelOf, woPerkIds, RULES, ruleAt, baseRule, rulesOn, V10, HOOKS, hooksFor, PAIRS, pairOn, synergyOf, doctrineOf, closedFrom, offDoctrine, hasT2, CORE, ratified, enforcementTick, sigGrowthMul, populated, courtOn, actCost, ACTIONS, canAct, doAct, domainPower, actEff, resBreakdown, TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };
+if (typeof module !== 'undefined') module.exports = { PERFECT_SHARE, endEarly, canContinue, continuePlaying, LEGIT, LEGIT_WHY, legitOn, legitOf, legitParts, legitEta, legitFrozen, addLegit, baseEstablished, baseActOk, legitActLine, baseLostIn, guardCost, canGuard, buyGuard, OVER, overOn, heldIds, aided, upkeepOf, aidOk, overTick, baseOf, RELOC, planCost, relocCost, canPlan, buyPlan, canReloc, relocEta, startReloc, UNREST, unrestOn, unrestOf, unrestParts, unrestEta, addUnrest, PAR, SCORE_BASE, runResult, trackRun, LEVELS, LEVEL_IDS, levelOf, woPerkIds, RULES, ruleAt, baseRule, rulesOn, V10, HOOKS, hooksFor, PAIRS, pairOn, synergyOf, doctrineOf, closedFrom, offDoctrine, hasT2, CORE, ratified, enforcementTick, sigGrowthMul, populated, courtOn, actCost, ACTIONS, canAct, doAct, domainPower, actEff, resBreakdown, TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };

@@ -1378,3 +1378,37 @@ Upkeep never takes more than {}% of your income.	A fenntartás sosem visz el a b
 Aid cannot be stacked on a country that is already aided.	A segély nem halmozható egy már segélyezett országon.
 Holding many countries costs Clout upkeep.	Sok ország tartása befolyás-fenntartással jár.
 Development aid	Fejlesztési segély
+# v10.17: end flow, right-panel tiles
+Continue playing	Játék folytatása
+End game	Játék befejezése
+Start a new game? This one cannot be resumed.	Új játékot kezdesz? Ez később nem folytatható.
+Start over	Újrakezdés
+End the game now? You will see the results.	Befejezed most a játékot? Megnézheted az eredményeket.
+Game ended	Játék befejezve
+Every country agrees	Minden ország egyetért
+You ended the game in week {} with {}% of the world aligned.	Befejezted a játékot ({1}. hét), a világ {2}%-a állt melletted.
+You had already won in week {}.	Már megnyerted a játékot ({1}. hét).
+You won in week {}, then kept going: by week {} {}% of the world agrees with you.	Megnyerted a játékot ({1}. hét), de folytattad. Állás ({2}. hét): a világ {3}%-a egyetért veled.
+Nothing is left to convince.	Már nincs kit meggyőzni.
+You step down. The movement carries on without you, mostly out of habit.	Lemondasz. A mozgalom nélküled is megy tovább, leginkább megszokásból.
+The world is yours, and you are not done.	A világ a tiéd, de még nem végeztél.
+From here only a real loss or a perfect world ends the game.	Innentől csak valódi vereség vagy a tökéletes világ vet véget a játéknak.
+Not a single country disagrees.	Egyetlen ország sem ellenkezik.
+A committee is formed to find out how this happened.	Bizottság alakul, hogy kiderítse, hogyan történt mindez.
+Profile	Profil
+Country rules	Az ország szabályai
+Status	Állapot
+Resistance and links	Ellenállás és kapcsolatok
+Power and specials	Erő és különleges akciók
+Power	Erő
+How spread works	Hogyan terjed
+Your strength in each domain	Az erőd minden területen
+Special actions	Különleges akciók
+Growth, borders, trade	Növekedés, határok, kereskedelem
+Not convened yet	Még nem ült össze
+Unrest {}	Nyugtalanság {1}
+Legitimacy {}	Legitimitás {1}
+Details	Részletek
+active	aktív
+Weakest to {}	Leggyengébb ellene: {1}
+strongest in {}	legerősebb: {1}
