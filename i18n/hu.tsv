@@ -86,7 +86,7 @@ Military Parade	Katonai parádé
 Military resistance −20%, ideological −5%. Louder	Katonai ellenállás −20%, ideológiai −5%. Hangosabb
 another −10% military, more border spread	még −10% katonai, több határ menti terjedés
 Cyber Operations	Kiberműveletek
-Diplomatic resistance −10%. Growth and border spread up. Snap Exercises push 50% harder	Diplomáciai ellenállás −10%. A növekedés és a határ menti terjedés nő. A Hirtelen hadgyakorlatok 50%-kal erősebbek
+Diplomatic resistance −10%. Growth and border spread up. Snap Exercises push 50% harder	Diplomáciai ellenállás −10%. A növekedés és a határ menti terjedés nő. A hirtelen hadgyakorlatok 50%-kal erősebbek
 25% of World Order campaigns and sanctions fail	A Világrend kampányainak és szankcióinak 25%-a kudarcot vall
 Sovereign Intervention	Szuverén beavatkozás
 Border spread up. Countries need 15 points less of your support to refuse the World Order. Louder	A határ menti terjedés nő. Az országoknak 15 ponttal kevesebb támogatás kell, hogy elutasítsák a Világrendet. Hangosabb
@@ -136,7 +136,7 @@ Special action: for 20 weeks every country’s resistance falls by 40%. Adds 8 N
 Plausible Deniability	Hihető tagadhatóság
 Notoriety grows 15% slower	A Hírhedtség 15%-kal lassabban nő
 Friendly Fact-Checkers	Barátságos tényellenőrök
-World Order counter-campaigns hit half as hard	A Világrend ellenkampányai feleolyan erősen találnak
+World Order counter-campaigns hit half as hard	A Világrend ellenkampányai fele olyan erősen találnak
 Subcommittee on Subcommittees	Albizottság az albizottságokról
 Treaty drafting 25% slower	A szerződés megfogalmazása 25%-kal lassabb
 Lobbyist Weekend Retreat	Lobbisták hétvégi elvonulása
@@ -181,7 +181,7 @@ Colossal democracy: slow to convert (−15% growth), and needs 10 points less su
 Digital reach	Digitális elérés
 Internal growth +10% everywhere	Belső növekedés +10% mindenhol
 Paperwork: spread into Sinopeia is halved, but out of it +30%.	Papírmunka: Sinopeiába a terjedés a felére csökken, onnan kifelé +30%.
-Isolated: no trade spread in, border spread halved, but Leaked Dossiers break every defence.	Elszigetelt: nincs kereskedelmi terjedés befelé, a határ menti terjedés a felére csökken, de a Kiszivárgott dossziék minden védelmet áttörnek.
+Isolated: no trade spread in, border spread halved, but Leaked Dossiers break every defence.	Elszigetelt: nincs kereskedelmi terjedés befelé, a határ menti terjedés a felére csökken, de a kiszivárgott dossziék minden védelmet áttörnek.
 Fanatics	Fanatikusok
 Treaty drafting 5% slower	A szerződés megfogalmazása 5%-kal lassabb
 Hyper-connected: +15% internal growth.	Hiper-összekötött: +15% belső növekedés.
@@ -824,10 +824,10 @@ Border spread up. Countries need 15 points less of your support to refuse the Wo
 Consulates	Konzulátusok
 Border spread up. Embassy makes a country resist 15% less for good (was 10%)	A határ menti terjedés nő. A Nagykövetség után az ország végleg 15%-kal kevésbé áll ellen (eddig 10%)
 Summit Circuit	Csúcstalálkozó-sorozat
-Border spread up. Diplomatic resistance −15%. Summit lasts 35 weeks	A határ menti terjedés nő. Diplomáciai ellenállás −15%. A Csúcstalálkozó 35 hétig tart
+Border spread up. Diplomatic resistance −15%. Summit lasts 35 weeks	A határ menti terjedés nő. Diplomáciai ellenállás −15%. A csúcstalálkozó 35 hétig tart
 Border spread up. Notoriety grows 10% slower. World Order campaigns hit 30% softer. Non-Aligned Pact blocks courtship for 30 weeks	A határ menti terjedés nő. A Hírhedtség 10%-kal lassabban nő. A Világrend kampányai 30%-kal gyengébben találnak. Az El nem kötelezett paktum 30 hétre megakadályozza az udvarlást
-Internal growth +25%. Pamphlets give +1 support	Belső növekedés +25%. A Röplapok +1 támogatást adnak
-Internal growth +25%. Ideological resistance −15%. Youth Movement lasts 35 weeks	Belső növekedés +25%. Ideológiai ellenállás −15%. Az Ifjúsági mozgalom 35 hétig tart
+Internal growth +25%. Pamphlets give +1 support	Belső növekedés +25%. A röplapok +1 támogatást adnak
+Internal growth +25%. Ideological resistance −15%. Youth Movement lasts 35 weeks	Belső növekedés +25%. Ideológiai ellenállás −15%. Az ifjúsági mozgalom 35 hétig tart
 Internal growth +35%. Clout income up. Martyr Narrative recharges 15 weeks faster	Belső növekedés +35%. A befolyás-bevétel nő. A Mártírnarratíva 15 héttel gyorsabban töltődik újra
 Unlocks {}, the Economy tier-4 action	Feloldja: {1}, a Gazdaság 4. szintű akciója
 Unlocks {}, the Military tier-4 action	Feloldja: {1}, a Katonai ág 4. szintű akciója
@@ -1094,7 +1094,7 @@ Unlock goal: {} {} / {}	Feloldási cél: {1} {2} / {3}
 # v10.12 Step 8.1 unrest + uprisings
 Holding is not owning.	Megszerezni nem ugyanaz, mint megtartani.
 Countries where you have a foothold but have not settled grow restless, and at 100 unrest they rise up against you.	Ahol van támaszpontod, de még nem szilárdítottad meg, ott nő a nyugtalanság, és 100-nál fellázadnak ellened.
-Garrison them with Military or calm them with Pamphlets.	Állíts helyőrséget Katonai akcióval, vagy csillapítsd Röplapokkal.
+Garrison them with Military or calm them with Pamphlets.	Állíts helyőrséget katonai akcióval, vagy csillapítsd röplapokkal.
 You get a short briefing the first time it happens.	Az első alkalommal rövid eligazítást kapsz.
 How it works	Hogyan működik
 Unrest and uprisings	Nyugtalanság és felkelések
@@ -1103,20 +1103,20 @@ Uprising	Felkelés
 New threat	Új veszély
 Amber flame: unrest 50+.	Borostyán láng: nyugtalanság 50+.
 Red: 75+, an uprising is coming.	Piros: 75+, felkelés közeleg.
-Garrison with Military or calm with Pamphlets.	Helyőrség Katonai akcióval, csillapítás Röplapokkal.
+Garrison with Military or calm with Pamphlets.	Helyőrség katonai akcióval, csillapítás röplapokkal.
 Countries where you have 25%+ support but have not settled (85%+) grow restless.	Ahol 25%+ a támogatásod, de még nem szilárdult meg (85%+), ott nő a nyugtalanság.
 Notoriety, World Order courtship and being cut off from your held countries make it faster.	A Hírhedtség, a Világrend udvarlása és az, ha el vannak vágva a megtartott országaidtól, gyorsítja.
 Your base never rises.	A bázisod sosem lázad fel.
 At 100 unrest the country rises up: support −25 and its neighbours grow restless.	100-as nyugtalanságnál az ország fellázad: támogatás −25, és a szomszédai is nyugtalanok lesznek.
 A country you held that falls below 55% counts as lost, which costs the third star.	Ha egy megtartott országod 55% alá esik, elvesztettnek számít, ez a harmadik csillagba kerül.
 Garrison: any Military action on a country you hold (60%+) cuts unrest by 60 and stops it for 30 weeks, but adds 2 Notoriety.	Helyőrség: bármely Katonai akció egy megtartott (60%+) országban 60-nal csökkenti a nyugtalanságot és 30 hétre megállítja, de +2 Hírhedtség.
-Calm: Pamphlets cut unrest by 30, quietly.	Csillapítás: a Röplapok csendben 30-cal csökkentik a nyugtalanságot.
+Calm: Pamphlets cut unrest by 30, quietly.	Csillapítás: a röplapok csendben 30-cal csökkentik a nyugtalanságot.
 Martyr Narrative stops it for 40 weeks.	A Mártírnarratíva 40 hétre megállítja.
 Don’t show again	Ne mutasd többé
 Show me {}	Mutasd: {1}
 Got it	Értem
 Military below 60% is no garrison: it adds 2 unrest.	60% alatt a Katonai akció nem helyőrség: +2 nyugtalanság.
-Where a country bans Military actions, only Pamphlets help; where its wall reverses them, a garrison adds unrest.	Ahol tilos a Katonai akció, csak a Röplapok segítenek; ahol a fal visszafordítja, ott a helyőrség növeli a nyugtalanságot.
+Where a country bans Military actions, only Pamphlets help; where its wall reverses them, a garrison adds unrest.	Ahol tilos a katonai akció, csak a röplapok segítenek; ahol a fal visszafordítja, ott a helyőrség növeli a nyugtalanságot.
 More Ideology power and settled countries calm down by themselves.	Nagyobb Ideológiai erő mellett a megszilárdult országok maguktól lecsillapodnak.
 Brutal adds unrest faster, Casual slower.	Brutális szinten gyorsabban nő a nyugtalanság, Laza szinten lassabban.
 Unrest in {}: {}	Nyugtalanság itt: {1}: {2}
@@ -1194,7 +1194,7 @@ Rally: Pamphlets +{}, Youth Movement +{}.	Nagygyűlés: Röplapok +{1}, Ifjúsá
 Recognition: Embassy +{}, Summit +{}.	Elismerés: Nagykövetség +{1}, Csúcstalálkozó +{2}.
 Martial law (Military) freezes it for {} weeks, then −{}.	A Statárium (Katonai) {1} hétre befagyasztja, utána −{2}.
 Martyr Narrative on your base: legitimacy cannot fall for {} weeks.	Mártír-narratíva a bázisodon: a legitimitás {1} hétig nem csökkenhet.
-A Summit on your base also stops the World Order drain for {} weeks.	Egy Csúcstalálkozó a bázisodon {1} hétre a Világrend nyomását is leállítja.
+A Summit on your base also stops the World Order drain for {} weeks.	Egy csúcstalálkozó a bázisodon {1} hétre a Világrend nyomását is leállítja.
 Where your base’s wall reverses a domain, that action costs {} legitimacy instead.	Ahol a bázisod fala visszafordít egy területet, ott az az akció inkább {1} legitimitásba kerül.
 Loyal Guard (Upgrades screen, {}+ Clout, once per game): the first coup fails.	Hű Gárda (Fejlesztések képernyő, {1}+ befolyás, játékonként egyszer): az első puccs elbukik.
 Legitimacy returns to {} and Notoriety +{}.	A legitimitás visszaáll {1}-ra, Hírhedtség +{2}.
@@ -1372,7 +1372,7 @@ Every country you hold ({}%+, your base not counted) beyond {} free ones takes {
 Settled countries ({}%+) cost half.	A megszilárdult országok ({1}%+) feleannyiba kerülnek.
 Economy power cuts upkeep by {}% per point, at most half off.	A Gazdasági erő pontonként {1}%-kal csökkenti a fenntartást, legfeljebb a felére.
 Brutal charges more, Casual less.	Brutális szinten drágább, Laza szinten olcsóbb.
-Development aid: Foreign Investment or Buyout on a country you hold cuts its unrest by {} and waives its upkeep for {} weeks.	Fejlesztési segély: egy általad tartott országban a Külföldi befektetés vagy Felvásárlás {1}-gyel csökkenti a nyugtalanságot, és {2} hétre elengedi a fenntartást.
+Development aid: Foreign Investment or Buyout on a country you hold cuts its unrest by {} and waives its upkeep for {} weeks.	Fejlesztési segély: egy általad tartott országban a külföldi befektetés vagy felvásárlás {1}-gyel csökkenti a nyugtalanságot, és {2} hétre elengedi a fenntartást.
 It works even on a country at 95%+ that would otherwise be "Already yours".	Működik akkor is, ha az ország 95%+ és egyébként "Már a tiéd" lenne.
 Upkeep never takes more than {}% of your income.	A fenntartás sosem visz el a bevételed {1}%-ánál többet.
 Aid cannot be stacked on a country that is already aided.	A segély nem halmozható egy már segélyezett országon.
@@ -1404,6 +1404,7 @@ Power	Erő
 How spread works	Hogyan terjed
 Your strength in each domain	Az erőd minden területen
 Special actions	Különleges akciók
+Special actions (once each)	Különleges akciók (mindegyik egyszer)
 Growth, borders, trade	Növekedés, határok, kereskedelem
 Not convened yet	Még nem ült össze
 Unrest {}	Nyugtalanság {1}
