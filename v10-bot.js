@@ -38,6 +38,7 @@ function bestAction(s) {
       if (v >= 85) continue;
       if (NEEDS_FOOTHOLD[a.id] && (v < 3 || v > 80)) continue;
       if (!S.canAct(s, a.id, c.id).ok) continue;
+      if (a.dom === 'mil' && S.gcMember && S.gcMember(s, c.id) && !s.cfg.gcBlind) continue;   // v10.21: Military on a member rallies the Grand Coalition
       const score = amt(s, a.id) * S.actEff(s, a, c.id) * Math.sqrt(c.pop) * (1 - v / 100) / cost * ruleMul(s, c.id, a.dom);
       if (!best || score > best.score) best = { a: a.id, t: c.id, score };
     }
@@ -112,6 +113,23 @@ function play(start, seed, cfg, build, sharp) {
     { const sh = S.alignedShare(s); s._cr = s._cr || {}; [.7, .8, .85, .9, .95].forEach(x => { if (sh >= x && !s._cr[x]) s._cr[x] = s.week; }); }
     if (s.week % 25 === 0) { s._hs = s._hs || {}; s._hs[s.week] = S.COUNTRIES.filter(c => s.inf[c.id] >= 60).length; }
     if (s.treaty > 70 || (s.wo.court || []).reduce((x, c) => x + c.prog, 0) > 120) S.doAct(s, 'eco4');
+    // v10.21 Step 9.2: break the Grand Coalition (cfg.gcBlind = ignore it). Up to 2 cohesion hits a week: Regime Change on a member,
+    // Diplomacy/Ideology on members (cheapest first), Military on a held country next to a member (border intimidation).
+    if (S.gcOn && S.gcOn(s) && !cfg.gcBlind) {
+      let hits = 0;
+      const mem = s.gc.members.slice();
+      for (const id of mem) { if (hits >= 2) break; if (S.canAct(s, 'mil4', id).ok && (S.ruleAt(s, id, 'mil') || {}).kind !== 'reverse') { S.doAct(s, 'mil4', id); hits++; } }
+      for (const aid of ['dip1', 'ideo1', 'dip2', 'ideo2', 'dip3', 'ideo3']) {
+        if (hits >= 2 || !S.gcOn(s)) break;
+        const t = s.gc.members.find(id => S.canAct(s, aid, id).ok && S.gcActEffect(s, S.ACTIONS.find(x => x.id === aid), id) < 0);
+        if (t) { S.doAct(s, aid, t); hits++; }
+      }
+      if (S.gcOn(s) && hits < 2) for (const aid of ['mil1', 'mil2', 'mil3']) {
+        const a = S.ACTIONS.find(x => x.id === aid);
+        const t = S.COUNTRIES.find(c => S.gcBorder(s, c.id) && S.canAct(s, aid, c.id).ok && (S.ruleAt(s, c.id, 'mil') || {}).kind !== 'reverse');
+        if (t) { S.doAct(s, aid, t.id); break; }
+      }
+    }
     // v10.19 Step 9.1 Terms: Summit on an eligible country capitulates it at once (biggest first; cfg.noTerms = never)
     if (S.capActive && !cfg.noTerms && S.capActive(s)) {
       const el = S.COUNTRIES.filter(c => !S.capWhy(s, c.id)).sort((a, b) => b.pop - a.pop);
@@ -125,7 +143,7 @@ function play(start, seed, cfg, build, sharp) {
   const log = s.actLog || [];
   const tiers = [1, 2, 3, 4].map(t => log.filter(id => +id.slice(-1) === t).length);
   const dom = { eco: 0, mil: 0, dip: 0, ideo: 0 }; log.forEach(id => { dom[id.replace(/\d$/, '')]++; });
-  return { brkShare: s.wo.brokeShare || 0, brk: s.broken || 0, capA: (s.capit || {}).auto || 0, capT: (s.capit || {}).terms || 0, capU: (s.capit || {}).ultimatum || 0, winType: s.winType || null, held: S.heldCount ? S.heldCount(s) : 0, cr: s._cr || {}, share: S.alignedShare(s), aids: s.aids || 0, hs: s._hs || {}, rel: (s.relocLog || []).length, planBought: !!s.plan, minL, guard: !!s.guard, guardUsed: !!s.guardUsed, ups: (s.uprisings || []).length, upLost: (s.uprisings || []).filter(u => u.lost).length, res: S.runResult ? S.runResult(s) : null, dom, pw, t2b, owned: s.owned.length, clout: Math.round(s.clout), over: s.over || 'timeout', week: s.week, acts: log.length, tiers, t4: tiers[3] > 0, w4, crisis, ratAt: s.wo.ratifiedAt || 0, cb: s.comebacks || 0 };
+  return { gc: s.gc ? { size: s.gc.size, broke: s.gc.broke || 0, coh: Math.round(s.gc.cohesion), formed: s.gc.formed } : null, brkShare: s.wo.brokeShare || 0, brk: s.broken || 0, capA: (s.capit || {}).auto || 0, capT: (s.capit || {}).terms || 0, capU: (s.capit || {}).ultimatum || 0, winType: s.winType || null, held: S.heldCount ? S.heldCount(s) : 0, cr: s._cr || {}, share: S.alignedShare(s), aids: s.aids || 0, hs: s._hs || {}, rel: (s.relocLog || []).length, planBought: !!s.plan, minL, guard: !!s.guard, guardUsed: !!s.guardUsed, ups: (s.uprisings || []).length, upLost: (s.uprisings || []).filter(u => u.lost).length, res: S.runResult ? S.runResult(s) : null, dom, pw, t2b, owned: s.owned.length, clout: Math.round(s.clout), over: s.over || 'timeout', week: s.week, acts: log.length, tiers, t4: tiers[3] > 0, w4, crisis, ratAt: s.wo.ratifiedAt || 0, cb: s.comebacks || 0 };
 }
 
 const T = { courtWeeks: 8, pushMul: 0.6 };

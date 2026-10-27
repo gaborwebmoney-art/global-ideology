@@ -171,8 +171,8 @@ const V10 = { edEff: 1.5, edTrade: 1.5, offCost: 1.5, offNoto: 3, courtWeeks: 13
 // Difficulty levels (v10.9). Each level is a set of V10 knob overrides; cfg.v10t (bot experiments) still wins.
 const LEVELS = {
   casual: { v10t: { woPerks: 1, unrestMul: .85, legitMul: .7, relocWeeks: 6, upkeepMul: .6 } },
-  // v10.19: Normal crackAmt 5 -> 8, Brutal 12 -> 14. After Step 9.1 the Breakup almost always leads to a win, so Normal's difficulty lives before it (bot 81% -> 66%).
-  normal: { v10t: { woPerks: 1, legitMul: 1, crackAmt: 8, crackGap: 8, crackN: 2 } },
+  // v10.19: Normal crackAmt 5 -> 8, Brutal 12 -> 14. v10.21 (Step 9.2 adds the endgame threat): Normal 8 -> 6. After Step 9.1 the Breakup almost always leads to a win, so Normal's difficulty lives before it (bot 81% -> 66%).
+  normal: { v10t: { woPerks: 1, legitMul: 1, crackAmt: 6, crackGap: 8, crackN: 2 } },
   brutal: { v10t: { woPerks: 1, unrestMul: 1.15, legitMul: 1.15, relocWeeks: 10, upkeepMul: 1.2, crackAmt: 14, crackGap: 7, crackN: 2, courtWeeks: 8, planBase: 3 } }
 };
 const LEVEL_IDS = ['casual', 'normal', 'brutal'];
@@ -252,8 +252,8 @@ function canAct(s, aid, target) {
   }
   if (aid === 'mil1' && nbMax(s, target) < (own(s, 'm1') ? 10 : 15) && !ct && !gar && !bAct) return { ok: false, why: `Needs a neighbour at ${own(s, 'm1') ? 10 : 15}%+` };
   if ((aid === 'mil2' || aid === 'mil3') && nbMax(s, target) < 25 && !ct && !gar && !bAct) return { ok: false, why: 'Needs a neighbour at 25%+' };
-  if (aid === 'mil4' && nbMax(s, target) < 50) return { ok: false, why: 'Needs a neighbour at 50%+' };
-  if (aid === 'mil4' && v >= 50 && !W.members[target] && !W.signed[target]) return { ok: false, why: 'Already 50%+ and outside the World Order' };
+  if (aid === 'mil4' && nbMax(s, target) < 50 && !(gcMember(s, target) && tradeLinks(s, target).some(n => s.inf[n] >= 50))) return { ok: false, why: 'Needs a neighbour at 50%+' };
+  if (aid === 'mil4' && v >= 50 && !W.members[target] && !W.signed[target] && !gcMember(s, target)) return { ok: false, why: 'Already 50%+ and outside the World Order' };
   if ((aid === 'ideo2' || aid === 'ideo3' || aid === 'eco3') && v <= 0) return { ok: false, why: 'No foothold here' };
   if (aid === 'dip4' && !ct && !(ratified(s) && W.signed[target])) return { ok: false, why: 'Only where the World Order is courting, or a signed country during Enforcement' };
   if (aid === 'ideo4' && !ct) return { ok: false, why: 'Only where the World Order is courting' };
@@ -303,8 +303,9 @@ function doAct(s, aid, target) {
   if (target && unrestOn(s) && !terms) unrestOnAct(s, a, target, before, rl);
   if (target && legitOn(s)) legitOnAct(s, a, target, rl);
   if (target && overOn(s)) overOnAct(s, a, target, before);
+  const gcRes = gcOn(s) ? gcOnAct(s, a, target, before) : null;
   allianceOnAct(s, a, target);
-  if (terms && s.wary) s.wary[target] = 0;   // a capitulated country is not wary of you; neighbours still are
+  if ((terms || gcRes === 'split') && s.wary) s.wary[target] = 0;   // capitulated / split off by Regime Change: not wary of you   // a capitulated country is not wary of you; neighbours still are
   tagMods(s, m0, a.name);
   return { ok: true, capitulated: terms || undefined };
 }
@@ -400,7 +401,18 @@ const PERFECT_SHARE = 0.99;
 // Step 9.1 knobs. capAt: share that turns capitulation on before the Breakup. A country capitulates after capWeeks in a row
 // eligible (not your base, below CONTROL, not allied, not a World Order member, support >= capMin, wariness < capWary).
 // Summit (Diplomacy tier 2) on an eligible country = Terms: it capitulates at once. Breakup: notoriety -breakNoto, freed members wary freedWary.
-const ENDGAME = { capAt: .75, capMin: 40, capWary: 30, capWeeks: 6, capTo: 90, breakNoto: 20, freedWary: 50, hopeless: 26, ultUnrest: 10 };
+const ENDGAME = { capAt: .75, capMin: 40, capWary: 30, capWeeks: 6, capTo: 90, breakNoto: 20, freedWary: 50, hopeless: 26, ultUnrest: 10,
+  // v10.21 Step 9.2 Grand Coalition (GC): forms at the Breakup from the holdouts (below CONTROL, not your base) when there are gcMin+.
+  // Members resist together (+gcRes on every resistance). gcDecay < 0 = the coalition slowly regains cohesion when left alone.
+  // Cohesion: -gcDecay/wk, -gcWin/wk per member at gcWinAt%+; Diplomacy on a member -gcDip, Ideology -gcIdeo, Military on a member +gcMil
+  // (rallies), Military on a country you hold next to / trading with a member -gcBorder (-gcBorderM3 with Sovereign Intervention),
+  // Regime Change on a member splits it off (-gcRegime). Below gcBreak it breaks. World Unity loss: cohesion >= gcUnityAt for gcUnityWeeks.
+  // Crackdowns every gcGap weeks on the 2 biggest contested countries (up to -gcAmt support, +UNREST.crack). A held country below gcRejoin% joins.
+  gcMin: 2, gcDecay: -.4, gcWin: .3, gcWinAt: 50, gcDip: 8, gcIdeo: 5, gcMil: 8, gcBorder: 4, gcBorderM3: 6, gcRegime: 15, gcBreak: 20,
+  gcUnityAt: 60, gcUnityWeeks: 40, gcGap: 8, gcAmt: 8, gcRejoin: 50, gcLead: 6, gcRes: .3 };
+// per-level ENDGAME overrides (cfg.eg still wins)
+// Brutal World Unity 35 weeks (Pavel agreed 30; at 30 the bot wins 15% on Brutal, below the 20-30% target)
+const LEVEL_EG = { casual: { gcUnityWeeks: 50, gcAmt: 5, gcGap: 10 }, normal: {}, brutal: { gcUnityWeeks: 35, gcGap: 8, gcAmt: 10 } };
 const SIGNATURES_TO_LOSE = 8;
 const SG = 'Secretary-General Horatio Quorum';
 const TUNE = { evBad: .65, evGap: 12, milNoSummit: true, fxScale: 0.4, treaty: 2.6, memberRes: 0.15, signBelow: 60, joinBelow: 50, withdrawAt: 70, lead: 6, planBase: 6, founders: 2, noto: 1.5, reachNoto: 0.12, pressure: 6, coalitionAt: 8, costGrow: 0.03, income: 3, shareIncome: 1.5 };
@@ -588,7 +600,7 @@ function resBreakdown(s, id) {
   const c = byId(id); const out = {};
   const active = s.mods.filter(m => m.id === id && m.until > s.week);
   const mul = active.filter(m => m.kind === 'summit').length ? 0.6 : 1;
-  const add = (active.filter(m => m.kind === 'counter').length ? 0.25 : 0) + (s.wo && s.wo.members[id] ? Math.max(0, TUNE.memberRes - perk(s).memberRes) : 0);
+  const add = (active.filter(m => m.kind === 'counter').length ? 0.25 : 0) + (s.wo && s.wo.members[id] ? Math.max(0, TUNE.memberRes - perk(s).memberRes) : 0) + (s.gc && !s.gc.broke && s.gc.members.includes(id) ? egk(s, 'gcRes') : 0);
   const zero = active.filter(m => m.kind === 'dossier').length ? (Q(s, id).dossierAll ? TYPES : ['dip', 'ideo']) : [];
   const base = resOf(s, id);
   const hi = TYPES.reduce((a, t) => (base[t] > base[a] ? t : a), TYPES[0]);
@@ -671,6 +683,7 @@ function step(s) {
   // Step 9.1: a treaty that stays hopeless for 26 weeks no longer ends the game. The World Order breaks up.
   if (s.coalition && (s.wo.hopeless || 0) >= egk(s, 'hopeless') && !(s.cfg.v10 && s.wo.ratifiedAt)) breakup(s);
   if (s.coalition || s.broken) allianceTick(s);
+  if (s.gc) gcTick(s);
   if (s.coalition) dependencyTick(s);
   milestoneNews(s, share);
   eventsTick(s);
@@ -688,6 +701,7 @@ function step(s) {
   }
   // the treaty / Enforcement loss exists only while the World Order does (before the Breakup)
   else if (!s.broken && (s.cfg.v10 ? enforcementLost(s) : signedCount(s) >= SIGNATURES_TO_LOSE)) { s.over = 'treaty'; addNews(s, `Containment Treaty ratified by ${SIGNATURES_TO_LOSE} nations. ${SG} weeps with joy into a fountain pen.`, 'wo'); }
+  else if (gcOn(s) && s.gc.unityWk >= egk(s, 'gcUnityWeeks')) { s.over = 'unity'; addNews(s, 'World Unity: the Grand Coalition stays together long enough to write a constitution. Your movement becomes a footnote in it.', 'wo'); }
   else if (legitOn(s) && legitEnd(s)) { /* s.over set by legitEnd */ }
   else if (COUNTRIES.every(c => s.inf[c.id] <= 0)) { s.over = 'extinct'; addNews(s, 'Your movement has vanished. Historians shrug.', 'wo'); }
 }
@@ -1006,8 +1020,8 @@ function completeReloc(s) {
 }
 // Score + stars (v10.10). A country counts as lost once you held it (>= CONTROL) and it later fell below CONTROL - LOST_MARGIN.
 // Notoriety in the score is the run average: peak notoriety hits 100 in most Normal/Brutal wins, so it would not tell runs apart.
-// v10.19: re-measured after Step 9.1 (bot median win week, 192 runs/level; was 175 / 213 / 245)
-const PAR = { casual: 197, normal: 249, brutal: 249 };
+// v10.21: re-measured after Step 9.2 (bot median win week, 192 runs/level; v10.19 197 / 249 / 249, v10.10 175 / 213 / 245)
+const PAR = { casual: 202, normal: 247, brutal: 266 };
 const SCORE_BASE = { casual: 1000, normal: 1500, brutal: 2500 };
 const LOST_MARGIN = 5; // dips of a few points around 60% are noise, not a lost country
 function trackRun(s) {
@@ -1664,7 +1678,7 @@ function continuePlaying(s) {
   return { ok: true };
 }
 // ---- v10.19 Step 9.1: Breakup, capitulation, Terms, new win rule
-function egk(s, k) { const o = s.cfg && s.cfg.eg; return o && o[k] !== undefined ? o[k] : ENDGAME[k]; }
+function egk(s, k) { const o = s.cfg && s.cfg.eg; if (o && o[k] !== undefined) return o[k]; const L = LEVEL_EG[levelOf(s)]; return L && L[k] !== undefined ? L[k] : ENDGAME[k]; }
 function winShareOf(s) { return (s.cfg && s.cfg.winShare) || WIN_SHARE; }
 function heldCount(s) { return COUNTRIES.filter(c => s.inf[c.id] >= CONTROL).length; }
 function allHeld(s) { return COUNTRIES.every(c => s.inf[c.id] >= CONTROL); }
@@ -1677,6 +1691,7 @@ function capWhy(s, id) {
   if (id === baseOf(s)) return 'base';
   if (s.inf[id] >= CONTROL) return 'held';
   if (s.wo && s.wo.members[id]) return 'wo';
+  if (gcMember(s, id)) return 'gc';
   if (typeof allianceOf === 'function' && allianceOf(s, id)) return 'allied';
   if (s.inf[id] < egk(s, 'capMin')) return 'support';
   if (waryOf(s, id) >= egk(s, 'capWary')) return 'wary';
@@ -1727,6 +1742,106 @@ function breakup(s) {
   s.notoriety = Math.max(0, s.notoriety - egk(s, 'breakNoto'));
   addNews(s, `The World Order breaks up. ${SG} hands in his lanyard; the treaty goes to a museum of good intentions. Members freed: ${freed.length}. Notoriety −${egk(s, 'breakNoto')}. Now win the rest: hold every country at once, or align ${Math.round(winShareOf(s) * 100)}% of the world.`, 'you');
   flag(s, 'critical', null, 'Breakup'); s.news[0].endgame = 1;
+  gcForm(s);
+}
+// ---- v10.21 Step 9.2: the Grand Coalition
+function gcOn(s) { return !!(s.gc && !s.gc.broke && !s.gc.gone); }
+function gcMember(s, id) { return gcOn(s) && s.gc.members.includes(id); }
+function gcForm(s) {
+  const hold = COUNTRIES.filter(c => c.id !== baseOf(s) && s.inf[c.id] < CONTROL).map(c => c.id);
+  if (hold.length < egk(s, 'gcMin')) return;
+  const leader = hold.slice().sort((a, b) => byId(b).pop - byId(a).pop)[0];
+  s.gc = { members: hold, leader, cohesion: 100, formed: s.week, unityWk: 0, nextCrack: s.week + egk(s, 'gcGap'), queue: [], hits: 0, size: hold.length };
+  addNews(s, `The holdouts close ranks: ${hold.map(nm).join(', ')} form the Grand Coalition, led by ${nm(leader)}. If they stay united (cohesion ${egk(s, 'gcUnityAt')}+) for ${egk(s, 'gcUnityWeeks')} weeks, World Unity ends your movement.`, 'wo');
+  flag(s, 'critical', leader, 'Grand Coalition'); s.news[0].gc = 1;
+}
+function gcLeave(s, id, text) {
+  const G = s.gc; G.members = G.members.filter(m => m !== id);
+  G.queue = G.queue.filter(q => q.target !== id);
+  if (text) { addNews(s, text, 'you'); flag(s, 'important', id, 'Left coalition'); s.news[0].gc = 1; }
+  if (G.leader === id && G.members.length) G.leader = G.members.slice().sort((a, b) => byId(b).pop - byId(a).pop)[0];
+  if (G.members.length < 2 && !G.broke) gcBreak(s, true);
+}
+function gcCohesion(s, n, why) {
+  const G = s.gc; if (!gcOn(s) || !n) return;
+  G.cohesion = Math.max(0, Math.min(100, G.cohesion + n));
+  if (n < 0 && why) G.hits = (G.hits || 0) + 1;
+  if (G.cohesion < egk(s, 'gcBreak')) gcBreak(s);
+}
+function gcBreak(s, empty) {
+  const G = s.gc; if (G.broke) return;
+  G.broke = s.week; G.queue = [];
+  const freed = G.members.slice();
+  s.wary = s.wary || {}; freed.forEach(id => { s.wary[id] = 0; });
+  addNews(s, empty ? 'The Grand Coalition runs out of members and quietly folds.' : `The Grand Coalition breaks apart. ${freed.length ? freed.map(nm).join(', ') + ' stop resisting together: they can capitulate now.' : ''}`, 'you');
+  flag(s, 'critical', null, 'Coalition broken'); s.news[0].gc = 1; s.news[0].endgame = 1;
+}
+// countries you hold (CONTROL%+) that border or trade with a member: Military there intimidates the coalition (option A)
+function gcBorder(s, id) { if (!gcOn(s) || s.inf[id] < CONTROL || gcMember(s, id)) return false; return neighboursOrTrade(s, id).some(n => gcMember(s, n)); }
+function gcActEffect(s, a, target, before) {
+  if (!gcOn(s) || !target) return 0;
+  if (gcMember(s, target)) {
+    if (a.id === 'mil4') return -egk(s, 'gcRegime');
+    if (a.dom === 'dip') return -egk(s, 'gcDip');
+    if (a.dom === 'ideo') return -egk(s, 'gcIdeo');
+    if (a.dom === 'mil') return egk(s, 'gcMil');
+    return 0;
+  }
+  if (a.dom === 'mil' && a.tier < 4 && (before === undefined ? s.inf[target] : before) >= CONTROL && gcBorder(s, target)) return -(own(s, 'm3') ? egk(s, 'gcBorderM3') : egk(s, 'gcBorder'));
+  return 0;
+}
+function gcOnAct(s, a, target, before) {
+  if (!target || !gcOn(s)) return;
+  const n = gcActEffect(s, a, target, before), c = byId(target);
+  if (gcMember(s, target) && a.id === 'mil4') {
+    gcLeave(s, target, `Regime Change in ${c.name}: the new government quits the Grand Coalition. Cohesion −${egk(s, 'gcRegime')}.`);
+    if (s.wary) s.wary[target] = 0;
+    gcCohesion(s, n, 'regime'); return 'split';
+  }
+  if (!n) return;
+  gcCohesion(s, n, n < 0 ? a.dom : null);
+  if (!gcOn(s)) return;
+  const coh = Math.round(s.gc.cohesion);
+  addNews(s, n > 0 ? `${a.name} in ${c.name} rallies the Grand Coalition. Cohesion ${coh} (+${n}).`
+    : gcMember(s, target) ? `${a.name} in ${c.name} sows doubt inside the Grand Coalition. Cohesion ${coh} (${n}).`
+    : `Tanks on parade in ${c.name}, right on the Grand Coalition's doorstep. Cohesion ${coh} (${n}).`, n > 0 ? 'wo' : 'you');
+  flag(s, 'ping', target, n > 0 ? 'Coalition rallies' : 'Cohesion down');
+}
+function gcTick(s) {
+  const G = s.gc; if (!gcOn(s)) return;
+  // members you win over (CONTROL%+) leave; held countries that fall below gcRejoin join
+  G.members.slice().forEach(id => { if (s.inf[id] >= CONTROL) gcLeave(s, id, `${nm(id)} now mostly agrees with you and leaves the Grand Coalition.`); });
+  if (!gcOn(s)) return;
+  COUNTRIES.forEach(c => {
+    if (c.id === baseOf(s) || G.members.includes(c.id) || !(s.held && s.held[c.id]) || s.inf[c.id] >= egk(s, 'gcRejoin')) return;
+    G.members.push(c.id); addNews(s, `${c.name} slips away from you and joins the Grand Coalition.`, 'wo'); flag(s, 'important', c.id, 'Joined coalition'); s.news[0].gc = 1;
+  });
+  // cohesion drift
+  const winning = G.members.filter(id => s.inf[id] >= egk(s, 'gcWinAt')).length;
+  G.cohesion = Math.max(0, Math.min(100, G.cohesion - egk(s, 'gcDecay') - egk(s, 'gcWin') * winning));
+  if (G.cohesion < egk(s, 'gcBreak')) { gcBreak(s); return; }
+  // World Unity countdown
+  const need = egk(s, 'gcUnityWeeks');
+  if (G.cohesion >= egk(s, 'gcUnityAt')) {
+    G.unityWk = (G.unityWk || 0) + 1;
+    if (G.unityWk === Math.round(need / 2) || G.unityWk === need - 10) { addNews(s, `World Unity in ${need - G.unityWk} weeks: the Grand Coalition holds at cohesion ${Math.round(G.cohesion)}. Push it below ${egk(s, 'gcUnityAt')} to stop the clock.`, 'wo'); flag(s, 'critical', G.leader, 'World Unity'); s.news[0].gc = 1; }
+  } else if (G.unityWk) { G.unityWk = 0; addNews(s, `The Grand Coalition squabbles: cohesion ${Math.round(G.cohesion)}. The World Unity clock stops.`, 'you'); flag(s, 'important', G.leader, 'Unity clock stopped'); s.news[0].gc = 1; }
+  // crackdowns: announced gcLead weeks ahead; Martyr Narrative / campaign immunity stop them
+  G.queue.filter(q => q.at <= s.week).forEach(q => {
+    if (hasMod(s, q.target, 'noCampaign')) { addNews(s, `The Grand Coalition's crackdown in ${nm(q.target)} finds only martyrs and cameras. Called off.`, 'you'); return; }
+    counterCampaign(s, q.target, q.amt); addUnrest(s, q.target, UNREST.crack);
+  });
+  G.queue = G.queue.filter(q => q.at > s.week);
+  if (s.week >= G.nextCrack) {
+    G.nextCrack = s.week + egk(s, 'gcGap');
+    const busy = new Set(G.queue.map(q => q.target));
+    const amt = Math.round(egk(s, 'gcAmt') * (1 - .5 * domainPower(s, 'ideo')));
+    COUNTRIES.filter(c => c.id !== baseOf(s) && c.pop >= 1 && s.inf[c.id] >= 15 && s.inf[c.id] < 95 && !busy.has(c.id) && !G.members.includes(c.id) && !hasMod(s, c.id, 'noCampaign') && !(Q(s, c.id).immuneAt && s.inf[c.id] >= Q(s, c.id).immuneAt))
+      .sort((a, b) => b.pop * s.inf[b.id] - a.pop * s.inf[a.id]).slice(0, 2).forEach(c => {
+        G.queue.push({ target: c.id, at: s.week + egk(s, 'gcLead'), amt });
+        addNews(s, `The Grand Coalition schedules a crackdown in ${c.name} in ${egk(s, 'gcLead')} weeks: up to −${amt} support.`, 'wo'); flag(s, 'important', c.id, `Crackdown in ${egk(s, 'gcLead')} wk`);
+      });
+  }
 }
 // SIM-END
-if (typeof module !== 'undefined') module.exports = { ultimatumOk, ENDGAME, WIN_SHARE, egk, winShareOf, heldCount, allHeld, capActive, capWhy, capEta, capCount, capitulate, capTick, breakup, waryOf, PERFECT_SHARE, endEarly, canContinue, continuePlaying, LEGIT, LEGIT_WHY, legitOn, legitOf, legitParts, legitEta, legitFrozen, addLegit, baseEstablished, baseActOk, legitActLine, baseLostIn, guardCost, canGuard, buyGuard, OVER, overOn, heldIds, aided, upkeepOf, aidOk, overTick, baseOf, RELOC, planCost, relocCost, canPlan, buyPlan, canReloc, relocEta, startReloc, UNREST, unrestOn, unrestOf, unrestParts, unrestEta, addUnrest, PAR, SCORE_BASE, runResult, trackRun, LEVELS, LEVEL_IDS, levelOf, woPerkIds, RULES, ruleAt, baseRule, rulesOn, V10, HOOKS, hooksFor, PAIRS, pairOn, synergyOf, doctrineOf, closedFrom, offDoctrine, hasT2, CORE, ratified, enforcementTick, sigGrowthMul, populated, courtOn, actCost, ACTIONS, canAct, doAct, domainPower, actEff, resBreakdown, TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };
+if (typeof module !== 'undefined') module.exports = { LEVEL_EG, gcOn, gcMember, gcForm, gcTick, gcBreak, gcCohesion, gcBorder, gcActEffect, ultimatumOk, ENDGAME, WIN_SHARE, egk, winShareOf, heldCount, allHeld, capActive, capWhy, capEta, capCount, capitulate, capTick, breakup, waryOf, PERFECT_SHARE, endEarly, canContinue, continuePlaying, LEGIT, LEGIT_WHY, legitOn, legitOf, legitParts, legitEta, legitFrozen, addLegit, baseEstablished, baseActOk, legitActLine, baseLostIn, guardCost, canGuard, buyGuard, OVER, overOn, heldIds, aided, upkeepOf, aidOk, overTick, baseOf, RELOC, planCost, relocCost, canPlan, buyPlan, canReloc, relocEta, startReloc, UNREST, unrestOn, unrestOf, unrestParts, unrestEta, addUnrest, PAR, SCORE_BASE, runResult, trackRun, LEVELS, LEVEL_IDS, levelOf, woPerkIds, RULES, ruleAt, baseRule, rulesOn, V10, HOOKS, hooksFor, PAIRS, pairOn, synergyOf, doctrineOf, closedFrom, offDoctrine, hasT2, CORE, ratified, enforcementTick, sigGrowthMul, populated, courtOn, actCost, ACTIONS, canAct, doAct, domainPower, actEff, resBreakdown, TRAITS, CONDITIONS, perk, Q, resOf, EVENTS, DECISIONS, resolveDecision, canChoose, fxOn, useSpecial, canSpecial, branchLock, boosted, SYNERGY, SPECIALS, CAPSTONE_NEEDS, possibleSignatures, committed, doctrines, rebrand, canRebrand, OPPOSITE, BRANCHES, signedCount, memberCount, pendingOn, SIGNATURES_TO_LOSE, upCost, TUNE, COUNTRIES, BORDERS, UPGRADES, OPS, createState, step, buyUpgrade, doOp, canOp, canBuy, collectBubble, alignedShare, effRes, neighbours };

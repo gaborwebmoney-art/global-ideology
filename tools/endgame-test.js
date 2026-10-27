@@ -1,12 +1,13 @@
-// Step 9.1 functional check (v10.19): Breakup, capitulation timing, Terms, both win paths, losses before/after the Breakup,
-// old saves. usage: node tools/endgame-test.js
+// Endgame functional check: 9.1 (v10.19) Breakup, capitulation timing, Terms, both win paths, losses before/after the Breakup,
+// old saves; v10.20 Ultimatum + notoriety until the Breakup; 9.2 (v10.21) Grand Coalition. usage: node tools/endgame-test.js
+// Sections 1-9 run with the Grand Coalition off (cfg.eg.gcMin 99) so they test 9.1 rules alone.
 const S = require('../sim.js'); const assert = require('assert');
 let n = 0; const ok = (c, m) => { assert(c, m); n++; };
 const ids = S.COUNTRIES.map(c => c.id);
-const mk = (lv, start) => S.createState(start || 'pannonia', 7, { v10: true, level: lv || 'normal', random: false });
+const mk = (lv, start, gc) => S.createState(start || 'pannonia', 7, Object.assign({ v10: true, level: lv || 'normal', random: false }, gc ? {} : { eg: { gcMin: 99 } }));
 // a running World Order with the treaty hopeless for 25 weeks; `low` stay below the signing line so the step can count to 26
-function nearBreakup(lv) {
-  const s = mk(lv); s.notoriety = 30; S.step(s); assert(s.coalition, 'WO should convene');
+function nearBreakup(lv, gc) {
+  const s = mk(lv, null, gc); s.notoriety = 30; S.step(s); assert(s.coalition, 'WO should convene');
   const low = ['sinopeia', 'juche', 'bharat'];
   ids.forEach(id => { s.inf[id] = low.includes(id) ? 30 : 70; });
   s.wo.signed = {}; s.wo.hopeless = 25; s.legit = 90; s.wary = s.wary || {};
@@ -34,7 +35,7 @@ function nearBreakup(lv) {
   const r = S.runResult(h); ok(r.win && r.winType === 'held' && r.stars >= 1, 'runResult win/held');
   const w = mk(); ids.forEach(id => { w.inf[id] = 96; }); w.inf.pinguinia = 5; w.inf.isolde = 5; w.legit = 90; S.step(w);
   ok(w.over === 'win' && w.winType === 'share', 'share >= 90% = win (share) even with countries not held');
-  const k = S.createState('pannonia', 7, { v10: true, level: 'normal', random: false, winShare: .8 }); ids.forEach(id => { k.inf[id] = 85; }); k.inf.pinguinia = 5; k.legit = 90; S.step(k);
+  const k = S.createState('pannonia', 7, { v10: true, level: 'normal', random: false, winShare: .8, eg: { gcMin: 99 } }); ids.forEach(id => { k.inf[id] = 85; }); k.inf.pinguinia = 5; k.legit = 90; S.step(k);
   ok(k.over === 'win' && k.winType === 'share', 'cfg.winShare override still works');
 }
 // 3. capitulation timing (6 weeks in a row eligible), reasons
@@ -133,7 +134,58 @@ function nearBreakup(lv) {
   for (let i = 0; i < 40; i++) { s.notoriety = 100; s.notoSum += 100; s.week++; }
   const r = S.runResult(Object.assign({}, s, { over: 'win' }));
   ok(r.avgNoto === Math.round(nb.sum / nb.weeks) && r.avgNotoUntil === 'breakup', 'avgNoto ignores weeks after the Breakup: ' + r.avgNoto);
-  const o = S.createState('pannonia', 7, { v10: true, level: 'normal', random: false }); o.notoSum = 500; o.week = 10; o.over = 'win';
+  const o = mk(); o.notoSum = 500; o.week = 10; o.over = 'win';
   ok(S.runResult(o).avgNoto === 50 && !S.runResult(o).avgNotoUntil, 'no Breakup: whole-run average (old saves too)');
+}
+// 10. v10.21 Grand Coalition
+{
+  const s = nearBreakup('normal', true); S.step(s);
+  const G = s.gc;
+  ok(G && G.members.length === 3 && ['sinopeia', 'juche', 'bharat'].every(id => G.members.includes(id)) && G.cohesion > 99, 'GC forms at the Breakup from the holdouts');
+  ok(G.leader === 'sinopeia' || G.leader === 'bharat', 'leader is the biggest member: ' + G.leader);
+  ok(s.news.some(x => x.tag === 'Grand Coalition' && x.level === 'critical'), 'GC news');
+  s.inf.sinopeia = 45; s.wary.sinopeia = 0; ok(S.capWhy(s, 'sinopeia') === 'gc' && !S.ultimatumOk(s, 'sinopeia'), 'members cannot capitulate (Terms/Ultimatum)');
+  // cohesion: Diplomacy -10, Ideology -6, Military on a member +8
+  s.owned.push('d1', 'd2', 'i1', 'i2', 'm1', 'm2'); s.cfg.gate = false; s.clout = 500; s.al = { list: [], next: 1 };
+  const c0 = G.cohesion; s.acd = {}; S.doAct(s, 'dip1', 'juche'); ok(Math.abs(G.cohesion - (c0 - 8)) < 1e-9, 'Diplomacy on a member -8: ' + G.cohesion);
+  s.acd = {}; S.doAct(s, 'ideo1', 'bharat'); ok(Math.abs(G.cohesion - (c0 - 13)) < 1e-9, 'Ideology on a member -5');
+  s.acd = {}; S.doAct(s, 'mil1', 'juche'); ok(Math.abs(G.cohesion - (c0 - 5)) < 1e-9, 'Military on a member rallies +8');
+  // A: Military on a country you hold that borders a member
+  s.acd = {}; const k0 = G.cohesion; ok(S.gcBorder(s, 'koryn'), 'Koryn borders members'); S.doAct(s, 'mil1', 'koryn');
+  ok(Math.abs(G.cohesion - (k0 - 4)) < 1e-9, 'border intimidation -4: ' + G.cohesion);
+  s.owned.push('m3'); s.acd = {}; const k1 = G.cohesion; S.doAct(s, 'mil1', 'koryn'); ok(Math.abs(G.cohesion - (k1 - 6)) < 1e-9, 'with Sovereign Intervention -6');
+  s.acd = {}; const k2 = G.cohesion; s.inf.helvetia = 70; S.doAct(s, 'eco1', 'helvetia'); ok(G.cohesion === k2, 'Economy elsewhere: no effect');
+  // B: Regime Change on a member splits it off
+  s.owned.push('m4'); s.acd = {}; s.inf.koryn = 70; const r0 = G.cohesion; const rr = S.doAct(s, 'mil4', 'juche');
+  ok(rr.ok && !G.members.includes('juche') && Math.abs(G.cohesion - (r0 - 15)) < 1e-9 && s.wary.juche === 0, 'Regime Change splits a member off: ' + JSON.stringify(rr));
+  // islands: a trade partner at 50%+ counts as the neighbour for Regime Change on a member
+  const I = nearBreakup('normal', true); ['sinopeia', 'juche', 'bharat'].forEach(id => { I.inf[id] = 70; }); I.inf.nippon = 30; I.inf.pinguinia = 30; I.inf.borealis = 30; S.step(I);
+  I.owned.push('m1', 'm2', 'm3', 'm4'); I.cfg.gate = false; I.clout = 500; I.acd = {};
+  ok(I.gc && I.gc.members.includes('nippon') && S.canAct(I, 'mil4', 'nippon').ok, 'Regime Change reaches island member via trade: ' + JSON.stringify(S.canAct(I, 'mil4', 'nippon')));
+  // members you win over leave; held countries below 50 join
+  s.inf.bharat = 65; S.step(s); ok(!G.members.includes('bharat') || G.broke, 'won-over member leaves');
+  const J = nearBreakup('normal', true); S.step(J); J.held = J.held || {}; J.held.kestria = true; J.inf.kestria = 45; S.step(J);
+  ok(J.gc.members.includes('kestria'), 'held country below 50 joins');
+  // break below 20 -> members capitulation-ready (wary 0)
+  const B = nearBreakup('normal', true); S.step(B); B.gc.cohesion = 19.5; S.step(B);
+  ok(B.gc.broke && !S.gcOn(B) && B.gc.members.every(id => (B.wary[id] || 0) === 0), 'breaks below 20');
+  B.inf.sinopeia = 45; ok(S.capWhy(B, 'sinopeia') === null, 'after the break members can capitulate');
+  ok(B.news.some(x => x.tag === 'Coalition broken' && x.level === 'critical'), 'break news');
+  // fewer than gcMin holdouts: no GC
+  const N = nearBreakup('normal', true); ['juche', 'bharat'].forEach(id => { N.inf[id] = 70; }); S.step(N); ok(!N.gc, 'one holdout: no GC');
+  // World Unity loss: cohesion >= 60 for 40 weeks (Brutal 30, Casual 50)
+  const U = nearBreakup('normal', true); S.step(U); U.gc.cohesion = 100; let wk = 0;
+  for (let i = 0; i < 60 && !U.over; i++) { U.gc.cohesion = 100; U.legit = 90; ['sinopeia', 'juche', 'bharat'].forEach(id => { U.inf[id] = 30; }); S.step(U); if (U.pending) S.resolveDecision(U, 'b'); wk++; }
+  ok(U.over === 'unity' && U.gc.unityWk === 40, 'World Unity loss after 40 weeks: ' + U.over + ' ' + U.gc.unityWk);
+  ok(!S.runResult(U).win, 'World Unity is a loss');
+  ok(S.egk(S.createState('pannonia', 1, { v10: true, level: 'brutal' }), 'gcUnityWeeks') === 35 && S.egk(S.createState('pannonia', 1, { v10: true, level: 'casual' }), 'gcUnityWeeks') === 50, 'level knobs');
+  // the clock resets below 60
+  const V = nearBreakup('normal', true); S.step(V); for (let i = 0; i < 10; i++) { V.gc.cohesion = 100; S.step(V); } V.gc.cohesion = 50; S.step(V); ok(V.gc.unityWk === 0, 'unity clock resets below 60');
+  // crackdowns get scheduled and land
+  const C = nearBreakup('normal', true); S.step(C); for (let i = 0; i < 20; i++) { C.gc.cohesion = 100; S.step(C); if (C.pending) S.resolveDecision(C, 'b'); }
+  ok(C.news.some(x => /Grand Coalition schedules a crackdown/.test(x.text)), 'GC crackdowns scheduled');
+  // old v10.20 save after the Breakup (no s.gc) keeps working
+  const O = nearBreakup('normal', false); S.step(O); assert(O.broken && !O.gc); O.cfg.eg = undefined; for (let i = 0; i < 20 && !O.over; i++) { S.step(O); if (O.pending) S.resolveDecision(O, 'b'); }
+  ok(!O.gc, 'old post-Breakup save: no GC appears later');
 }
 console.log('endgame ok (' + n + ' checks)');

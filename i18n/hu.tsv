@@ -1472,7 +1472,7 @@ Notoriety {}, {} upgrades.	Hírhedtség {1}, {2} fejlesztés.
 You held all {} countries at once in week {}, with the Containment Treaty at {}% and Notoriety at {}.	A(z) {2}. héten egyszerre mind a(z) {1} ország a kezedben volt, a Megfékezési Szerződés {3}%-on, a Hírhedtség {4}-en állt.
 You aligned {}% of the world in {} weeks, with the Containment Treaty at {}% and Notoriety at {}.	A világ {1}%-át összehangoltad {2} hét alatt, a Megfékezési Szerződés {3}%-on, a Hírhedtség {4}-en állt.
 You bought {} upgrades.	{1} fejlesztést vásároltál.
-Win by holding all 16 countries (60%+ support) at the same time, or by aligning 90% of the world. Hold so many that the World Order can never reach 8 signatures for 26 weeks (while you align 40%+) and it breaks up; after that, countries that stop resisting capitulate. When 8 countries sign first, the treaty is ratified and Enforcement drains your support everywhere until you break it or fade away.	Nyerj úgy, hogy egyszerre mind a 16 országot a kezedben tartod (60%+ támogatás), vagy a világ 90%-át összehangolod. Tarts annyit, hogy a Világrend 26 hétig ne érhessen el 8 aláírást (miközben 40%+-ot összehangolsz), és felbomlik; utána az ellenállást feladó országok kapitulálnak. Ha előbb 8 ország aláír, a szerződést ratifikálják, és a Végrehajtás mindenhol fogyasztja a támogatásodat, amíg meg nem töröd, vagy el nem tűnsz.
+Win by holding all 16 countries (60%+ support) at the same time, or by aligning 90% of the world. Hold so many that the World Order can never reach 8 signatures for 26 weeks (while you align 40%+) and it breaks up; after that, countries that stop resisting capitulate, and the last holdouts form a Grand Coalition you must break before it unites the world. When 8 countries sign first, the treaty is ratified and Enforcement drains your support everywhere until you break it or fade away.	Nyerj úgy, hogy egyszerre mind a 16 országot a kezedben tartod (60%+ támogatás), vagy a világ 90%-át összehangolod. Tarts annyit, hogy a Világrend 26 hétig ne érhessen el 8 aláírást (miközben 40%+-ot összehangolsz), és felbomlik; utána az ellenállást feladó országok kapitulálnak, az utolsó kitartók pedig Nagykoalíciót alkotnak, amelyet szét kell törnöd, mielőtt egyesíti a világot. Ha előbb 8 ország aláír, a szerződést ratifikálják, és a Végrehajtás mindenhol fogyasztja a támogatásodat, amíg meg nem töröd, vagy el nem tűnsz.
 You win by holding all 16 countries (60%+ support, your base included) at the same time, or by aligning 90% of the world. The meter at the bottom shows how many you hold.	Akkor nyersz, ha egyszerre mind a 16 ország a kezedben van (60%+ támogatás, a bázisoddal együtt), vagy ha a világ 90%-át összehangolod. Az alsó mérő mutatja, hányat tartasz.
 When the World Order can no longer reach 8 signatures for 26 weeks (while you align 40%+), it breaks up. The treaty and Enforcement end, its members are free again (wary of you, but no longer bound), and your Notoriety drops by 20. The game goes on.	Ha a Világrend 26 hétig nem érheti el a 8 aláírást (miközben te 40%+-ot összehangolsz), felbomlik. A szerződés és a Végrehajtás véget ér, a tagjai újra szabadok (tartanak tőled, de már semmi sem köti őket), a Hírhedtséged pedig 20-szal csökken. A játék folytatódik.
 After the Breakup, or once you align 75% of the world, holdouts capitulate. A country that is not allied, not in the World Order, at 40%+ support and with wariness below 30% for 6 weeks in a row capitulates by itself: support 90%, no unrest.	A Felbomlás után, vagy ha a világ 75%-át összehangolod, a kitartók kapitulálnak. Az az ország, amely nincs szövetségben, nem tagja a Világrendnek, legalább 40% a támogatása, és 6 egymást követő héten át 30% alatt van, mennyire tart tőled, magától kapitulál: támogatás 90%, nincs nyugtalanság.
@@ -1493,3 +1493,52 @@ Terms: a Summit here makes it capitulate now · Ultimatum (a Snap Exercise here)
 Terms (a Summit here) makes it capitulate now · Ultimatum (a Snap Exercise here) too	A Feltételek (egy itteni Csúcstalálkozó) azonnal kapitulálásra kényszerítik · az Ultimátum (egy itteni Hirtelen hadgyakorlat) is
 Terms (a Summit here) makes it capitulate now, needs 2 Diplomacy upgrades · Ultimatum (a Snap Exercise here) too	A Feltételek (egy itteni Csúcstalálkozó) azonnal kapitulálásra kényszerítik, 2 Diplomácia-fejlesztés kell hozzá · az Ultimátum (egy itteni Hirtelen hadgyakorlat) is
 {} reads your ultimatum, counts the tanks and capitulates. Support {}%. Its neighbours grow restless and wary.	{1} elolvassa az ultimátumodat, megszámolja a tankokat és kapitulál. Támogatás {2}%. A szomszédai nyugtalanabbak és jobban tartanak tőled.
+# v10.21 Step 9.2 Grand Coalition
+Grand Coalition	Nagykoalíció
+The Grand Coalition	A Nagykoalíció
+Left coalition	Kilépett a koalícióból
+Joined coalition	Csatlakozott a koalícióhoz
+Coalition broken	A koalíció szétesett
+Coalition rallies	A koalíció összezár
+World Unity	Világegység
+Unity clock stopped	Az egység órája megállt
+Broken	Szétesett
+Clock stopped	Az óra áll
+Leader of the Grand Coalition	A Nagykoalíció vezetője
+Member of the Grand Coalition	A Nagykoalíció tagja
+Grand Coalition leader	Nagykoalíció-vezető
+Grand Coalition member	Nagykoalíció-tag
+How the Grand Coalition works	Hogyan működik a Nagykoalíció
+The holdouts close ranks: {} form the Grand Coalition, led by {}. If they stay united (cohesion {}+) for {} weeks, World Unity ends your movement.	A kitartók összezárnak: {1} megalakítják a Nagykoalíciót, élén ezzel: {2}. Ha {4} hétig egységesek maradnak ({3}+ összetartás), a Világegység véget vet a mozgalmadnak.
+{} now mostly agrees with you and leaves the Grand Coalition.	{1} már nagyrészt egyetért veled, és kilép a Nagykoalícióból.
+Regime Change in {}: the new government quits the Grand Coalition. Cohesion −{}.	Rendszerváltás itt: {1}: az új kormány kilép a Nagykoalícióból. Összetartás −{2}.
+{} slips away from you and joins the Grand Coalition.	{1} kicsúszik a kezedből, és csatlakozik a Nagykoalícióhoz.
+The Grand Coalition runs out of members and quietly folds.	A Nagykoalíciónak elfogynak a tagjai, és csendben feloszlik.
+The Grand Coalition breaks apart. {} stop resisting together: they can capitulate now.	A Nagykoalíció szétesik. {1} már nem állnak ellen együtt: most kapitulálhatnak.
+{} in {} rallies the Grand Coalition. Cohesion {} (+{}).	{1} itt: {2} – összezárja a Nagykoalíciót. Összetartás {3} (+{4}).
+{} in {} sows doubt inside the Grand Coalition. Cohesion {} ({}).	{1} itt: {2} – kételyt szít a Nagykoalícióban. Összetartás {3} ({4}).
+Tanks on parade in {}, right on the Grand Coalition's doorstep. Cohesion {} ({}).	Tankparádé itt: {1}, közvetlenül a Nagykoalíció küszöbén. Összetartás {2} ({3}).
+World Unity in {} weeks: the Grand Coalition holds at cohesion {}. Push it below {} to stop the clock.	Világegység {1} hét múlva: a Nagykoalíció {2} összetartásnál tart. Szorítsd {3} alá, hogy megálljon az óra.
+The Grand Coalition squabbles: cohesion {}. The World Unity clock stops.	A Nagykoalíció összeveszik: összetartás {1}. A Világegység órája megáll.
+The Grand Coalition's crackdown in {} finds only martyrs and cameras. Called off.	A Nagykoalíció leszámolása itt: {1} csak mártírokat és kamerákat talál. Lefújva.
+The Grand Coalition schedules a crackdown in {} in {} weeks: up to −{} support.	A Nagykoalíció leszámolást ütemez ide: {1}, {2} hét múlva: legfeljebb −{3} támogatás.
+World Unity: the Grand Coalition stays together long enough to write a constitution. Your movement becomes a footnote in it.	Világegység: a Nagykoalíció elég sokáig együtt marad ahhoz, hogy alkotmányt írjon. A mozgalmad lábjegyzet lesz benne.
+Unity {} wk	Egység {1} hét
+World Unity in {} weeks unless cohesion falls below {}	Világegység {1} hét múlva, hacsak az összetartás {2} alá nem esik
+Cohesion below {}: the World Unity clock is stopped. Below {} it breaks	Összetartás {1} alatt: a Világegység órája áll. {2} alatt szétesik
+The Grand Coalition broke in week {}. Its members can capitulate now	A Nagykoalíció a(z) {1}. héten szétesett. A tagjai most kapitulálhatnak
+Crackdown in {} in {} weeks	Leszámolás itt: {1}, {2} hét múlva
+In the Grand Coalition: break it first (cohesion {}, breaks below {})	A Nagykoalíció tagja: előbb törd szét (összetartás {1}, {2} alatt szétesik)
+Diplomacy here: cohesion −{} · Ideology: −{} · Military here rallies it: +{} · Regime Change splits it off: −{}	Diplomácia itt: összetartás −{1} · Ideológia: −{2} · Katonai akció itt összezárja: +{3} · Rendszerváltás leválasztja: −{4}
+On the Grand Coalition's doorstep: any Military action here cuts its cohesion by {}	A Nagykoalíció küszöbén: bármely Katonai akció itt {1}-gyel csökkenti az összetartását
+Splits {} off the Grand Coalition: cohesion −{}.	Leválasztja ezt a Nagykoalícióról: {1}; összetartás −{2}.
+Rallies the Grand Coalition: cohesion +{}.	Összezárja a Nagykoalíciót: összetartás +{1}.
+Grand Coalition cohesion {}.	Nagykoalíció összetartása: {1}.
+Coalition {}	Koalíció {1}
+Led by {} · {} members · cohesion {}	Vezető: {1} · {2} tag · összetartás {3}
+At the Breakup, the countries you do not hold yet (below 60%) close ranks as the Grand Coalition. Its members cannot capitulate and resist you harder together. Every few weeks it schedules a crackdown on your contested countries.	A Felbomláskor a még nem a kezedben lévő országok (60% alatt) Nagykoalícióvá zárnak össze. A tagjai nem kapitulálhatnak, és együtt keményebben ellenállnak. Néhány hetente leszámolást ütemez a vitatott országaidban.
+World Unity: if the coalition keeps its cohesion at 60 or more for 40 weeks in a row (Casual 50, Brutal 35), you lose. Below 60 the clock stops and starts again from zero. Below 20 the coalition breaks and its members can capitulate.	Világegység: ha a koalíció összetartása 40 egymást követő héten át legalább 60 (Laza 50, Brutális 35 hét), veszítesz. 60 alatt az óra megáll, és újra nulláról indul. 20 alatt a koalíció szétesik, és a tagjai kapitulálhatnak.
+Break it: Diplomacy on a member −8 cohesion, Ideology −5. Military on a member rallies it (+8). Military on a country you hold next to a member, or trading with one, intimidates it: −4 (−6 with Sovereign Intervention). Regime Change on a member splits it off: −15.	Így töröd szét: Diplomácia egy tagon −8 összetartás, Ideológia −5. Katonai akció egy tagon összezárja (+8). Katonai akció egy általad tartott országban, amely egy taggal határos vagy kereskedik, megfélemlíti: −4 (Szuverén beavatkozással −6). Rendszerváltás egy tagon leválasztja: −15.
+Left alone, it slowly pulls itself together again. Members you win over (60%+) leave it; a country you held that falls below 50% joins it.	Ha magára hagyod, lassan újra összeszedi magát. A megnyert tagok (60%+) kilépnek; egy egykor általad tartott ország, amely 50% alá esik, csatlakozik.
+Martyr Narrative calls off its crackdown in that country, and Ideology power softens them. Regime Change can reach an island member through a trade partner at 50%+.	A Mártírnarratíva lefújja a leszámolását abban az országban, az Ideológiai erő pedig enyhíti őket. A Rendszerváltás egy szigeti tagot is elér egy 50%+-os kereskedelmi partneren keresztül.
+The Grand Coalition held together for {} weeks and wrote you out of history in week {}. The World Order had broken up in week {}. At your peak you had {}% of the world. Next time, keep its cohesion below {}: Diplomacy and Ideology on its members, Military next to them, never on them.	A Nagykoalíció {1} hétig kitartott, és a(z) {2}. héten kiírt a történelemből. A Világrend a(z) {3}. héten bomlott fel. A csúcson a világ {4}%-a volt a tiéd. Legközelebb tartsd az összetartását {5} alatt: Diplomácia és Ideológia a tagjain, Katonai akció mellettük, soha nem rajtuk.

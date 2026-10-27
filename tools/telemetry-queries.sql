@@ -140,3 +140,14 @@ select level, outcome, count(*) as runs, percentile_cont(.5) within group (order
 from public.gi_runs
 where event in ('run_end','run_final') and channel <> 'dev' and breakup_week is not null
 group by 1, 2 order by 1, 3 desc;
+
+-- 11. v10.21 Grand Coalition per level: how often it forms, gets broken, and ends runs (World Unity).
+--     Bot reference (Normal): forms in ~70% of runs, broken in ~70% of those (~25 wk after forming), World Unity ends ~6% of runs.
+select level, count(*) as runs,
+  count(*) filter (where gc_size is not null) as gc_formed, round(avg(gc_size), 1) as avg_size,
+  count(*) filter (where gc_broke_week is not null) as gc_broken,
+  percentile_cont(.5) within group (order by gc_broke_week - breakup_week) filter (where gc_broke_week is not null) as med_weeks_to_break,
+  count(*) filter (where outcome = 'unity') as world_unity_losses
+from public.gi_runs
+where event = 'run_end' and channel <> 'dev' and version >= '10.21'
+group by 1 order by 1;
