@@ -64,7 +64,7 @@ const UPGRADES = [
   { id: 'm3', b: 'mil', name: 'Sovereign Intervention', cost: 14, fx: { border: .03, pen: { mil: .2 }, shield: 15, loud: .01 }, boost: { shield: 10 }, text: 'Border spread up. Countries need 15 points less of your support to refuse the World Order. Louder. Proxy Garrison blocks courtship for 25 weeks', btext: '10 points more' },
   { id: 'm4', b: 'mil', name: 'Regime Change', cost: 16, special: 'stoppage', text: 'Unlocks Regime Change, the Military tier-4 action' },
 
-  { id: 'd1', b: 'dip', name: 'Consulates', cost: 4, fx: { border: .02 }, boost: { border: .015 }, text: 'Border spread up. Embassy makes a country resist 15% less for good (was 10%)', btext: 'more border spread' },
+  { id: 'd1', b: 'dip', name: 'Consulates', cost: 4, fx: { border: .02 }, boost: { border: .015 }, text: 'Border spread up. Your Embassy action now makes a country resist 15% less for good (instead of 10%)', btext: 'more border spread' },
   { id: 'd2', b: 'dip', name: 'Summit Circuit', cost: 9, fx: { border: .03, pen: { dip: .15 } }, boost: { pen: { dip: .1 } }, text: 'Border spread up. Diplomatic resistance −15%. Summit lasts 35 weeks', btext: 'another −10% diplomatic' },
   { id: 'd3', b: 'dip', name: 'Sanctions Hammer', cost: 14, fx: { border: .02, vis: -.1, fcRed: .3 }, boost: { fcRed: .2, border: .01 }, text: 'Border spread up. Notoriety grows 10% slower. World Order campaigns hit 30% softer. Non-Aligned Pact blocks courtship for 30 weeks', btext: '20% softer again' },
   { id: 'd4', b: 'dip', name: 'Endless Negotiations', cost: 16, special: 'breaker', text: 'Unlocks Endless Negotiations, the Diplomacy tier-4 action' },
