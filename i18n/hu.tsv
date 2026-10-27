@@ -1415,3 +1415,20 @@ Weakest to {}	Leggyengébb ellene: {1}
 strongest in {}	legerősebb: {1}
 Finish the game as a win? You will see the results.	Befejezed a játékot győzelemmel? Megnézheted az eredményeket.
 You call it here. The world is yours and nobody argues.	Eddig tart. A világ a tiéd, és senki sem vitatkozik.
+# v10.18: telemetry opt-out, bug report
+Anonymous gameplay data is collected to improve the game. You can switch it off in More.	Névtelen játékadatokat gyűjtünk a játék fejlesztéséhez. A Továbbiak menüben kikapcsolhatod.
+Share anonymous gameplay data	Névtelen játékadatok megosztása
+Sends how each game goes (difficulty, start country, outcome, weeks, score) with a random device ID and no personal details. Crash reports and bug reports you send are not affected by this switch.	Elküldi, hogyan alakul egy-egy játék (nehézség, kezdő ország, kimenet, hetek, pontszám) véletlen eszközazonosítóval, személyes adatok nélkül. Az összeomlási jelentéseket és az általad küldött hibajelentéseket ez a kapcsoló nem érinti.
+Feedback	Visszajelzés
+Report a bug	Hiba jelentése
+Tell us what went wrong. The current state of your game is attached automatically, so we can replay it.	Írd le, mi romlott el. A játékod aktuális állapotát automatikusan csatoljuk, így vissza tudjuk játszani.
+What happened?	Mi történt?
+Describe the problem	Írd le a problémát
+Contact (optional)	Elérhetőség (nem kötelező)
+Only if you want a reply	Csak ha választ szeretnél
+Send report	Jelentés küldése
+Please describe the problem first.	Először írd le a problémát.
+Sending…	Küldés…
+Thank you. Your report was sent.	Köszönjük. A jelentést elküldtük.
+The server cannot be reached right now. Your report is saved on this device and will be sent automatically.	A szerver most nem érhető el. A jelentést elmentettük ezen az eszközön, és automatikusan elküldjük.
+Reporting is not available in this version.	Ebben a verzióban nem lehet jelentést küldeni.
