@@ -110,4 +110,30 @@ function nearBreakup(lv) {
   // a save made with the treaty already failing reaches the Breakup, not a collapse ending
   const f = nearBreakup(); delete f.capWk; const g = JSON.parse(JSON.stringify(f)); S.step(g); ok(g.broken && !g.over, 'old failing-treaty save breaks up');
 }
+// 8. v10.20 Ultimatum: Snap Exercise on a capitulation-ready country, wariness does not stop it, not where Military reverses
+{
+  const s = nearBreakup(); S.step(s); assert(s.broken);
+  s.owned.push('m1', 'm2'); s.cfg.gate = false; s.clout = 200; s.acd = {}; s.al = { list: [], next: 1 };
+  const t = 'tavaro'; s.inf[t] = 45; s.wary[t] = 80;
+  ok(S.capWhy(s, t) === 'wary' && S.ultimatumOk(s, t), 'ultimatum allowed on a wary country');
+  const nb = S.neighbours(t).filter(x => s.inf[x] >= 25 && x !== S.baseOf(s)), u0 = nb.map(x => (s.unrest || {})[x] || 0);
+  const r = S.doAct(s, 'mil2', t);
+  ok(r.ok && s.inf[t] >= 90 && s.capit.ultimatum === 1 && s.wary[t] === 0, 'ultimatum capitulates at once');
+  ok(nb.every((x, i) => ((s.unrest || {})[x] || 0) >= u0[i]), 'neighbours get unrest');
+  ok(S.capCount(s) === 1 && s.news.some(x => x.tag === 'Capitulated' && /ultimatum/.test(x.text)), 'ultimatum news, counted');
+  s.acd = {}; s.inf.kestria = 45; s.wary.kestria = 0;
+  ok(!S.ultimatumOk(s, 'kestria'), 'no ultimatum where the Military wall reverses (Kestria)');
+  s.inf.koryn = 30; ok(!S.ultimatumOk(s, 'koryn'), 'no ultimatum below 40% support');
+  s.acd = {}; s.inf.koryn = 30; const k0 = s.inf.koryn; S.doAct(s, 'mil2', 'koryn'); ok(s.inf.koryn < 90 && s.capit.ultimatum === 1, 'ordinary Snap Exercise elsewhere');
+}
+// 9. v10.20 average notoriety counts until the Breakup (Ghost goal, score)
+{
+  const s = nearBreakup(); s.notoSum = 10 * s.week; S.step(s); assert(s.broken);
+  const nb = s.notoAtBreak; ok(nb && nb.weeks === s.week, 'notoriety snapshot at the Breakup');
+  for (let i = 0; i < 40; i++) { s.notoriety = 100; s.notoSum += 100; s.week++; }
+  const r = S.runResult(Object.assign({}, s, { over: 'win' }));
+  ok(r.avgNoto === Math.round(nb.sum / nb.weeks) && r.avgNotoUntil === 'breakup', 'avgNoto ignores weeks after the Breakup: ' + r.avgNoto);
+  const o = S.createState('pannonia', 7, { v10: true, level: 'normal', random: false }); o.notoSum = 500; o.week = 10; o.over = 'win';
+  ok(S.runResult(o).avgNoto === 50 && !S.runResult(o).avgNotoUntil, 'no Breakup: whole-run average (old saves too)');
+}
 console.log('endgame ok (' + n + ' checks)');

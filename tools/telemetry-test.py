@@ -158,7 +158,7 @@ def t_errors(browser, base):
     rows = mock.of('gi_errors')
     check('forced error: exactly one POST to gi_errors', mock.count('gi_errors') == 1 and len(rows) == 1, (mock.count('gi_errors'), len(rows)))
     r = rows[0] if rows else {}
-    check('error row: message, src, version, channel', r.get('message') == 'boom-test' and r.get('src') == 'onerror' and r.get('version') == '10.19' and r.get('channel') == 'dev', r)
+    check('error row: message, src, version, channel', r.get('message') == 'boom-test' and r.get('src') == 'onerror' and r.get('version') == '10.20' and r.get('channel') == 'dev', r)
     check('error row: stack, ua, screen, lang', bool(r.get('stack')) and 'Mozilla' in (r.get('ua') or '') and re.match(r'^\d+x\d+$', r.get('screen') or '') and r.get('lang') == 'en', r)
     check('error row: anon_id and id are uuids, user_id null', UUID_RE.match(r.get('anon_id', '')) and UUID_RE.match(r.get('id', '')) and r.get('user_id') is None, r)
     check('error row: no game yet -> level/start/week null', r.get('level') is None and r.get('start_country') is None and r.get('week') is None, r)
@@ -202,7 +202,7 @@ def t_runs(browser, base):
     st = mock.of('gi_runs', 'run_start')
     check('run_start posted when a game starts', len(st) == 1 and st[0]['start_country'] == 'isolde' and st[0]['level'] and st[0]['lang'] == 'en' and st[0]['seed'] is not None, st)
     rid = st[0]['run_id'] if st else None
-    check('run_start: run_id uuid, version, channel, no outcome', st and UUID_RE.match(rid) and st[0]['version'] == '10.19' and st[0]['outcome'] is None and st[0]['weeks'] == 0, st)
+    check('run_start: run_id uuid, version, channel, no outcome', st and UUID_RE.match(rid) and st[0]['version'] == '10.20' and st[0]['outcome'] is None and st[0]['weeks'] == 0, st)
     force_win(page)
     flush(page)
     en = mock.of('gi_runs', 'run_end')
@@ -212,8 +212,8 @@ def t_runs(browser, base):
     check('win: weeks, stars, score, held, peak share, notoriety fields', e.get('weeks', 0) >= 1 and e.get('stars') >= 1 and e.get('score') is not None and e.get('held') >= 1 and 0 < e.get('peak_share', 0) <= 1 and e.get('avg_noto') is not None and e.get('peak_noto') is not None, e)
     check('win: uprisings/coups/relocations/used_continue/session_min present', all(k in e for k in ('uprisings', 'coups', 'relocations', 'used_continue', 'session_min')) and e['used_continue'] is False, e)
     check('win: upgrades in the order bought', e.get('upgrades') == got, (e.get('upgrades'), got))
-    check('v10.19: breakup_week / cap_auto / cap_terms / win_type on run_end', all(k in e for k in ('breakup_week', 'cap_auto', 'cap_terms', 'win_type')) and e.get('win_type') in ('held', 'share'), e)
-    check('v10.19: run_start sends the new fields as null', all(k in st[0] and st[0][k] is None for k in ('breakup_week', 'cap_auto', 'cap_terms', 'win_type')), st)
+    check('v10.19: breakup_week / cap_auto / cap_terms / win_type on run_end', all(k in e for k in ('breakup_week', 'cap_auto', 'cap_terms', 'win_type', 'cap_ultimatum')) and e.get('win_type') in ('held', 'share'), e)
+    check('v10.19: run_start sends the new fields as null', all(k in st[0] and st[0][k] is None for k in ('breakup_week', 'cap_auto', 'cap_terms', 'win_type', 'cap_ultimatum')), st)
     # continue playing -> run_continue, then the run ends again with run_final
     page.evaluate("document.getElementById('contPlay') && !document.getElementById('contPlay').hidden && document.getElementById('contPlay').click()")
     page.wait_for_timeout(200); flush(page)

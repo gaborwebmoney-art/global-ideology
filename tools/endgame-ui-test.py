@@ -116,6 +116,8 @@ def walk(browser, base, device, lang):
     if lang == 'hu':
         t = page.evaluate("document.getElementById('endText').textContent")
         check(f'{tag}: HU win text fully translated, in order', t.startswith('A(z)') and 'Notoriety' not in t and 'upgrades' not in t and 'Világrend' in t, t)
+    sc = page.evaluate("document.getElementById('endScore').innerText")
+    check(f'{tag}: score notoriety counted until the Breakup', ('until the Breakup' in sc) or ('a Felbomlásig' in sc), sc[:300])
     shot('08-win-popup')
     page.click('#contPlay'); page.wait_for_timeout(400)
     c = page.evaluate("() => ({ over: __GI.S.over, cont: !!__GI.S.cont, note: document.getElementById('shareNote').textContent })")
@@ -132,8 +134,9 @@ def walk(browser, base, device, lang):
     page.evaluate("document.getElementById('endOv').hidden = true")
     page.evaluate("document.getElementById('moreBtn').click()"); page.wait_for_timeout(150)
     page.click('#rulesEnd'); page.wait_for_timeout(200)
-    rt = page.evaluate("document.getElementById('rulesTitle').textContent + ' :: ' + document.getElementById('rulesPages').innerText")
+    rt = page.evaluate("document.getElementById('rulesTitle').textContent + ' :: ' + document.getElementById('rulesPages').textContent")
     check(f'{tag}: rulebook page "The endgame"', rt.startswith('The endgame') or rt.startswith('A végjáték'), rt[:120])
+    check(f'{tag}: rulebook explains Ultimatum', ('Ultimatum' in rt) or ('Ultimátum' in rt), rt[-300:])
     shot('12-rulebook')
     if lang == 'hu':
         miss = page.evaluate("[...GI_I18N.misses || []].filter(m => /capitul|Capitul|Breakup|Terms|Held|endgame|broke up|breaks up/.test(m))")

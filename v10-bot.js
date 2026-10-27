@@ -115,14 +115,17 @@ function play(start, seed, cfg, build, sharp) {
     // v10.19 Step 9.1 Terms: Summit on an eligible country capitulates it at once (biggest first; cfg.noTerms = never)
     if (S.capActive && !cfg.noTerms && S.capActive(s)) {
       const el = S.COUNTRIES.filter(c => !S.capWhy(s, c.id)).sort((a, b) => b.pop - a.pop);
-      for (const c of el) if (S.canAct(s, 'dip2', c.id).ok) { S.doAct(s, 'dip2', c.id); break; }
+      for (const c of el) {
+        if (S.canAct(s, 'dip2', c.id).ok) { S.doAct(s, 'dip2', c.id); break; }
+        if (!cfg.noUltimatum && S.ultimatumOk && S.ultimatumOk(s, c.id) && S.canAct(s, 'mil2', c.id).ok) { S.doAct(s, 'mil2', c.id); break; }   // v10.20 Ultimatum
+      }
     }
     for (let i = 0; i < 4; i++) { const b = bestAction(s); if (!b || b.score <= 0) break; S.doAct(s, b.a, b.t); }
   }
   const log = s.actLog || [];
   const tiers = [1, 2, 3, 4].map(t => log.filter(id => +id.slice(-1) === t).length);
   const dom = { eco: 0, mil: 0, dip: 0, ideo: 0 }; log.forEach(id => { dom[id.replace(/\d$/, '')]++; });
-  return { brkShare: s.wo.brokeShare || 0, brk: s.broken || 0, capA: (s.capit || {}).auto || 0, capT: (s.capit || {}).terms || 0, winType: s.winType || null, held: S.heldCount ? S.heldCount(s) : 0, cr: s._cr || {}, share: S.alignedShare(s), aids: s.aids || 0, hs: s._hs || {}, rel: (s.relocLog || []).length, planBought: !!s.plan, minL, guard: !!s.guard, guardUsed: !!s.guardUsed, ups: (s.uprisings || []).length, upLost: (s.uprisings || []).filter(u => u.lost).length, res: S.runResult ? S.runResult(s) : null, dom, pw, t2b, owned: s.owned.length, clout: Math.round(s.clout), over: s.over || 'timeout', week: s.week, acts: log.length, tiers, t4: tiers[3] > 0, w4, crisis, ratAt: s.wo.ratifiedAt || 0, cb: s.comebacks || 0 };
+  return { brkShare: s.wo.brokeShare || 0, brk: s.broken || 0, capA: (s.capit || {}).auto || 0, capT: (s.capit || {}).terms || 0, capU: (s.capit || {}).ultimatum || 0, winType: s.winType || null, held: S.heldCount ? S.heldCount(s) : 0, cr: s._cr || {}, share: S.alignedShare(s), aids: s.aids || 0, hs: s._hs || {}, rel: (s.relocLog || []).length, planBought: !!s.plan, minL, guard: !!s.guard, guardUsed: !!s.guardUsed, ups: (s.uprisings || []).length, upLost: (s.uprisings || []).filter(u => u.lost).length, res: S.runResult ? S.runResult(s) : null, dom, pw, t2b, owned: s.owned.length, clout: Math.round(s.clout), over: s.over || 'timeout', week: s.week, acts: log.length, tiers, t4: tiers[3] > 0, w4, crisis, ratAt: s.wo.ratifiedAt || 0, cb: s.comebacks || 0 };
 }
 
 const T = { courtWeeks: 8, pushMul: 0.6 };

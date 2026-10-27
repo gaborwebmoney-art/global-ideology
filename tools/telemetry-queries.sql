@@ -116,3 +116,27 @@ from public.gi_reports
 where channel <> 'dev'
 order by created_at desc
 limit 50;
+
+-- 9. v10.19+ endgame, per level and version: real players vs the bot (bot sharp/slow, Normal: win 68-81%, Breakup in
+--    66-80% of runs at week ~230, win ~20 weeks after the Breakup). Needs the v10.19/v10.20 columns of supabase-telemetry.sql.
+--    (gi_run_results was created with "select *" before these columns existed: query gi_runs directly.)
+with r as (
+  select distinct on (run_id) * from public.gi_runs
+  where event = 'run_end' and channel <> 'dev' and version >= '10.19'
+  order by run_id, (outcome = 'abandoned') asc, created_at desc)
+select version, level, count(*) as runs,
+  round(100.0 * avg((outcome in ('win','collapse','perfect'))::int), 1) as win_pct,
+  round(100.0 * avg((breakup_week is not null)::int), 1) as breakup_pct,
+  percentile_cont(.5) within group (order by breakup_week) as med_breakup_week,
+  percentile_cont(.5) within group (order by weeks) filter (where outcome = 'win') as med_win_week,
+  percentile_cont(.5) within group (order by weeks - breakup_week) filter (where outcome = 'win' and breakup_week is not null) as med_weeks_breakup_to_win,
+  round(avg(cap_auto), 2) as cap_auto, round(avg(cap_terms), 2) as cap_terms, round(avg(cap_ultimatum), 2) as cap_ultimatum,
+  count(*) filter (where win_type = 'held') as wins_held, count(*) filter (where win_type = 'share') as wins_share,
+  count(*) filter (where outcome in ('abandoned','retired') and breakup_week is not null) as quit_after_breakup
+from r group by 1, 2 order by 1, 2;
+
+-- 10. Where post-Breakup runs end up: quits after the Breakup are the "boring mop-up" signal for Step 9.2.
+select level, outcome, count(*) as runs, percentile_cont(.5) within group (order by weeks - breakup_week) as med_weeks_after_breakup
+from public.gi_runs
+where event in ('run_end','run_final') and channel <> 'dev' and breakup_week is not null
+group by 1, 2 order by 1, 3 desc;
