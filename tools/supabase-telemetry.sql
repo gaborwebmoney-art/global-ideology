@@ -104,6 +104,18 @@ alter table public.gi_runs    add  constraint gi_runs_limits check (
   and (relocations is null or relocations between 0 and 1000)
   and (session_min is null or session_min between 0 and 100000));
 
+-- v10.19 (Step 9.1 endgame): extra run_end fields. Safe to re-run. Until this is applied the game strips these fields and still sends the rest.
+alter table public.gi_runs add column if not exists breakup_week int;    -- week the World Order broke up (null = never)
+alter table public.gi_runs add column if not exists cap_auto     int;    -- countries that capitulated by themselves
+alter table public.gi_runs add column if not exists cap_terms    int;    -- countries that capitulated to Terms (Summit)
+alter table public.gi_runs add column if not exists win_type     text;   -- held (all 16 at once) | share (winShare aligned) | collapse (legacy)
+alter table public.gi_runs drop constraint if exists gi_runs_endgame_limits;
+alter table public.gi_runs add  constraint gi_runs_endgame_limits check (
+  (breakup_week is null or breakup_week between 0 and 100000)
+  and (cap_auto is null or cap_auto between 0 and 1000) and (cap_terms is null or cap_terms between 0 and 1000)
+  and (win_type is null or char_length(win_type) <= 16));
+notify pgrst, 'reload schema';
+
 alter table public.gi_reports drop constraint if exists gi_reports_limits;
 alter table public.gi_reports add  constraint gi_reports_limits check (
   char_length(report) between 1 and 2000 and (contact is null or char_length(contact) <= 200)

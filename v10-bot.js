@@ -49,7 +49,7 @@ function play(start, seed, cfg, build, sharp) {
   const s = S.createState(start, seed, Object.assign({ v10: true, cdMode: 'global', gate: true }, cfg));
   const prio = prioFor(BUILDS[build], cfg.rush, cfg.minor ? 2 : 4);
   let w4 = 0, crisis = 0, pw = 0, t2b = 0, minL = 100;
-  while (!s.over && s.week < 1500) {
+  while (!s.over && s.week < (cfg.maxWeeks || 1500)) {
     S.step(s);
     if (s.pending) { let c = 'a'; if (!S.canChoose(s, c).ok) c = 'b'; S.resolveDecision(s, c); }
     s.bubbles.slice().forEach(b => { if (sharp || Math.random() < 0.6) S.collectBubble(s, b.key); });
@@ -112,12 +112,17 @@ function play(start, seed, cfg, build, sharp) {
     { const sh = S.alignedShare(s); s._cr = s._cr || {}; [.7, .8, .85, .9, .95].forEach(x => { if (sh >= x && !s._cr[x]) s._cr[x] = s.week; }); }
     if (s.week % 25 === 0) { s._hs = s._hs || {}; s._hs[s.week] = S.COUNTRIES.filter(c => s.inf[c.id] >= 60).length; }
     if (s.treaty > 70 || (s.wo.court || []).reduce((x, c) => x + c.prog, 0) > 120) S.doAct(s, 'eco4');
+    // v10.19 Step 9.1 Terms: Summit on an eligible country capitulates it at once (biggest first; cfg.noTerms = never)
+    if (S.capActive && !cfg.noTerms && S.capActive(s)) {
+      const el = S.COUNTRIES.filter(c => !S.capWhy(s, c.id)).sort((a, b) => b.pop - a.pop);
+      for (const c of el) if (S.canAct(s, 'dip2', c.id).ok) { S.doAct(s, 'dip2', c.id); break; }
+    }
     for (let i = 0; i < 4; i++) { const b = bestAction(s); if (!b || b.score <= 0) break; S.doAct(s, b.a, b.t); }
   }
   const log = s.actLog || [];
   const tiers = [1, 2, 3, 4].map(t => log.filter(id => +id.slice(-1) === t).length);
   const dom = { eco: 0, mil: 0, dip: 0, ideo: 0 }; log.forEach(id => { dom[id.replace(/\d$/, '')]++; });
-  return { cr: s._cr || {}, share: S.alignedShare(s), aids: s.aids || 0, hs: s._hs || {}, rel: (s.relocLog || []).length, planBought: !!s.plan, minL, guard: !!s.guard, guardUsed: !!s.guardUsed, ups: (s.uprisings || []).length, upLost: (s.uprisings || []).filter(u => u.lost).length, res: S.runResult ? S.runResult(s) : null, dom, pw, t2b, owned: s.owned.length, clout: Math.round(s.clout), over: s.over || 'timeout', week: s.week, acts: log.length, tiers, t4: tiers[3] > 0, w4, crisis, ratAt: s.wo.ratifiedAt || 0, cb: s.comebacks || 0 };
+  return { brkShare: s.wo.brokeShare || 0, brk: s.broken || 0, capA: (s.capit || {}).auto || 0, capT: (s.capit || {}).terms || 0, winType: s.winType || null, held: S.heldCount ? S.heldCount(s) : 0, cr: s._cr || {}, share: S.alignedShare(s), aids: s.aids || 0, hs: s._hs || {}, rel: (s.relocLog || []).length, planBought: !!s.plan, minL, guard: !!s.guard, guardUsed: !!s.guardUsed, ups: (s.uprisings || []).length, upLost: (s.uprisings || []).filter(u => u.lost).length, res: S.runResult ? S.runResult(s) : null, dom, pw, t2b, owned: s.owned.length, clout: Math.round(s.clout), over: s.over || 'timeout', week: s.week, acts: log.length, tiers, t4: tiers[3] > 0, w4, crisis, ratAt: s.wo.ratifiedAt || 0, cb: s.comebacks || 0 };
 }
 
 const T = { courtWeeks: 8, pushMul: 0.6 };

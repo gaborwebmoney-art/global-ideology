@@ -1,4 +1,4 @@
-"""Telemetry tests (v10.18): crash capture, run data, bug report, opt-out, missing tables.
+"""Telemetry tests (v10.18, v10.19 endgame fields): crash capture, run data, bug report, opt-out, missing tables.
 Starts a local web server, drives index.html in Chromium (Playwright), and intercepts every call to *.supabase.co.
 usage:  python3 tools/telemetry-test.py            (exit code 0 = all passed)
 Needs Playwright for Python and Chromium; the browser path below is the one used in the handover."""
@@ -40,6 +40,10 @@ class Mock:
                 body = None
             self.reqs.append({'t': t, 'body': body, 'headers': request.headers, 'raw': request.post_data or ''})
             mode = self.mode.get(t, self.default)
+            if mode == 'nocol':   # server without the v10.19 columns of gi_runs
+                if any(isinstance(r, dict) and 'breakup_week' in r for r in (body or [])):
+                    return route.fulfill(status=400, headers=dict(CORS, **{'content-type': 'application/json'}), body=json.dumps({'code': 'PGRST204', 'message': "Could not find the 'breakup_week' column"}))
+                mode = 'ok'
             if mode == 'ok':
                 return route.fulfill(status=201, headers=CORS, body='')
             if mode == 'abort':
@@ -154,7 +158,7 @@ def t_errors(browser, base):
     rows = mock.of('gi_errors')
     check('forced error: exactly one POST to gi_errors', mock.count('gi_errors') == 1 and len(rows) == 1, (mock.count('gi_errors'), len(rows)))
     r = rows[0] if rows else {}
-    check('error row: message, src, version, channel', r.get('message') == 'boom-test' and r.get('src') == 'onerror' and r.get('version') == '10.18' and r.get('channel') == 'dev', r)
+    check('error row: message, src, version, channel', r.get('message') == 'boom-test' and r.get('src') == 'onerror' and r.get('version') == '10.19' and r.get('channel') == 'dev', r)
     check('error row: stack, ua, screen, lang', bool(r.get('stack')) and 'Mozilla' in (r.get('ua') or '') and re.match(r'^\d+x\d+$', r.get('screen') or '') and r.get('lang') == 'en', r)
     check('error row: anon_id and id are uuids, user_id null', UUID_RE.match(r.get('anon_id', '')) and UUID_RE.match(r.get('id', '')) and r.get('user_id') is None, r)
     check('error row: no game yet -> level/start/week null', r.get('level') is None and r.get('start_country') is None and r.get('week') is None, r)
@@ -198,7 +202,7 @@ def t_runs(browser, base):
     st = mock.of('gi_runs', 'run_start')
     check('run_start posted when a game starts', len(st) == 1 and st[0]['start_country'] == 'isolde' and st[0]['level'] and st[0]['lang'] == 'en' and st[0]['seed'] is not None, st)
     rid = st[0]['run_id'] if st else None
-    check('run_start: run_id uuid, version, channel, no outcome', st and UUID_RE.match(rid) and st[0]['version'] == '10.18' and st[0]['outcome'] is None and st[0]['weeks'] == 0, st)
+    check('run_start: run_id uuid, version, channel, no outcome', st and UUID_RE.match(rid) and st[0]['version'] == '10.19' and st[0]['outcome'] is None and st[0]['weeks'] == 0, st)
     force_win(page)
     flush(page)
     en = mock.of('gi_runs', 'run_end')
@@ -208,6 +212,8 @@ def t_runs(browser, base):
     check('win: weeks, stars, score, held, peak share, notoriety fields', e.get('weeks', 0) >= 1 and e.get('stars') >= 1 and e.get('score') is not None and e.get('held') >= 1 and 0 < e.get('peak_share', 0) <= 1 and e.get('avg_noto') is not None and e.get('peak_noto') is not None, e)
     check('win: uprisings/coups/relocations/used_continue/session_min present', all(k in e for k in ('uprisings', 'coups', 'relocations', 'used_continue', 'session_min')) and e['used_continue'] is False, e)
     check('win: upgrades in the order bought', e.get('upgrades') == got, (e.get('upgrades'), got))
+    check('v10.19: breakup_week / cap_auto / cap_terms / win_type on run_end', all(k in e for k in ('breakup_week', 'cap_auto', 'cap_terms', 'win_type')) and e.get('win_type') in ('held', 'share'), e)
+    check('v10.19: run_start sends the new fields as null', all(k in st[0] and st[0][k] is None for k in ('breakup_week', 'cap_auto', 'cap_terms', 'win_type')), st)
     # continue playing -> run_continue, then the run ends again with run_final
     page.evaluate("document.getElementById('contPlay') && !document.getElementById('contPlay').hidden && document.getElementById('contPlay').click()")
     page.wait_for_timeout(200); flush(page)
@@ -380,6 +386,15 @@ def t_userid(browser, base):
 
 
 def t_missing(browser, base):
+    print('\n[old gi_runs columns]')
+    mock = Mock(); mock.mode['gi_runs'] = 'nocol'
+    page = open_game(browser, mock, base)
+    start(page); force_win(page); flush(page); flush(page)
+    ok_rows = [r for r in mock.reqs if r['t'] == 'gi_runs' and isinstance(r['body'], list) and not any('breakup_week' in x for x in r['body'])]
+    ends = [x for r in ok_rows for x in r['body'] if x.get('event') == 'run_end']
+    check('server without v10.19 columns: rows resent without them, run_end arrives', len(ends) == 1 and ends[0].get('outcome') == 'win', [(r['t'], len(r['body'])) for r in mock.reqs])
+    check('server without v10.19 columns: run data not switched off', page.evaluate("!(JSON.parse(localStorage.getItem('gi.tele.dead') || '{}').gi_runs > Date.now())"))
+    page.context.close()
     print('\n[missing tables]')
     mock = Mock(); mock.default = 404
     ctx = browser.new_context(viewport={'width': 1100, 'height': 760})

@@ -244,7 +244,7 @@ The World Order’s {} in {} collapses amid mysterious scheduling conflicts.	A V
 sanctions	szankciók
 Sanctions close the {}–{} trade route for 30 weeks.	A szankciók 30 hétre lezárják a {1}–{2} kereskedelmi útvonalat.
 Route closed	Útvonal lezárva
-{} counts the remaining undecided nations and asks for a glass of water. Unless 8 signatures become possible within 26 weeks, the treaty collapses.	{1} megszámolja a megmaradt bizonytalan nemzeteket, és egy pohár vizet kér. Ha 26 héten belül nem lesz lehetséges 8 aláírás, a szerződés összeomlik.
+{} counts the remaining undecided nations and asks for a glass of water. Unless 8 signatures become possible within 26 weeks, the World Order breaks up.	{1} megszámolja a megmaradt bizonytalan nemzeteket, és egy pohár vizet kér. Ha 26 héten belül nem lesz lehetséges 8 aláírás, a Világrend felbomlik.
 Treaty failing	A szerződés bukik
 The World Order finds enough undecided nations to keep the treaty alive.	A Világrend elég bizonytalan nemzetet talál, hogy életben tartsa a szerződést.
 {} withdraws its treaty signature. {} is “disappointed, procedurally”.	{1} visszavonja a szerződéshez adott aláírását. {2} „csalódott, eljárásilag”.
@@ -676,8 +676,8 @@ Collect {} Clout	Gyűjts be {1} befolyást
 Nothing announced. Next move in {} weeks.	Nincs bejelentés. Következő lépés {1} hét múlva.
 {} in {} in {} weeks	{1} itt: {2}, {3} hét múlva
 {} in {} in {} week	{1} itt: {2}, {3} hét múlva
-Only {} signatures still possible. The treaty collapses in {} weeks unless that changes	Már csak {1} aláírás lehetséges. A szerződés {2} hét múlva összeomlik, ha ez nem változik.
-Only {} signatures still possible. Align {}% of the world and the treaty starts to collapse	Már csak {1} aláírás lehetséges. Ha a világ {2}%-át megnyered, a szerződés elkezd összeomlani.
+Only {} signatures still possible. The World Order breaks up in {} weeks unless that changes	Már csak {1} aláírás lehetséges. A Világrend {2} hét múlva felbomlik, ha ez nem változik.
+Only {} signatures still possible. Align {}% of the world and the World Order starts to break up	Már csak {1} aláírás lehetséges. Hangold össze a világ {2}%-át, és a Világrend bomlani kezd.
 saved wk {}	mentve: {1}. hét
 not saved	nincs mentve
 game over	játék vége
@@ -1432,3 +1432,54 @@ Sending…	Küldés…
 Thank you. Your report was sent.	Köszönjük. A jelentést elküldtük.
 The server cannot be reached right now. Your report is saved on this device and will be sent automatically.	A szerver most nem érhető el. A jelentést elmentettük ezen az eszközön, és automatikusan elküldjük.
 Reporting is not available in this version.	Ebben a verzióban nem lehet jelentést küldeni.
+# v10.19 Step 9.1 endgame: Breakup, capitulation, Terms, new win
+Breakup	Felbomlás
+Capitulated	Kapitulált
+Capitulation	Kapituláció
+The endgame	A végjáték
+New phase	Új szakasz
+How the endgame works	Hogyan működik a végjáték
+The World Order has broken up	A Világrend felbomlott
+{} accepts your terms at the summit and capitulates. Support {}%, no unrest. The flags are swapped before lunch.	{1} a csúcstalálkozón elfogadja a feltételeidet és kapitulál. Támogatás {2}%, nincs nyugtalanság. A zászlókat még ebéd előtt lecserélik.
+{} capitulates. It stopped resisting weeks ago; now it is official. Support {}%, no unrest.	{1} kapitulál. Hetek óta nem állt ellen, most már hivatalos is. Támogatás {2}%, nincs nyugtalanság.
+Three quarters of the world agrees with you. Holdouts start to capitulate: support {}%+, not allied, not wary.	A világ háromnegyede egyetért veled. A kitartók elkezdenek kapitulálni: {1}%+ támogatás, nincs szövetségben, nem tart tőled.
+The World Order breaks up. {} hands in his lanyard; the treaty goes to a museum of good intentions. Members freed: {}. Notoriety −{}. Now win the rest: hold every country at once, or align {}% of the world.	A Világrend felbomlik. {1} leadja a belépőkártyáját; a szerződés a jó szándékok múzeumába kerül. Felszabadult tagok: {2}. Hírhedtség −{3}. Most nyerd meg a maradékot: tarts egyszerre minden országot, vagy hangold össze a világ {4}%-át.
+All {} countries are yours at once. The world wakes up aligned. Nobody remembers agreeing to it.	Egyszerre mind a(z) {1} ország a tiéd. A világ összehangolva ébred. Senki sem emlékszik, hogy beleegyezett volna.
+Held {}/{}	Kézben {1}/{2}
+Countries held (60%+ support), your base included	A kezedben lévő országok (60%+ támogatás), a bázisoddal együtt
+Win: hold all {} countries at once, or align {}%	Győzelem: tarts egyszerre mind a(z) {1} országot, vagy hangolj össze {2}%-ot
+You won. Now the whole world: 99% aligned ends the game	Nyertél. Most az egész világ: 99% összehangolásnál vége a játéknak
+World Order broke up in week {}	A Világrend a(z) {1}. héten felbomlott
+No treaty: the World Order broke up in week {}. {} capitulated so far	Nincs szerződés: a Világrend a(z) {1}. héten felbomlott. Eddig {2} ország kapitulált
+Broke up in week {}. {} countries capitulated so far.	Felbomlott a(z) {1}. héten. Eddig {2} ország kapitulált.
+Broke up in week {}	Felbomlott a(z) {1}. héten
+Capitulation starts after the World Order breaks up, or at {}% aligned	A kapituláció a Világrend felbomlása után indul, vagy {1}% összehangolásnál
+World Order member: it will not capitulate	Világrend-tag: nem kapitulál
+In the {}: win it over ({}%+) or split the alliance first	Tagja ennek: {1}. Előbb nyerd meg ({2}%+), vagy bontsd fel a szövetséget
+Needs {}% support to capitulate (now {}%)	A kapitulációhoz {1}% támogatás kell (most {2}%)
+Too wary to capitulate: {}%, needs below {}%	Túlságosan tart tőled a kapitulációhoz: {1}%, {2}% alatt kell lennie
+Capitulates in {} wk	Kapitulál {1} hét múlva
+Terms: a Summit here makes it capitulate now	Feltételek: egy itteni Csúcstalálkozó azonnal kapitulálásra kényszeríti
+Terms (a Summit here) makes it capitulate now	A Feltételek (egy itteni Csúcstalálkozó) azonnal kapitulálásra kényszerítik
+Terms (a Summit here) makes it capitulate now, needs 2 Diplomacy upgrades	A Feltételek (egy itteni Csúcstalálkozó) azonnal kapitulálásra kényszerítik, 2 Diplomácia-fejlesztés kell hozzá
+Terms: {} capitulates at once (support {}%, no unrest).	Feltételek: {1} azonnal kapitulál ({2}% támogatás, nincs nyugtalanság).
+Every country is yours	Minden ország a tiéd
+You held all {} countries at once in week {}.	A(z) {2}. héten egyszerre mind a(z) {1} ország a kezedben volt.
+You aligned {}% of the world in {} weeks.	A világ {1}%-át összehangoltad {2} hét alatt.
+The World Order broke up in week {}; {} countries capitulated after it.	A Világrend a(z) {1}. héten felbomlott; utána {2} ország kapitulált.
+The World Order broke up in week {}; {} country capitulated after it.	A Világrend a(z) {1}. héten felbomlott; utána {2} ország kapitulált.
+Notoriety {}, {} upgrades.	Hírhedtség {1}, {2} fejlesztés.
+You held all {} countries at once in week {}, with the Containment Treaty at {}% and Notoriety at {}.	A(z) {2}. héten egyszerre mind a(z) {1} ország a kezedben volt, a Megfékezési Szerződés {3}%-on, a Hírhedtség {4}-en állt.
+You aligned {}% of the world in {} weeks, with the Containment Treaty at {}% and Notoriety at {}.	A világ {1}%-át összehangoltad {2} hét alatt, a Megfékezési Szerződés {3}%-on, a Hírhedtség {4}-en állt.
+You bought {} upgrades.	{1} fejlesztést vásároltál.
+Win by holding all 16 countries (60%+ support) at the same time, or by aligning 90% of the world. Hold so many that the World Order can never reach 8 signatures for 26 weeks (while you align 40%+) and it breaks up; after that, countries that stop resisting capitulate. When 8 countries sign first, the treaty is ratified and Enforcement drains your support everywhere until you break it or fade away.	Nyerj úgy, hogy egyszerre mind a 16 országot a kezedben tartod (60%+ támogatás), vagy a világ 90%-át összehangolod. Tarts annyit, hogy a Világrend 26 hétig ne érhessen el 8 aláírást (miközben 40%+-ot összehangolsz), és felbomlik; utána az ellenállást feladó országok kapitulálnak. Ha előbb 8 ország aláír, a szerződést ratifikálják, és a Végrehajtás mindenhol fogyasztja a támogatásodat, amíg meg nem töröd, vagy el nem tűnsz.
+You win by holding all 16 countries (60%+ support, your base included) at the same time, or by aligning 90% of the world. The meter at the bottom shows how many you hold.	Akkor nyersz, ha egyszerre mind a 16 ország a kezedben van (60%+ támogatás, a bázisoddal együtt), vagy ha a világ 90%-át összehangolod. Az alsó mérő mutatja, hányat tartasz.
+When the World Order can no longer reach 8 signatures for 26 weeks (while you align 40%+), it breaks up. The treaty and Enforcement end, its members are free again (wary of you, but no longer bound), and your Notoriety drops by 20. The game goes on.	Ha a Világrend 26 hétig nem érheti el a 8 aláírást (miközben te 40%+-ot összehangolsz), felbomlik. A szerződés és a Végrehajtás véget ér, a tagjai újra szabadok (tartanak tőled, de már semmi sem köti őket), a Hírhedtséged pedig 20-szal csökken. A játék folytatódik.
+After the Breakup, or once you align 75% of the world, holdouts capitulate. A country that is not allied, not in the World Order, at 40%+ support and with wariness below 30% for 6 weeks in a row capitulates by itself: support 90%, no unrest.	A Felbomlás után, vagy ha a világ 75%-át összehangolod, a kitartók kapitulálnak. Az az ország, amely nincs szövetségben, nem tagja a Világrendnek, legalább 40% a támogatása, és 6 egymást követő héten át 30% alatt van, mennyire tart tőled, magától kapitulál: támogatás 90%, nincs nyugtalanság.
+Terms: a Summit (Diplomacy tier 2) on a country that could capitulate makes it capitulate at once, for the usual cost and cooldown. The dossier of each country tells you when it capitulates, or why it will not.	Feltételek: egy Csúcstalálkozó (Diplomácia, 2. szint) egy kapitulálni kész országban azonnali kapitulációt hoz, a szokásos költségért és várakozási idővel. Minden ország dossziéja megmutatja, mikor kapitulál, vagy miért nem.
+Wariness fades by itself; Military actions raise it sharply. Countries in an alliance must first be won over (60%+) or the alliance split (Diplomacy and Ideology actions break its cohesion). Coups and losing your base still end the game after the Breakup.	Az, hogy mennyire tartanak tőled, magától csökken; a Katonai akciók élesen növelik. A szövetségben lévő országokat előbb meg kell nyerni (60%+), vagy fel kell bontani a szövetséget (a Diplomácia és az Ideológia akciói megtörik az összetartását). A puccs és a bázis elvesztése a Felbomlás után is véget vet a játéknak.
+You held all {} countries at once in week {}. The World Order broke up in week {}; {} countries capitulated after it. Notoriety {}, {} upgrades.	A(z) {2}. héten egyszerre mind a(z) {1} ország a kezedben volt. A Világrend a(z) {3}. héten felbomlott; utána {4} ország kapitulált. Hírhedtség {5}, {6} fejlesztés.
+You held all {} countries at once in week {}. The World Order broke up in week {}; {} country capitulated after it. Notoriety {}, {} upgrades.	A(z) {2}. héten egyszerre mind a(z) {1} ország a kezedben volt. A Világrend a(z) {3}. héten felbomlott; utána {4} ország kapitulált. Hírhedtség {5}, {6} fejlesztés.
+You aligned {}% of the world in {} weeks. The World Order broke up in week {}; {} countries capitulated after it. Notoriety {}, {} upgrades.	A világ {1}%-át összehangoltad {2} hét alatt. A Világrend a(z) {3}. héten felbomlott; utána {4} ország kapitulált. Hírhedtség {5}, {6} fejlesztés.
+You aligned {}% of the world in {} weeks. The World Order broke up in week {}; {} country capitulated after it. Notoriety {}, {} upgrades.	A világ {1}%-át összehangoltad {2} hét alatt. A Világrend a(z) {3}. héten felbomlott; utána {4} ország kapitulált. Hírhedtség {5}, {6} fejlesztés.
+You held all {} countries at once in week {}, with the Containment Treaty at {}% and Notoriety at {}. You bought {} upgrades.	A(z) {2}. héten egyszerre mind a(z) {1} ország a kezedben volt, a Megfékezési Szerződés {3}%-on, a Hírhedtség {4}-en állt. {5} fejlesztést vásároltál.
