@@ -1065,12 +1065,17 @@ function collectBubble(s, key) {
   return v;
 }
 
-function counterCampaign(s, target, amt) {
+function counterCampaign(s, target, amt, by) {   // by 'gc': a Grand Coalition crackdown (v10.21)
   const fc = Math.min(.9, s.stats.fcRed + perk(s).fc);
   const t = byId(target);
   s.inf[t.id] = Math.max(0, s.inf[t.id] - (amt || 10) * (1 - fc));
-  s.mods.push({ id: t.id, kind: 'counter', src: 'World Order campaign', until: s.week + Math.round(25 * (1 - fc / 2)) });
-  const lines = [
+  s.mods.push({ id: t.id, kind: 'counter', src: by === 'gc' ? 'Grand Coalition crackdown' : 'World Order campaign', until: s.week + Math.round(25 * (1 - fc / 2)) });
+  const lines = by === 'gc' ? [
+    `Grand Coalition crackdown in ${t.name}. Leaflets feature a stern owl and several flags.`,
+    `Fact-checkers descend on ${t.name}. Your slogans rated \u201cmostly vibes\u201d.`,
+    `The Grand Coalition funds ${t.name} civics classes. Attendance: mandatory, enthusiasm: optional.`,
+    `${t.name} bans your pamphlets, then prints more to explain the ban.`
+  ] : [
     `World Order launches awareness campaign in ${t.name}. Leaflets feature a stern owl.`,
     `Fact-checkers descend on ${t.name}. Your slogans rated \u201cmostly vibes\u201d.`,
     `World Order funds ${t.name} civics classes. Attendance: mandatory, enthusiasm: optional.`,
@@ -1829,7 +1834,7 @@ function gcTick(s) {
   // crackdowns: announced gcLead weeks ahead; Martyr Narrative / campaign immunity stop them
   G.queue.filter(q => q.at <= s.week).forEach(q => {
     if (hasMod(s, q.target, 'noCampaign')) { addNews(s, `The Grand Coalition's crackdown in ${nm(q.target)} finds only martyrs and cameras. Called off.`, 'you'); return; }
-    counterCampaign(s, q.target, q.amt); addUnrest(s, q.target, UNREST.crack);
+    counterCampaign(s, q.target, q.amt, 'gc'); addUnrest(s, q.target, UNREST.crack);
   });
   G.queue = G.queue.filter(q => q.at > s.week);
   if (s.week >= G.nextCrack) {
