@@ -36,7 +36,9 @@ window.GIAccounts = (() => {
     async load(s) { return readJSON('gi.save.' + s.email); },
     async save(s, rec) { if (!LS.set('gi.save.' + s.email, JSON.stringify(rec))) fail('Browser storage is full or blocked.'); },
     saveSync(s, rec) { LS.set('gi.save.' + s.email, JSON.stringify(rec)); },
-    async clear(s) { LS.del('gi.save.' + s.email); }
+    async clear(s) { LS.del('gi.save.' + s.email); },
+    // v10.23: deleting a device profile removes its name and its save from this browser
+    async remove(s) { LS.del('gi.save.' + s.email); LS.set('gi.profiles', JSON.stringify(this.profiles().filter(n => n !== s.email))); }
   };
 
   // Online accounts: Supabase Auth (email + password, stored by Supabase as bcrypt hashes) and a `saves` table
@@ -54,6 +56,7 @@ window.GIAccounts = (() => {
       if (/email not confirmed/i.test(m)) return 'This account still needs email confirmation.';
       if (/same_password/.test(code)) return 'The new password must differ from the old one.';
       if (status === 429 || /over_.*rate_limit/.test(code)) return 'Too many attempts. Wait a few minutes and try again.';
+      if (ctx === 'delete' && (status === 404 || /PGRST202/.test(code))) return 'Account deletion is not available yet. Please try again later.';
       return m || 'Server error ' + status;
     }
     async function call(path, opt, ctx) {
@@ -94,7 +97,12 @@ window.GIAccounts = (() => {
       async load(s) { const rows = await call('/rest/v1/saves?select=state&user_id=eq.' + encodeURIComponent(s.uid), { headers: H(s.access) }); return rows && rows[0] ? rows[0].state : null; },
       async save(s, rec) { await call('/rest/v1/saves?on_conflict=user_id', upsert(s, rec)); },
       saveSync(s, rec) { try { fetch(cfg.url + '/rest/v1/saves?on_conflict=user_id', Object.assign({ keepalive: true }, upsert(s, rec))).catch(() => {}); } catch { /* page closing */ } },
-      async clear(s) { await call('/rest/v1/saves?user_id=eq.' + encodeURIComponent(s.uid), { method: 'DELETE', headers: H(s.access) }); }
+      async clear(s) { await call('/rest/v1/saves?user_id=eq.' + encodeURIComponent(s.uid), { method: 'DELETE', headers: H(s.access) }); },
+      // v10.23: gi_delete_my_account (tools/supabase-v10.23.sql) removes the auth user; saves and the ranking entry go with it
+      async remove(s) {
+        const r = await call('/rest/v1/rpc/gi_delete_my_account', { method: 'POST', headers: H(s.access), body: '{}' }, 'delete');
+        if (!r || r.ok !== true) fail('Could not delete the account. Try again later.');
+      }
     };
   }
 
@@ -172,6 +180,8 @@ window.GIAccounts = (() => {
     async save(rec) { return backend.save(await fresh(), rec); },
     saveSync(rec) { if (session) backend.saveSync(session, rec); },
     async clear() { return backend.clear(await fresh()); },
+    // v10.23: delete the account and its data (online), or the device profile; then sign out
+    async deleteAccount() { const s = await fresh(); await backend.remove(s); session = null; persist(); },
     // v10.22: a fresh access token for the ranking functions (online accounts only)
     async token() { if (!session || backend.kind !== 'supabase') return null; return (await fresh()).access; }
   };

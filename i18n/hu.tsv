@@ -1613,3 +1613,10 @@ Week {} · {}	{1}. hét · {2}
 Saved game	Mentett játék
 Your saved game (week {}) was made with a different version of the game and cannot be continued. You can start a new game.	A mentett játékod ({1}. hét) a játék egy másik verziójával készült, ezért nem folytatható. Kezdhetsz új játékot.
 Your saved game could not be loaded. You can start a new game.	A mentett játékodat nem sikerült betölteni. Kezdhetsz új játékot.
+Delete account	Fiók törlése
+Delete your account and all its data? This cannot be undone.	Törlöd a fiókodat és minden adatát? Ez nem vonható vissza.
+Delete	Törlés
+Privacy policy	Adatvédelmi nyilatkozat
+About	Névjegy
+Account deletion is not available yet. Please try again later.	A fióktörlés még nem érhető el. Próbáld meg később.
+Could not delete the account. Try again later.	A fiók törlése nem sikerült. Próbáld meg később.

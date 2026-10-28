@@ -16,23 +16,22 @@ Chrome only offers install and offline mode on HTTPS or `localhost`. Two ways:
 
 Installed, it runs fullscreen and works offline (fonts are bundled). Online accounts still need a connection.
 
-## 3. Build the APK / Play Store bundle (Capacitor)
-Needs Node 20+, JDK 17+ and Android Studio (for the SDK).
+## 3. Build the Play bundle (Capacitor 8)
+Needs Node 22+, JDK 21 and the Android SDK. Easiest: let GitHub build it, see `docs/PLAY.md` (workflow `Android release`, signed with your upload key from the repo secrets).
+
+Locally:
 ```bash
 npm install
-npm run android:add      # once: creates android/
-npm run android:open     # opens Android Studio
+npx cap add android            # once: creates android/ (not committed)
+npm run android:aab            # web -> cap sync -> tools/android-prepare.js -> gradlew bundleRelease
 ```
-In Android Studio: plug in the phone and press Run, or Build → Generate Signed Bundle / APK for Play Store (`.aab`).
-After any change to the game: `npm run android:sync`.
-
-CLI debug build instead: `cd android && ./gradlew assembleDebug` → `android/app/build/outputs/apk/debug/app-debug.apk`. Copy it to the phone and open it (allow "install unknown apps").
+`tools/android-prepare.js` copies the icons/splash (`android-res/`), sets version (VERSION file, `GI_VERSION_CODE`) and, when `GI_KEYSTORE*` env vars are set, release signing. Output: `android/app/build/outputs/bundle/release/app-release.aab`.
+Debug APK instead: `cd android && ./gradlew assembleDebug`.
 
 ## Before publishing on Google Play
-- `appId` in `capacitor.config.json` (`app.globalideology.game`) is permanent once published. Change it first if you want another.
-- Create your own signing key and keep it safe: `keytool -genkey -v -keystore release.jks -alias gi -keyalg RSA -keysize 2048 -validity 10000`. It is gitignored.
-- Play needs a privacy policy URL because accounts collect email, and a 512 px icon and screenshots.
-- Replace `icons/icon.svg` (placeholder artwork) with real art, then regenerate the PNGs.
+Follow `docs/PLAY.md` (key, listing text, declarations, closed test).
+- `appId` (`app.globalideology.game`) is permanent once uploaded.
+- Art: `python3 tools/make-assets.py` regenerates icons from one drawing; `python3 tools/make-screenshots.py` regenerates the store screenshots; `python3 tools/make-privacy.py` the privacy pages.
 
 ## Editing notes
 - Phone layouts are the last CSS block in `index.html` ("Phone and touch").

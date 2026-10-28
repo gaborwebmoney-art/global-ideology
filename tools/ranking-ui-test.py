@@ -65,6 +65,8 @@ class Server:
             if not re.match(r'^[A-Za-z0-9_]{3,20}$', a['p_name'] or ''): return dict(ok=False, why='name')
             if any(p['name'].lower() == a['p_name'].lower() for u, p in self.players.items() if u != uid): return dict(ok=False, why='taken')
             self.players[uid] = dict(name=a['p_name'], country=a.get('p_country')); return dict(ok=True)
+        if fn == 'gi_delete_my_account':
+            self.players.pop(uid, None); self.scores = [x for x in self.scores if x['user'] != uid]; self.deleted = True; return dict(ok=True)
         if fn == 'gi_leave_ranking':
             self.players.pop(uid, None); self.scores = [s for s in self.scores if s['user'] != uid]; return dict(ok=True)
         if fn == 'gi_submit_score':
@@ -211,6 +213,21 @@ def claim_flow(browser, base):
     wait(page, "!document.getElementById('endOv').hidden && !!document.querySelector('#endRank [data-rjoin]')")
     sub = [c for c in srv.calls if c[0] == 'gi_submit_score']
     check('claim: the guest win is submitted for the new account', len(sub) == 1 and sub[0][1]['p_run'] == run, sub)
+    # v10.23: delete my account from More (Google Play requirement)
+    page.evaluate("document.getElementById('endOv').hidden = true; document.getElementById('pickbar').hidden = true")
+    page.click('#moreBtn'); page.wait_for_timeout(200)
+    check('delete: Account section shows when logged in', page.is_visible('#acctSec') and page.is_visible('#delAcct'))
+    page.click('#delAcct'); page.wait_for_timeout(100)
+    check('delete: asks first, nothing sent yet', page.is_visible('#delAsk') and not getattr(srv, 'deleted', False))
+    page.click('#delNo'); page.wait_for_timeout(100)
+    check('delete: Cancel goes back', page.is_visible('#delAcct') and not getattr(srv, 'deleted', False))
+    page.click('#delAcct'); page.click('#delYes'); wait(page, "!document.getElementById('authOv').hidden")
+    check('delete: server function called with the login token, account removed', getattr(srv, 'deleted', False) and srv.uid not in srv.players)
+    check('delete: signed out, back at the login screen, no saved session', page.evaluate("localStorage.getItem('gi.session')") is None and page.evaluate("__GI.S") is None)
+    check('delete: no device copy of the game left', page.evaluate("localStorage.getItem('gi.cur')") is None)
+    page.click('#authGuest'); page.wait_for_timeout(200); page.evaluate("document.getElementById('introOv').hidden = true"); page.click('#moreBtn'); page.wait_for_timeout(200)
+    check('delete: guests have no Account section', not page.is_visible('#acctSec'))
+    check('delete: Privacy policy entry is in More', page.is_visible('#privOpen'))
     check('claim: no page errors', not errs, errs)
     ctx.close()
 
