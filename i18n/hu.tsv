@@ -1545,3 +1545,68 @@ The Grand Coalition held together for {} weeks and wrote you out of history in w
 Grand Coalition crackdown in {}. Leaflets feature a stern owl and several flags.	Nagykoalíciós leszámolás itt: {1}. A szórólapokon szigorú bagoly és több zászló.
 The Grand Coalition funds {} civics classes. Attendance: mandatory, enthusiasm: optional.	A Nagykoalíció állampolgári ismeretek órákat finanszíroz itt: {1}. Részvétel: kötelező, lelkesedés: opcionális.
 Grand Coalition crackdown	Nagykoalíciós leszámolás
+# v10.22 global ranking, guest play, 16+
+Play without an account	Játék fiók nélkül
+No email needed, so players under 16 can play too. Your game is not saved and you do not appear in the ranking.	Nem kell e-mail, így 16 év alatti játékosok is játszhatnak. A játékod nem mentődik, és nem kerülsz be a ranglistába.
+I am 16 or older. Younger players can play without an account.	Elmúltam 16 éves. A fiatalabbak fiók nélkül játszhatnak.
+Accounts are for players aged 16 or older. Younger players can play without an account.	Fiókot 16 éves kortól lehet létrehozni. A fiatalabbak fiók nélkül játszhatnak.
+Global ranking	Világranglista
+Ranking	Ranglista
+Top 100	Top 100
+This week	Ezen a héten
+All time	Mindenkori
+Ctry	Orsz.
+Player	Játékos
+Stars	Csillag
+Score	Pontszám
+Best run per player since Monday 00:00 (Budapest time). Only players who chose a ranking name are listed.	Játékosonként a legjobb játszma hétfő 00:00 (budapesti idő) óta. Csak a ranglistanevet választó játékosok szerepelnek.
+Best run per player, all time. Only players who chose a ranking name are listed.	Játékosonként a valaha volt legjobb játszma. Csak a ranglistanevet választó játékosok szerepelnek.
+Best run per player since Monday 00:00 (Budapest time). Only players who chose a ranking name are listed. Beta: your scores are not sent to the ranking.	Játékosonként a legjobb játszma hétfő 00:00 (budapesti idő) óta. Csak a ranglistanevet választó játékosok szerepelnek. Béta: a pontjaid nem kerülnek a ranglistára.
+Best run per player, all time. Only players who chose a ranking name are listed. Beta: your scores are not sent to the ranking.	Játékosonként a valaha volt legjobb játszma. Csak a ranglistanevet választó játékosok szerepelnek. Béta: a pontjaid nem kerülnek a ranglistára.
+Loading the ranking…	A ranglista betöltése…
+The ranking cannot be loaded right now. Check your connection and try again.	A ranglista most nem tölthető be. Ellenőrizd a kapcsolatot, és próbáld újra.
+No ranked wins on this level this week yet. The first one takes #1.	Ezen a szinten ezen a héten még nincs rangsorolt győzelem. Az első rögtön az 1. hely.
+No ranked wins on this level yet.	Ezen a szinten még nincs rangsorolt győzelem.
+You · {}	Te · {1}
+You (not listed)	Te (nem szerepelsz)
+{} points to pass {}.	{1} pont kell, hogy megelőzd: {2}.
+No online server is set up for this game.	Ehhez a játékhoz nincs online szerver beállítva.
+Beta: browse only.	Béta: csak böngészés.
+Log in to appear here. Accounts are for players aged 16 or older.	Jelentkezz be, hogy itt szerepelj. Fiók 16 éves kortól.
+You are not listed yet.	Még nem szerepelsz.
+Join the ranking	Csatlakozás a ranglistához
+Pick a ranking name	Válassz ranglistanevet
+Your ranking name	A ranglistaneved
+Your best scores appear in the public Top 100 under this name. Your email is never shown.	A legjobb pontjaid ezen a néven jelennek meg a nyilvános Top 100-ban. Az e-mail-címed sosem látszik.
+Ranking name	Ranglistanév
+3–20 letters, digits or _. It does not have to be your real name. You can change it once every 30 days.	3–20 betű, számjegy vagy _. Nem kell a valódi neved legyen. 30 naponta egyszer módosíthatod.
+Country (optional)	Ország (nem kötelező)
+You choose it; it is never looked up from your connection.	Te választod; sosem a kapcsolatodból állapítjuk meg.
+Don’t show a country	Ne mutass országot
+I am 16 or older.	Elmúltam 16 éves.
+Show my ranking name, country and best scores publicly. I can leave the ranking at any time in More, and my entry and scores are deleted.	A ranglistanevem, az országom és a legjobb pontjaim nyilvánosan látszhatnak. Bármikor kiléphetek a ranglistából a Továbbiak menüben, ekkor a bejegyzésem és a pontjaim törlődnek.
+Not now	Most nem
+Save	Mentés
+Leave the ranking	Kilépés a ranglistából
+Tap again: delete my entry and scores	Koppints újra: a bejegyzésem és a pontjaim törlése
+The ranking is for players aged 16 or older.	A ranglista 16 éves kortól használható.
+Tick the box to show your name and scores publicly.	Jelöld be a négyzetet, hogy a neved és a pontjaid nyilvánosan látszódjanak.
+Use 3–20 letters, digits or _.	3–20 betűt, számjegyet vagy _ jelet használj.
+That name is not allowed. Pick another one.	Ez a név nem engedélyezett. Válassz másikat.
+That name is taken. Pick another one.	Ez a név foglalt. Válassz másikat.
+Pick a country from the list.	Válassz országot a listából.
+Log in first.	Előbb jelentkezz be.
+Something went wrong. Try again.	Valami hiba történt. Próbáld újra.
+You can change your ranking name again on {}.	A ranglistanevedet ekkor módosíthatod újra: {1}.
+Cannot reach the game server. Check your connection.	A játékszerver nem érhető el. Ellenőrizd a kapcsolatot.
+Ranking name: {} · change or leave	Ranglistanév: {1} · módosítás vagy kilépés
+Global ranking · {}	Világranglista · {1}
+#{} this week	{1}. hely ezen a héten
+All time: #{}. {} points behind {}.	Mindenkori: {1}. hely. {2} ponttal lemaradva tőle: {3}.
+All time: #{}.	Mindenkori: {1}. hely.
+Join the ranking to appear there under a name you choose.	Csatlakozz a ranglistához, hogy egy általad választott néven ott szerepelj.
+This score would be #{} this week. Create a free account (16+) to claim it.	Ezzel a ponttal a(z) {1}. hely lenne a tiéd ezen a héten. Hozz létre ingyenes fiókot (16+), hogy megszerezd.
+This score would be #{} this week.	Ezzel a ponttal a(z) {1}. hely lenne a tiéd ezen a héten.
+Create account	Fiók létrehozása
+See ranking	Ranglista megnyitása
+Week {} · {}	{1}. hét · {2}

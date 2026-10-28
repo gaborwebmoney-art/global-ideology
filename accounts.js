@@ -171,6 +171,8 @@ window.GIAccounts = (() => {
     async load() { return backend.load(await fresh()); },
     async save(rec) { return backend.save(await fresh(), rec); },
     saveSync(rec) { if (session) backend.saveSync(session, rec); },
-    async clear() { return backend.clear(await fresh()); }
+    async clear() { return backend.clear(await fresh()); },
+    // v10.22: a fresh access token for the ranking functions (online accounts only)
+    async token() { if (!session || backend.kind !== 'supabase') return null; return (await fresh()).access; }
   };
 })();
