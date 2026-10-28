@@ -161,7 +161,7 @@ def walk(browser, base, device, lang):
     check(f'{tag}: logged-in win', w == 'win', page.evaluate("JSON.stringify({ over: __GI.S && __GI.S.over, week: __GI.S && __GI.S.week, sess: !!GIAccounts.session(), ov: ['authOv','resumeOv','introOv','endOv'].filter(k => !document.getElementById(k).hidden) })") if w != 'win' else '')
     wait(page, "!document.getElementById('endRank').hidden")
     sub = [c for c in srv.calls if c[0] == 'gi_submit_score']
-    check(f'{tag}: win submitted with plausible values', len(sub) == 1 and sub[0][2] and sub[0][1]['p_level'] in ('casual', 'normal', 'brutal') and sub[0][1]['p_weeks'] >= 60 and sub[0][1]['p_version'] == '10.23', sub)
+    check(f'{tag}: win submitted with plausible values', len(sub) == 1 and sub[0][2] and sub[0][1]['p_level'] in ('casual', 'normal', 'brutal') and sub[0][1]['p_weeks'] >= 60 and sub[0][1]['p_version'] == '10.24', sub)
     check(f'{tag}: server accepted it', any(s['user'] == srv.uid for s in srv.scores), sub)
     t = page.evaluate("document.getElementById('endRank').innerText")
     check(f'{tag}: end screen offers Join', page.evaluate("!!document.querySelector('#endRank [data-rjoin]')"), t)
@@ -215,7 +215,7 @@ def claim_flow(browser, base):
     check('claim: the guest win is submitted for the new account', len(sub) == 1 and sub[0][1]['p_run'] == run, sub)
     # v10.23: delete my account from More (Google Play requirement)
     page.evaluate("document.getElementById('endOv').hidden = true; document.getElementById('pickbar').hidden = true")
-    page.click('#moreBtn'); page.wait_for_timeout(200)
+    page.click('#moreBtn'); page.click('#setOpen'); page.wait_for_timeout(200)   # v10.24: Menu -> Settings
     check('delete: Account section shows when logged in', page.is_visible('#acctSec') and page.is_visible('#delAcct'))
     page.click('#delAcct'); page.wait_for_timeout(100)
     check('delete: asks first, nothing sent yet', page.is_visible('#delAsk') and not getattr(srv, 'deleted', False))

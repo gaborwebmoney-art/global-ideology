@@ -37,19 +37,19 @@ EN = {
 <li>The game sends anonymous gameplay data (you can switch this off), crash reports, and bug reports only if you send them.</li>
 <li>The public ranking is opt-in. Only the ranking name you choose and your scores are shown.</li>
 <li>There are no ads, no advertising or analytics SDKs, no tracking across apps or sites, and your data is never sold.</li>
-<li>You can delete your account and its data inside the game (<em>More → Account → Delete account</em>) or on the <a href="delete-account.html">account deletion page</a>.</li>
+<li>You can delete your account and its data inside the game (<em>Menu (⋯) → Settings → Account and data → Delete account</em>) or on the <a href="delete-account.html">account deletion page</a>.</li>
 </ul>'''),
         ('What stays on your device', '''<p>The game keeps its save, settings (language, text size, map view, news pause, data-sharing choice) and a random anonymous device ID in the app's local storage. Uninstalling the app or clearing its storage removes all of it. If you play without an account, the running game is also kept there so it can continue after the app is closed.</p>'''),
         ('Data the game sends', '''<table>
 <tr><th>What</th><th>Data</th><th>Why</th><th>Your choice</th></tr>
-<tr><td>Gameplay data</td><td>Random anonymous device ID, app version, language, difficulty, start country, random seed, the upgrades you buy, outcome, weeks played, score and similar game statistics, minutes of play. If you are logged in, your account's internal ID is attached.</td><td>To balance and fix the game.</td><td>On by default. Switch off in <em>More → Share anonymous gameplay data</em>.</td></tr>
+<tr><td>Gameplay data</td><td>Random anonymous device ID, app version, language, difficulty, start country, random seed, the upgrades you buy, outcome, weeks played, score and similar game statistics, minutes of play. If you are logged in, your account's internal ID is attached.</td><td>To balance and fix the game.</td><td>On by default. Switch off in <em>Menu → Settings → Share anonymous gameplay data</em>.</td></tr>
 <tr><td>Crash reports</td><td>The error message and technical trace, app version, device/browser identification string, screen size, language, and game context (week, difficulty, start country). Anonymous device ID, plus the account ID if you are logged in.</td><td>To find and fix bugs. Without them crashes would go unnoticed.</td><td>Always sent.</td></tr>
 <tr><td>Bug reports</td><td>The text you write, the optional contact you type, a snapshot of the game state, and the same technical context as crash reports.</td><td>To answer and fix what you report.</td><td>Only when you press send.</td></tr>
 </table>
 <p>None of this includes your name or email address. We do not try to identify you from it.</p>'''),
         ('Accounts', '''<p>If you create an account we store your <strong>email address</strong> and a <strong>hashed password</strong> (we never see or store the password itself), and your <strong>saved game</strong>. The email address is used only to sign you in, to send password-reset emails, and to contact you about your account. Accounts and saves are handled by Supabase (see below).</p>
 <p>You must be at least 16 years old to create an account. Younger players can play without one.</p>'''),
-        ('Global ranking (optional)', '''<p>You can join the public ranking after logging in. If you do, the ranking shows the <strong>ranking name</strong> you choose (please do not use your real name), an optional <strong>country</strong> you choose, and your winning scores (difficulty, score, stars, weeks, start country). Anyone can see the ranking. Leaving the ranking (<em>More</em>, your ranking name, then <em>Leave the ranking</em>) deletes your ranking name and scores.</p>'''),
+        ('Global ranking (optional)', '''<p>You can join the public ranking after logging in. If you do, the ranking shows the <strong>ranking name</strong> you choose (please do not use your real name), an optional <strong>country</strong> you choose, and your winning scores (difficulty, score, stars, weeks, start country). Anyone can see the ranking. Leaving the ranking (<em>Menu</em>, your ranking name, then <em>Leave the ranking</em>) deletes your ranking name and scores.</p>'''),
         ('Who processes the data', '''<ul>
 <li><strong>Supabase</strong> (database and sign-in): accounts, saves, ranking, gameplay data, crash and bug reports. The project is hosted in the EU (Frankfurt, Germany).</li>
 <li><strong>GitHub Pages</strong> (hosting of the web game and these pages): GitHub may log technical connection data such as IP addresses when the web game or app loads.</li>
@@ -79,19 +79,19 @@ HU = {
 <li>A játék névtelen játékadatokat (ezt kikapcsolhatod) és összeomlási jelentéseket küld; hibajelentést csak akkor, ha te elküldöd.</li>
 <li>A nyilvános ranglistán való részvétel önkéntes. Csak az általad választott ranglistanév és az eredményeid látszanak.</li>
 <li>Nincsenek hirdetések, hirdetési vagy analitikai SDK-k, alkalmazások és oldalak közötti követés, és az adataidat soha nem adjuk el.</li>
-<li>A fiókodat és adatait törölheted a játékban (<em>Továbbiak → Fiók → Fiók törlése</em>) vagy a <a href="delete-account.html">fióktörlési oldalon</a>.</li>
+<li>A fiókodat és adatait törölheted a játékban (<em>Menü (⋯) → Beállítások → Fiók és adatok → Fiók törlése</em>) vagy a <a href="delete-account.html">fióktörlési oldalon</a>.</li>
 </ul>'''),
         ('Mi marad az eszközödön', '''<p>A játék az alkalmazás helyi tárhelyén tárolja a mentést, a beállításokat (nyelv, szövegméret, térképnézet, hírek szüneteltetése, adatmegosztási döntés) és egy véletlenszerű, névtelen eszközazonosítót. Az alkalmazás eltávolítása vagy a tárhely törlése mindezt törli. Ha fiók nélkül játszol, a folyamatban lévő játék is itt marad, hogy az alkalmazás bezárása után folytatható legyen.</p>'''),
         ('Milyen adatokat küld a játék', '''<table>
 <tr><th>Mit</th><th>Adatok</th><th>Miért</th><th>Te döntesz</th></tr>
-<tr><td>Játékadatok</td><td>Véletlenszerű névtelen eszközazonosító, alkalmazásverzió, nyelv, nehézség, kezdőország, véletlen mag, a megvásárolt fejlesztések, kimenetel, lejátszott hetek, pontszám és hasonló játékstatisztikák, játékperc. Ha be vagy jelentkezve, a fiókod belső azonosítója is csatolódik.</td><td>A játék kiegyensúlyozása és javítása.</td><td>Alapból bekapcsolva. Kikapcsolható: <em>Továbbiak → Névtelen játékadatok megosztása</em>.</td></tr>
+<tr><td>Játékadatok</td><td>Véletlenszerű névtelen eszközazonosító, alkalmazásverzió, nyelv, nehézség, kezdőország, véletlen mag, a megvásárolt fejlesztések, kimenetel, lejátszott hetek, pontszám és hasonló játékstatisztikák, játékperc. Ha be vagy jelentkezve, a fiókod belső azonosítója is csatolódik.</td><td>A játék kiegyensúlyozása és javítása.</td><td>Alapból bekapcsolva. Kikapcsolható: <em>Menü → Beállítások → Névtelen játékadatok megosztása</em>.</td></tr>
 <tr><td>Összeomlási jelentések</td><td>A hibaüzenet és a technikai nyom, alkalmazásverzió, eszköz/böngésző azonosító szöveg, képernyőméret, nyelv és játékkörnyezet (hét, nehézség, kezdőország). Névtelen eszközazonosító, bejelentkezve a fiók azonosítója is.</td><td>Hibák felderítése és javítása. Nélkülük az összeomlások észrevétlenek maradnának.</td><td>Mindig elküldődnek.</td></tr>
 <tr><td>Hibajelentések</td><td>Az általad írt szöveg, az opcionálisan megadott elérhetőség, a játékállás pillanatképe és az összeomlási jelentésekkel megegyező technikai környezet.</td><td>A bejelentett hiba megválaszolása és javítása.</td><td>Csak akkor, ha elküldöd.</td></tr>
 </table>
 <p>Ezek nem tartalmazzák a neved vagy e-mail-címed, és nem is próbálunk belőlük azonosítani.</p>'''),
         ('Fiókok', '''<p>Ha fiókot hozol létre, eltároljuk az <strong>e-mail-címedet</strong>, a jelszavad <strong>kivonatát</strong> (magát a jelszót sosem látjuk és nem tároljuk) és a <strong>mentett játékodat</strong>. Az e-mail-címet kizárólag a bejelentkeztetéshez, jelszó-visszaállító levelekhez és a fiókoddal kapcsolatos kapcsolatfelvételhez használjuk. A fiókokat és mentéseket a Supabase kezeli (lásd lent).</p>
 <p>Fiók létrehozásához legalább 16 évesnek kell lenned. Fiatalabb játékosok fiók nélkül játszhatnak.</p>'''),
-        ('Világranglista (önkéntes)', '''<p>Bejelentkezés után csatlakozhatsz a nyilvános ranglistához. Ekkor a ranglista az általad választott <strong>ranglistanevet</strong> (kérjük, ne a valódi neved használd), egy opcionálisan választott <strong>országot</strong> és a győztes eredményeidet (nehézség, pontszám, csillagok, hetek, kezdőország) mutatja. A ranglistát bárki láthatja. A ranglistáról való kilépés (<em>Továbbiak</em>, a ranglistanevedre koppintva, majd <em>Kilépés a ranglistából</em>) törli a ranglistanevedet és az eredményeidet.</p>'''),
+        ('Világranglista (önkéntes)', '''<p>Bejelentkezés után csatlakozhatsz a nyilvános ranglistához. Ekkor a ranglista az általad választott <strong>ranglistanevet</strong> (kérjük, ne a valódi neved használd), egy opcionálisan választott <strong>országot</strong> és a győztes eredményeidet (nehézség, pontszám, csillagok, hetek, kezdőország) mutatja. A ranglistát bárki láthatja. A ranglistáról való kilépés (<em>Menü</em>, a ranglistanevedre koppintva, majd <em>Kilépés a ranglistából</em>) törli a ranglistanevedet és az eredményeidet.</p>'''),
         ('Ki dolgozza fel az adatokat', '''<ul>
 <li><strong>Supabase</strong> (adatbázis és bejelentkezés): fiókok, mentések, ranglista, játékadatok, összeomlási és hibajelentések. A projekt az EU-ban (Frankfurt, Németország) fut.</li>
 <li><strong>GitHub Pages</strong> (a webes játék és ezek az oldalak tárhelye): a GitHub technikai kapcsolati adatokat, például IP-címeket naplózhat, amikor a webes játék vagy az alkalmazás betöltődik.</li>
@@ -128,14 +128,14 @@ DEL = f'''<!doctype html>
 <body><main><a class="lang" href="privacy.html">Privacy policy</a>
 <h1>Global Ideology<br>Delete your account</h1><p class="meta">Account deletion page for the Global Ideology app (Android) and web game. / Fióktörlés a Global Ideology alkalmazáshoz és webes játékhoz.</p>
 <h2>In the game (fastest)</h2>
-<ol><li>Log in to your account.</li><li>Open <em>More</em> (the <strong>⋯</strong> button) → <em>Account</em> → <em>Delete account</em>.</li><li>Confirm. Your account is removed immediately and you are logged out.</li></ol>
+<ol><li>Log in to your account.</li><li>Open the <em>Menu</em> (the <strong>⋯</strong> button) → <em>Settings</em> → <em>Account and data</em> → <em>Delete account</em>.</li><li>Confirm. Your account is removed immediately and you are logged out.</li></ol>
 <h2>If you cannot log in</h2>
 <p>Write to the developer from the email address of the account, using the contact email on the game's Google Play page, and ask for the account to be deleted. The request is handled within 30 days.</p>
 <h2>What is deleted</h2>
 <ul><li>Your account, email address and hashed password.</li><li>Your saved game.</li><li>Your ranking name, country and ranking scores.</li><li>Gameplay data, crash reports and bug reports still attached to your account ID are detached from it, so they are anonymous afterwards. They are removed at the latest after {RETENTION}.</li></ul>
 <p>Data kept on your own device is removed by uninstalling the app or clearing its storage.</p>
 <h2>Magyarul</h2>
-<p><strong>A játékban:</strong> jelentkezz be, majd <em>Továbbiak (⋯) → Fiók → Fiók törlése</em>, és erősítsd meg. A fiók azonnal törlődik. <strong>Ha nem tudsz bejelentkezni:</strong> írj a fiók e-mail-címéről a játék Google Play oldalán megadott kapcsolati e-mail-címre; a kérést 30 napon belül teljesítjük. Törlődik a fiókod, az e-mail-címed, a mentésed, a ranglistanevet és az eredményeid; a még a fiókodhoz kötött játékadatok, összeomlási és hibajelentések leválnak róla (utána névtelenek), és legkésőbb {RETENTION.replace('months', 'hónap')} után törlődnek.</p>
+<p><strong>A játékban:</strong> jelentkezz be, majd <em>Menü (⋯) → Beállítások → Fiók és adatok → Fiók törlése</em>, és erősítsd meg. A fiók azonnal törlődik. <strong>Ha nem tudsz bejelentkezni:</strong> írj a fiók e-mail-címéről a játék Google Play oldalán megadott kapcsolati e-mail-címre; a kérést 30 napon belül teljesítjük. Törlődik a fiókod, az e-mail-címed, a mentésed, a ranglistanevet és az eredményeid; a még a fiókodhoz kötött játékadatok, összeomlási és hibajelentések leválnak róla (utána névtelenek), és legkésőbb {RETENTION.replace('months', 'hónap')} után törlődnek.</p>
 </main></body></html>
 '''
 

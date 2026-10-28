@@ -8,3 +8,4 @@ android/local.properties
 *.jks
 t-*.png
 android/
+dist/

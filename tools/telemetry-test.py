@@ -158,7 +158,7 @@ def t_errors(browser, base):
     rows = mock.of('gi_errors')
     check('forced error: exactly one POST to gi_errors', mock.count('gi_errors') == 1 and len(rows) == 1, (mock.count('gi_errors'), len(rows)))
     r = rows[0] if rows else {}
-    check('error row: message, src, version, channel', r.get('message') == 'boom-test' and r.get('src') == 'onerror' and r.get('version') == '10.23' and r.get('channel') == 'dev', r)
+    check('error row: message, src, version, channel', r.get('message') == 'boom-test' and r.get('src') == 'onerror' and r.get('version') == '10.24' and r.get('channel') == 'dev', r)
     check('error row: stack, ua, screen, lang', bool(r.get('stack')) and 'Mozilla' in (r.get('ua') or '') and re.match(r'^\d+x\d+$', r.get('screen') or '') and r.get('lang') == 'en', r)
     check('error row: anon_id and id are uuids, user_id null', UUID_RE.match(r.get('anon_id', '')) and UUID_RE.match(r.get('id', '')) and r.get('user_id') is None, r)
     check('error row: no game yet -> level/start/week null', r.get('level') is None and r.get('start_country') is None and r.get('week') is None, r)
@@ -202,7 +202,7 @@ def t_runs(browser, base):
     st = mock.of('gi_runs', 'run_start')
     check('run_start posted when a game starts', len(st) == 1 and st[0]['start_country'] == 'isolde' and st[0]['level'] and st[0]['lang'] == 'en' and st[0]['seed'] is not None, st)
     rid = st[0]['run_id'] if st else None
-    check('run_start: run_id uuid, version, channel, no outcome', st and UUID_RE.match(rid) and st[0]['version'] == '10.23' and st[0]['outcome'] is None and st[0]['weeks'] == 0, st)
+    check('run_start: run_id uuid, version, channel, no outcome', st and UUID_RE.match(rid) and st[0]['version'] == '10.24' and st[0]['outcome'] is None and st[0]['weeks'] == 0, st)
     force_win(page)
     flush(page)
     en = mock.of('gi_runs', 'run_end')
@@ -289,11 +289,11 @@ def t_optout(browser, base):
     txt = page.inner_text('#introSheet')
     check('intro tells the player that anonymous gameplay data is collected', 'Anonymous gameplay data is collected' in page.evaluate("document.querySelector('.tele-note').textContent"), '')
     page.evaluate("document.getElementById('introOv').hidden = true")
-    page.click('#moreBtn')
-    check('More has the switch, default ON', page.is_checked('#setTele') and page.evaluate("GITele.runsOn()"))
+    page.click('#moreBtn'); page.click('#setOpen')   # v10.24: Menu -> Settings
+    check('Settings has the switch, default ON', page.is_checked('#setTele') and page.evaluate("GITele.runsOn()"))
     page.click('#setTele')
     check('switch OFF stores gi.tele=0', page.evaluate("localStorage.getItem('gi.tele')") == '0' and page.evaluate("GITele.runsOn()") is False)
-    page.click('#moreClose')
+    page.click('#setClose')
     start(page); force_win(page); page.click('#again'); start(page, 'bharat'); page.evaluate("for (let i = 0; i < 3; i++) step(__GI.S)")
     page.click('#moreBtn'); page.click('#quitGame'); page.click('#quitYes')
     page.evaluate("setTimeout(() => { throw new Error('optout-error') }, 0)")
@@ -307,7 +307,7 @@ def t_optout(browser, base):
     page.reload(); wait(page, "window.__GI && !document.getElementById('authOv').hidden")
     page.click('#authGuest'); page.wait_for_timeout(300)
     if page.is_visible('#resumeOv'): page.click('#resumeNew')   # v10.23: the running game left a device copy; this test wants a clean board
-    page.evaluate("document.getElementById('introOv').hidden = true"); page.click('#moreBtn')
+    page.evaluate("document.getElementById('introOv').hidden = true"); page.click('#moreBtn'); page.click('#setOpen')
     check('the switch stays OFF after a reload', not page.is_checked('#setTele'))
     page.click('#setTele')
     check('switch back ON', page.evaluate("GITele.runsOn()") is True)
