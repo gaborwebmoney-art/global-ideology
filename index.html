@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-aD9eA7V2PvmjYg8t7Tymm4Xl/lgjQjS6/MH7c+Puqjs=' 'sha256-R9545v5VKL92UIY7KzBwpSlFGp3eAA6ZB8V9WnXT4iE=' 'sha256-iRZuHe+p+SN9T3SZV6y/ebpoS1+sNOF+lpFQGe9JMAQ=' 'sha256-8uagxKxAZsYXKPu4mbOOaRfxnqNa4r3dNIot/CVnWTQ=' 'sha256-1wtMK3+G7mCcoPTg9c+RCq0EXnTWmcd9TBhMf5148D4=' 'sha256-hNTcHA1I5XAAfMZPFKw+GYRbFMwxv5qawgW8x0AtQaE=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-aD9eA7V2PvmjYg8t7Tymm4Xl/lgjQjS6/MH7c+Puqjs=' 'sha256-R9545v5VKL92UIY7KzBwpSlFGp3eAA6ZB8V9WnXT4iE=' 'sha256-iRZuHe+p+SN9T3SZV6y/ebpoS1+sNOF+lpFQGe9JMAQ=' 'sha256-ooH+G/kHYGPcl8dULZQFn2CSaRAUpg2NIKih1YdwWIA=' 'sha256-1wtMK3+G7mCcoPTg9c+RCq0EXnTWmcd9TBhMf5148D4=' 'sha256-hNTcHA1I5XAAfMZPFKw+GYRbFMwxv5qawgW8x0AtQaE=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#0d1820">
 <meta name="mobile-web-app-capable" content="yes">
@@ -537,9 +537,11 @@ body { overscroll-behavior: none; -webkit-tap-highlight-color: transparent; }
 /* phone, portrait: bar, map, hud, scrolling dossier */
 @media (max-width: 600px) and (orientation: portrait) {
   .main { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); gap: 6px; }
-  .mapwrap { height: 100%; overflow: auto; }
-  .mapwrap:not(.fit) #map { height: 100%; min-height: 441px; width: auto; aspect-ratio: 1000 / 580; }
-  .mapwrap.fit { align-self: start; }
+  .mapwrap { height: 100%; overflow: auto; background: #0a141b; }   /* the map's own sea, so spare height reads as more sea */
+  /* v10.23: no empty gap under the map. The zoomed view is sized from the free height (see sizeMap: wide enough to fill it, at most ~2.6 screens of
+     pan) and centred in the frame; the whole-map view fills the frame and centres the world in it. */
+  .mapwrap:not(.fit) #map { height: auto; width: var(--mapw, 760px); margin-top: var(--mapmt, 0px); aspect-ratio: 1000 / 580; }
+  .mapwrap.fit { align-self: stretch; }
   .side { position: fixed; left: 0; right: 0; bottom: 0; top: auto; max-height: 62dvh; overflow-y: auto; z-index: 30; border-radius: 12px 12px 0 0; border-bottom: 0; padding-bottom: calc(12px + env(safe-area-inset-bottom)); transform: translateY(105%); transition: transform .2s ease; box-shadow: 0 -8px 24px rgba(0,0,0,.45); }
   .side.open { transform: none; }
   /* country pick: the start bar (z 40) sat on top of the opened dossier; lift the sheet and hide the bar while it is open (sheet has its own Start here) */
@@ -550,8 +552,8 @@ body { overscroll-behavior: none; -webkit-tap-highlight-color: transparent; }
   .side-top { pointer-events: none; } .side-top > * { pointer-events: auto; }
   .side-top .btn { min-height: 36px; padding: 6px 12px; box-shadow: 0 2px 10px rgba(0,0,0,.5); }
   .side-close { background: var(--panel-2); }
-  .mapwrap.fit { height: auto; aspect-ratio: 1000 / 580; overflow: hidden; }
-  .mapwrap.fit #map { width: 100%; height: 100%; aspect-ratio: auto; }
+  .mapwrap.fit { height: 100%; aspect-ratio: auto; overflow: hidden; display: flex; align-items: center; }
+  .mapwrap.fit #map { flex: none; width: 100%; height: auto; aspect-ratio: 1000 / 580; }
   .mapwrap.fit .fitbtn { position: absolute; left: 6px; bottom: 6px; top: auto; margin: 0; }
   .fitbtn { position: sticky; top: 6px; left: 8px; margin: 6px 0 0 8px; z-index: 5; }
   .mapwrap:not(.fit) .pickbar { position: sticky; bottom: 8px; left: 8px; right: 8px; transform: none; margin: 0 0 8px; width: calc(100% - 16px); max-width: none; box-sizing: border-box; z-index: 5; }
@@ -4822,12 +4824,29 @@ window.GIAccounts = (() => {
   const PHONE = () => window.matchMedia('(max-width: 560px)').matches;
   // the bottom-sheet dossier uses the same breakpoint as its CSS (portrait, up to 600px wide)
   const SHEET = () => window.matchMedia('(max-width: 600px) and (orientation: portrait)').matches;
-  function setFit(on) {
+  // v10.23: only the player's own choice is remembered ('gi.view'); the default on a phone is the zoomed view that fills the free height
+  // (the old 'gi.fit' was written on every start, so it says nothing about what the player chose)
+  function setFit(on, chosen) {
     $('mapwrap').classList.toggle('fit', on); $('fitMap').textContent = on ? 'Zoom in' : 'Whole map';
-    try { localStorage.setItem('gi.fit', on ? '1' : '0'); } catch { /* storage blocked */ }
+    if (chosen) { try { localStorage.setItem('gi.view', on ? 'fit' : 'zoom'); } catch { /* storage blocked */ } }
+    sizeMap();
     if (!on && selected) centreOn(selected);
     if (S) setTimeout(() => { renderFx(); renderFab(); }, 0);
   }
+  // Zoomed view on a portrait phone: as wide as the free height asks for (map aspect 1000:580), never under 760 px (the old size) and never
+  // over 2.6 frame widths, so a tall phone does not need three screens of panning. Centred vertically in the frame.
+  function sizeMap() {
+    const w = $('mapwrap');
+    if (!SHEET() || w.classList.contains('fit')) { w.style.removeProperty('--mapw'); w.style.removeProperty('--mapmt'); return; }
+    const fw = w.clientWidth, fh = w.clientHeight; if (!fw || !fh) return;
+    const BTN = 36;   // the "Whole map" button's row above the map
+    const mw = Math.round(Math.max(760, Math.min(2.6 * fw, (fh - BTN) * 1000 / 580)));
+    w.style.setProperty('--mapw', mw + 'px');
+    w.style.setProperty('--mapmt', Math.max(0, Math.round((fh - BTN - mw * 0.58) / 2)) + 'px');
+    if (!w.dataset.centred) { w.dataset.centred = '1'; w.scrollLeft = Math.max(0, (w.scrollWidth - w.clientWidth) / 2); }
+  }
+  if (window.ResizeObserver) new ResizeObserver(() => sizeMap()).observe($('mapwrap'));
+  window.addEventListener('orientationchange', () => setTimeout(sizeMap, 100));
   function centreOn(id) {
     const w = $('mapwrap'); if (!PHONE() || w.classList.contains('fit')) return;
     const c = byId(id), k = $('map').getBoundingClientRect().width / 1000; w.scrollLeft = Math.max(0, c.x * k - w.clientWidth / 2); w.scrollTop = Math.max(0, c.y * k - w.clientHeight / 2);
@@ -4863,8 +4882,8 @@ window.GIAccounts = (() => {
   initPager($('introSheet'), $('introOv'));
   initPager($('coachSheet'), $('coachOv'));
   initPager($('rulesSheet'), $('rulesOv'));
-  $('fitMap').addEventListener('click', () => setFit(!$('mapwrap').classList.contains('fit')));
-  (() => { let v = null; try { v = localStorage.getItem('gi.fit'); } catch { /* storage blocked */ } setFit(v !== '0'); })();
+  $('fitMap').addEventListener('click', () => setFit(!$('mapwrap').classList.contains('fit'), true));
+  (() => { let v = null; try { v = localStorage.getItem('gi.view'); } catch { /* storage blocked */ } setFit(v === 'fit'); })();
 
   function select(id) {
     if (id !== selected) actView = { dom: null, act: null };   // a newly chosen country opens on the list of action categories
