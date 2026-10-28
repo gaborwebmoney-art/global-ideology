@@ -159,7 +159,7 @@ def walk(browser, base, device, lang):
     check(f'{tag}: logged-in win', w == 'win', page.evaluate("JSON.stringify({ over: __GI.S && __GI.S.over, week: __GI.S && __GI.S.week, sess: !!GIAccounts.session(), ov: ['authOv','resumeOv','introOv','endOv'].filter(k => !document.getElementById(k).hidden) })") if w != 'win' else '')
     wait(page, "!document.getElementById('endRank').hidden")
     sub = [c for c in srv.calls if c[0] == 'gi_submit_score']
-    check(f'{tag}: win submitted with plausible values', len(sub) == 1 and sub[0][2] and sub[0][1]['p_level'] in ('casual', 'normal', 'brutal') and sub[0][1]['p_weeks'] >= 60 and sub[0][1]['p_version'] == '10.22', sub)
+    check(f'{tag}: win submitted with plausible values', len(sub) == 1 and sub[0][2] and sub[0][1]['p_level'] in ('casual', 'normal', 'brutal') and sub[0][1]['p_weeks'] >= 60 and sub[0][1]['p_version'] == '10.23', sub)
     check(f'{tag}: server accepted it', any(s['user'] == srv.uid for s in srv.scores), sub)
     t = page.evaluate("document.getElementById('endRank').innerText")
     check(f'{tag}: end screen offers Join', page.evaluate("!!document.querySelector('#endRank [data-rjoin]')"), t)

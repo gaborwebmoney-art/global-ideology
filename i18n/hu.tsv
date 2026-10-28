@@ -1610,3 +1610,6 @@ This score would be #{} this week.	Ezzel a ponttal a(z) {1}. hely lenne a tiéd 
 Create account	Fiók létrehozása
 See ranking	Ranglista megnyitása
 Week {} · {}	{1}. hét · {2}
+Saved game	Mentett játék
+Your saved game (week {}) was made with a different version of the game and cannot be continued. You can start a new game.	A mentett játékod ({1}. hét) a játék egy másik verziójával készült, ezért nem folytatható. Kezdhetsz új játékot.
+Your saved game could not be loaded. You can start a new game.	A mentett játékodat nem sikerült betölteni. Kezdhetsz új játékot.
