@@ -89,8 +89,8 @@ jobs:
           M="$(java -jar "$RUNNER_TEMP/bundletool.jar" dump manifest --bundle "$AAB")"
           echo "$M" | head -40
           echo "$M" | grep -q 'package="app.globalideology.game"' || { echo "::error::wrong package name"; exit 1; }
-          echo "$M" | grep -q 'android:targetSdkVersion(0x[0-9a-f]*)=(type 0x10)0x24' || { echo "::error::targetSdkVersion is not 36"; exit 1; }
-          echo "$M" | grep -q "versionCode(0x[0-9a-f]*)=(type 0x10)0x$(printf '%x' "$GI_VERSION_CODE")" || { echo "::error::versionCode is not $GI_VERSION_CODE"; exit 1; }
+          echo "$M" | grep -q 'android:targetSdkVersion="36"' || { echo "::error::targetSdkVersion is not 36"; exit 1; }
+          echo "$M" | grep -q "android:versionCode=\"$GI_VERSION_CODE\"" || { echo "::error::versionCode is not $GI_VERSION_CODE"; exit 1; }
           jarsigner -verify -verbose:summary "$AAB" | tee "$RUNNER_TEMP/jar.txt" | tail -3
           grep -q 'jar verified' "$RUNNER_TEMP/jar.txt" || { echo "::error::bundle is not signed"; exit 1; }
           unzip -l "$AAB" | grep -q 'base/assets/public/index.html' || { echo "::error::game files missing from the bundle"; exit 1; }
