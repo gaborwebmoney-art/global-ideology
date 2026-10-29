@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="gi-platform" content="web">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-GeOrwVa9pk4Hndrf0H7vZCsLvpAQ192NAq//g+HcH98=' 'sha256-guQxKnQv4Nv6Jj/XZDAup+XYcs5tJyJtKOkf8Ye3XKI=' 'sha256-TsFAbk/k0hCMhlpgct5H7gb72eJZGA3qz/s+ENJ3UsA=' 'sha256-ttf2qypqw4skej6wrUka54Px+7eVGFpnvcEN0wt2HWw=' 'sha256-Y0y/2dFTsn4w0b+XSO4Xlj6u7hg8YPLOScWIo+UXPH4=' 'sha256-JcZ+w0wl/nJsffYsW7LsiVx5K7SNFIv9cKhwl0SGrrM=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; media-src 'self'; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-GeOrwVa9pk4Hndrf0H7vZCsLvpAQ192NAq//g+HcH98=' 'sha256-guQxKnQv4Nv6Jj/XZDAup+XYcs5tJyJtKOkf8Ye3XKI=' 'sha256-TsFAbk/k0hCMhlpgct5H7gb72eJZGA3qz/s+ENJ3UsA=' 'sha256-g4qQvwUU2mbnn4K2Kd1SHG81/fCWDlfpZZ5ZRVCGsqg=' 'sha256-Y0y/2dFTsn4w0b+XSO4Xlj6u7hg8YPLOScWIo+UXPH4=' 'sha256-JcZ+w0wl/nJsffYsW7LsiVx5K7SNFIv9cKhwl0SGrrM=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; media-src 'self'; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#0d1820">
 <meta name="mobile-web-app-capable" content="yes">
@@ -5278,6 +5278,7 @@ window.GIAccounts = (() => {
       paintBest();
     }
     COUNTRIES.forEach(c => nodeEls[c.id].g.classList.toggle('sel', c.id === id));
+    paintSel();   // v10.28: the territory outline follows the selection even while the game is paused (render() does not run then)
     renderSide();
     if (SHEET() && !picking) $('side').classList.add('open');
     else if (SHEET()) $('side').classList.remove('open');
