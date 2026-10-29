@@ -1,6 +1,6 @@
 {
   "name": "global-ideology",
-  "version": "0.10.26",
+  "version": "0.10.27",
   "private": true,
   "description": "Global Ideology: Android wrapper (Capacitor)",
   "scripts": {

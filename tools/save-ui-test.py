@@ -63,7 +63,7 @@ def run(p, url):
     wk = play_to(page, 6)
     m = page.evaluate("window.__GI.mirrorRead()")
     check('guest: device copy exists at the exact current week', m and m['week'] == wk and m['S']['week'] == wk, m and m.get('week'))
-    check('guest: copy carries schema v6, app version, empty owner', m and m['v'] == 6 and m['app'] == '10.26' and m['owner'] == '', m and (m.get('v'), m.get('app'), m.get('owner')))
+    check('guest: copy carries schema v6, app version, empty owner', m and m['v'] == 6 and m['app'] == '10.27' and m['owner'] == '', m and (m.get('v'), m.get('app'), m.get('owner')))
     start = page.evaluate("window.__GI.S.startId")
     seed = page.evaluate("window.__GI.S.seed")
     run_id = page.evaluate("window.__GI.S.tele && window.__GI.S.tele.id")

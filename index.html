@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="gi-platform" content="web">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-GeOrwVa9pk4Hndrf0H7vZCsLvpAQ192NAq//g+HcH98=' 'sha256-i2FwEknUs3RaerICz3yrM4IkFuGzxawYKk/GWPbaP5c=' 'sha256-TsFAbk/k0hCMhlpgct5H7gb72eJZGA3qz/s+ENJ3UsA=' 'sha256-mliCKgW/hlVMsyl4laNICHAIAuMU7EpTgBK9IIgdV+s=' 'sha256-QdwV8FZaROu/S8E01qJSIEvu5RJd2aLYYqkI32aJn4I=' 'sha256-JcZ+w0wl/nJsffYsW7LsiVx5K7SNFIv9cKhwl0SGrrM=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; media-src 'self'; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-GeOrwVa9pk4Hndrf0H7vZCsLvpAQ192NAq//g+HcH98=' 'sha256-481MSsXztzDDD043aUeyOaOnf9Hk+UOTtBNYaGv5Mkk=' 'sha256-TsFAbk/k0hCMhlpgct5H7gb72eJZGA3qz/s+ENJ3UsA=' 'sha256-yAdYl5rVy22fAf2Ma1ciFK/GmaKnBMBGEjML7igIt5k=' 'sha256-QdwV8FZaROu/S8E01qJSIEvu5RJd2aLYYqkI32aJn4I=' 'sha256-JcZ+w0wl/nJsffYsW7LsiVx5K7SNFIv9cKhwl0SGrrM=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; media-src 'self'; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#0d1820">
 <meta name="mobile-web-app-capable" content="yes">
@@ -275,7 +275,7 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--you); 
 @keyframes alertin { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
 .fitbtn { display: none; }
 .node { cursor: pointer; }
-.node .base { fill: var(--panel-2); stroke: var(--line); stroke-width: 1.5; }
+.node .base { fill: var(--panel-2); fill-opacity: .25; stroke: var(--line); stroke-width: 1.5; }   /* v10.27: circles 75% transparent, strokes stay opaque */
 .node.held .base { stroke: var(--you); stroke-width: 2.5; }
 .node.sel .base { stroke: var(--text); stroke-width: 2.5; }
 .node .inkfill { fill: var(--you); opacity: .85; }
@@ -857,7 +857,7 @@ html { overscroll-behavior: contain; }
 <body>
 <div id="app">
   <header class="bar">
-    <div class="brand"><span class="bfull">Global Ideology</span><span class="bshort" aria-hidden="true">GI</span><small id="giVer">v10.26</small></div>
+    <div class="brand"><span class="bfull">Global Ideology</span><span class="bshort" aria-hidden="true">GI</span><small id="giVer">v10.27</small></div>
     <span class="lang" role="group" aria-label="Language"><button type="button" data-lang="en" aria-pressed="true">EN</button><button type="button" data-lang="hu" aria-pressed="false">HU</button></span>
     <button type="button" class="btn tsbtn" id="tsBtn" aria-label="Text size" title="Text size">Aa</button>
     <button type="button" class="btn tsbtn" id="moreBtn" aria-label="Menu" title="Menu and settings">&#8943;</button>
@@ -2985,7 +2985,7 @@ function gcTick(s) {
 // It must never get in the player's way: every path is wrapped, nothing is written to the console, and a table that does not
 // exist yet (404/400) just makes the module drop that kind of item for a while. No email address is ever sent.
 window.GITele = (() => {
-  const VERSION = '10.26' + (window.GI_PLATFORM === 'itch' ? '-itch' : '');   // itch.io runs report as live, told apart by version
+  const VERSION = '10.27' + (window.GI_PLATFORM === 'itch' ? '-itch' : '');   // itch.io runs report as live, told apart by version
   const DEBUG = /[?&]debug\b/.test(location.search);
   const NATIVE = !!window.Capacitor;
   // live = the main game and the Android app, beta = /beta/, dev = localhost or a file (kept apart so test sessions do not pollute the data)
@@ -4017,7 +4017,7 @@ window.GIAccounts = (() => {
   // ---------- v10.22 global ranking: opt-in board (ranking name, optional country, 16+) fed by won runs of online accounts ----------
   // Server side: tools/supabase-ranking.sql (functions only; the tables are not readable). Guests and the beta channel read only.
   const Rank = (() => {
-    const VER = '10.26', LEVELS = ['casual', 'normal', 'brutal'];
+    const VER = '10.27', LEVELS = ['casual', 'normal', 'brutal'];
     const ISO = 'AD AE AF AG AL AM AO AR AT AU AZ BA BB BD BE BF BG BH BI BJ BN BO BR BS BT BW BY BZ CA CD CF CG CH CI CL CM CN CO CR CU CV CY CZ DE DJ DK DM DO DZ EC EE EG ER ES ET FI FJ FM FR GA GB GD GE GH GM GN GQ GR GT GW GY HN HR HT HU ID IE IL IN IQ IR IS IT JM JO JP KE KG KH KI KM KN KP KR KW KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MG MH MK ML MM MN MR MT MU MV MW MX MY MZ NA NE NG NI NL NO NP NR NZ OM PA PE PG PH PK PL PS PT PW PY QA RO RS RU RW SA SB SC SD SE SG SI SK SL SM SN SO SR SS ST SV SY SZ TD TG TH TJ TL TM TN TO TR TT TV TW TZ UA UG US UY UZ VA VC VE VN VU WS XK YE ZA ZM ZW'.split(' ');
     const view = { level: 'normal', period: 'week' };
     let player, playerFor = null, busy = 0;
