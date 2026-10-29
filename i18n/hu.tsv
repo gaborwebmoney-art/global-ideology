@@ -52,12 +52,12 @@ Spreads along trade routes. Earns Clout.	Kereskedelmi útvonalakon terjed. Befol
 Breaks resistance and makes countries refuse the World Order. Loud.	Letöri az ellenállást, és rávesz országokat, hogy elutasítsák a Világrendet. Hangos.
 Diplomacy	Diplomácia
 Spreads across land borders. Blunts the World Order.	Szárazföldi határokon terjed. Tompítja a Világrendet.
-Faith	Hit
+Grassroots	Közösség
 Crosses oceans and borders on its own.	Magától átkel óceánokon és határokon.
 Covert Ops	Titkos műveletek
 Weakens every defence. Very loud.	Minden védelmet gyengít. Nagyon hangos.
-Underworld	Alvilág
-Arms, drugs, people. Destabilises everyone. Loud, and notorious.	Fegyver, drog, emberek. Mindenkit destabilizál. Hangos és hírhedt.
+Back Channels	Hátsó csatornák
+Quiet deals and dirty tricks. Destabilises everyone. Loud, and notorious.	Csendes alkuk és piszkos trükkök. Mindenkit destabilizál. Hangos és hírhedt.
 Spin	Spin
 Keeps the World Order busy.	Lefoglalja a Világrendet.
 Charismatic Leadership	Karizmatikus vezetés
@@ -104,16 +104,16 @@ Border spread up. Notoriety grows 10% slower. World Order campaigns hit 30% soft
 20% softer again	még 20%-kal gyengébben
 Alliance Breaker	Szövetségtörő
 Special action: a World Order member of your choice (not the HQ) leaves, and every resistance in the world drops 8% for good	Különleges akció: egy általad választott Világrend-tag (nem a főhadiszállás) kilép, és a világon minden ellenállás végleg 8%-kal csökken
-Word of God	Isten szava
+Word of Mouth	Szájról szájra
 Can take root in distant countries. Ideological resistance −10%	Gyökeret verhet távoli országokban. Ideológiai ellenállás −10%
 further reach	nagyobb hatótávolság
-Congregations	Gyülekezetek
+Local Chapters	Helyi csoportok
 Distant reach up. Growth, trade spread and Clout income up a little	A távoli hatótáv nő. A növekedés, a kereskedelmi terjedés és a befolyás-bevétel kissé nő
-Pilgrim Prophets	Zarándokok és próféták
+Travelling Speakers	Vándorszónokok
 Internal growth +30%. Ideological resistance −15%. Operations cost 1 Clout less	Belső növekedés +30%. Ideológiai ellenállás −15%. A műveletek 1 befolyással kevesebbe kerülnek
 1 Clout less again	még 1 befolyással kevesebb
-Believe!	Higgy!
-Special action: the World Order HQ loses its faith in the treaty. It quits, a new HQ takes over, and the draft drops 15%	Különleges akció: a Világrend főhadiszállása elveszti a hitét a szerződésben. Kilép, új főhadiszállás veszi át, és a tervezet 15%-kal csökken
+Rally Cry	Csatakiáltás
+Special action: the World Order HQ loses confidence in the treaty. It quits, a new HQ takes over, and the draft drops 15%	Különleges akció: a Világrend főhadiszállása elveszti a bizalmát a szerződésben. Kilép, új főhadiszállás veszi át, és a tervezet 15%-kal csökken
 Sleeper Agents	Alvó ügynökök
 Plants support in 2 random countries. All resistances −5%	Támogatást ültet 2 véletlenszerű országba. Minden ellenállás −5%
 another −3% everywhere	még −3% mindenhol
@@ -125,11 +125,11 @@ All resistances −8%. 40% of World Order campaigns and sanctions fall apart. Mu
 15% more fall apart	még 15% esik szét
 Hybrid Threat	Hibrid fenyegetés
 Special action: every sanction is lifted, every planned World Order move is cancelled, and it cannot sanction you for 40 weeks	Különleges akció: minden szankció feloldódik, minden tervezett Világrend-lépés törlődik, és 40 hétig nem szankcionálhat téged
-Arms Brokerage	Fegyverközvetítés
+Contractor Network	Vállalkozói hálózat
 Military resistance −15%, ideological −5%. Border spread up. Louder	Katonai ellenállás −15%, ideológiai −5%. A határ menti terjedés nő. Hangosabb
-Narcotics Pipeline	Kábítószer-csatorna
+Offshore Accounts	Offshore számlák
 Clout income up. Diplomatic resistance −15%. Internal growth up a little. Louder	A befolyás-bevétel nő. Diplomáciai ellenállás −15%. A belső növekedés kissé nő. Hangosabb
-Trafficking Networks	Embercsempész-hálózatok
+Shadow Logistics	Árnyék-logisztika
 Border spread up. Economic resistance −15%, all others −5%. Notoriety grows 15% faster	A határ menti terjedés nő. Gazdasági ellenállás −15%, az összes többi −5%. A Hírhedtség 15%-kal gyorsabban nő
 Engineered Collapse	Megrendezett összeomlás
 Special action: for 20 weeks every country’s resistance falls by 40%. Adds 8 Notoriety	Különleges akció: 20 hétig minden ország ellenállása 40%-kal csökken. +8 Hírhedtség
@@ -302,7 +302,7 @@ Utopia declared. Everyone is happy, by law. Growth and income double for 26 week
 Stoppage Order: {}’s office is surrounded by very polite soldiers. The World Order is frozen for 10 weeks.	Leállítási parancs: {1} irodáját nagyon udvarias katonák veszik körül. A Világrend 10 hétre lefagy.
 {}’s cabinet discovers a generous consultancy contract and quits the World Order.	{1} kabinetje egy nagylelkű tanácsadói szerződésre bukkan, és kilép a Világrendből.
 {} walks out of the World Order, and the whole alliance system wobbles. Resistance falls everywhere.	{1} kivonul a Világrendből, és az egész szövetségi rendszer megingik. Az ellenállás mindenhol csökken.
-{} loses faith in the treaty and leaves. The World Order moves its HQ to {}, losing 15% of the draft in the removal van.	{1} elveszti a hitét a szerződésben, és kilép. A Világrend főhadiszállását {2} országba költözteti, a tervezet 15%-át a költöztető autóban elveszítve.
+{} loses confidence in the treaty and leaves. The World Order moves its HQ to {}, losing 15% of the draft in the removal van.	{1} elveszti a bizalmát a szerződésben, és kilép. A Világrend főhadiszállását {2} országba költözteti, a tervezet 15%-át a költöztető autóban elveszítve.
 Engineered Collapse: every government wakes to rumours, shortages and unmarked vans. Resistance falls everywhere for 20 weeks.	Megrendezett összeomlás: minden kormány pletykákra, hiányra és jelöletlen furgonokra ébred. Az ellenállás mindenhol csökken 20 hétig.
 Hybrid Threat: nobody at the World Order can agree who is threatening whom. Every plan is shelved and sanctions are lifted.	Hibrid fenyegetés: a Világrendben senki sem tud megegyezni, ki kit fenyeget. Minden terv polcra kerül, a szankciók feloldódnak.
 Viral Moment	Vírusszerű pillanat
@@ -615,8 +615,8 @@ Operations	Műveletek
 How upgrades work	Hogyan működnek a fejlesztések
 Choose a doctrine: Ideology or Economy, and Military or Diplomacy.	Válassz doktrínát: Ideológia vagy Gazdaság, és Katonai vagy Diplomácia.
 The first upgrade of every branch is open to all; the second one commits you.	Minden ág első fejlesztése mindenkinek nyitva áll; a második elkötelez.
-Partners boost each other: Ideology and Diplomacy, Economy and Military, Faith and Covert Ops.	A partnerek erősítik egymást: Ideológia és Diplomácia, Gazdaság és Katonai, Hit és Titkos műveletek.
-Underworld and Spin work with any doctrine.	Az Alvilág és a Spin bármely doktrínával működik.
+Partners boost each other: Ideology and Diplomacy, Economy and Military, Grassroots and Covert Ops.	A partnerek erősítik egymást: Ideológia és Diplomácia, Gazdaság és Katonai, Közösség és Titkos műveletek.
+Back Channels and Spin work with any doctrine.	A Hátsó csatornák és a Spin bármely doktrínával működik.
 Top-tier upgrades are one-off special actions.	A csúcsfejlesztések egyszeri különleges akciók.
 Each upgrade you own makes the next one 15% dearer.	Minden megszerzett fejlesztés 15%-kal drágábbá teszi a következőt.
 The game is paused while this screen is open.	A játék szünetel, amíg ez a képernyő nyitva van.
@@ -959,8 +959,8 @@ Pragmatists	Pragmatikusok
 Contrarian	Örök ellenzék
 Respects strength	Tiszteli az erőt
 Sanction-hardened	Szankcióedzett
-Arms bazaar	Fegyverbazár
-Oil cartel	Olajkartell
+Defence expo	Védelmi kiállítás
+Oil consortium	Olajkonzorcium
 Viral	Virális
 Youth protests	Ifjúsági tüntetések
 Coalition politics	Koalíciós politika
@@ -1079,12 +1079,12 @@ Reach a goal to unlock its extra upgrade branch for free once those branches arr
 Guest game: progress is not kept. Open a profile to collect it.	Vendégjáték: a haladás nem marad meg. Nyiss egy profilt a gyűjtéshez.
 Ghost	Szellem
 Headliner	Címlapsztár
-Pilgrim	Zarándok
-Kingpin	Keresztapa
+Wayfarer	Vándor
+Puppetmaster	Bábjátékos
 Covert Ops · {}	Titkos műveletek · {1}
 Spin · {}	Spin · {1}
-Faith · {}	Hit · {1}
-Underworld · {}	Alvilág · {1}
+Grassroots · {}	Közösség · {1}
+Back Channels · {}	Hátsó csatornák · {1}
 Win 3 times on Normal or Brutal with average notoriety {} or less.	Nyerj 3-szor Normál vagy Brutális szinten legfeljebb {1} átlagos Hírhedtséggel.
 Collect 30 stars in total (your best per country and level).	Gyűjts összesen 30 csillagot (a legjobb eredményed országonként és szintenként).
 Earn 2 or more stars on Normal or Brutal from 8 different start countries.	Szerezz legalább 2 csillagot Normál vagy Brutális szinten 8 különböző kezdőországból.

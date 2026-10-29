@@ -37,15 +37,15 @@ const TRADE = [
 // Pavel's skill tree (skilltree 10092025.xlsx), adapted to the World Order model.
 // Opposed pairs lock at tier 2: Ideology vs Economy, Military vs Diplomacy.
 // Each branch is boosted by the tier-3 upgrade of its partner, and its tier-4 capstone needs it:
-// Ideology <- Diplomacy, Diplomacy <- Ideology, Military <- Economy, Economy <- Military, Faith <-> Covert Ops.
+// Ideology <- Diplomacy, Diplomacy <- Ideology, Military <- Economy, Economy <- Military, Grassroots <-> Covert Ops.
 const BRANCHES = [
   { id: 'ideo', name: 'Ideology', blurb: 'Grows support inside countries.', partner: 'dip' },
   { id: 'eco', name: 'Economy', blurb: 'Spreads along trade routes. Earns Clout.', partner: 'mil' },
   { id: 'mil', name: 'Military', blurb: 'Breaks resistance and makes countries refuse the World Order. Loud.', partner: 'eco' },
   { id: 'dip', name: 'Diplomacy', blurb: 'Spreads across land borders. Blunts the World Order.', partner: 'ideo' },
-  { id: 'faith', name: 'Faith', blurb: 'Crosses oceans and borders on its own.', partner: 'covert', unlock: 'reach' },
+  { id: 'faith', name: 'Grassroots', blurb: 'Crosses oceans and borders on its own.', partner: 'covert', unlock: 'reach' },
   { id: 'covert', name: 'Covert Ops', blurb: 'Weakens every defence. Very loud.', partner: 'faith', unlock: 'wo' },
-  { id: 'under', name: 'Underworld', blurb: 'Arms, drugs, people. Destabilises everyone. Loud, and notorious.' },
+  { id: 'under', name: 'Back Channels', blurb: 'Quiet deals and dirty tricks. Destabilises everyone. Loud, and notorious.' },
   { id: 'spin', name: 'Spin', blurb: 'Keeps the World Order busy.' }
 ];
 const UPGRADES = [
@@ -69,19 +69,19 @@ const UPGRADES = [
   { id: 'd3', b: 'dip', name: 'Sanctions Hammer', cost: 14, fx: { border: .02, vis: -.1, fcRed: .3 }, boost: { fcRed: .2, border: .01 }, text: 'Border spread up. Notoriety grows 10% slower. World Order campaigns hit 30% softer. Non-Aligned Pact blocks courtship for 30 weeks', btext: '20% softer again' },
   { id: 'd4', b: 'dip', name: 'Endless Negotiations', cost: 16, special: 'breaker', text: 'Unlocks Endless Negotiations, the Diplomacy tier-4 action' },
 
-  { id: 'f1', b: 'faith', name: 'Word of God', cost: 6, fx: { reach: .007, pen: { ideo: .1 } }, boost: { reach: .002 }, text: 'Can take root in distant countries. Ideological resistance −10%', btext: 'further reach' },
-  { id: 'f2', b: 'faith', name: 'Congregations', cost: 10, fx: { reach: .008, growth: .01, trade: .02, income: 1 }, boost: { income: .5 }, text: 'Distant reach up. Growth, trade spread and Clout income up a little', btext: 'more income' },
-  { id: 'f3', b: 'faith', name: 'Pilgrim Prophets', cost: 15, fx: { growth: .03, pen: { ideo: .15 }, opDiscount: 1 }, boost: { opDiscount: 1 }, text: 'Internal growth +30%. Ideological resistance −15%. Operations cost 1 Clout less', btext: '1 Clout less again' },
-  { id: 'f4', b: 'faith', name: 'Believe!', cost: 16, special: 'believe', text: 'Special action: the World Order HQ loses its faith in the treaty. It quits, a new HQ takes over, and the draft drops 15%' },
+  { id: 'f1', b: 'faith', name: 'Word of Mouth', cost: 6, fx: { reach: .007, pen: { ideo: .1 } }, boost: { reach: .002 }, text: 'Can take root in distant countries. Ideological resistance −10%', btext: 'further reach' },
+  { id: 'f2', b: 'faith', name: 'Local Chapters', cost: 10, fx: { reach: .008, growth: .01, trade: .02, income: 1 }, boost: { income: .5 }, text: 'Distant reach up. Growth, trade spread and Clout income up a little', btext: 'more income' },
+  { id: 'f3', b: 'faith', name: 'Travelling Speakers', cost: 15, fx: { growth: .03, pen: { ideo: .15 }, opDiscount: 1 }, boost: { opDiscount: 1 }, text: 'Internal growth +30%. Ideological resistance −15%. Operations cost 1 Clout less', btext: '1 Clout less again' },
+  { id: 'f4', b: 'faith', name: 'Rally Cry', cost: 16, special: 'believe', text: 'Special action: the World Order HQ loses confidence in the treaty. It quits, a new HQ takes over, and the draft drops 15%' },
 
   { id: 'c1', b: 'covert', name: 'Sleeper Agents', cost: 6, fx: { pen: { eco: .05, mil: .05, dip: .05, ideo: .05 }, loud: .02 }, once: { seed: 2 }, boost: { pen: { eco: .03, mil: .03, dip: .03, ideo: .03 } }, text: 'Plants support in 2 random countries. All resistances −5%', btext: 'another −3% everywhere' },
   { id: 'c2', b: 'covert', name: 'Asset Degradation', cost: 10, fx: { hiCut: .1, loud: .03, dossierDiscount: 4 }, boost: { hiCut: .05 }, text: 'Every country’s strongest resistance drops by 10 points. Leaked Dossiers cost less', btext: '5 points more' },
   { id: 'c3', b: 'covert', name: 'Orchestrated Unrest', cost: 16, fx: { pen: { eco: .08, mil: .08, dip: .08, ideo: .08 }, sabotage: .4, loud: .07 }, boost: { sabotage: .15 }, text: 'All resistances −8%. 40% of World Order campaigns and sanctions fall apart. Much louder', btext: '15% more fall apart' },
   { id: 'c4', b: 'covert', name: 'Hybrid Threat', cost: 16, special: 'hybrid', text: 'Special action: every sanction is lifted, every planned World Order move is cancelled, and it cannot sanction you for 40 weeks' },
 
-  { id: 'u1', b: 'under', name: 'Arms Brokerage', cost: 6, fx: { pen: { mil: .15, ideo: .05 }, border: .015, loud: .02 }, text: 'Military resistance −15%, ideological −5%. Border spread up. Louder' },
-  { id: 'u2', b: 'under', name: 'Narcotics Pipeline', cost: 10, fx: { income: 1, pen: { dip: .15 }, growth: .02, loud: .03 }, text: 'Clout income up. Diplomatic resistance −15%. Internal growth up a little. Louder' },
-  { id: 'u3', b: 'under', name: 'Trafficking Networks', cost: 15, fx: { border: .035, pen: { eco: .15, mil: .05, dip: .05, ideo: .05 }, loud: .04, vis: .15 }, text: 'Border spread up. Economic resistance −15%, all others −5%. Notoriety grows 15% faster' },
+  { id: 'u1', b: 'under', name: 'Contractor Network', cost: 6, fx: { pen: { mil: .15, ideo: .05 }, border: .015, loud: .02 }, text: 'Military resistance −15%, ideological −5%. Border spread up. Louder' },
+  { id: 'u2', b: 'under', name: 'Offshore Accounts', cost: 10, fx: { income: 1, pen: { dip: .15 }, growth: .02, loud: .03 }, text: 'Clout income up. Diplomatic resistance −15%. Internal growth up a little. Louder' },
+  { id: 'u3', b: 'under', name: 'Shadow Logistics', cost: 15, fx: { border: .035, pen: { eco: .15, mil: .05, dip: .05, ideo: .05 }, loud: .04, vis: .15 }, text: 'Border spread up. Economic resistance −15%, all others −5%. Notoriety grows 15% faster' },
   { id: 'u4', b: 'under', name: 'Engineered Collapse', cost: 18, special: 'collapse', text: 'Special action: for 20 weeks every country\u2019s resistance falls by 40%. Adds 8 Notoriety' },
 
   { id: 's1', b: 'spin', name: 'Plausible Deniability', cost: 5, fx: { vis: -.15 }, text: 'Notoriety grows 15% slower' },
@@ -126,7 +126,7 @@ const SPECIALS = {
   bribe: { name: 'Government Bribe', target: true },
   stoppage: { name: 'Stoppage Order', target: false },
   breaker: { name: 'Alliance Breaker', target: true },
-  believe: { name: 'Believe!', target: false },
+  believe: { name: 'Rally Cry', target: false },
   hybrid: { name: 'Hybrid Threat', target: false },
   collapse: { name: 'Engineered Collapse', target: false }
 };
@@ -485,8 +485,8 @@ const RULES = {
   koryn:      { weak: ['mil', 'lock', 'Respects strength', 'Military actions here also stop World Order courtship for 20 weeks.'],
                 wall: ['eco', 'harden', 'Sanction-hardened', 'Economy actions here raise its economic resistance by 25% for 20 weeks.'],
                 base: ['free', 'Your first Military upgrade is free.', 'mil'] },
-  tavaro:     { weak: ['mil', 'refund', 'Arms bazaar', 'Military actions here refund half their Clout cost.'],
-                wall: ['eco', 'loud', 'Oil cartel', 'Economy actions here cost +4 Notoriety.'],
+  tavaro:     { weak: ['mil', 'refund', 'Defence expo', 'Military actions here refund half their Clout cost.'],
+                wall: ['eco', 'loud', 'Oil consortium', 'Economy actions here cost +4 Notoriety.'],
                 base: ['perk', 'Oil is active from the start: Clout income up.'] },
   kestria:    { weak: ['ideo', 'bubble', 'Viral', 'Ideology actions here drop a 2-Clout bubble.'],
                 wall: ['mil', 'reverse', 'Youth protests', 'Military actions here cost you 5 support instead of adding it.'],
@@ -653,7 +653,7 @@ function step(s) {
   };
   BORDERS.forEach(([a, b]) => spread(a, b, st.border * pk.border, 'border'));
   s.trade.forEach(([a, b]) => { if (!isBlocked(s, a, b)) spread(a, b, (st.trade * pk.trade + (pairOn(s, 'ecodip') ? v10t(s, 'edTrade') * st.border * pk.border : 0)) * (fxOn(s, 'tradeMul') || 1) * (s.cfg.v10 ? 1 + v10t(s, 'ecoTrade') * domainPower(s, 'eco') : 1), 'trade'); });
-  // 3. Faith reach: distant seeding
+  // 3. Grassroots reach: distant seeding
   if (st.reach > 0) COUNTRIES.forEach(c => {
     if (s.inf[c.id] <= 0 && rng(s) < st.reach * (1 + 6 * alignedShare(s)) * (1 - R[c.id])) seed(s, c.id, 1, null);
   });
@@ -1362,7 +1362,7 @@ function useSpecial(s, key, target) {
     const next = Object.keys(W.members).sort((a, b) => s.inf[a] - s.inf[b])[0];
     W.hq = next; s.treaty = Math.max(0, s.treaty - 15);
     if (s.owned.includes('c3')) s.clout += 15;
-    addNews(s, `${byId(old).name} loses faith in the treaty and leaves. The World Order moves its HQ to ${byId(next).name}, losing 15% of the draft in the removal van.`, 'you');
+    addNews(s, `${byId(old).name} loses confidence in the treaty and leaves. The World Order moves its HQ to ${byId(next).name}, losing 15% of the draft in the removal van.`, 'you');
   }
   if (key === 'collapse') { COUNTRIES.forEach(c => resMod(s, c.id, .6, 20)); s.notoriety = Math.min(100, s.notoriety + 8); addNews(s, 'Engineered Collapse: every government wakes to rumours, shortages and unmarked vans. Resistance falls everywhere for 20 weeks.', 'you'); }
   if (key === 'hybrid') { s.blocked = []; W.queue = []; s.noSanctionUntil = s.week + 40; if (s.owned.includes('f3')) s.treaty = Math.max(0, s.treaty - 10); addNews(s, 'Hybrid Threat: nobody at the World Order can agree who is threatening whom. Every plan is shelved and sanctions are lifted.', 'you'); s.notoriety = Math.min(100, s.notoriety + 6); }

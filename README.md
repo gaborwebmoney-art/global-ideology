@@ -6,10 +6,10 @@ A Plague Inc.–style strategy game prototype. You lead a movement that wants th
 
 ## How it plays
 - Support grows inside a country by itself and spills over borders and trade routes once it passes 8%.
-- Spend **Clout** on upgrades (7 branches: Ideology, Economy, Diplomacy, Faith, Military, Covert Ops, Spin) and on targeted operations (Summit, Trade Deal, Snap Exercise, Leaked Dossiers).
+- Spend **Clout** on upgrades (7 branches: Ideology, Economy, Diplomacy, Grassroots, Military, Covert Ops, Spin) and on targeted operations (Summit, Trade Deal, Snap Exercise, Leaked Dossiers).
 - Loud tactics raise **Notoriety**. At 8 the **World Order** convenes: a visible opponent led by Secretary-General Horatio Quorum. It recruits member countries, runs awareness campaigns, sanctions trade routes and collects signatures for its Containment Treaty. Every move is announced 6 weeks ahead, and a Summit in the target country derails it.
 - You win at 70% of the world's population. You lose when 8 countries sign the treaty. Countries where you hold 60% or more refuse to sign.
-- Upgrades follow the original skill tree: opposed doctrines **Ideology or Economy** and **Military or Diplomacy** (the second upgrade in a branch commits you, one Rebrand allowed). Partners boost each other (Ideology and Diplomacy, Economy and Military, Faith and Covert Ops), and each branch ends in a one-off special action against the World Order.
+- Upgrades follow the original skill tree: opposed doctrines **Ideology or Economy** and **Military or Diplomacy** (the second upgrade in a branch commits you, one Rebrand allowed). Partners boost each other (Ideology and Diplomacy, Economy and Military, Grassroots and Covert Ops), and each branch ends in a one-off special action against the World Order.
 - A second way to win: hold enough countries that the World Order cannot reach 8 signatures for 26 weeks, and the treaty collapses.
 - Random world events (good and bad) hit every 12–20 weeks, and every 25–35 weeks you face a decision with two options. The game pauses until you choose.
 - Accounts: register or log in with email and password (online, via Supabase), or play under a device profile. The game autosaves and you continue where you left off. See `DESIGN.md` → Prototype v6.1.
@@ -36,7 +36,7 @@ A Plague Inc.–style strategy game prototype. You lead a movement that wants th
 ## Balance (v5)
 Casual / careful win rates by doctrine build (`node doctrine-bot.js`):
 
-| Build | + Faith | + Covert |
+| Build | + Grassroots | + Covert |
 |---|---|---|
 | Ideology + Diplomacy | 72% / 82% | 82% / 87% |
 | Economy + Military | 63% / 88% | 73% / 97% |

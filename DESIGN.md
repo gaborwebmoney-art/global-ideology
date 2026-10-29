@@ -13,7 +13,7 @@ The game follows the Plague Inc. model. The player is a spreading movement with 
   - Military: breaks military resistance, loud
   - Diplomatic: spreads over land borders
   - Ideological: grows support inside a population
-  - Faith: crosses borders and oceans
+  - Grassroots: crosses borders and oceans
   - Covert Ops: lowers resistance, very loud
 - **Controls.** Global upgrades plus a few targeted operations with cooldowns. No hand-management of each country.
 - **Win condition.** Align 70% of the world's population before the treaty completes.
@@ -21,7 +21,7 @@ The game follows the Plague Inc. model. The player is a spreading movement with 
 
 ### Content and tone
 - The Covert Ops tree is non-violent: Sleeper Agents → Leaked Dossiers → Orchestrated Unrest → Shadow Government. Military ends in a Blockade.
-- Satire targets bureaucracy and summits, media and PR, lobbying and corporate spin, influencer culture and personality cults. There is no satire of violence or religion; Faith is played straight.
+- Satire targets bureaucracy and summits, media and PR, lobbying and corporate spin, influencer culture and personality cults. There is no satire of violence or religion; Grassroots is played straight.
 - Platform: an HTML/JS prototype first. Port to Godot 4 once the core loop is fun.
 
 ## Prototype v1
@@ -87,10 +87,10 @@ Run `node balance-bot.js`: 90 games per strategy.
 | Loud-first | ~29% | Loses around week 205 |
 
 ## Prototype v3: doctrines
-- **Three opposed pairs:** Faith or Military, Diplomacy or Covert Ops, Ideology or Economy. Spin is open to every doctrine. That gives 8 possible builds.
+- **Three opposed pairs:** Grassroots or Military, Diplomacy or Covert Ops, Ideology or Economy. Spin is open to every doctrine. That gives 8 possible builds.
 - **Lock at tier 2.** The first upgrade of every branch is open to all. Buying the second upgrade in a branch closes its opposite for the rest of the game.
 - **Rebrand:** once per game. It refunds 50% of the committed branch's tiers 2–4, costs 10 Clout and adds 15 Notoriety, then opens the opposite branch.
-- **Operations follow doctrine.** Faith closes Snap Exercise. Diplomacy closes Leaked Dossiers.
+- **Operations follow doctrine.** Grassroots closes Snap Exercise. Diplomacy closes Leaked Dossiers.
 - **The loud paths got a unique edge against the World Order:**
   - **Military shield:** countries need 15 + 10 points less of your support to refuse invitations and signings. Military also gets some ideological reach.
   - **Covert sabotage:** 50% of World Order campaigns and sanctions fail, and Shadow Government slows the treaty draft.
@@ -100,10 +100,10 @@ Run `node balance-bot.js`: 90 games per strategy.
 
 | Build | Casual | Careful |
 |---|---|---|
-| Faith + Diplomacy + Ideology | 77% | 90% |
-| Faith + Diplomacy + Economy | 70% | 87% |
-| Faith + Covert + Ideology | 70% | 92% |
-| Faith + Covert + Economy | 48% | 77% |
+| Grassroots + Diplomacy + Ideology | 77% | 90% |
+| Grassroots + Diplomacy + Economy | 70% | 87% |
+| Grassroots + Covert + Ideology | 70% | 92% |
+| Grassroots + Covert + Economy | 48% | 77% |
 | Military + Diplomacy + Ideology | 55% | 57% |
 | Military + Diplomacy + Economy | 57% | 65% |
 | Military + Covert + Ideology | 73% | 70% |
@@ -123,15 +123,15 @@ Source: `skilltree 10092025.xlsx` and `countries.docx` in the `game` repo.
   - Diplomacy ← Social Engineering
   - Military ← Monopolization
   - Economy ← Sovereign Intervention
-  - Faith ↔ Covert Ops
+  - Grassroots ↔ Covert Ops
 - **Capstones are one-off special actions, retargeted at the World Order:**
   - **Utopia:** 26 weeks of double growth and income, no operations
   - **Government Bribe:** a member quits, and +25 support there
   - **Stoppage Order:** freezes the World Order for 10 weeks
   - **Alliance Breaker:** a member quits, and all resistances −8% permanently
-  - **Believe!:** the HQ quits, a new HQ takes over, and the draft drops 15
+  - **Rally Cry:** the HQ quits, a new HQ takes over, and the draft drops 15
   - **Hybrid Threat:** lifts sanctions, cancels planned moves, and no sanctions for 40 weeks
-- **Faith** opens when you are in 4 countries. **Covert Ops** opens when the World Order convenes. Neither is paid.
+- **Grassroots** opens when you are in 4 countries. **Covert Ops** opens when the World Order convenes. Neither is paid.
 - **Operations:**
   - The Military doctrine closes Summit; its counters are Sovereign Intervention's shield and Snap Exercise.
   - The Diplomacy doctrine closes Snap Exercise.
@@ -139,7 +139,7 @@ Source: `skilltree 10092025.xlsx` and `countries.docx` in the `game` repo.
 - **Economy fix:** v1–v3 players only ever reached about 5 upgrades and never tier 3. Upgrades are now weaker individually (fxScale .4), Clout is richer (×3) and escalation is 3% per upgrade. Players now own about 12 upgrades, including 3+ tier-3s. The World Order is stronger to match: it plans every 6 weeks and drafts at 2.6.
 - **Balance** (60 games per build; casual / careful):
 
-| Build | + Faith | + Covert |
+| Build | + Grassroots | + Covert |
 |---|---|---|
 | Ideology + Diplomacy (synergy) | 70% / 87% | 78% / 98% |
 | Economy + Military (synergy) | 73% / 93% | 77% / 98% |
@@ -165,7 +165,7 @@ Built on the Sep 2025 event list (see `prior-work/original-events-sep2025.md` in
 - Peace Talks, Emergency Summit, Official Scandal, Snap Election, Viral Campaign, Defence Pact, Ultimatum, Defector, Talk Show, Image Consultant.
 
 ### Balance (v5, 60 games per build; casual / careful)
-| Build | + Faith | + Covert |
+| Build | + Grassroots | + Covert |
 |---|---|---|
 | Ideology + Diplomacy | 72% / 82% | 82% / 87% |
 | Economy + Military | 63% / 88% | 73% / 97% |
@@ -244,7 +244,7 @@ Why: two playthroughs felt samey. Upgrades are mostly the same resistance cut, c
 - `createState(start, seed, { traits, random })`: both default to true. `{ traits:false, random:false }` reproduces the v8 numbers exactly (checked with `doctrine-bot.js`). The bots read `GI_CFG` (JSON) to switch this.
 
 ### Balance (v9, `doctrine-bot.js`, casual / careful win %, traits+random on; v8 in brackets)
-| Build | + Faith | + Covert |
+| Build | + Grassroots | + Covert |
 |---|---|---|
 | Ideology + Diplomacy | 78 / 88 (72 / 82) | 80 / 88 (82 / 87) |
 | Economy + Military | 75 / 90 (63 / 88) | 78 / 92 (73 / 97) |
