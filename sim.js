@@ -6,22 +6,22 @@ const TYPE_LABEL = { eco: 'Economic', mil: 'Military', dip: 'Diplomatic', ideo: 
 // Countries from Pavel's countries.docx (Sep 2025). Resistances map 100 -> .15, 200 -> .35, 300 -> .55, 400 -> .75.
 // Celestia, Tavaro, Kestria and Pinguinia fill map gaps (Western Europe, Middle East, Africa, the pole).
 const COUNTRIES = [
-  { id: 'borealis',   name: 'Borealis',   pop: 38,   x: 150, y: 95,  res: { mil: .55, eco: .55, dip: .55, ideo: .55 }, traits: ['Federal', 'Resource-rich'], desc: 'A sprawling northern dominion of vast wilderness. Tolerant, decentralised and hard to influence as a single entity.' },
-  { id: 'aethelgard', name: 'Aethelgard', pop: 330,  x: 205, y: 220, res: { mil: .75, eco: .75, dip: .75, ideo: .15 }, traits: ['Superpower', 'Divided politics'], desc: 'A sprawling federation with a powerful, sometimes divided, government. Strong on every front except ideas: it will try any of them once.' },
-  { id: 'laplata',    name: 'La Plata',   pop: 46,   x: 290, y: 450, res: { mil: .55, eco: .15, dip: .15, ideo: .15 }, traits: ['Agricultural wealth', 'Unstable'], desc: 'Great natural beauty, vast farmland and a long history of political turmoil. Very open to a good economic offer.' },
-  { id: 'isolde',     name: 'Isolde',     pop: 0.4,  x: 395, y: 55,  res: { mil: .15, eco: .55, dip: .35, ideo: .35 }, traits: ['Island', 'Close-knit'], desc: 'A remote island of fire and ice. Small, self-reliant and proud of its heritage.' },
-  { id: 'guldor',     name: 'Guldor',     pop: 68,   x: 430, y: 128, res: { mil: .35, eco: .35, dip: .75, ideo: .35 }, traits: ['Island', 'Old money'], desc: 'An ancient kingdom of trade and exploration. Its power rests on centuries of relationships and very old treaties.' },
-  { id: 'celestia',   name: 'Celestia',   pop: 67,   x: 480, y: 240, res: { mil: .30, eco: .40, dip: .60, ideo: .60 }, traits: ['Cultural power'], desc: 'Philosophers, painters and strikes. Soft power, soft army.' },
-  { id: 'helvetia',   name: 'Helvetia',   pop: 9,    x: 555, y: 205, res: { mil: .15, eco: .75, dip: .55, ideo: .35 }, traits: ['Neutral', 'Financial centre'], desc: 'A neutral, prosperous alpine republic. Its banks are everywhere; its opinions, officially, nowhere.' },
-  { id: 'pannonia',   name: 'Pannonia',   pop: 10,   x: 615, y: 155, res: { mil: .15, eco: .15, dip: .35, ideo: .35 }, traits: ['Landlocked', 'Unpredictable'], desc: 'A landlocked state with a proud history and a distinct identity, often at odds with its own alliances.' },
-  { id: 'koryn',      name: 'Koryn',      pop: 145,  x: 755, y: 95,  res: { mil: .55, eco: .35, dip: .35, ideo: .55 }, traits: ['Authoritarian', 'Resource-rich'], desc: 'A vast, resource-rich nation with a centralised government and a proud military history.' },
-  { id: 'tavaro',     name: 'Tavaro',     pop: 90,   x: 665, y: 305, res: { mil: .60, eco: .70, dip: .40, ideo: .60 }, traits: ['Crossroads', 'Oil'], desc: 'A desert crossroads sitting on the world’s favourite resource.' },
-  { id: 'kestria',    name: 'Kestria',    pop: 220,  x: 545, y: 430, res: { mil: .30, eco: .30, dip: .30, ideo: .40 }, traits: ['Young population'], desc: 'The youngest population on the map. Ideas spread here fast.', growthMul: 1.25 },
-  { id: 'bharat',     name: 'Bharat',     pop: 900,  x: 780, y: 340, res: { mil: .55, eco: .35, dip: .35, ideo: .55 }, traits: ['Colossal democracy', 'Tech boom'], desc: 'A colossal democracy of vibrant cultures and a booming tech sector. Its diversity is both a strength and a way in.' },
-  { id: 'sinopeia',   name: 'Sinopeia',   pop: 900,  x: 860, y: 225, res: { mil: .55, eco: .75, dip: .55, ideo: .55 }, traits: ['Authoritarian', 'Manufacturing giant'], desc: 'A vast, ancient empire with a disciplined, centrally run society. Nothing enters without paperwork.' },
-  { id: 'juche',      name: 'Juche',      pop: 26,   x: 935, y: 120, res: { mil: .15, eco: .15, dip: .15, ideo: .75 }, traits: ['Isolated', 'Personality cult'], desc: 'A fiercely isolated nation built around one leader’s portrait. Unmoved by any idea but the official one.' },
-  { id: 'nippon',     name: 'Nippon',     pop: 125,  x: 962, y: 292, res: { mil: .55, eco: .75, dip: .75, ideo: .55 }, traits: ['Island', 'Hyper-advanced'], desc: 'An island nation with a hyper-advanced economy and a disciplined, ageing society.' },
-  { id: 'pinguinia',  name: 'Pinguinia',  pop: 0.05, x: 470, y: 540, res: { mil: .10, eco: .20, dip: .90, ideo: .90 }, traits: ['Polar', 'Research stations'], desc: 'Fifty thousand scientists and considerably more penguins.' }
+  { id: 'borealis',   name: 'Borealis',   pop: 38,   x: 170, y: 144,  res: { mil: .55, eco: .55, dip: .55, ideo: .55 }, traits: ['Federal', 'Resource-rich'], desc: 'A sprawling northern dominion of vast wilderness. Tolerant, decentralised and hard to influence as a single entity.' },
+  { id: 'aethelgard', name: 'Aethelgard', pop: 330,  x: 186, y: 231, res: { mil: .75, eco: .75, dip: .75, ideo: .15 }, traits: ['Superpower', 'Divided politics'], desc: 'A sprawling federation with a powerful, sometimes divided, government. Strong on every front except ideas: it will try any of them once.' },
+  { id: 'laplata',    name: 'La Plata',   pop: 46,   x: 321, y: 434, res: { mil: .55, eco: .15, dip: .15, ideo: .15 }, traits: ['Agricultural wealth', 'Unstable'], desc: 'Great natural beauty, vast farmland and a long history of political turmoil. Very open to a good economic offer.' },
+  { id: 'isolde',     name: 'Isolde',     pop: 0.4,  x: 433, y: 109,  res: { mil: .15, eco: .55, dip: .35, ideo: .35 }, traits: ['Island', 'Close-knit'], desc: 'A remote island of fire and ice. Small, self-reliant and proud of its heritage.' },
+  { id: 'guldor',     name: 'Guldor',     pop: 68,   x: 474, y: 168, res: { mil: .35, eco: .35, dip: .75, ideo: .35 }, traits: ['Island', 'Old money'], desc: 'An ancient kingdom of trade and exploration. Its power rests on centuries of relationships and very old treaties.' },
+  { id: 'celestia',   name: 'Celestia',   pop: 67,   x: 472, y: 236, res: { mil: .30, eco: .40, dip: .60, ideo: .60 }, traits: ['Cultural power'], desc: 'Philosophers, painters and strikes. Soft power, soft army.' },
+  { id: 'helvetia',   name: 'Helvetia',   pop: 9,    x: 520, y: 194, res: { mil: .15, eco: .75, dip: .55, ideo: .35 }, traits: ['Neutral', 'Financial centre'], desc: 'A neutral, prosperous alpine republic. Its banks are everywhere; its opinions, officially, nowhere.' },
+  { id: 'pannonia',   name: 'Pannonia',   pop: 10,   x: 582, y: 208, res: { mil: .15, eco: .15, dip: .35, ideo: .35 }, traits: ['Landlocked', 'Unpredictable'], desc: 'A landlocked state with a proud history and a distinct identity, often at odds with its own alliances.' },
+  { id: 'koryn',      name: 'Koryn',      pop: 145,  x: 684, y: 159,  res: { mil: .55, eco: .35, dip: .35, ideo: .55 }, traits: ['Authoritarian', 'Resource-rich'], desc: 'A vast, resource-rich nation with a centralised government and a proud military history.' },
+  { id: 'tavaro',     name: 'Tavaro',     pop: 90,   x: 614, y: 255, res: { mil: .60, eco: .70, dip: .40, ideo: .60 }, traits: ['Crossroads', 'Oil'], desc: 'A desert crossroads sitting on the world’s favourite resource.' },
+  { id: 'kestria',    name: 'Kestria',    pop: 220,  x: 541, y: 324, res: { mil: .30, eco: .30, dip: .30, ideo: .40 }, traits: ['Young population'], desc: 'The youngest population on the map. Ideas spread here fast.', growthMul: 1.25 },
+  { id: 'bharat',     name: 'Bharat',     pop: 900,  x: 712, y: 305, res: { mil: .55, eco: .35, dip: .35, ideo: .55 }, traits: ['Colossal democracy', 'Tech boom'], desc: 'A colossal democracy of vibrant cultures and a booming tech sector. Its diversity is both a strength and a way in.' },
+  { id: 'sinopeia',   name: 'Sinopeia',   pop: 900,  x: 790, y: 230, res: { mil: .55, eco: .75, dip: .55, ideo: .55 }, traits: ['Authoritarian', 'Manufacturing giant'], desc: 'A vast, ancient empire with a disciplined, centrally run society. Nothing enters without paperwork.' },
+  { id: 'juche',      name: 'Juche',      pop: 26,   x: 849, y: 231, res: { mil: .15, eco: .15, dip: .15, ideo: .75 }, traits: ['Isolated', 'Personality cult'], desc: 'A fiercely isolated nation built around one leader’s portrait. Unmoved by any idea but the official one.' },
+  { id: 'nippon',     name: 'Nippon',     pop: 125,  x: 890, y: 268, res: { mil: .55, eco: .75, dip: .75, ideo: .55 }, traits: ['Island', 'Hyper-advanced'], desc: 'An island nation with a hyper-advanced economy and a disciplined, ageing society.' },
+  { id: 'pinguinia',  name: 'Pinguinia',  pop: 0.05, x: 864, y: 471, res: { mil: .10, eco: .20, dip: .90, ideo: .90 }, traits: ['Remote', 'Research stations'], desc: 'Fifty thousand scientists, a vast empty interior and considerably more penguins than expected.' }
 ];
 const BORDERS = [
   ['borealis', 'aethelgard'], ['celestia', 'helvetia'], ['helvetia', 'pannonia'], ['celestia', 'pannonia'],
@@ -31,7 +31,7 @@ const BORDERS = [
 const TRADE = [
   ['aethelgard', 'guldor'], ['guldor', 'celestia'], ['isolde', 'guldor'], ['isolde', 'borealis'],
   ['aethelgard', 'laplata'], ['laplata', 'kestria'], ['celestia', 'kestria'], ['bharat', 'kestria'],
-  ['nippon', 'sinopeia'], ['nippon', 'juche'], ['helvetia', 'guldor'], ['laplata', 'pinguinia'], ['tavaro', 'celestia']
+  ['nippon', 'sinopeia'], ['nippon', 'juche'], ['helvetia', 'guldor'], ['bharat', 'pinguinia'], ['tavaro', 'celestia']
 ];
 
 // Pavel's skill tree (skilltree 10092025.xlsx), adapted to the World Order model.
@@ -442,7 +442,7 @@ const TRAITS = {
   sinopeia:   { quirk: 'Paperwork: spread into Sinopeia is halved, but out of it +30%.', q: { inMul: .5, outMul: 1.3 }, perkName: 'Manufacturing giant', perk: 'Clout income up', fx: { income: 1 }, woPerk: 'your Clout income down' },
   juche:      { quirk: 'Isolated: no trade spread in, border spread halved, but Leaked Dossiers break every defence.', q: { inMul: .5, tradeInMul: 0, dossierAll: true }, perkName: 'Fanatics', perk: 'Treaty drafting 5% slower', fx: { treatySlow: .05 }, woPerk: 'treaty drafting 5% faster' },
   nippon:     { quirk: 'Hyper-connected: +15% internal growth.', q: { gMul: 1.15 }, perkName: 'Hyper-advanced', perk: 'Every cooldown 6 weeks shorter', fx: { opCd: 6 }, woPerk: 'your cooldowns 6 weeks longer' },
-  pinguinia:  { quirk: 'Polar: nothing happens here, for now.', q: {}, perkName: 'Neutral scientists', perk: 'World Order members resist 5 points less', fx: { memberRes: .05 }, woPerk: 'World Order members resist 5 points more' }
+  pinguinia:  { quirk: 'Remote: nothing happens here, for now.', q: {}, perkName: 'Neutral scientists', perk: 'World Order members resist 5 points less', fx: { memberRes: .05 }, woPerk: 'World Order members resist 5 points more' }
 };
 // Two of these are drawn for every game.
 const CONDITIONS = [
