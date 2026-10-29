@@ -4,7 +4,17 @@
   const DATA = /*I18N_DATA*/ null;
   const EXACT = new Map(Object.entries(DATA.exact));
   const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const PATS = DATA.pat.map(([en, hu]) => ({ re: new RegExp('^' + en.split('{}').map(esc).join('([\\s\\S]+?)') + '$'), hu, len: en.replace(/\{\}/g, '').length }))
+  // v10.25: the LAST {} (when only one . ! ? or nothing follows it) may be empty: "...support{}." has no suffix without a coalition,
+  // and "Support −6.{}" ends the sentence. Before, an empty capture made the whole line miss and it stayed half English.
+  const toRe = en => {
+    const parts = en.split('{}'); let src = '^';
+    parts.forEach((p, i) => {
+      src += esc(p);
+      if (i < parts.length - 1) src += (i === parts.length - 2 && /^[.!?]?$/.test(parts[i + 1]) && p.length >= 8) ? '([\\s\\S]*?)' : '([\\s\\S]+?)';
+    });
+    return new RegExp(src + '$');
+  };
+  const PATS = DATA.pat.map(([en, hu]) => ({ re: toRe(en), hu, len: en.replace(/\{\}/g, '').length }))
     .sort((a, b) => b.len - a.len);
   const ATTRS = ['title', 'aria-label', 'placeholder', 'alt'];
   const KEY = 'gi.lang';
