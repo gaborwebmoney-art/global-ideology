@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="gi-platform" content="web">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-GeOrwVa9pk4Hndrf0H7vZCsLvpAQ192NAq//g+HcH98=' 'sha256-guQxKnQv4Nv6Jj/XZDAup+XYcs5tJyJtKOkf8Ye3XKI=' 'sha256-TsFAbk/k0hCMhlpgct5H7gb72eJZGA3qz/s+ENJ3UsA=' 'sha256-K5Fzyl0haOIPtX50zWfr8l+WU0iXJtvYU93ySyQ6fRU=' 'sha256-Y0y/2dFTsn4w0b+XSO4Xlj6u7hg8YPLOScWIo+UXPH4=' 'sha256-JcZ+w0wl/nJsffYsW7LsiVx5K7SNFIv9cKhwl0SGrrM=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; media-src 'self'; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-GeOrwVa9pk4Hndrf0H7vZCsLvpAQ192NAq//g+HcH98=' 'sha256-guQxKnQv4Nv6Jj/XZDAup+XYcs5tJyJtKOkf8Ye3XKI=' 'sha256-TsFAbk/k0hCMhlpgct5H7gb72eJZGA3qz/s+ENJ3UsA=' 'sha256-ttf2qypqw4skej6wrUka54Px+7eVGFpnvcEN0wt2HWw=' 'sha256-Y0y/2dFTsn4w0b+XSO4Xlj6u7hg8YPLOScWIo+UXPH4=' 'sha256-JcZ+w0wl/nJsffYsW7LsiVx5K7SNFIv9cKhwl0SGrrM=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; media-src 'self'; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#0d1820">
 <meta name="mobile-web-app-capable" content="yes">
@@ -241,6 +241,10 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--you); 
 .t-terr:hover { stroke: var(--text); stroke-width: 1; stroke-opacity: .5; }
 .t-terr.wo-member { stroke: var(--wo); stroke-width: 1.5; stroke-opacity: .9; }
 .t-terr.wo-signed { stroke: var(--wo); stroke-width: 2.6; stroke-opacity: 1; }
+/* v10.28: hovered / selected country outline: bright, with a soft glow (hover stays visible on top of treaty and coalition outlines) */
+.t-terr.t-terr:hover { stroke: #fff; stroke-width: 2; stroke-opacity: 1; filter: drop-shadow(0 0 3px rgba(255, 255, 255, .75)); }
+.t-terr.t-terr.sel { stroke: #fff; stroke-width: 2.6; stroke-opacity: 1; filter: drop-shadow(0 0 4px rgba(255, 255, 255, .85)); }
+.node > text:not(.pct):not(.stamp):not(.best) { font-weight: 500; }   /* v10.28: country names Medium (500) */
 .t-border { fill: none; stroke: #5f7f90; stroke-width: 1; stroke-dasharray: 4 3; opacity: .8; pointer-events: none; }
 .t-peak { fill: none; stroke: #6d8794; stroke-width: 1.1; stroke-linejoin: round; opacity: .75; pointer-events: none; }
 .t-peakfill { fill: #2f4855; opacity: .9; pointer-events: none; }
@@ -3541,6 +3545,7 @@ window.GIAccounts = (() => {
     Object.entries(T.territories).forEach(([id, d]) => {
       const t = p(d, 't-terr'); t.dataset.id = id; terrEls[id] = t;
       t.addEventListener('click', () => select(id));
+      t.addEventListener('mouseenter', () => { if (gTerrain.lastElementChild !== t) gTerrain.appendChild(t); });   // v10.28: hovered outline on top
     });
   })();
   const nodeEls = {};
@@ -3598,8 +3603,9 @@ window.GIAccounts = (() => {
 
   const esc = t => String(t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   // ---------- rendering ----------
+  function paintSel() { COUNTRIES.forEach(c => { const t = terrEls[c.id]; if (!t) return; t.classList.toggle('sel', selected === c.id); if (selected === c.id && gTerrain.lastElementChild !== t) gTerrain.appendChild(t); }); }
   function render() {
-    if (!S) { drawEdges(); renderSide(); renderFx(); renderAlliances(); renderFab(); return; }
+    if (!S) { drawEdges(); renderSide(); renderFx(); renderAlliances(); renderFab(); paintSel(); return; }
     window.GITele.tick(S);
     $('week').textContent = S.week;
     $('clout').textContent = Math.floor(S.clout);
@@ -3630,6 +3636,8 @@ window.GIAccounts = (() => {
       t.classList.toggle('wo-member', !!S.wo.members[c.id] && !S.wo.signed[c.id]);
       t.classList.toggle('wo-signed', !!S.wo.signed[c.id]);
       t.classList.toggle('gc-member', gcMember(S, c.id));
+      t.classList.toggle('sel', selected === c.id);
+      if (selected === c.id && gTerrain.lastElementChild !== t) gTerrain.appendChild(t);   // outline drawn over its neighbours
     });
     processAlerts();
     renderWo(); renderGc();
