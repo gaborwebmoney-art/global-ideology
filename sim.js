@@ -9,7 +9,7 @@ const COUNTRIES = [
   { id: 'borealis',   name: 'Borealis',   pop: 38,   x: 170, y: 144,  res: { mil: .55, eco: .55, dip: .55, ideo: .55 }, traits: ['Federal', 'Resource-rich'], desc: 'A sprawling northern dominion of vast wilderness. Tolerant, decentralised and hard to influence as a single entity.', lore: 'After the Great Snow Compromise of 1731, every province may secede, provided it apologises first. None has finished the paperwork.' },
   { id: 'aethelgard', name: 'Aethelgard', pop: 330,  x: 186, y: 231, res: { mil: .75, eco: .75, dip: .75, ideo: .15 }, traits: ['Superpower', 'Divided politics'], desc: 'A sprawling federation with a powerful, sometimes divided, government. Strong on every front except ideas: it will try any of them once.', lore: 'Founded in a hurry over a dispute about a tax on leaves. Has held 58 constitutional conventions since, each declared a triumph, and tries every idea once.' },
   { id: 'laplata',    name: 'La Plata',   pop: 46,   x: 321, y: 434, res: { mil: .55, eco: .15, dip: .15, ideo: .15 }, traits: ['Agricultural wealth', 'Unstable'], desc: 'Great natural beauty, vast farmland and a long history of political turmoil. Very open to a good economic offer.', lore: 'The currency has been reinvented nine times since the Beef Boom of 1888. Each reissue came with a new slogan and a new dance.' },
-  { id: 'isolde',     name: 'Isolde',     pop: 0.4,  x: 433, y: 109,  res: { mil: .15, eco: .55, dip: .35, ideo: .35 }, traits: ['Island', 'Close-knit'], desc: 'A remote island of fire and ice. Small, self-reliant and proud of its heritage.', lore: 'Settled by Northmen who were lost and decided that was fine. The oldest parliament on the map; when the volcano erupts, the session is rescheduled.' },
+  { id: 'isolde',     name: 'Isolde',     pop: 1,    x: 433, y: 109,  res: { mil: 0, eco: 1, dip: 1, ideo: 1 }, traits: ['Island', 'Close-knit'], desc: 'A remote island of fire and ice. Small, self-reliant and proud of its heritage.', lore: 'Settled by Northmen who were lost and decided that was fine. The oldest parliament on the map; when the volcano erupts, the session is rescheduled.' },
   { id: 'guldor',     name: 'Guldor',     pop: 68,   x: 480, y: 173, res: { mil: .35, eco: .35, dip: .75, ideo: .35 }, traits: ['Island', 'Old money'], desc: 'An ancient kingdom of trade and exploration. Its power rests on centuries of relationships and very old treaties.', lore: 'In 1701 the royal surveyors read the wrong units and the realm briefly appeared four times larger. It maintains that the treaties still apply.' },
   { id: 'celestia',   name: 'Celestia',   pop: 67,   x: 472, y: 236, res: { mil: .30, eco: .40, dip: .60, ideo: .60 }, traits: ['Cultural power'], desc: 'Philosophers, painters and strikes. Soft power, soft army.', lore: 'Since the Great Debate of 1642, every issue is settled by a manifesto, a strike, or lunch. Insists the northern fjords were never on the menu.' },
   { id: 'helvetia',   name: 'Helvetia',   pop: 9,    x: 538, y: 95, res: { mil: .15, eco: .75, dip: .55, ideo: .35 }, traits: ['Neutral', 'Financial centre'], desc: 'A neutral, prosperous republic of banks, fjords and a surprising number of ledgers. Its opinions, officially, nowhere.', lore: 'At the end of the 9th century the Northmen left the north entirely. The Helvetians, unused to wasting resources, moved in the following week, with a ledger. Neutral on arrival, and billed neutrally.' },
@@ -144,7 +144,7 @@ const OPS = [
 // ---- v10 prototype (cfg.v10): widened resistance profiles, domain power, 16 actions, World Order courtships ----
 const V10_RES = {
   borealis: { eco: .80, mil: .45, dip: .60, ideo: .15 }, aethelgard: { eco: .80, mil: .90, dip: .60, ideo: .10 },
-  laplata: { eco: .10, mil: .60, dip: .25, ideo: .40 }, isolde: { eco: .55, mil: .10, dip: .35, ideo: .80 },
+  laplata: { eco: .10, mil: .60, dip: .25, ideo: .40 }, isolde: { eco: 1, mil: 0, dip: 1, ideo: 1 },
   guldor: { eco: .60, mil: .45, dip: .90, ideo: .25 }, celestia: { eco: .40, mil: .15, dip: .65, ideo: .85 },
   helvetia: { eco: .90, mil: .10, dip: .60, ideo: .30 }, pannonia: { eco: .20, mil: .25, dip: .30, ideo: .60 },
   koryn: { eco: .35, mil: .85, dip: .20, ideo: .70 }, tavaro: { eco: .85, mil: .60, dip: .25, ideo: .55 },
@@ -562,7 +562,8 @@ function createState(startId, seed, opts) {
       TYPES.forEach(t => {
         const b0 = baseRes(s, c.id)[t]; let v = b0 * (1 + (rng(s) - .5) * .3);
         if (c.id === 'sinopeia' || c.id === 'bharat') v = Math.min(v, b0 + .03);
-        s.res[c.id][t] = Math.round(Math.min(.9, Math.max(.05, v)) * 100) / 100;
+        // Isolde is a fixed curiosity: walls everywhere except Military, never randomised.
+        s.res[c.id][t] = c.id === 'isolde' ? b0 : Math.round(Math.min(.9, Math.max(.05, v)) * 100) / 100;
       });
     });
     const pool = CONDITIONS.slice();

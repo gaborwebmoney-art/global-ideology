@@ -1147,6 +1147,10 @@ Below 60% this is no garrison: unrest +2 here.	60% alatt ez nem helyőrség: itt
 Calm: unrest −30.	Csillapítás: nyugtalanság −30.
 No new unrest here for 40 weeks.	Itt 40 hétig nincs új nyugtalanság.
 Unrest in {}: uprising in about {} weeks.	Nyugtalanság itt: {1}: felkelés kb. {2} hét múlva.
+Unrest in {}: uprising in about {} weeks. Garrison it (any Military action) or calm it (Pamphlets).	Nyugtalanság itt: {1}: felkelés kb. {2} hét múlva. Állíts helyőrséget (bármely Katonai akció), vagy csillapítsd (Röplapok).
+Unrest in {}. Garrison it (any Military action) or calm it (Pamphlets).	Nyugtalanság itt: {1}. Állíts helyőrséget (bármely Katonai akció), vagy csillapítsd (Röplapok).
+uprising in about {} weeks.	felkelés kb. {1} hét múlva.
+uprising in about {} weeks	felkelés kb. {1} hét múlva
 Unrest in {}.	Nyugtalanság itt: {1}.
 Garrison it (any Military action) or calm it (Pamphlets).	Állíts helyőrséget (bármely Katonai akció), vagy csillapítsd (Röplapok).
 Garrison in {}: unrest −60, no new unrest for 30 weeks.	Helyőrség itt: {1}: nyugtalanság −60, 30 hétig nincs új nyugtalanság.
@@ -1545,6 +1549,7 @@ The Grand Coalition held together for {} weeks and wrote you out of history in w
 Grand Coalition crackdown in {}. Leaflets feature a stern owl and several flags.	Nagykoalíciós leszámolás itt: {1}. A szórólapokon szigorú bagoly és több zászló.
 The Grand Coalition funds {} civics classes. Attendance: mandatory, enthusiasm: optional.	A Nagykoalíció állampolgári ismeretek órákat finanszíroz itt: {1}. Részvétel: kötelező, lelkesedés: opcionális.
 Grand Coalition crackdown	Nagykoalíciós leszámolás
+World Order campaign	Világrend-kampány
 # v10.22 global ranking, guest play, 16+
 Play without an account	Játék fiók nélkül
 No email needed, so players under 16 can play too. Your game is not saved and you do not appear in the ranking.	Nem kell e-mail, így 16 év alatti játékosok is játszhatnak. A játékod nem mentődik, és nem kerülsz be a ranglistába.
