@@ -15,6 +15,7 @@ Great natural beauty, vast farmland and a long history of political turmoil. Ver
 Island	Sziget
 Close-knit	Összetartó
 A remote island of fire and ice. Small, self-reliant and proud of its heritage.	Egy távoli tűz- és jégsziget. Kicsi, önellátó és büszke az örökségére.
+A remote island of fire and ice, population: one. Fully self-sufficient: no trade, no talks, no slogans get through. Only an army can take it.	Egy távoli tűz- és jégsziget, lakossága: egy fő. Teljesen önellátó: se kereskedelem, se tárgyalás, se jelszó nem jut át. Csak hadsereg foglalhatja el.
 Old money	Régi pénz
 An ancient kingdom of trade and exploration. Its power rests on centuries of relationships and very old treaties.	Egy ősi kereskedő- és felfedezőkirályság. Hatalma évszázados kapcsolatokon és nagyon régi szerződéseken nyugszik.
 Cultural power	Kulturális hatalom
@@ -160,6 +161,7 @@ Unstable: frequent support swings, up or down.	Instabil: gyakori támogatási in
 Breadbasket	Éléskamra
 Trade spread +15%	Kereskedelmi terjedés +15%
 Remote: the World Order never recruits it.	Távoli: a Világrend soha nem szervezi be.
+Population one: only Military actions win support here. The World Order never recruits it.	Lakossága egy fő: itt csak Katonai akciókkal lehet támogatást szerezni. A Világrend soha nem szervezi be.
 Hideout	Búvóhely
 Old money: ideas travel out of Guldor 50% faster.	Régi pénz: az eszmék Guldorból 50%-kal gyorsabban terjednek ki.
 Financier	Pénzember
@@ -595,6 +597,7 @@ Start in	Kezdjünk itt:
 Start here	Itt kezdek
 {}M people	{1} millió fő
 {}k people	{1} ezer fő
+1 person	1 fő
 {}% of world	a világ {1}%-a
 Quirk.	Sajátosság.
 (when you hold {}%+): {}	({1}%+ támogatásnál): {2}

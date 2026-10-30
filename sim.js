@@ -9,7 +9,7 @@ const COUNTRIES = [
   { id: 'borealis',   name: 'Borealis',   pop: 38,   x: 170, y: 144,  res: { mil: .55, eco: .55, dip: .55, ideo: .55 }, traits: ['Federal', 'Resource-rich'], desc: 'A sprawling northern dominion of vast wilderness. Tolerant, decentralised and hard to influence as a single entity.', lore: 'After the Great Snow Compromise of 1731, every province may secede, provided it apologises first. None has finished the paperwork.' },
   { id: 'aethelgard', name: 'Aethelgard', pop: 330,  x: 186, y: 231, res: { mil: .75, eco: .75, dip: .75, ideo: .15 }, traits: ['Superpower', 'Divided politics'], desc: 'A sprawling federation with a powerful, sometimes divided, government. Strong on every front except ideas: it will try any of them once.', lore: 'Founded in a hurry over a dispute about a tax on leaves. Has held 58 constitutional conventions since, each declared a triumph, and tries every idea once.' },
   { id: 'laplata',    name: 'La Plata',   pop: 46,   x: 321, y: 434, res: { mil: .55, eco: .15, dip: .15, ideo: .15 }, traits: ['Agricultural wealth', 'Unstable'], desc: 'Great natural beauty, vast farmland and a long history of political turmoil. Very open to a good economic offer.', lore: 'The currency has been reinvented nine times since the Beef Boom of 1888. Each reissue came with a new slogan and a new dance.' },
-  { id: 'isolde',     name: 'Isolde',     pop: 1,    x: 433, y: 109,  res: { mil: 0, eco: 1, dip: 1, ideo: 1 }, traits: ['Island', 'Close-knit'], desc: 'A remote island of fire and ice. Small, self-reliant and proud of its heritage.', lore: 'Settled by Northmen who were lost and decided that was fine. The oldest parliament on the map; when the volcano erupts, the session is rescheduled.' },
+  { id: 'isolde',     name: 'Isolde',     pop: 0.000001, x: 433, y: 109,  res: { mil: 0, eco: 1, dip: 1, ideo: 1 }, traits: ['Island', 'Close-knit'], desc: 'A remote island of fire and ice, population: one. Fully self-sufficient: no trade, no talks, no slogans get through. Only an army can take it.', lore: 'Settled by Northmen who were lost and decided that was fine. The oldest parliament on the map; when the volcano erupts, the session is rescheduled.' },
   { id: 'guldor',     name: 'Guldor',     pop: 68,   x: 480, y: 173, res: { mil: .35, eco: .35, dip: .75, ideo: .35 }, traits: ['Island', 'Old money'], desc: 'An ancient kingdom of trade and exploration. Its power rests on centuries of relationships and very old treaties.', lore: 'In 1701 the royal surveyors read the wrong units and the realm briefly appeared four times larger. It maintains that the treaties still apply.' },
   { id: 'celestia',   name: 'Celestia',   pop: 67,   x: 472, y: 236, res: { mil: .30, eco: .40, dip: .60, ideo: .60 }, traits: ['Cultural power'], desc: 'Philosophers, painters and strikes. Soft power, soft army.', lore: 'Since the Great Debate of 1642, every issue is settled by a manifesto, a strike, or lunch. Insists the northern fjords were never on the menu.' },
   { id: 'helvetia',   name: 'Helvetia',   pop: 9,    x: 538, y: 95, res: { mil: .15, eco: .75, dip: .55, ideo: .35 }, traits: ['Neutral', 'Financial centre'], desc: 'A neutral, prosperous republic of banks, fjords and a surprising number of ledgers. Its opinions, officially, nowhere.', lore: 'At the end of the 9th century the Northmen left the north entirely. The Helvetians, unused to wasting resources, moved in the following week, with a ledger. Neutral on arrival, and billed neutrally.' },
@@ -241,7 +241,7 @@ function canAct(s, aid, target) {
   if (a.global) return { ok: true };
   const rl = ruleAt(s, target, a.dom);
   if (rl && rl.kind === 'ban') return { ok: false, why: `${rl.name}: no ${TYPE_LABEL[a.dom]} actions here` };
-  const v = s.inf[target], W = s.wo, ct = courtOn(s, target) || (rl && rl.kind === 'anyNb');
+  const v = s.inf[target], W = s.wo, ct = courtOn(s, target) || (rl && rl.kind === 'anyNb') || (a.dom === 'mil' && Q(s, target).armyOnly);   // v10.30: Isolde has no neighbours; the army lands from the sea
   const gar = unrestOn(s) && a.dom === 'mil' && a.tier < 4 && v >= CONTROL, calm = unrestOn(s) && aid === 'ideo1' && v >= UNREST.min;
   const bAct = baseActOk(s, a, target);
   if (['eco1', 'eco3', 'mil1', 'mil2', 'mil3', 'ideo1'].includes(aid) && v >= 95 && !((gar || calm) && unrestOf(s, target) >= UNREST.busyAt) && !bAct && !aidOk(s, aid, target)) return { ok: false, why: 'Already yours' };
@@ -252,7 +252,7 @@ function canAct(s, aid, target) {
   }
   if (aid === 'mil1' && nbMax(s, target) < (own(s, 'm1') ? 10 : 15) && !ct && !gar && !bAct) return { ok: false, why: `Needs a neighbour at ${own(s, 'm1') ? 10 : 15}%+` };
   if ((aid === 'mil2' || aid === 'mil3') && nbMax(s, target) < 25 && !ct && !gar && !bAct) return { ok: false, why: 'Needs a neighbour at 25%+' };
-  if (aid === 'mil4' && nbMax(s, target) < 50 && !(gcMember(s, target) && tradeLinks(s, target).some(n => s.inf[n] >= 50))) return { ok: false, why: 'Needs a neighbour at 50%+' };
+  if (aid === 'mil4' && nbMax(s, target) < 50 && !Q(s, target).armyOnly && !(gcMember(s, target) && tradeLinks(s, target).some(n => s.inf[n] >= 50))) return { ok: false, why: 'Needs a neighbour at 50%+' };
   if (aid === 'mil4' && v >= 50 && !W.members[target] && !W.signed[target] && !gcMember(s, target)) return { ok: false, why: 'Already 50%+ and outside the World Order' };
   if ((aid === 'ideo2' || aid === 'ideo3' || aid === 'eco3') && v <= 0) return { ok: false, why: 'No foothold here' };
   if (aid === 'dip4' && !ct && !(ratified(s) && W.signed[target])) return { ok: false, why: 'Only where the World Order is courting, or a signed country during Enforcement' };
@@ -260,7 +260,8 @@ function canAct(s, aid, target) {
   return { ok: true };
 }
 function pushSupport(s, id, amt) { amt *= v10t(s, 'pushMul'); if (amt <= 0) return; if (s.inf[id] <= 0) seed(s, id, 0.5, null); s.inf[id] = Math.min(100, s.inf[id] + amt); }
-function doAct(s, aid, target) {
+function doAct(s, aid, target) { const r = doAct0(s, aid, target); armyGate(s, aid, target); return r; }
+function doAct0(s, aid, target) {
   const chk = canAct(s, aid, target); if (!chk.ok) return chk;
   const m0 = s.mods.length;
   const a = ACTIONS.find(x => x.id === aid), W = s.wo, e = target ? actEff(s, a, target) : 0;
@@ -430,7 +431,7 @@ const TRAITS = {
   borealis:   { quirk: 'Federal: the World Order can only recruit it below 20% support.', q: { recruitDelta: -20 }, perkName: 'Resource-rich', perk: 'Clout income up a little', fx: { income: .5 }, woPerk: 'your Clout income down a little' },
   aethelgard: { quirk: 'Divided politics: random support swings of 4–10 points.', q: { swing: .015 }, perkName: 'Superpower ally', perk: 'World Order campaigns hit 30% softer', fx: { fc: .3 }, woPerk: 'World Order campaigns hit you 30% harder' },
   laplata:    { quirk: 'Unstable: frequent support swings, up or down.', q: { swing: .02 }, perkName: 'Breadbasket', perk: 'Trade spread +15%', fx: { trade: 1.15 }, woPerk: 'your trade spread −15%' },
-  isolde:     { quirk: 'Remote: the World Order never recruits it.', q: { noRecruit: true }, perkName: 'Hideout', perk: 'Clout income up a little', fx: { income: .2 }, woPerk: 'your Clout income down a little' },
+  isolde:     { quirk: 'Population one: only Military actions win support here. The World Order never recruits it.', q: { noRecruit: true, armyOnly: true }, perkName: 'Hideout', perk: 'Clout income up a little', fx: { income: .2 }, woPerk: 'your Clout income down a little' },
   guldor:     { quirk: 'Old money: ideas travel out of Guldor 50% faster.', q: { outMul: 1.5 }, perkName: 'Financier', perk: 'Clout income up', fx: { income: 1 }, woPerk: 'your Clout income down' },
   celestia:   { quirk: 'Cultural power: ideas travel out of Celestia 40% faster.', q: { outMul: 1.4 }, perkName: 'Soft power', perk: 'Notoriety grows 10% slower', fx: { vis: -.1 }, woPerk: 'Notoriety grows 10% faster' },
   helvetia:   { quirk: 'Neutral: the World Order cannot run campaigns here.', q: { immuneAt: 1 }, perkName: 'Discreet banking', perk: 'Operations cost 1 Clout less', fx: { opDisc: 1 }, woPerk: 'your actions cost 1 Clout more' },
@@ -517,6 +518,19 @@ function ruleAt(s, id, dom) {
 const ruleKind = (s, id, dom) => { const r = ruleAt(s, id, dom); return r ? r.kind : null; };
 function baseRule(s) { return rulesOn(s) && RULES[baseOf(s)] ? RULES[baseOf(s)].base : null; }
 const MULT_KEYS = ['growth', 'trade', 'border'];
+// v10.30 Isolde (armyOnly): its support only rises through a Military action on it. Any other gain (spillover, events,
+// decisions, upgrades) is taken back right away; losses always count and lower the ceiling, so lost ground must be retaken.
+function armyGate(s, aid, target) {
+  if (!s || !s.inf) return;
+  for (const c of COUNTRIES) {
+    if (!Q(s, c.id).armyOnly) continue;
+    s.army = s.army || {};
+    const byArmy = aid && target === c.id && (ACTIONS.find(x => x.id === aid) || {}).dom === 'mil';
+    if (s.army[c.id] === undefined || byArmy) s.army[c.id] = s.inf[c.id];
+    else s.inf[c.id] = Math.min(s.inf[c.id], s.army[c.id]);
+    s.army[c.id] = s.inf[c.id];
+  }
+}
 function Q(s, id) { return (s.cfg && s.cfg.traits === false) ? {} : ((TRAITS[id] && TRAITS[id].q) || {}); }
 function perk(s) {
   const p = { income: 0, growth: 1, trade: 1, border: 1, vis: 0, fc: 0, opDisc: 0, opCd: 0, bubble: 0, treatySlow: 0, memberRes: 0, plan: 0 };
@@ -611,14 +625,17 @@ function resBreakdown(s, id) {
     v = Math.min(.95, Math.max(0, v * mul + add));
     out[t] = v;
   });
+  // v10.30 Isolde: one self-sufficient islander. Economy, Diplomacy and Ideology never get through; only Military does.
+  if (Q(s, id).armyOnly) TYPES.forEach(t => { if (t !== 'mil') out[t] = 1; });
   return out;
 }
 function effRes(s, id) { const b = resBreakdown(s, id); return (b.eco + b.mil + b.dip + b.ideo) / 4; }
 
-function step(s) {
+function step(s) { const r = step0(s); armyGate(s); return r; }
+function step0(s) {
   if (s.over || s.pending) return;
   s.week++;
-  const R = {}; COUNTRIES.forEach(c => { R[c.id] = effRes(s, c.id); });
+  const R = {}; COUNTRIES.forEach(c => { R[c.id] = Q(s, c.id).armyOnly ? 1 : effRes(s, c.id); });   // armyOnly: no passive growth or spread in
   const d = {}; COUNTRIES.forEach(c => { d[c.id] = 0; });
   const st = s.stats;
   const pk = perk(s);
@@ -1059,7 +1076,8 @@ function seed(s, id, amount, src) {
   }
 }
 function spawnBubble(s, id, value) { s.bubbles.push({ key: ++s.bubbleSeq, id, value, until: s.week + 7 }); }
-function collectBubble(s, key) {
+function collectBubble(s, key) { const r = collectBubble0(s, key); armyGate(s); return r; }
+function collectBubble0(s, key) {
   const i = s.bubbles.findIndex(b => b.key === key); if (i < 0) return 0;
   const v = s.bubbles[i].value, bid = s.bubbles[i].id; s.bubbles.splice(i, 1); s.clout += v;
   if (s.cfg.v10 && own(s, 'e1') && bid) { if (s.inf[bid] <= 0) seed(s, bid, 1, null); else s.inf[bid] = Math.min(100, s.inf[bid] + 1); }
@@ -1270,7 +1288,8 @@ function rebrand(s, b) {
   addNews(s, `Your movement announces it has always stood for ${ob}, never ${nb}. Archives are being updated.`, 'you');
   return { ok: true, refund };
 }
-function buyUpgrade(s, id) {
+function buyUpgrade(s, id) { const r = buyUpgrade0(s, id); armyGate(s); return r; }
+function buyUpgrade0(s, id) {
   const u = UPGRADES.find(x => x.id === id); const chk = canBuy(s, u); if (!chk.ok) return chk;
   const off = offDoctrine(s, u), pairsBefore = PAIRS.filter(p => pairOn(s, p.id)).map(p => p.id);
   s.clout -= upCost(s, u); s.owned.push(id); if (s.freeUp === u.b) s.freeUp = null;
@@ -1526,7 +1545,8 @@ function canChoose(s, choice) {
   if (choice === 'a' && p.cost && s.clout < p.cost) return { ok: false, why: `Needs ${p.cost} Clout` };
   return { ok: true };
 }
-function resolveDecision(s, choice) {
+function resolveDecision(s, choice) { const r = resolveDecision0(s, choice); armyGate(s); return r; }
+function resolveDecision0(s, choice) {
   const chk = canChoose(s, choice); if (!chk.ok) return chk;
   const p = s.pending; const d = DECISIONS.find(x => x.id === p.id);
   const m0 = s.mods.length; const text = d[choice](s, p); tagMods(s, m0, p.name);
