@@ -1021,7 +1021,7 @@ function completeReloc(s) {
 // Score + stars (v10.10). A country counts as lost once you held it (>= CONTROL) and it later fell below CONTROL - LOST_MARGIN.
 // Notoriety in the score is the run average: peak notoriety hits 100 in most Normal/Brutal wins, so it would not tell runs apart.
 // v10.21: re-measured after Step 9.2 (bot median win week, 192 runs/level; v10.19 197 / 249 / 249, v10.10 175 / 213 / 245)
-const PAR = { casual: 202, normal: 247, brutal: 266 };
+const PAR = { casual: 192, normal: 230, brutal: 257 };
 const SCORE_BASE = { casual: 1000, normal: 1500, brutal: 2500 };
 const LOST_MARGIN = 5; // dips of a few points around 60% are noise, not a lost country
 function trackRun(s) {
