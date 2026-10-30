@@ -1,0 +1,11 @@
+itch.io screenshots for v10.30 (1920x1080, English, Casual, start Borealis). Regenerate: python3 tools/make-itch-shots.py
+01-briefing          Briefing: the rules in one page
+02-choose-country    Choose your start: dossier, Background lore, resistances, difficulty
+03-early-actions     Week 18: first foothold, Ideology actions on a neighbour
+04-upgrades          Upgrades: 8 doctrine tracks, opposed pairs
+05-decision          A decision: snap election, pay for the candidate or stay out
+06-world-order       The World Order convenes and courts countries against you
+07-midgame           45% aligned: sanctions, trade routes closing, treaty signatures
+08-late-game         News log late game
+09-result            The world agrees with you: score and stars
+10-final-map         Final map: all aligned, Grand Coalition broken
