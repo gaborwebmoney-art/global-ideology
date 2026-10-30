@@ -21,10 +21,10 @@ Cultural power	Kulturális hatalom
 Philosophers, painters and strikes. Soft power, soft army.	Filozófusok, festők és sztrájkok. Puha hatalom, puha hadsereg.
 Neutral	Semleges
 Financial centre	Pénzügyi központ
-A neutral, prosperous alpine republic. Its banks are everywhere; its opinions, officially, nowhere.	Semleges, gazdag alpesi köztársaság. A bankjai mindenhol ott vannak; a véleménye, hivatalosan, sehol.
-Landlocked	Tengerparttal nem rendelkező
+A neutral, prosperous republic of banks, fjords and a surprising number of ledgers. Its opinions, officially, nowhere.	Semleges, gazdag köztársaság bankokkal, fjordokkal és meglepően sok főkönyvvel. A véleménye, hivatalosan, sehol.
+Sprawling	Kiterjedt
 Unpredictable	Kiszámíthatatlan
-A landlocked state with a proud history and a distinct identity, often at odds with its own alliances.	Tengerparttal nem rendelkező állam büszke történelemmel és különálló identitással, gyakran szemben a saját szövetségeseivel.
+A sprawling state with a proud history and a distinct identity, often at odds with its own alliances.	Hatalmas kiterjedésű állam büszke történelemmel és különálló identitással, gyakran szemben a saját szövetségeseivel.
 Authoritarian	Önkényuralmi
 A vast, resource-rich nation with a centralised government and a proud military history.	Hatalmas, erőforrásgazdag nemzet központosított kormánnyal és büszke katonai múlttal.
 Crossroads	Útkereszteződés
@@ -38,14 +38,14 @@ A colossal democracy of vibrant cultures and a booming tech sector. Its diversit
 Manufacturing giant	Gyártóóriás
 A vast, ancient empire with a disciplined, centrally run society. Nothing enters without paperwork.	Hatalmas, ősi birodalom fegyelmezett, központilag irányított társadalommal. Papírmunka nélkül semmi sem lép be.
 Isolated	Elszigetelt
-Personality cult	Személyi kultusz
-A fiercely isolated nation built around one leader’s portrait. Unmoved by any idea but the official one.	Hevesen elszigetelt nemzet, egyetlen vezető portréja köré építve. A hivatalos eszmén kívül semmi sem hatja meg.
+Closed borders	Zárt határok
+A fiercely isolated nation with one official opinion. Unmoved by any idea but that one.	Hevesen elszigetelt nemzet egyetlen hivatalos véleménnyel. A hivatalos eszmén kívül semmi sem hatja meg.
 Hyper-advanced	Hiper-fejlett
 An island nation with a hyper-advanced economy and a disciplined, ageing society.	Szigetnemzet hiper-fejlett gazdasággal, fegyelmezett, öregedő társadalommal.
 Polar	Sarki
-Remote	Távoli
-Research stations	Kutatóállomások
-Fifty thousand scientists, a vast empty interior and considerably more penguins than expected.	Ötvenezer tudós, egy hatalmas üres belső vidék és a vártnál jóval több pingvin.
+Island continent	Szigetkontinens
+Mining boom	Bányászati fellendülés
+A sunburnt island continent of mines, beaches and very large distances. Relaxed, friendly, and a long way from everything.	Napégette szigetkontinens bányákkal, tengerpartokkal és hatalmas távolságokkal. Laza, barátságos, és minden egyébtől messze van.
 Ideology	Ideológia
 Grows support inside countries.	Növeli a támogatást az országokon belül.
 Economy	Gazdaság
@@ -171,7 +171,7 @@ Neutral: the World Order cannot run campaigns here.	Semleges: a Világrend nem i
 Discreet banking	Diszkrét bankolás
 Operations cost 1 Clout less	A műveletek 1 befolyással kevesebbe kerülnek
 Unpredictable: 40% of World Order moves here fall through.	Kiszámíthatatlan: a Világrend itteni lépéseinek 40%-a elhal.
-Landlocked hub	Szárazföldi csomópont
+Crossroads hub	Keresztút-csomópont
 Border spread +10%	Határ menti terjedés +10%
 Authoritarian: slow to convert (−15% growth), but immune to campaigns once you hold 50%.	Önkényuralmi: lassan téríthető (−15% növekedés), de 50% támogatásnál immunis a kampányokra.
 Crossroads: spread through Tavaro is 40% faster out, 20% faster in.	Útkereszteződés: Tavaro-n át a terjedés kifelé 40%-kal, befelé 20%-kal gyorsabb.
@@ -181,14 +181,13 @@ More opportunity bubbles	Több lehetőségbuborék
 Colossal democracy: slow to convert (−15% growth), and needs 10 points less support to refuse a signing.	Óriás demokrácia: lassan téríthető (−15% növekedés), és 10 ponttal kevesebb támogatás kell az aláírás megtagadásához.
 Digital reach	Digitális elérés
 Internal growth +10% everywhere	Belső növekedés +10% mindenhol
-Paperwork: spread into Sinopeia is halved, but out of it +30%.	Papírmunka: Sinopeiába a terjedés a felére csökken, onnan kifelé +30%.
+Paperwork: spread into Biyoco is halved, but out of it +30%.	Papírmunka: Biyocóba a terjedés a felére csökken, onnan kifelé +30%.
 Isolated: no trade spread in, border spread halved, but Leaked Dossiers break every defence.	Elszigetelt: nincs kereskedelmi terjedés befelé, a határ menti terjedés a felére csökken, de a kiszivárgott dossziék minden védelmet áttörnek.
-Fanatics	Fanatikusok
+True believers	Igazhitűek
 Treaty drafting 5% slower	A szerződés megfogalmazása 5%-kal lassabb
 Hyper-connected: +15% internal growth.	Hiper-összekötött: +15% belső növekedés.
 Every cooldown 6 weeks shorter	Minden várakozási idő 6 héttel rövidebb
-Remote: nothing happens here, for now.	Távoli: itt egyelőre semmi sem történik.
-Neutral scientists	Semleges tudósok
+Remote: spread into Koalia is 20% slower.	Távoli: a Koaliába terjedés 20%-kal lassabb.
 World Order members resist 5 points less	A Világrend tagjai 5 ponttal kevésbé ellenállnak
 Trade boom	Kereskedelmi fellendülés
 Trade spread +30%	Kereskedelmi terjedés +30%
@@ -959,7 +958,7 @@ Armed neutrality	Fegyveres semlegesség
 Pragmatists	Pragmatikusok
 Contrarian	Örök ellenzék
 Respects strength	Tiszteli az erőt
-Sanction-hardened	Szankcióedzett
+Self-reliant	Önellátó
 Defence expo	Védelmi kiállítás
 Oil consortium	Olajkonzorcium
 Viral	Virális
@@ -967,13 +966,13 @@ Youth protests	Ifjúsági tüntetések
 Coalition politics	Koalíciós politika
 Red tape	Bürokrácia
 Face	Arcmegőrzés
-Great Firewall	Nagy Tűzfal
+Great Filing Cabinet	Nagy Iratszekrény
 Brittle regime	Törékeny rezsim
-Portrait backlash	A portré visszavág
+Official-line backlash	A hivatalos vonal visszavág
 Trendsetters	Trenddiktátorok
 Pacifist constitution	Pacifista alkotmány
-Research grants	Kutatási ösztöndíjak
-Antarctic Treaty	Antarktisz-egyezmény
+Mining royalties	Bányászati jogdíjak
+Tyranny of distance	A távolság zsarnoksága
 Ideology actions here also spread half their gain to neighbours and trade partners.	Az itteni Ideológia-akciók nyereségük felét a szomszédokra és a kereskedelmi partnerekre is átterjesztik.
 Economy actions here also spread half their gain to neighbours and trade partners.	Az itteni Gazdaság-akciók nyereségük felét a szomszédokra és a kereskedelmi partnerekre is átterjesztik.
 Diplomacy actions here also spread half their gain to neighbours and trade partners.	Az itteni Diplomácia-akciók nyereségük felét a szomszédokra és a kereskedelmi partnerekre is átterjesztik.
@@ -1666,3 +1665,20 @@ Region borders	Térségi határok
 Trade routes	Kereskedelmi útvonalak
 World Order markers	Világrend-jelölők
 Labels	Címkék
+After the Great Snow Compromise of 1731, every province may secede, provided it apologises first. None has finished the paperwork.	Az 1731-es Nagy Hókompromisszum óta minden tartomány kiválhat, ha előtte bocsánatot kér. Eddig egyik sem végzett a papírmunkával.
+Founded in a hurry over a dispute about a tax on leaves. Has held 58 constitutional conventions since, each declared a triumph, and tries every idea once.	Sietve alapították egy levéladó körüli vita miatt. Azóta 58 alkotmányozó gyűlést tartott, mindegyiket diadalnak nyilvánította, és minden ötletet egyszer kipróbál.
+The currency has been reinvented nine times since the Beef Boom of 1888. Each reissue came with a new slogan and a new dance.	A pénzt kilencszer találták fel újra az 1888-as Marhahús-boom óta. Minden újrakiadás új jelmondattal és új tánccal érkezett.
+Settled by Northmen who were lost and decided that was fine. The oldest parliament on the map; when the volcano erupts, the session is rescheduled.	Északiak telepítették be, akik eltévedtek, és úgy döntöttek, hogy ez rendben van. A térkép legrégebbi parlamentje; ha kitör a vulkán, az ülést elhalasztják.
+In 1701 the royal surveyors read the wrong units and the realm briefly appeared four times larger. It maintains that the treaties still apply.	1701-ben a királyi földmérők rossz mértékegységet olvastak, és a birodalom egy időre négyszer akkorának látszott. Ragaszkodik hozzá, hogy a szerződések még érvényesek.
+Since the Great Debate of 1642, every issue is settled by a manifesto, a strike, or lunch. Insists the northern fjords were never on the menu.	Az 1642-es Nagy Vita óta minden kérdést kiáltvány, sztrájk vagy ebéd dönt el. Állítja, hogy az északi fjordok sosem szerepeltek az étlapon.
+At the end of the 9th century the Northmen left the north entirely. The Helvetians, unused to wasting resources, moved in the following week, with a ledger. Neutral on arrival, and billed neutrally.	A 9. század végén az északiak teljesen elhagyták északot. A helvétek, akik nem szoktak erőforrást pazarolni, a következő héten beköltöztek, főkönyvvel. Semlegesen érkeztek, és semlegesen számláztak.
+Following the events of 1567 the country expanded north until its borders reached the Baltic, mostly because nobody objected loudly enough. Later got the Alps in a clerical-error swap with Helvetia.	Az 1567-es események után az ország északra terjeszkedett, egészen a Balti-tengerig, leginkább mert senki sem tiltakozott elég hangosan. Később hivatali tévedésből megkapta az Alpokat Helvetiától.
+Expanded eastward for three centuries looking for a warmer border. Then realised it had left the iron on and turned back home. Still has eleven time zones to show for it.	Három évszázadig terjeszkedett keletre egy melegebb határ után kutatva. Aztán rájött, hogy bekapcsolva hagyta a vasalót, és hazafordult. Tizenegy időzónát őriz ebből az időből.
+The Caravan Road Compact of 1210 requires every road in the region to pass through Tavaro. Pipelines were later added under the same clause.	Az 1210-es Karavánút-egyezmény előírja, hogy a térség minden útja Tavarón vezessen át. A csővezetékek később ugyanezen záradék alapján kerültek hozzá.
+Median age 19. Skipped several centuries of technology by mutual agreement and now argues about the rest on video.	Az átlagéletkor 19 év. Kölcsönös megegyezéssel átugrott pár évszázadnyi technikát, és a maradékról most videón vitatkozik.
+Holds the largest election on the map and the largest argument about it the day after. The committee on a national word for "yes" has been in session since 1952. It never forgets, so the minutes are perfect and nothing is decided.	Itt tartják a térkép legnagyobb választását és másnap a legnagyobb vitát róla. Az „igen” nemzeti szavát kereső bizottság 1952 óta ülésezik. Sosem felejt, így a jegyzőkönyv tökéletes, és semmi sem dől el.
+Invented paper, then bureaucracy, then the form for requesting paper. Builds everything, including, every spring, the country.	Feltalálta a papírt, aztán a bürokráciát, aztán az űrlapot a papír igényléséhez. Mindent megépít, minden tavasszal az országot is.
+Closed its borders "for the weekend" long ago. The weekend is renewed every year by unanimous vote by a single voter.	Évekkel ezelőtt „a hétvégére” lezárta a határait. A hétvégét évente egyhangú szavazással hosszabbítja meg egyetlen szavazó.
+Began a brief period of tidying in the 17th century and never stopped. Apologises for train delays of under twenty seconds.	A 17. században egy rövid rendrakási időszakba kezdett, és azóta sem hagyta abba. Bocsánatot kér minden húsz másodperc alatti vonatkésésért.
+Surveyors stopped at the coast and declared the interior "a job for later". Everything in it is venomous, so diplomacy is done from a respectful distance, over a barbecue. The koala holds the casting vote, but sleeps twenty hours a day.	A földmérők megálltak a parton, és a belsőt „későbbi feladatnak” nyilvánították. Benne minden mérgező, ezért a diplomácia tisztelettudó távolságból, grillezés közben zajlik. A koala dönt szavazategyenlőségnél, de napi húsz órát alszik.
+Background.	Háttér.
