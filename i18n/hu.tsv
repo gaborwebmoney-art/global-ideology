@@ -1690,3 +1690,11 @@ Closed its borders "for the weekend" long ago, drawn with a generous ruler, whic
 Began a brief period of tidying in the 17th century and never stopped. Apologises for train delays of under twenty seconds.	A 17. században egy rövid rendrakási időszakba kezdett, és azóta sem hagyta abba. Bocsánatot kér minden húsz másodperc alatti vonatkésésért.
 Surveyors stopped at the coast and declared the interior "a job for later". Everything in it is venomous, so diplomacy is done from a respectful distance, over a barbecue. The koala holds the casting vote, but sleeps twenty hours a day.	A földmérők megálltak a parton, és a belsőt „későbbi feladatnak” nyilvánították. Benne minden mérgező, ezért a diplomácia tisztelettudó távolságból, grillezés közben zajlik. A koala dönt szavazategyenlőségnél, de napi húsz órát alszik.
 Background.	Háttér.
+# v10.31: extra branches locked until their unlock goal is reached
+Each extra upgrade branch stays locked until you reach its goal. Once reached, it is open in every new game.	Minden extra fejlesztési ág zárva marad, amíg el nem éred a hozzá tartozó célt. Utána minden új játékban nyitva van.
+unlocked	feloldva
+Locked until you reach the {} goal	Zárva, amíg el nem éred ezt a célt: {1}
+Progress: {} / {}	Haladás: {1} / {2}
+Progress: {} / {}. Reached: the branch opens from your next game.	Haladás: {1} / {2}. Teljesítve: az ág a következő játékodtól nyitva.
+{} unlocked: open from your next game.	{1} feloldva: a következő játékodtól nyitva.
+The four extra branches open once you reach their unlock goals (Menu, Unlock goals).	A négy extra ág akkor nyílik meg, ha eléred a feloldási céljaikat (Menü, Feloldási célok).
