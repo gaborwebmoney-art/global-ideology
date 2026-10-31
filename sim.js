@@ -43,8 +43,8 @@ const BRANCHES = [
   { id: 'eco', name: 'Economy', blurb: 'Spreads along trade routes. Earns Clout.', partner: 'mil' },
   { id: 'mil', name: 'Military', blurb: 'Breaks resistance and makes countries refuse the World Order. Loud.', partner: 'eco' },
   { id: 'dip', name: 'Diplomacy', blurb: 'Spreads across land borders. Blunts the World Order.', partner: 'ideo' },
-  { id: 'faith', name: 'Grassroots', blurb: 'Crosses oceans and borders on its own.', partner: 'covert', unlock: 'reach' },
-  { id: 'covert', name: 'Covert Ops', blurb: 'Weakens every defence. Very loud.', partner: 'faith', unlock: 'wo' },
+  { id: 'faith', name: 'Grassroots', blurb: 'Crosses oceans and borders on its own.', partner: 'covert' },
+  { id: 'covert', name: 'Covert Ops', blurb: 'Weakens every defence. Very loud.', partner: 'faith' },
   { id: 'under', name: 'Back Channels', blurb: 'Quiet deals and dirty tricks. Destabilises everyone. Loud, and notorious.' },
   { id: 'spin', name: 'Spin', blurb: 'Keeps the World Order busy.' }
 ];
@@ -131,7 +131,6 @@ const SPECIALS = {
   collapse: { name: 'Engineered Collapse', target: false }
 };
 const REBRAND_COST = 10, REBRAND_NOTORIETY = 15;
-const FAITH_UNLOCK_COUNTRIES = 4;
 
 const OPS = [
   { id: 'summit', name: 'Summit', branch: 'Diplomacy', cost: 6, cd: 30, text: 'All resistances here −40% for 25 weeks, and derails any World Order move planned here. Quiet.' },
@@ -1255,11 +1254,9 @@ function canBuy(s, u) {
 // Fixed for the whole game; older saves and the bots have no list, so everything stays open there.
 const PREMIUM_GOAL = { covert: 'Ghost', spin: 'Headliner', faith: 'Wayfarer', under: 'Puppetmaster' };
 function premiumLocked(s, b) { return !!(s.cfg && Array.isArray(s.cfg.locked) && s.cfg.locked.includes(b)); }
+// v10.32: the old in-game gates (Grassroots at 4 countries, Covert Ops when the World Order convenes) are gone; the goal lock is the only one
 function branchLock(s, b) {
-  const br = BRANCHES.find(x => x.id === b);
   if (premiumLocked(s, b)) return `Locked until you reach the ${PREMIUM_GOAL[b]} goal`;
-  if (br.unlock === 'reach' && COUNTRIES.filter(c => s.inf[c.id] >= 5).length < FAITH_UNLOCK_COUNTRIES && !s.owned.some(id => id[0] === 'f')) return `Opens when your movement is in ${FAITH_UNLOCK_COUNTRIES} countries`;
-  if (br.unlock === 'wo' && !s.coalition && !s.broken && !s.owned.some(id => id[0] === 'c')) return 'Opens when the World Order convenes';
   return null;
 }
 function boosted(s, u) { return synergyOf(s, u.b).some(id => s.owned.includes(id)); }

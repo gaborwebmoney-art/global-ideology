@@ -1698,3 +1698,9 @@ Progress: {} / {}	Haladás: {1} / {2}
 Progress: {} / {}. Reached: the branch opens from your next game.	Haladás: {1} / {2}. Teljesítve: az ág a következő játékodtól nyitva.
 {} unlocked: open from your next game.	{1} feloldva: a következő játékodtól nyitva.
 The four extra branches open once you reach their unlock goals (Menu, Unlock goals).	A négy extra ág akkor nyílik meg, ha eléred a feloldási céljaikat (Menü, Feloldási célok).
+# v10.32: goal sizes differ by platform (web 25% lower), Ghost limit 25, browser-storage note
+Win {} times on Normal or Brutal with average notoriety {} or less (counted until the World Order breaks up).	Nyerj {1}-szor Normál vagy Brutális szinten legfeljebb {2} átlagos Hírhedtséggel (a Világrend felbomlásáig számítva).
+Collect {} stars in total (your best per country and level).	Gyűjts összesen {1} csillagot (a legjobb eredményed országonként és szintenként).
+Earn 2 or more stars on Normal or Brutal from {} different start countries.	Szerezz legalább 2 csillagot Normál vagy Brutális szinten {1} különböző kezdőországból.
+Collect {} stars on Brutal (your best per country).	Gyűjts {1} csillagot Brutális szinten (a legjobb eredményed országonként).
+Progress is saved in this browser on this device. Clearing the browser data or playing on another device starts it again.	A haladás ebben a böngészőben, ezen az eszközön tárolódik. A böngészőadatok törlése vagy egy másik eszköz használata újrakezdi.
