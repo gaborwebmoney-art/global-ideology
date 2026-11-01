@@ -2,9 +2,9 @@
 
 Everything Claude prepared is in this repo. Everything only you can do is marked **YOU**.
 
-## 0. Account type (decided 2026-11-01: organization account via the egyéni vállalkozó)
-- **Organization account** (chosen): needs a D-U-N-S number for the business (free, up to 30 days) and Google's verification (1-3 weeks). No 12-tester rule. The EV must be active before it can earn (reactivate it before the payments profile goes live).
-- Personal accounts created after 13 Nov 2023 would need a closed test with 12+ testers for 14 continuous days before production; not our path.
+## 0. Account type and the 14-day clock (decided 2026-11-01: personal account)
+Pavel requested a **personal** developer account (created after 13 Nov 2023), so production access needs a **closed test with at least 12 testers opted in for 14 continuous days**. The clock starts when the 12th tester has opted in on a live closed-test release. Order: first AAB -> closed test -> 12+ testers (aim for 15-20) -> 14 days -> apply for production. Paid branches can ship into the same closed track; builds can be updated without resetting the clock.
+Payouts from sales are business income: the egyéni vállalkozó must be active before the payments profile goes live (ask the accountant).
 
 ## 0b. Paid branches (v10.33)
 Products (Play Console -> Monetize -> Products -> **One-time products**; all *managed / non-consumable*, status Active):
