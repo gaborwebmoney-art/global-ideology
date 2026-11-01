@@ -101,6 +101,15 @@ jobs:
           grep -q 'AppPlugin' "$RUNNER_TEMP/plugins.json" || { echo "::error::App plugin (Back button) not registered"; exit 1; }
           unzip -l "$AAB" | grep -q 'base/assets/public/privacy.html' && echo "note: privacy.html is inside the app" || true
           ls -l "$AAB"
+      - name: Test APK for sideloading (self-test only; Google Play billing does not work outside a Play install)
+        if: env.SELFTEST == 'yes'
+        run: cd android && ./gradlew --no-daemon assembleDebug && ls -l app/build/outputs/apk/debug/
+      - uses: actions/upload-artifact@v4
+        if: env.SELFTEST == 'yes'
+        with:
+          name: global-ideology-test-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 14
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ env.SELFTEST == 'yes' && 'global-ideology-SELFTEST-not-for-play' || 'global-ideology-release-aab' }}
