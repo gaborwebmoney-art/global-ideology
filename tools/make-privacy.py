@@ -36,6 +36,7 @@ EN = {
 <li>An account needs an email address and a password, and lets you continue a game on any device. Accounts are for players aged 16 or older.</li>
 <li>The game sends anonymous gameplay data (you can switch this off), crash reports, and bug reports only if you send them.</li>
 <li>The public ranking is opt-in. Only the ranking name you choose and your scores are shown.</li>
+<li>In the Android app you can buy extra branches. Google Play takes the payment; we only receive a purchase record linked to your account, never your card or bank details.</li>
 <li>There are no ads, no advertising or analytics SDKs, no tracking across apps or sites, and your data is never sold.</li>
 <li>You can delete your account and its data inside the game (<em>Menu (⋯) → Settings → Account and data → Delete account</em>) or on the <a href="delete-account.html">account deletion page</a>.</li>
 </ul>'''),
@@ -47,22 +48,24 @@ EN = {
 <tr><td>Bug reports</td><td>The text you write, the optional contact you type, a snapshot of the game state, and the same technical context as crash reports.</td><td>To answer and fix what you report.</td><td>Only when you press send.</td></tr>
 </table>
 <p>None of this includes your name or email address. We do not try to identify you from it.</p>'''),
-        ('Accounts', '''<p>If you create an account we store your <strong>email address</strong> and a <strong>hashed password</strong> (we never see or store the password itself), and your <strong>saved game</strong>. The email address is used only to sign you in, to send password-reset emails, and to contact you about your account. Accounts and saves are handled by Supabase (see below).</p>
+        ('Accounts', '''<p>If you create an account we store your <strong>email address</strong> and a <strong>hashed password</strong> (we never see or store the password itself), your <strong>saved game</strong> and your <strong>unlock-goal progress</strong> (the results of games you won: difficulty, start country, stars, score, weeks, average notoriety). The email address is used only to sign you in, to send password-reset emails, and to contact you about your account. Accounts and saves are handled by Supabase (see below).</p>
 <p>You must be at least 16 years old to create an account. Younger players can play without one.</p>'''),
+        ('Purchases (Android app)', '''<p>The four extra branches can be unlocked by reaching their goals for free, or bought in the Android app. Purchases need an account. <strong>Google Play</strong> processes the payment under its own terms and privacy policy; we never see your card, bank or Google account details. To unlock what you bought, the app sends the purchase token to our server, which checks it with Google and stores a <strong>purchase record</strong>: the product, Google's order number, the purchase token, the purchase time and its status (for example refunded), linked to your account's internal ID. At checkout the app passes Google a one-way hash of that ID, so a purchase can only be claimed by the account that made it. A branch you bought also opens in the web game when you log in with the same account.</p>'''),
         ('Global ranking (optional)', '''<p>You can join the public ranking after logging in. If you do, the ranking shows the <strong>ranking name</strong> you choose (please do not use your real name), an optional <strong>country</strong> you choose, and your winning scores (difficulty, score, stars, weeks, start country). Anyone can see the ranking. Leaving the ranking (<em>Menu</em>, your ranking name, then <em>Leave the ranking</em>) deletes your ranking name and scores.</p>'''),
         ('Who processes the data', '''<ul>
 <li><strong>Supabase</strong> (database and sign-in): accounts, saves, ranking, gameplay data, crash and bug reports. The project is hosted in the EU (Frankfurt, Germany).</li>
 <li><strong>GitHub Pages</strong> (hosting of the web game and these pages): GitHub may log technical connection data such as IP addresses when the web game or app loads.</li>
-<li><strong>Google Play</strong> distributes the Android app and handles installation data under Google's own policies.</li>
+<li><strong>Google Play</strong> distributes the Android app, handles installation data and processes payments for purchases under Google's own policies. We use Google's Play Developer API to confirm purchases and refunds.</li>
 </ul>
 <p>We do not share data with anyone else, and we do not sell it.</p>'''),
         ('How long we keep it', '''<ul>
-<li>Account, saved game, ranking entry: until you delete your account (or leave the ranking).</li>
+<li>Account, saved game, unlock-goal progress, ranking entry: until you delete your account (or leave the ranking).</li>
+<li>Purchase records: until you delete your account. Google Play keeps its own order records under its policies.</li>
 <li>Gameplay data, crash reports and bug reports: up to ''' + RETENTION + '''. When you delete your account, any of these still attached to your account ID are detached from it, so they are anonymous afterwards.</li>
 <li>Data on your device: until you uninstall the app or clear its storage.</li>
 </ul>'''),
         ('Your rights', '''<p>Under the GDPR you have the right to access, correct, delete and port your data, to object to processing, and to withdraw consent. Most of this you can do yourself in the game; for anything else contact the developer. If you think your rights are not respected you can complain to your data protection authority; in Hungary this is the Nemzeti Adatvédelmi és Információszabadság Hatóság (NAIH, <a href="https://naih.hu">naih.hu</a>).</p>
-<p>Legal bases: the account and save are needed to provide the service you asked for (contract); crash reports and gameplay data serve our legitimate interest in a working, balanced game; the ranking is based on your consent, which you can withdraw by leaving it.</p>'''),
+<p>Legal bases: the account, save, goal progress and purchase records are needed to provide the service you asked for (contract); crash reports and gameplay data serve our legitimate interest in a working, balanced game; the ranking is based on your consent, which you can withdraw by leaving it.</p>'''),
         ('Children', '''<p>The game is not designed for children. Accounts and the ranking are for players aged 16 or older. Without an account no name, email or other identifying data is collected; anonymous gameplay data and crash reports described above still apply unless gameplay data is switched off.</p>'''),
         ('Changes', '''<p>If this policy changes, the new version replaces this page and the date at the top changes. Material changes will also be announced in the game.</p>'''),
     ],
@@ -78,6 +81,7 @@ HU = {
 <li>A fiókhoz e-mail-cím és jelszó kell, és lehetővé teszi, hogy bármelyik eszközön folytasd a játékot. Fiókot 16 éves vagy idősebb játékosok hozhatnak létre.</li>
 <li>A játék névtelen játékadatokat (ezt kikapcsolhatod) és összeomlási jelentéseket küld; hibajelentést csak akkor, ha te elküldöd.</li>
 <li>A nyilvános ranglistán való részvétel önkéntes. Csak az általad választott ranglistanév és az eredményeid látszanak.</li>
+<li>Az Android-alkalmazásban extra ágakat vásárolhatsz. A fizetést a Google Play kezeli; mi csak a fiókodhoz kötött vásárlási adatot kapjuk meg, a kártya- vagy bankadataidat soha.</li>
 <li>Nincsenek hirdetések, hirdetési vagy analitikai SDK-k, alkalmazások és oldalak közötti követés, és az adataidat soha nem adjuk el.</li>
 <li>A fiókodat és adatait törölheted a játékban (<em>Menü (⋯) → Beállítások → Fiók és adatok → Fiók törlése</em>) vagy a <a href="delete-account.html">fióktörlési oldalon</a>.</li>
 </ul>'''),
@@ -89,22 +93,24 @@ HU = {
 <tr><td>Hibajelentések</td><td>Az általad írt szöveg, az opcionálisan megadott elérhetőség, a játékállás pillanatképe és az összeomlási jelentésekkel megegyező technikai környezet.</td><td>A bejelentett hiba megválaszolása és javítása.</td><td>Csak akkor, ha elküldöd.</td></tr>
 </table>
 <p>Ezek nem tartalmazzák a neved vagy e-mail-címed, és nem is próbálunk belőlük azonosítani.</p>'''),
-        ('Fiókok', '''<p>Ha fiókot hozol létre, eltároljuk az <strong>e-mail-címedet</strong>, a jelszavad <strong>kivonatát</strong> (magát a jelszót sosem látjuk és nem tároljuk) és a <strong>mentett játékodat</strong>. Az e-mail-címet kizárólag a bejelentkeztetéshez, jelszó-visszaállító levelekhez és a fiókoddal kapcsolatos kapcsolatfelvételhez használjuk. A fiókokat és mentéseket a Supabase kezeli (lásd lent).</p>
+        ('Fiókok', '''<p>Ha fiókot hozol létre, eltároljuk az <strong>e-mail-címedet</strong>, a jelszavad <strong>kivonatát</strong> (magát a jelszót sosem látjuk és nem tároljuk) a <strong>mentett játékodat</strong> és a <strong>feloldási célok haladását</strong> (megnyert játékaid eredményei: nehézség, kezdőország, csillagok, pontszám, hetek, átlagos hírhedtség). Az e-mail-címet kizárólag a bejelentkeztetéshez, jelszó-visszaállító levelekhez és a fiókoddal kapcsolatos kapcsolatfelvételhez használjuk. A fiókokat és mentéseket a Supabase kezeli (lásd lent).</p>
 <p>Fiók létrehozásához legalább 16 évesnek kell lenned. Fiatalabb játékosok fiók nélkül játszhatnak.</p>'''),
+        ('Vásárlások (Android-alkalmazás)', '''<p>A négy extra ág ingyen, a hozzájuk tartozó célok elérésével is feloldható, vagy megvásárolható az Android-alkalmazásban. A vásárláshoz fiók kell. A fizetést a <strong>Google Play</strong> kezeli a saját feltételei és adatvédelmi szabályai szerint; a kártya-, bank- vagy Google-fiókadataidat sosem látjuk. A megvett tartalom feloldásához az alkalmazás elküldi a vásárlási tokent a szerverünknek, amely ellenőrzi azt a Google-nál, és eltárol egy <strong>vásárlási rekordot</strong>: a terméket, a Google rendelésszámát, a vásárlási tokent, a vásárlás idejét és állapotát (például visszatérítve), a fiókod belső azonosítójához kötve. Fizetéskor az alkalmazás ennek az azonosítónak egy egyirányú kivonatát adja át a Google-nak, így egy vásárlást csak az a fiók igényelhet, amelyik megtette. A megvett ág a webes játékban is megnyílik, ha ugyanazzal a fiókkal jelentkezel be.</p>'''),
         ('Világranglista (önkéntes)', '''<p>Bejelentkezés után csatlakozhatsz a nyilvános ranglistához. Ekkor a ranglista az általad választott <strong>ranglistanevet</strong> (kérjük, ne a valódi neved használd), egy opcionálisan választott <strong>országot</strong> és a győztes eredményeidet (nehézség, pontszám, csillagok, hetek, kezdőország) mutatja. A ranglistát bárki láthatja. A ranglistáról való kilépés (<em>Menü</em>, a ranglistanevedre koppintva, majd <em>Kilépés a ranglistából</em>) törli a ranglistanevedet és az eredményeidet.</p>'''),
         ('Ki dolgozza fel az adatokat', '''<ul>
 <li><strong>Supabase</strong> (adatbázis és bejelentkezés): fiókok, mentések, ranglista, játékadatok, összeomlási és hibajelentések. A projekt az EU-ban (Frankfurt, Németország) fut.</li>
 <li><strong>GitHub Pages</strong> (a webes játék és ezek az oldalak tárhelye): a GitHub technikai kapcsolati adatokat, például IP-címeket naplózhat, amikor a webes játék vagy az alkalmazás betöltődik.</li>
-<li><strong>Google Play</strong> terjeszti az Android-alkalmazást, és a telepítési adatokat a Google saját szabályai szerint kezeli.</li>
+<li><strong>Google Play</strong> terjeszti az Android-alkalmazást, kezeli a telepítési adatokat és a vásárlások fizetését a Google saját szabályai szerint. A vásárlások és visszatérítések ellenőrzéséhez a Google Play Developer API-t használjuk.</li>
 </ul>
 <p>Más félnek nem adunk át adatot, és nem is adjuk el azokat.</p>'''),
         ('Meddig őrizzük', '''<ul>
-<li>Fiók, mentett játék, ranglistabejegyzés: amíg törlöd a fiókodat (vagy kilépsz a ranglistáról).</li>
+<li>Fiók, mentett játék, célhaladás, ranglistabejegyzés: amíg törlöd a fiókodat (vagy kilépsz a ranglistáról).</li>
+<li>Vásárlási rekordok: a fiókod törléséig. A Google Play a saját rendelési nyilvántartását a saját szabályai szerint őrzi.</li>
 <li>Játékadatok, összeomlási és hibajelentések: legfeljebb ''' + RETENTION.replace('months', 'hónap') + '''. Fiókod törlésekor az esetleg még a fiókazonosítódhoz kötött ilyen adatok leválnak róla, így utána névtelenek.</li>
 <li>Az eszközödön lévő adatok: az alkalmazás eltávolításáig vagy a tárhely törléséig.</li>
 </ul>'''),
         ('Jogaid', '''<p>A GDPR alapján jogod van az adataidhoz való hozzáféréshez, azok helyesbítéséhez, törléséhez és hordozásához, az adatkezelés elleni tiltakozáshoz és a hozzájárulás visszavonásához. Ennek nagy részét magad is megteheted a játékban; minden másért fordulj a fejlesztőhöz. Ha úgy érzed, jogaidat nem tartják tiszteletben, panaszt tehetsz az adatvédelmi hatóságnál; Magyarországon ez a Nemzeti Adatvédelmi és Információszabadság Hatóság (NAIH, <a href="https://naih.hu">naih.hu</a>).</p>
-<p>Jogalapok: a fiók és a mentés a kért szolgáltatás nyújtásához kell (szerződés); az összeomlási jelentések és játékadatok a működő, kiegyensúlyozott játékhoz fűződő jogos érdekünket szolgálják; a ranglista a hozzájárulásodon alapul, amelyet a kilépéssel bármikor visszavonhatsz.</p>'''),
+<p>Jogalapok: a fiók, a mentés, a célhaladás és a vásárlási rekordok a kért szolgáltatás nyújtásához kellenek (szerződés); az összeomlási jelentések és játékadatok a működő, kiegyensúlyozott játékhoz fűződő jogos érdekünket szolgálják; a ranglista a hozzájárulásodon alapul, amelyet a kilépéssel bármikor visszavonhatsz.</p>'''),
         ('Gyermekek', '''<p>A játék nem gyermekeknek készült. A fiókok és a ranglista 16 éves vagy idősebb játékosoknak szólnak. Fiók nélkül nem gyűjtünk nevet, e-mail-címet vagy más azonosító adatot; a fent leírt névtelen játékadatok és összeomlási jelentések viszont érvényesek, kivéve ha a játékadatok megosztását kikapcsolják.</p>'''),
         ('Változások', '''<p>Ha ez a nyilatkozat módosul, az új változat felváltja ezt az oldalt, és a tetején lévő dátum megváltozik. A lényeges változásokat a játékban is jelezzük.</p>'''),
     ],
@@ -132,10 +138,10 @@ DEL = f'''<!doctype html>
 <h2>If you cannot log in</h2>
 <p>Write to the developer from the email address of the account, using the contact email on the game's Google Play page, and ask for the account to be deleted. The request is handled within 30 days.</p>
 <h2>What is deleted</h2>
-<ul><li>Your account, email address and hashed password.</li><li>Your saved game.</li><li>Your ranking name, country and ranking scores.</li><li>Gameplay data, crash reports and bug reports still attached to your account ID are detached from it, so they are anonymous afterwards. They are removed at the latest after {RETENTION}.</li></ul>
+<ul><li>Your account, email address and hashed password.</li><li>Your saved game.</li><li>Your ranking name, country and ranking scores.</li><li>Your unlock-goal progress and purchase records (bought branches cannot be restored to a new account; Google Play keeps its own order history).</li><li>Gameplay data, crash reports and bug reports still attached to your account ID are detached from it, so they are anonymous afterwards. They are removed at the latest after {RETENTION}.</li></ul>
 <p>Data kept on your own device is removed by uninstalling the app or clearing its storage.</p>
 <h2>Magyarul</h2>
-<p><strong>A játékban:</strong> jelentkezz be, majd <em>Menü (⋯) → Beállítások → Fiók és adatok → Fiók törlése</em>, és erősítsd meg. A fiók azonnal törlődik. <strong>Ha nem tudsz bejelentkezni:</strong> írj a fiók e-mail-címéről a játék Google Play oldalán megadott kapcsolati e-mail-címre; a kérést 30 napon belül teljesítjük. Törlődik a fiókod, az e-mail-címed, a mentésed, a ranglistanevet és az eredményeid; a még a fiókodhoz kötött játékadatok, összeomlási és hibajelentések leválnak róla (utána névtelenek), és legkésőbb {RETENTION.replace('months', 'hónap')} után törlődnek.</p>
+<p><strong>A játékban:</strong> jelentkezz be, majd <em>Menü (⋯) → Beállítások → Fiók és adatok → Fiók törlése</em>, és erősítsd meg. A fiók azonnal törlődik. <strong>Ha nem tudsz bejelentkezni:</strong> írj a fiók e-mail-címéről a játék Google Play oldalán megadott kapcsolati e-mail-címre; a kérést 30 napon belül teljesítjük. Törlődik a fiókod, az e-mail-címed, a mentésed, a ranglistanevet és az eredményeid, a célhaladásod és a vásárlási rekordjaid (a megvett ágak új fiókra nem vihetők át; a Google Play megőrzi a saját rendeléstörténetét); a még a fiókodhoz kötött játékadatok, összeomlási és hibajelentések leválnak róla (utána névtelenek), és legkésőbb {RETENTION.replace('months', 'hónap')} után törlődnek.</p>
 </main></body></html>
 '''
 

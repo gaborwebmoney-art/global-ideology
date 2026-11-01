@@ -1,0 +1,54 @@
+// v10.33 goal progress + purchases SQL check in an in-memory Postgres (PGlite). usage: in a scratch folder
+// `npm i @electric-sql/pglite@0.2`, then from that folder: node <repo>/tools/goals-sql-test.mjs
+import { createRequire } from 'module'; import { pathToFileURL } from 'url';
+const { PGlite } = await import(pathToFileURL(createRequire(process.cwd() + '/').resolve('@electric-sql/pglite')).href); import fs from 'fs';
+const db = new PGlite();
+await db.exec(`create role anon; create role authenticated; create schema auth;
+  create table auth.users (id uuid primary key);
+  create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('test.uid', true), '')::uuid $$;`);
+const rd = f => fs.readFileSync(new URL('./' + f, import.meta.url), 'utf8').replace(/notify pgrst, 'reload schema';/g, '');
+await db.exec(rd('supabase-ranking.sql'));
+const sql = rd('supabase-v10.33.sql'); await db.exec(sql); await db.exec(sql); console.log('v10.33 sql ok (twice)');
+const U = i => 'b0000000-0000-4000-8000-' + String(i).padStart(12, '0');
+const as = async i => db.exec(`select set_config('test.uid', '${i === null ? '' : U(i)}', false)`);
+const q = async (s, p) => (await db.query(s, p)).rows[0];
+for (let i = 1; i <= 5; i++) await db.query(`insert into auth.users values ($1)`, [U(i)]);
+const res = [], ok = (n, c, x) => res.push([n, !!c, x]);
+const rec = (run, lv, start, stars, score, weeks, noto) => q(`select public.gi_goal_record($1::uuid,$2,$3,$4,$5,$6,$7,'10.33-android') j`, [run, lv, start, stars, score, weeks, noto]);
+await as(1);
+ok('valid run', (await rec(U(9001), 'normal', 'pannonia', 2, 1500, 230, 20)).j.ok);
+ok('duplicate ignored', (await rec(U(9001), 'normal', 'pannonia', 2, 1500, 230, 20)).j.ok && (await q(`select count(*)::int n from gi_goal_runs`)).n === 1);
+ok('better run same key', (await rec(U(9002), 'normal', 'pannonia', 3, 1600, 220, 30)).j.ok);
+ok('brutal run', (await rec(U(9003), 'brutal', 'kestria', 2, 2500, 250, 10)).j.ok);
+ok('casual run (no ghost)', (await rec(U(9004), 'casual', 'tavaro', 1, 1000, 200, 5)).j.ok);
+ok('too high score rejected', (await rec(U(9005), 'normal', 'pannonia', 3, 99999, 230, 10)).j.why === 'score');
+ok('3 stars too slow rejected', (await rec(U(9006), 'normal', 'pannonia', 3, 1500, 300, 10)).j.why === 'stars');
+ok('bad noto rejected', (await rec(U(9007), 'normal', 'pannonia', 1, 1500, 230, 200)).j.why === 'noto');
+ok('bad start rejected', (await rec(U(9008), 'normal', 'Pannonia!', 1, 1500, 230, 10)).j.why === 'bad');
+let st = (await q(`select public.gi_goal_state() j`)).j;
+ok('state best', st.best['pannonia|normal'] === 3 && st.best['kestria|brutal'] === 2 && st.best['tavaro|casual'] === 1, st);
+ok('ghost: normal/brutal with noto <= 25', st.ghost === 2 && st.imported === false, st);
+ok('ghost limit param', (await q(`select public.gi_goal_state(15) j`)).j.ghost === 1);
+const imp = (await q(`select public.gi_goal_import($1::jsonb, 4, '10.32') j`, [JSON.stringify({ 'pannonia|normal': 1, 'helvetia|brutal': 3, 'bad key': 3, 'x|normal': 9, 'koalia|casual': 7, 'tadam|normal': 'x' })])).j;
+ok('import ok, bad keys dropped', imp.ok && imp.keys === 3, imp);
+ok('import only once', (await q(`select public.gi_goal_import('{}'::jsonb, 0, 'x') j`)).j.why === 'done');
+st = (await q(`select public.gi_goal_state() j`)).j;
+ok('import merged (max)', st.best['pannonia|normal'] === 3 && st.best['helvetia|brutal'] === 3 && st.ghost === 6 && st.imported, st);
+const raw = (await q(`select best from gi_goal_import`)).best; ok('import stars capped', raw['koalia|casual'] === 3 && Object.keys(raw).length === 3, raw);
+await as(2); ok('ghost import capped at 10', (await q(`select public.gi_goal_import('{}'::jsonb, 99, 'x') j`)).j.ok && (await q(`select ghost from gi_goal_import where user_id=$1`, [U(2)])).ghost === 10);
+ok('other user sees own state only', (await q(`select public.gi_goal_state() j`)).j.best['pannonia|normal'] === undefined);
+await as(null); ok('anon state = login', (await q(`select public.gi_goal_state() j`)).j.why === 'login');
+// entitlements (service role writes)
+await db.query(`insert into gi_entitlements (user_id, product, purchase_token, state) values ($1,'gi.branch.spin','t1','active'),($1,'gi.branch.covert','t2','revoked'),($2,'gi.branches.all','t3','active')`, [U(1), U(2)]);
+await as(1); let mb = (await q(`select public.gi_my_branches() j`)).j; ok('single active, revoked ignored', JSON.stringify(mb.branches) === '["spin"]', mb);
+await as(2); mb = (await q(`select public.gi_my_branches() j`)).j; ok('bundle = 4 branches', JSON.stringify(mb.branches) === '["covert","faith","spin","under"]', mb);
+ok('bad product rejected', await (async () => { try { await db.query(`insert into gi_entitlements (user_id, product, purchase_token) values ($1,'gi.free','t9')`, [U(1)]); return false; } catch { return true; } })());
+const denied = async s => { try { await db.exec(`set role authenticated`); await q(s); return false; } catch { return true; } finally { await db.exec(`reset role`); } };
+await as(1);
+ok('authenticated cannot read runs table', await denied(`select * from public.gi_goal_runs`));
+ok('authenticated cannot write entitlements', await denied(`insert into public.gi_entitlements (user_id, product, purchase_token) values ('${U(1)}','gi.branches.all','zz')`));
+ok('authenticated can call state', !(await denied(`select public.gi_goal_state() j`)));
+ok('anon cannot call record', await (async () => { try { await db.exec(`set role anon`); await q(`select public.gi_goal_record('${U(9)}'::uuid,'normal','pannonia',1,1500,230,10,'x') j`); return false; } catch { return true; } finally { await db.exec(`reset role`); } })());
+ok('cascade on user delete', await (async () => { await db.query(`delete from auth.users where id=$1`, [U(1)]); return (await q(`select (select count(*) from gi_goal_runs)::int + (select count(*) from gi_entitlements where purchase_token in ('t1','t2'))::int n`)).n === 0; })());
+let f = 0; for (const [n, c, x] of res) { console.log((c ? 'PASS  ' : 'FAIL  ') + n + (c ? '' : ' -- ' + JSON.stringify(x))); if (!c) f++; }
+console.log(`${res.length - f}/${res.length} passed`); process.exit(f ? 1 : 0);

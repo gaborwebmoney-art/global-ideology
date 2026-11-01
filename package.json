@@ -1,6 +1,6 @@
 {
   "name": "global-ideology",
-  "version": "0.10.32",
+  "version": "0.10.33",
   "private": true,
   "description": "Global Ideology: Android wrapper (Capacitor)",
   "scripts": {
@@ -15,7 +15,9 @@
   },
   "dependencies": {
     "@capacitor/android": "^8.5.3",
-    "@capacitor/core": "^8.5.3"
+    "@capacitor/core": "^8.5.3",
+    "@capacitor/app": "^8.1.2",
+    "gi-billing": "file:plugins/gi-billing"
   },
   "devDependencies": {
     "@capacitor/cli": "^8.5.3"

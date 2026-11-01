@@ -1,0 +1,10 @@
+{
+  "name": "gi-billing",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Global Ideology: Google Play Billing (one-time products) for the Android app. Capacitor 8 plugin, Play Billing Library 8.",
+  "main": "index.js",
+  "files": ["android/src/main/", "android/build.gradle", "index.js"],
+  "capacitor": { "android": { "src": "android" } },
+  "peerDependencies": { "@capacitor/core": ">=8.0.0" }
+}

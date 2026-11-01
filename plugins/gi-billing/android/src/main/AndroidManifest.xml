@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- The billing library adds com.android.vending.BILLING itself; declared here too so the permission is never lost. -->
+    <uses-permission android:name="com.android.vending.BILLING" />
+</manifest>

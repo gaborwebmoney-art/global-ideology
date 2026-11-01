@@ -4,13 +4,14 @@
   const DATA = /*I18N_DATA*/ null;
   const EXACT = new Map(Object.entries(DATA.exact));
   const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  // v10.33: also "{}.{}" (a sentence, then an optional suffix such as " +5 Notoriety."): the suffix may be empty.
   // v10.25: the LAST {} (when only one . ! ? or nothing follows it) may be empty: "...support{}." has no suffix without a coalition,
   // and "Support −6.{}" ends the sentence. Before, an empty capture made the whole line miss and it stayed half English.
   const toRe = en => {
     const parts = en.split('{}'); let src = '^';
     parts.forEach((p, i) => {
       src += esc(p);
-      if (i < parts.length - 1) src += (i === parts.length - 2 && /^[.!?]?$/.test(parts[i + 1]) && p.length >= 8) ? '([\\s\\S]*?)' : '([\\s\\S]+?)';
+      if (i < parts.length - 1) src += (i === parts.length - 2 && ((/^[.!?]?$/.test(parts[i + 1]) && p.length >= 8) || (/^[.!?]$/.test(p) && parts[i + 1] === '' && i > 0))) ? '([\\s\\S]*?)' : '([\\s\\S]+?)';
     });
     return new RegExp(src + '$');
   };
@@ -38,7 +39,7 @@
     if (!/[A-Za-z]{2}/.test(s)) return s;
     const dots = s.split(' · ');
     if (dots.length > 1) { const o = dots.map(tr); if (o.some((x, i) => x !== dots[i])) return o.join(' · '); }
-    const pre = /^([▲▼★] )([\s\S]+)$/.exec(s);
+    const pre = /^([▲▼★✕✓] )([\s\S]+)$/.exec(s);
     if (pre) { const r = tr(pre[2]); if (r !== pre[2]) return pre[1] + r; }
     // trailing status mark, e.g. the action tiles "Economy ★" / "Diplomacy ✕" (weak spot / wall)
     const suf = /^([\s\S]*[A-Za-z]) ([★✕✓✗▲▼●○])$/.exec(s);

@@ -94,6 +94,11 @@ jobs:
           jarsigner -verify -verbose:summary "$AAB" | tee "$RUNNER_TEMP/jar.txt" | tail -3
           grep -q 'jar verified' "$RUNNER_TEMP/jar.txt" || { echo "::error::bundle is not signed"; exit 1; }
           unzip -l "$AAB" | grep -q 'base/assets/public/index.html' || { echo "::error::game files missing from the bundle"; exit 1; }
+          unzip -l "$AAB" | grep -q 'base/assets/public/audio/music-main.mp3' || { echo "::error::music missing from the bundle"; exit 1; }
+          echo "$M" | grep -q 'com.android.vending.BILLING' || { echo "::error::BILLING permission missing (gi-billing plugin not linked)"; exit 1; }
+          unzip -p "$AAB" base/assets/capacitor.plugins.json | tee "$RUNNER_TEMP/plugins.json"
+          grep -q 'GIBillingPlugin' "$RUNNER_TEMP/plugins.json" || { echo "::error::GIBilling plugin not registered"; exit 1; }
+          grep -q 'AppPlugin' "$RUNNER_TEMP/plugins.json" || { echo "::error::App plugin (Back button) not registered"; exit 1; }
           unzip -l "$AAB" | grep -q 'base/assets/public/privacy.html' && echo "note: privacy.html is inside the app" || true
           ls -l "$AAB"
       - uses: actions/upload-artifact@v4
