@@ -1,6 +1,7 @@
 // Global Ideology billing plugin (Kotlin, Play Billing Library 8). Built as a library module of the Capacitor app.
 ext {
     giBillingVersion = project.hasProperty('googlePlayBillingVersion') ? rootProject.ext.googlePlayBillingVersion : '8.2.0'
+    androidxAppCompatVersion = project.hasProperty('androidxAppCompatVersion') ? rootProject.ext.androidxAppCompatVersion : '1.7.1'
 }
 
 buildscript {
@@ -45,5 +46,6 @@ repositories {
 
 dependencies {
     implementation project(':capacitor-android')
+    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"   // Capacitor's getActivity() is an AppCompatActivity
     implementation "com.android.billingclient:billing:$giBillingVersion"
 }
