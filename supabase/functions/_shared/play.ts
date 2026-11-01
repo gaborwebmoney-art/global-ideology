@@ -73,7 +73,8 @@ export async function db(path: string, init: RequestInit = {}): Promise<Response
 
 /** Branches and products a user owns through active purchases. */
 export async function owned(uid: string): Promise<{ branches: string[]; products: string[] }> {
-  const r = await db(`gi_entitlements?select=product&user_id=eq.${uid}&state=eq.active`);
+  const now = encodeURIComponent(new Date().toISOString());   // free grants (gi_admin_grant) can expire
+  const r = await db(`gi_entitlements?select=product&user_id=eq.${uid}&state=eq.active&or=(expires_at.is.null,expires_at.gt.${now})`);
   const rows: { product: string }[] = r.ok ? await r.json() : [];
   const products = [...new Set(rows.map((x) => x.product))].sort();
   const branches = [...new Set(products.flatMap((p) => PRODUCTS[p] || []))].sort();
