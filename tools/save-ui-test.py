@@ -2,6 +2,7 @@
 is gone, version-mismatch and unreadable saves (told, never silently overwritten), game over clears the copy, a broken save
 never leaves a broken board. Offline (no Supabase), phone viewport. usage: python3 tools/save-ui-test.py   (exit 0 = all passed)"""
 import json, os, socket, subprocess, sys, time
+VER = open(__import__('os').path.join(__import__('os').path.dirname(__file__), '..', 'VERSION')).read().strip()   # app version under test
 from playwright.sync_api import sync_playwright
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
@@ -63,7 +64,7 @@ def run(p, url):
     wk = play_to(page, 6)
     m = page.evaluate("window.__GI.mirrorRead()")
     check('guest: device copy exists at the exact current week', m and m['week'] == wk and m['S']['week'] == wk, m and m.get('week'))
-    check('guest: copy carries schema v6, app version, empty owner', m and m['v'] == 6 and m['app'] == '10.33' and m['owner'] == '', m and (m.get('v'), m.get('app'), m.get('owner')))
+    check('guest: copy carries schema v6, app version, empty owner', m and m['v'] == 6 and m['app'] == VER and m['owner'] == '', m and (m.get('v'), m.get('app'), m.get('owner')))
     start = page.evaluate("window.__GI.S.startId")
     seed = page.evaluate("window.__GI.S.seed")
     run_id = page.evaluate("window.__GI.S.tele && window.__GI.S.tele.id")

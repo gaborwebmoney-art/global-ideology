@@ -1727,3 +1727,78 @@ Checking Google Play…	Google Play ellenőrzése…
 Done. You own {} of the 4 extra branches.	Kész. A 4 extra ágból {1} a tiéd.
 Done. No purchases found for this Google account.	Kész. Ehhez a Google-fiókhoz nem találtunk vásárlást.
 bought	megvásárolva
+# v10.35 Codex and early-game briefings
+Getting started	Első lépések
+Upgrades and doctrines	Fejlesztések és doktrínák
+Actions	Akciók
+The World Order	A Világrend
+Alliances	Szövetségek
+Events and decisions	Események és döntések
+Winning and losing	Győzelem és vereség
+Difficulty levels	Nehézségi szintek
+Early-game briefings	Kezdő eligazítások
+Short briefings on the basics in your first games, on Casual and Normal.	Rövid eligazítások az alapokról az első játszmáidban, Laza és Normál szinten.
+All of them stay in Menu, How it works.	Mindegyik megmarad a Menü, Hogyan működik pontban.
+Support grows by itself inside every country where you have a foothold.	A támogatás magától nő minden országban, ahol van támaszpontod.
+Once it passes 8%, it spills over land borders and along trade routes.	Ha meghaladja a 8%-ot, átterjed a szárazföldi határokon és a kereskedelmi útvonalakon.
+Clout pays for everything.	Mindent Befolyással fizetsz.
+You earn it every week, and amber bubbles pop up on the map: click or tap them to collect more.	Minden héten kapsz belőle, és borostyánszínű buborékok bukkannak fel a térképen: kattints vagy koppints rájuk, hogy többet gyűjts.
+A country at 60%+ support counts as held.	A 60%+ támogatású országot tartod.
+Spend your first Clout on Upgrades (the Upgrades button at the top): they work in every country at once.	Az első Befolyásodat költsd Fejlesztésekre (a fenti Fejlesztések gomb): ezek egyszerre minden országban hatnak.
+Space pauses, keys 1, 2 and 3 set the speed.	A szóköz megállítja a játékot, az 1, 2 és 3 billentyű a sebességet állítja.
+The game pauses by itself for decisions and, if you like, for important news.	A játék döntéseknél magától megáll, és ha szeretnéd, fontos híreknél is.
+There is no rush.	Nincs hová sietni.
+The 1st, 2nd and 3rd upgrade in a branch open that domain’s tier-1, tier-2 and tier-3 actions.	Egy ág 1., 2. és 3. fejlesztése megnyitja az adott terület 1., 2. és 3. szintű akcióit.
+The top upgrade unlocks a tier-4 action that can turn the tide.	A legfelső fejlesztés egy 4. szintű akciót nyit meg, amely fordulatot hozhat.
+The game is paused while the Upgrades screen is open.	A játék áll, amíg a Fejlesztések képernyő nyitva van.
+Actions work on one country at a time.	Az akciók egyszerre egy országra hatnak.
+Open a country’s dossier, pick a domain and choose one of its actions.	Nyisd meg egy ország dossziéját, válassz területet, majd annak egyik akcióját.
+Each costs Clout and then has a cooldown.	Mindegyik Befolyásba kerül, utána pedig várakozási idő következik.
+Every country has a weak spot (★), where one domain’s actions get an extra effect, and a wall (✕), where they misfire.	Minden országnak van egy gyenge pontja (★), ahol egy terület akciói plusz hatást kapnak, és egy fala (✕), ahol egy terület akciói balul sülnek el.
+The dossier shows both.	A dosszié mindkettőt mutatja.
+Read them before you spend.	Olvasd el őket, mielőtt költesz.
+Most actions also knock back World Order courtships in that country.	A legtöbb akció az adott országban a Világrend udvarlását is visszaveti.
+Military actions are loud: they raise Notoriety and alarm the neighbours.	A katonai akciók zajosak: növelik a Hírhedtséget, és riadóztatják a szomszédokat.
+Each starting country also gives a base bonus, shown when you pick it.	Minden kezdőország bázisbónuszt is ad, ezt kiválasztáskor látod.
+Later, actions on your own base restore its legitimacy.	Később a saját bázisodon végzett akciók helyreállítják a legitimitását.
+Loud moves raise Notoriety.	A zajos lépések növelik a Hírhedtséget.
+At 8 the World Order convenes: it sets up its headquarters far from you and recruits member countries.	8-nál összeül a Világrend: tőled távol állítja fel a központját, és tagországokat toboroz.
+Secretary-General Horatio Quorum courts countries one at a time, to join or to sign the Containment Treaty.	Horatio Quorum főtitkár egyesével udvarol az országoknak, hogy csatlakozzanak, vagy aláírják a Megfékezési Szerződést.
+The bar on the map and in the dossier shows how far it got.	A térképen és a dossziéban lévő sáv mutatja, hol tart.
+Actions in that country knock it back, until the bar turns red: past the point of no return only a tier-4 action or much more support stops it.	Az abban az országban végzett akciók visszavetik, amíg a sáv piros nem lesz: azon túl már csak egy 4. szintű akció vagy sokkal nagyobb támogatás állítja meg.
+Countries where you have 60%+ support usually refuse to sign.	Ahol 60%+ a támogatásod, azok az országok általában nem írják alá.
+When 8 countries sign, the treaty is ratified and Enforcement drains your support everywhere until you break it.	Ha 8 ország aláírja, a szerződést ratifikálják, és a Végrehajtás mindenhol apasztja a támogatásodat, amíg meg nem töröd.
+On Normal and Brutal it also schedules crackdowns on your biggest footholds.	Normál és Brutális szinten leszámolásokat is ütemez a legnagyobb támaszpontjaid ellen.
+They are announced on the map and in the dossier a few weeks ahead.	Ezeket néhány héttel előre jelzi a térkép és a dosszié.
+Countries near you grow wary as your Notoriety rises.	A hozzád közeli országok egyre jobban tartanak tőled, ahogy nő a Hírhedtséged.
+A Military action alarms its target and the neighbours at once.	Egy katonai akció azonnal riadóztatja a célpontot és a szomszédait.
+A wary country forms an alliance with wary neighbours, up to 4 members.	Egy tőled tartó ország szövetséget köt a szintén tartó szomszédaival, legfeljebb 4 taggal.
+Economy or Military actions against a member make the whole alliance close ranks: resistance rises in every member for 12 weeks.	Ha egy tag ellen gazdasági vagy katonai akciót indítasz, az egész szövetség összezár: 12 hétig minden tagban nő az ellenállás.
+Diplomacy and Ideology actions on a member wear its cohesion down instead.	A tagon végzett diplomáciai és ideológiai akciók viszont gyengítik az összetartását.
+Below 20% cohesion the alliance falls apart.	20% összetartás alatt a szövetség felbomlik.
+Members you win over (60%+) walk out, and every alliance slowly loses cohesion by itself.	Az általad megnyert tagok (60%+) kilépnek, és minden szövetség magától is lassan veszít az összetartásából.
+Isolationist countries never join alliances.	Az elszigetelődő országok soha nem lépnek szövetségre.
+Allied countries do not capitulate in the endgame until they leave their alliance.	A szövetséges országok a végjátékban addig nem kapitulálnak, amíg ki nem lépnek a szövetségükből.
+Random world events, good and bad, hit every few months.	Néhány havonta véletlen világesemények történnek, jók és rosszak.
+They arrive in the news feed.	Ezek a hírfolyamban jelennek meg.
+Every so often you face a decision with two options.	Időnként két lehetőség közül kell döntened.
+Settings, Pause on important news: the game stops when important news arrives.	Beállítások, Megállás fontos híreknél: a játék megáll, ha fontos hír érkezik.
+Pick a speed to carry on.	A folytatáshoz válassz sebességet.
+You win by holding all 16 countries (60%+ support) at the same time, or by aligning 90% of the world.	Akkor nyersz, ha egyszerre mind a 16 országot tartod (60%+ támogatás), vagy a világ 90%-át magad mellé állítod.
+When you reach it, you can end the game there or play on.	Ha eléred, ott befejezheted a játékot, vagy játszhatsz tovább.
+You lose your base to a coup when its legitimacy hits 0.	Ha a bázisod legitimitása 0-ra esik, puccs dönt meg, és elveszíted.
+Once your base has reached 60%, letting it stay below 35% support for 10 weeks also loses the game.	Ha a bázisod már elérte a 60%-ot, és 10 hétig 35% támogatás alatt marad, az is vereség.
+8 signatures ratify the Containment Treaty.	8 aláírással ratifikálják a Megfékezési Szerződést.
+Enforcement then drains your support everywhere until you break it or fade away.	Ezután a Végrehajtás mindenhol apasztja a támogatásodat, amíg meg nem töröd, vagy el nem tűnsz.
+Stars and score rate every result: finish sooner and without losing countries you held for more stars.	Csillagok és pontszám értékel minden eredményt: több csillagot kapsz, ha hamarabb végzel, és nem veszítesz el tartott országot.
+Today’s game.	A mostani játék.
+The World Order turns recruited countries’ perks against you.	A Világrend a beszervezett országok előnyeit ellened fordítja.
+Unrest, legitimacy loss and upkeep are milder.	A nyugtalanság, a legitimitásvesztés és a fenntartás enyhébb.
+Harder crackdowns every 7 weeks, faster courtships and plans.	Keményebb leszámolások 7 hetente, gyorsabb udvarlás és tervezés.
+Longer games.	Hosszabb játszmák.
+Unrest, legitimacy loss and upkeep are harsher.	A nyugtalanság, a legitimitásvesztés és a fenntartás keményebb.
+Early-game briefings show on Casual and Normal.	A kezdő eligazítások Laza és Normál szinten jelennek meg.
+Menu, How it works keeps every briefing on all levels.	A Menü, Hogyan működik pont minden szinten minden eligazítást megőriz.
+# v10.35: whole-page rows for two rulebook pages a {} pattern used to swallow (Menu, How it works)
+After the move: legitimacy starts at 50. The crown ring, the base actions and the no-unrest rule move to the new country. The old base becomes an ordinary country with 20 unrest and no longer counts as a lost country.	A költözés után: a legitimitás 50-ről indul. A korona-gyűrű, a bázis-akciók és a nyugtalanság-mentesség átkerül az új országba. A régi bázis szokásos országgá válik 20 nyugtalansággal, és már nem számít elvesztett országnak.
+Development aid: Foreign Investment or Buyout on a country you hold cuts its unrest by 20 and waives its upkeep for 25 weeks. It works even on a country at 95%+ that would otherwise be "Already yours".	Fejlesztési segély: egy általad tartott országban a külföldi befektetés vagy felvásárlás 20-szal csökkenti a nyugtalanságot, és 25 hétre elengedi a fenntartást. Működik akkor is, ha az ország 95%+ és egyébként „Már a tiéd” lenne.

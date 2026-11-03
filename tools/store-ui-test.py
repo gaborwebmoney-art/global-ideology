@@ -3,6 +3,7 @@ The page runs as the Android app (window.Capacitor stub with mocked GIBilling an
 (same rules as tools/supabase-v10.33.sql and the play-verify Edge Function). Also checks the web build stays free of the paywall.
 usage: python3 tools/store-ui-test.py [shots_dir]   (exit code 0 = all passed)"""
 import json, os, re, socket, subprocess, sys, time, uuid
+VER = open(__import__('os').path.join(__import__('os').path.dirname(__file__), '..', 'VERSION')).read().strip()   # app version under test
 from playwright.sync_api import sync_playwright
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
@@ -133,7 +134,7 @@ def android(browser, base, lang):
     shot = lambda n: page.screenshot(path=os.path.join(OUT, f'store-{tag}-{n}.png'))
     page.goto(base + '/index.html?debug'); wait(page, "!!(window.__GI && !document.getElementById('authOv').hidden)")
     page.evaluate(f"GI_I18N.setLang('{lang}')"); page.wait_for_timeout(150)
-    check(f'{tag}: version tagged -android', page.evaluate("window.GITele.VERSION") == '10.33-android', page.evaluate("window.GITele.VERSION"))
+    check(f'{tag}: version tagged -android', page.evaluate("window.GITele.VERSION") == VER + '-android', page.evaluate("window.GITele.VERSION"))
     # --- guest: branch locked, offer asks for an account, no buy button
     page.click('#authGuest'); page.wait_for_timeout(200); start(page)
     check(f'{tag}: guest: extra branches locked', page.evaluate("__GI.S.cfg.locked.slice().sort().join()") == 'covert,faith,spin,under', page.evaluate("__GI.S.cfg.locked"))
@@ -168,7 +169,7 @@ def android(browser, base, lang):
     check(f'{tag}: online win', page.evaluate(WIN) == 'win')
     wait(page, "!document.getElementById('endOv').hidden"); page.wait_for_timeout(800)
     rec = [c for c in srv.calls if c[0] == 'gi_goal_record']
-    check(f'{tag}: win sent to gi_goal_record with plausible values', len(rec) == 1 and rec[0][1]['p_start'] == 'pannonia' and rec[0][1]['p_weeks'] >= 60 and rec[0][1]['p_version'] == '10.33-android', rec)
+    check(f'{tag}: win sent to gi_goal_record with plausible values', len(rec) == 1 and rec[0][1]['p_start'] == 'pannonia' and rec[0][1]['p_weeks'] >= 60 and rec[0][1]['p_version'] == VER + '-android', rec)
     st = page.evaluate("JSON.parse(localStorage.getItem('gi.goalsrv.%s'))" % srv.uid)
     check(f'{tag}: server state cached (import + win)', st and st['best'].get('kestria|normal') == 2 and st['best'].get('pannonia|normal', 0) >= 1, st)
     # Android trusts the server copy: a forged local record does not count
@@ -229,7 +230,7 @@ def web_after_android(browser, base, srv):
     ctx.route(re.compile(r'https://[^/]+\.supabase\.co/.*'), srv.handler)
     page = ctx.new_page(); errs = []; page.on('pageerror', lambda e: errs.append(str(e)))
     page.goto(base + '/index.html?debug'); wait(page, "!!(window.__GI && !document.getElementById('authOv').hidden)")
-    check(f'{tag}: version untagged', page.evaluate("window.GITele.VERSION") == '10.33')
+    check(f'{tag}: version untagged', page.evaluate("window.GITele.VERSION") == VER)
     page.click('#authGuest'); page.wait_for_timeout(200); start(page)
     open_branch(page, 'covert')
     check(f'{tag}: guest on the web: no paywall at all', page.evaluate("!document.querySelector('#tree .paybox')"))
