@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="gi-platform" content="web">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-s8nQlj6/j60PtPrdsiEJ8GepaaO/JWRJvB5f9uFMO/0=' 'sha256-1soKPYVyXePSYGNOoj97VJg7FQ3kuTnyo0c2EwBob/A=' 'sha256-TsFAbk/k0hCMhlpgct5H7gb72eJZGA3qz/s+ENJ3UsA=' 'sha256-ysIXQskR5r8FmSSNKEnHUvJBB1FKKJ+rpT9+SkS4Zcw=' 'sha256-45cvpe6Jvw4zmuCSePI5dl8u9delPrYz5OKtM5iAVfs=' 'sha256-MOC9f44G+bUtq8yfVssGbW2wx93XgSaVRuoLRbyONDY=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; media-src 'self'; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-s8nQlj6/j60PtPrdsiEJ8GepaaO/JWRJvB5f9uFMO/0=' 'sha256-1soKPYVyXePSYGNOoj97VJg7FQ3kuTnyo0c2EwBob/A=' 'sha256-TsFAbk/k0hCMhlpgct5H7gb72eJZGA3qz/s+ENJ3UsA=' 'sha256-je/p2TRZHalUbcNY+8xStHyjx8o18tCGYfJq8x4xkXQ=' 'sha256-45cvpe6Jvw4zmuCSePI5dl8u9delPrYz5OKtM5iAVfs=' 'sha256-MOC9f44G+bUtq8yfVssGbW2wx93XgSaVRuoLRbyONDY=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; media-src 'self'; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#0d1820">
 <meta name="mobile-web-app-capable" content="yes">
@@ -1077,7 +1077,7 @@ html { overscroll-behavior: contain; }
   <div class="sheet narrow" role="dialog" aria-modal="true" aria-labelledby="setTitle">
     <div class="sheet-head"><button class="btn" id="setBack" type="button">&larr; Back</button><div><div class="eyebrow">Menu</div><h2 id="setTitle">Settings</h2></div><div class="spacer"></div><button class="btn" id="setClose" type="button">Close</button></div>
     <div class="eyebrow" style="margin-top:6px">Sound</div>
-    <div class="setline"><label class="setchk"><input type="checkbox" id="setMusic" checked><span>Music</span></label><input type="range" id="setMusicVol" min="0" max="100" step="5" value="60" aria-label="Music volume"></div>
+    <div class="setline"><label class="setchk"><input type="checkbox" id="setMusic" checked><span>Music</span></label><input type="range" id="setMusicVol" min="0" max="100" step="5" value="35" aria-label="Music volume"></div>
     <div class="setline"><label class="setchk"><input type="checkbox" id="setSfx" checked><span>Sound effects</span></label><input type="range" id="setSfxVol" min="0" max="100" step="5" value="70" aria-label="Sound effects volume"></div>
     <div class="eyebrow" style="margin-top:14px">Display</div>
     <div class="setline"><span class="setlbl">Language</span><span class="lang" role="group" aria-label="Language"><button type="button" data-lang="en" aria-pressed="true">EN</button><button type="button" data-lang="hu" aria-pressed="false">HU</button></span></div>
@@ -5254,7 +5254,7 @@ window.GIAccounts = (() => {
     const get = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch { return d; } };
     const put = (k, v) => { try { localStorage.setItem(k, String(v)); } catch { /* storage blocked */ } };
     const num = (v, d) => (Number.isFinite(+v) && +v >= 0 && +v <= 100 ? +v : d);
-    const cfg = { music: get('gi.music', '1') !== '0', sfx: get('gi.sfx', '1') !== '0', mv: num(get('gi.musicVol', 60), 60), sv: num(get('gi.sfxVol', 70), 70) };
+    const cfg = { music: get('gi.music', '1') !== '0', sfx: get('gi.sfx', '1') !== '0', mv: num(get('gi.musicVol', 35), 35), sv: num(get('gi.sfxVol', 70), 70) };
     const SRC = { main: 'audio/music-main.mp3', win: 'audio/win.mp3', lose: 'audio/lose.mp3' };
     const AC = window.AudioContext || window.webkitAudioContext;
     let ctx = null, mBus = null, sBus = null, unlocked = false, mode = 'main', hiddenPaused = [];
