@@ -1,66 +1,68 @@
 # v35 Tutorial: Build Proposal (revised 2026-11-03)
 
-Status: APPROVED by Pavel 2026-11-03. Building as v10.35 on beta (`release/v10.35`). Live stays v10.34 until his phone test and explicit OK.
+Status: **APPROVED by Pavel (2026-11-03), built as v10.35 on beta.** Revision 2 replaces the first draft after a review against the code (`release/v10.34`).
 
-## 0. What changed in this revision
+## 0. What changed from the first draft, and why
 
-The draft assumed no help system existed. The code already has one, so v35 extends it instead of building a second:
+| First draft | Revised | Why |
+|---|---|---|
+| Hints on Casual only | Briefings on **Casual and Normal**. Brutal: none. Toggle in Settings, default on. | The itch.io pitch steers new players to Normal (campaign under 1h). Casual-only would teach almost nobody. The Q1/Q3 reading question is gone. |
+| New `tutorial.js` file | No new file. Built into `index.html` next to the existing briefings. | The CSP (`tools/csp.py`, `build.py`) allows only hashed inline scripts and has no `'self'` in `script-src`, so a separate script file would be blocked. |
+| New EN/HU i18n "keys" | English in code + Hungarian rows in `i18n/hu.tsv`. | The language layer has no keys: it translates English text as it reaches the page (`i18n/engine.js`). |
+| New Codex screen | **The existing "How it works" rulebook becomes the Codex.** | The game already has a briefing system (v10.12+): `TOPIC` table, coach card (`#coachOv`), rulebook (`#rulesOv`), "Don't show again", Settings, Briefings, "Show all again". It covered only late-game mechanics. v35 adds the early-game topics to the same system. |
+| New non-blocking hint cards | Same coach card as the existing briefings: it pauses the game; Close only on the last page. | Same look and behaviour as the briefings Pavel already tested. Pausing suits "no rush" players. Nothing blocks for good: Got it always closes it. |
+| Guided first campaign | **Cut from v35.** | Most expensive and riskiest part. Revisit after launch feedback. |
+| Hooks in event code, "don't touch sim.js" | All triggers read state from the UI layer. **Simulation untouched** (no edits above the UI code; sim.js unchanged). | No conflict with the sim. Balance cannot move. |
 
-| Already in v10.34 | Where |
-|---|---|
-| Briefing pager (pauses, Back/Next, "Got it", "Don't show again") | `#coachOv`, `openCoach()`, `TOPIC` map |
-| Rules screens reachable any time | Menu → How it works (`#rulesOv`, `setRules()`) |
-| Reset of all briefings | Settings → Briefings → Show all again |
-| Per-profile seen flags | `Best.getFlag/setFlag` |
-| Intro briefing (6 pages) and "How upgrades work" pager | `#introOv`, `#howOv` |
+## 1. Goal
 
-Existing topics all cover mid/late game: unrest, base/legitimacy, moving the base, overextension, endgame, Grand Coalition. **The gap is the first 15 minutes.** v35 fills that gap.
+A new player understands the core loop (support spreads, Clout, upgrades, actions), opposed doctrines and their synergies, the World Order and alliances, inside the first games. Nothing is one-time-only: closing a briefing loses nothing.
 
-Other review findings applied:
-- `index.html` is edited directly (`build.py`/`template.html` are legacy). Code stays inline; `tools/csp.py` re-hashes. A separate `tutorial.js` would be blocked by the CSP.
-- i18n has no keys: English in code, exact rows in `i18n/hu.tsv`, `node tools/i18n-build.js`.
-- Hooks read state in the UI layer (`coachCheck()`); the SIM block is not touched.
-
-## 1. Scope (decided)
+## 2. Scope (built)
 
 | Item | Decision |
 |---|---|
-| New early-game briefings | Casual and Normal. Brutal: none auto (still in Menu). |
-| Repeat | Each new briefing shows once per profile. Text stays in Menu → How it works. |
-| Settings | New "Show briefings" switch (all automatic briefings, default on). "Show all again" also resets the new ones. |
-| Guided first campaign | Cut from v35. Revisit after launch feedback. |
-| Launch | itch public Tue 10 Nov 2026 16:00 CET; hard fallback Thu 12 Nov as-is. YouTube outreach in parallel, not a gate. |
+| Early-game briefings | Casual and Normal. Not Brutal. |
+| Codex | Menu, How it works: 14 topics, all levels, always available, paginated on phones, Close goes back to the Menu. |
+| Settings | New "Early-game briefings" switch (default on). Existing "Briefings: Show all again" resets every topic, old and new. |
+| Guided campaign | Not in v35. |
 
-## 2. New briefings and triggers
+## 3. Topics
 
-| Topic | Title | Trigger (UI reads state) |
+New (v35): Getting started, Upgrades and doctrines, Actions, The World Order, Alliances, Events and decisions, Winning and losing, Difficulty levels.
+Existing: Unrest and uprisings, Your base, Moving your base, Overextension, The endgame, The Grand Coalition.
+
+## 4. Briefing triggers (Casual and Normal)
+
+Each repeats every run until **learned** or switched off with "Don't show again". One at a time, at least 3 game weeks apart. Late-game briefings keep their v10.12–v10.21 behaviour on every level.
+
+| Topic | Shows when | Learned when |
 |---|---|---|
-| `start` | Getting started | Week ≥ 1 of a new game (week < 10, so old saves are not interrupted) |
-| `upg` | Upgrades and doctrines | First time any upgrade is affordable (`canBuy`) |
-| `noto` | Notoriety | Notoriety ≥ 5, World Order not yet convened |
-| `wo` | The World Order | World Order convenes |
-| `win` | How you win | First country other than the base reaches 60% |
+| Getting started | week 2, no upgrade bought yet | first upgrade bought |
+| Upgrades and doctrines | first upgrade bought, no doctrine committed | a doctrine is committed (2nd upgrade in a branch) |
+| Actions | an upgrade owned, no action used yet | first action |
+| The World Order | the World Order convenes | an action in a country it is courting |
+| Alliances | first alliance forms | a Diplomacy or Ideology action on an alliance member |
 
-Order and rules follow the existing `coachCheck()`: one briefing at a time, never while another sheet is open, game pauses while open and resumes on close. Each one is 2–3 short pages.
+Events, Winning and losing and Difficulty levels are Codex-only (no briefing).
 
-## 3. Rules
+## 5. Rules (kept)
 
-- Every briefing has a Menu → How it works entry with the same text.
-- Desktop 3-column layout and map unchanged; phone layout unchanged (Menu gains buttons in an existing row).
-- EN + HU for every new string; `GI_I18N.misses` empty on the new screens.
-- Balance untouched: no SIM change.
+- Nothing blocks input for good. Every briefing is also in the Codex, with the same text plus extra detail.
+- Desktop 3-column layout and the map unchanged. Phone: Codex buttons in two columns inside the Menu; pages with Back/Next; Close on the last page.
+- All new text has Hungarian rows. Test: every Codex page renders fully Hungarian.
+- Balance not touched.
 
-## 4. Build steps
+## 6. Found and fixed on the way
 
-1. `release/v10.35` from `release/v10.34`.
-2. New TOPIC entries + triggers in `coachCheck()`; eyebrow "Briefing" for them.
-3. Menu → How it works: 5 new buttons. Settings: "Show briefings" switch.
-4. HU rows; `node tools/i18n-build.js && python3 tools/csp.py`.
-5. VERSION 10.35, sw.js cache, About line.
-6. Headless test (Casual/Normal/Brutal, toggle, reset, HU misses, console errors, SIM block identical).
-7. Beta channel → `/beta/`. Pavel tests on phone and desktop → OK → live.
+- Two existing rulebook pages (Moving your base p.3, Overextension p.3) were half English in Hungarian: a `{}` pattern swallowed the whole page. Whole-page HU rows added.
+- `tools/store-ui-test.py` and `tools/save-ui-test.py` hard-coded version 10.33. They now read `VERSION`.
 
-## 5. Later
+## 7. Tests
 
-- Guided first campaign, if launch players report being lost.
-- Hint wording pass after first itch comments.
+`tools/tutorial-ui-test.py` (new): briefing order, pause/resume, learned flags, gap, Don't show again, Brutal/toggle-off silence, 14 Codex topics on desktop and phone, Close back to Menu, Hungarian coverage. Existing suites re-run: endgame-ui, layout, store, save, settings, bubble-tap.
+
+## 8. Later (not v35)
+
+- Guided first campaign, if launch feedback says players are lost.
+- Telemetry: briefing shown/learned/off counts, to tune the triggers.
