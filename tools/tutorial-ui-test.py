@@ -69,7 +69,7 @@ with sync_playwright() as p:
         page.check('#coachOff')
         page.click('#coachClose'); page.wait_for_timeout(200)
         # 3) Codex: Menu -> How it works, every topic opens, Close returns to Menu
-        page.click('#moreBtn'); page.wait_for_timeout(200)
+        page.click('#moreBtn'); page.wait_for_timeout(200); page.click('#tutOpen'); page.wait_for_timeout(200)
         n = page.evaluate("document.querySelectorAll('#codexList [data-codex]').length")
         check(f'[{tag}] codex lists 14 topics', n == 14, n)
         page.screenshot(path=f'{OUT}/codex-menu-{tag}.png', full_page=True)
@@ -81,9 +81,8 @@ with sync_playwright() as p:
                 page.click('#rulesSheet [data-pnext]'); page.wait_for_timeout(80)
             if k == 'wo': page.screenshot(path=f'{OUT}/codex-wo-{tag}.png')
             page.click('#rulesClose'); page.wait_for_timeout(150)
-            check(f'[{tag}] codex {k}: {np} pages, Close back to Menu', vis and np >= 2 and page.is_visible('#moreOv'))
+            check(f'[{tag}] codex {k}: {np} pages, Close back to Settings, Tutorial', vis and np >= 2 and page.is_visible('#setTut'))
         # 4) Settings toggle off -> no early briefings
-        page.click('#setOpen'); page.wait_for_timeout(200)
         check(f'[{tag}] settings has toggle, on by default', page.is_checked('#setTips'))
         page.screenshot(path=f'{OUT}/settings-{tag}.png', full_page=True)
         page.click('#setClose'); page.wait_for_timeout(200)
@@ -103,7 +102,7 @@ with sync_playwright() as p:
     ctx = b.new_context(viewport={'width': 1280, 'height': 800}); page = ctx.new_page()
     page.add_init_script("localStorage.setItem('gi.lang', 'hu')")
     start(page, 'normal'); page.evaluate("document.querySelector('#sp0').click()")
-    page.click('#moreBtn'); page.wait_for_timeout(200)
+    page.click('#moreBtn'); page.wait_for_timeout(200); page.click('#tutOpen'); page.wait_for_timeout(200)
     import re
     eng = []
     for k in TOPICS:
@@ -112,12 +111,11 @@ with sync_playwright() as p:
         if re.search(r'\b(the|and|your|you|with|countries)\b', txt): eng.append(k)
         page.evaluate("document.querySelector('#rulesClose').click()"); page.wait_for_timeout(100)
     check('HU: every codex topic fully Hungarian', not eng, eng)
-    page.click('#setOpen'); page.wait_for_timeout(200)
     page.screenshot(path=f'{OUT}/settings-hu.png', full_page=True)
     st = page.text_content('#setOv')
     check('HU: settings toggle translated', 'Kezdő eligazítások' in st and 'Early-game' not in st)
     page.click('#setClose'); page.wait_for_timeout(150)
-    page.click('#moreBtn'); page.wait_for_timeout(150); page.click('#codexList [data-codex="wo"]'); page.wait_for_timeout(150)
+    page.click('#moreBtn'); page.wait_for_timeout(150); page.click('#tutOpen'); page.wait_for_timeout(150); page.click('#codexList [data-codex="wo"]'); page.wait_for_timeout(150)
     page.screenshot(path=f'{OUT}/codex-wo-hu.png')
     ctx.close(); b.close()
 print(f'\n{ok_n} ok, {bad_n} failed'); sys.exit(1 if bad_n else 0)

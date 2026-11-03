@@ -162,16 +162,18 @@ def walk(browser, base, device, lang):
     # rulebook page
     page.evaluate("document.getElementById('endOv').hidden = true")
     page.evaluate("document.getElementById('moreBtn').click()"); page.wait_for_timeout(150)
+    page.click('#tutOpen'); page.wait_for_timeout(150)   # v10.36: How it works lives in Settings, Tutorial
     page.click('#rulesEnd'); page.wait_for_timeout(200)
     rt = page.evaluate("document.getElementById('rulesTitle').textContent + ' :: ' + document.getElementById('rulesPages').textContent")
     check(f'{tag}: rulebook page "The endgame"', rt.startswith('The endgame') or rt.startswith('A végjáték'), rt[:120])
     check(f'{tag}: rulebook explains Ultimatum', ('Ultimatum' in rt) or ('Ultimátum' in rt), rt[-300:])
     shot('12-rulebook')
-    page.evaluate("document.getElementById('rulesOv').hidden = true; document.getElementById('moreBtn').click()"); page.wait_for_timeout(150)
+    page.evaluate("document.getElementById('rulesOv').hidden = true; document.getElementById('setOv').hidden = true; document.getElementById('moreBtn').click()"); page.wait_for_timeout(150)
+    page.click('#tutOpen'); page.wait_for_timeout(150)
     page.click('#rulesGc'); page.wait_for_timeout(200)
     rg = page.evaluate("document.getElementById('rulesTitle').textContent + ' :: ' + document.getElementById('rulesPages').textContent")
     check(f'{tag}: rulebook page "The Grand Coalition"', rg.startswith('The Grand Coalition') or rg.startswith('A Nagykoalíció'), rg[:120])
-    page.evaluate("document.getElementById('rulesOv').hidden = true")
+    page.evaluate("document.getElementById('rulesOv').hidden = true; document.getElementById('setOv').hidden = true")
     # World Unity loss in a fresh game
     page.evaluate("document.getElementById('endOv').hidden = true; __GI.startGame('pannonia'); __GI.setSpeed(0)")
     page.evaluate(SETUP); page.evaluate("() => { step(__GI.S); __GI.render(); }"); page.wait_for_timeout(200)

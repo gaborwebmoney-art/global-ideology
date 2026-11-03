@@ -1802,3 +1802,63 @@ Menu, How it works keeps every briefing on all levels.	A Menü, Hogyan működik
 # v10.35: whole-page rows for two rulebook pages a {} pattern used to swallow (Menu, How it works)
 After the move: legitimacy starts at 50. The crown ring, the base actions and the no-unrest rule move to the new country. The old base becomes an ordinary country with 20 unrest and no longer counts as a lost country.	A költözés után: a legitimitás 50-ről indul. A korona-gyűrű, a bázis-akciók és a nyugtalanság-mentesség átkerül az új országba. A régi bázis szokásos országgá válik 20 nyugtalansággal, és már nem számít elvesztett országnak.
 Development aid: Foreign Investment or Buyout on a country you hold cuts its unrest by 20 and waives its upkeep for 25 weeks. It works even on a country at 95%+ that would otherwise be "Already yours".	Fejlesztési segély: egy általad tartott országban a külföldi befektetés vagy felvásárlás 20-szal csökkenti a nyugtalanságot, és 25 hétre elengedi a fenntartást. Működik akkor is, ha az ország 95%+ és egyébként „Már a tiéd” lenne.
+# v10.36 guided walkthrough, Settings Tutorial page
+Step {} / {}	{1}/{2}. lépés
+Skip tutorial	Oktatás kihagyása
+Tutorial	Oktatás
+General	Általános
+Guided walkthrough	Vezetett bemutató
+Walkthrough	Bemutató
+Replay	Újra
+Your first moves, step by step: choose a base, collect Clout, buy an upgrade, take an action.	Az első lépéseid, egyenként: válassz bázist, gyűjts Befolyást, vegyél fejlesztést, hajts végre egy akciót.
+It starts when you choose your starting country.	Akkor indul, amikor kiválasztod a kezdőországodat.
+It starts with your next new game (Menu, New game).	A következő új játékoddal indul (Menü, Új játék).
+Short briefings on the basics, on Casual and Normal, for players who skipped the walkthrough.	Rövid eligazítások az alapokról, Laza és Normál szinten, azoknak, akik kihagyták a bemutatót.
+All of them stay below.	Mindegyik megtalálható lent.
+Early-game briefings show on Casual and Normal.	A kezdő eligazítások Laza és Normál szinten jelennek meg.
+Settings, Tutorial keeps every briefing on all levels.	A Beállítások, Oktatás oldal minden szinten minden eligazítást megőriz.
+Choose your base	Válaszd ki a bázisodat
+Your movement starts in one country.	A mozgalmad egy országban indul.
+Tap any country on the map to see what it offers.	Koppints bármelyik országra a térképen, és nézd meg, mit kínál.
+▸ Tap a country	▸ Koppints egy országra
+Every country plays differently	Minden ország máshogy játszik
+Its ★ weak spot and ✕ wall are under Country rules.	A ★ gyenge pontja és a ✕ fala az Ország szabályai alatt található.
+Pick a difficulty, then start.	Válassz nehézséget, aztán indulj.
+▸ Press Start here	▸ Nyomd meg az indítás gombot
+Clout pays for everything	Mindent Befolyással fizetsz
+The blinking number at the top is your Clout.	A fent villogó szám a Befolyásod.
+You earn a little every week, and amber bubbles pop up on the map.	Minden héten kapsz egy keveset, és borostyánszínű buborékok bukkannak fel a térképen.
+This one is worth 4.	Ez 4-et ér.
+▸ Tap the bubble	▸ Koppints a buborékra
+Spend it on upgrades	Költsd fejlesztésekre
+Upgrades work in every country at once, and each one opens new actions.	A fejlesztések egyszerre minden országban hatnak, és mindegyik új akciókat nyit meg.
+▸ Open Upgrades	▸ Nyisd meg a Fejlesztéseket
+Pick a branch	Válassz ágat
+Ideology, Economy, Military or Diplomacy: choose any.	Ideológia, Gazdaság, Katonai vagy Diplomácia: bármelyiket választhatod.
+Your first {} upgrade is free.	Az első {1}-fejlesztésed ingyenes.
+▸ Pick a branch	▸ Válassz ágat
+Your first upgrade	Az első fejlesztésed
+The second one commits you to a doctrine: Ideology or Economy, Military or Diplomacy.	A második elkötelez egy doktrína mellett: Ideológia vagy Gazdaság, Katonai vagy Diplomácia.
+▸ Open the upgrade	▸ Nyisd meg a fejlesztést
+▸ Confirm the upgrade	▸ Erősítsd meg a fejlesztést
+Confirm	Megerősítés
+Now act	Most cselekedj
+Upgrades work everywhere; actions hit one country.	A fejlesztések mindenhol hatnak, az akciók egy országot céloznak.
+{} is close to you: open its dossier.	{1} közel van hozzád: nyisd meg a dossziéját.
+▸ Tap {}	▸ Koppints ide: {1}
+Four domains	Négy terület
+Here ★ {} works extra well and ✕ {} misfires.	Itt a ★ {1} különösen jól működik, a ✕ {2} viszont balul sül el.
+Your new upgrade made one {} action ready.	Az új fejlesztésed elérhetővé tett egy akciót: {1}.
+▸ Open {}	▸ Nyisd meg: {1}
+Military needs a foothold	A hadseregnek támaszpont kell
+Show of Force needs a neighbour with 10%+ of your support.	Az Erődemonstrációhoz kell egy szomszéd, ahol legalább 10% a támogatásod.
+Your base grows by itself: in a few weeks your army can march.	A bázisod magától erősödik: néhány hét múlva a sereged indulhat.
+Each action costs Clout, then needs a cooldown before it works in that country again.	Minden akció Befolyásba kerül, utána várakozási idő kell, mielőtt abban az országban újra működik.
+It costs {} Clout, then needs {} weeks before you can use it here again.	{1} Befolyásba kerül, utána {2} hétig nem használhatod itt újra.
+Watch it land on the map.	Figyeld, ahogy célba ér a térképen.
+▸ Confirm {}	▸ Erősítsd meg: {1}
+The world is yours to start	A világ a tiéd, indítsd el
+Loud moves raise Notoriety.	A zajos lépések növelik a Hírhedtséget.
+At 8 the World Order wakes up and fights back.	8-nál felébred a Világrend, és visszavág.
+Briefings explain each new threat; Settings, Tutorial keeps them all.	Az eligazítások minden új veszélyt elmagyaráznak; a Beállítások, Oktatás oldal mindet megőrzi.
+▸ Pick a speed to begin	▸ Válassz sebességet az induláshoz

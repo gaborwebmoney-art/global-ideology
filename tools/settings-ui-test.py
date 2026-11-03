@@ -61,6 +61,7 @@ with sync_playwright() as p:
     page.screenshot(path=OUT + '/settings-hu.png', full_page=True)
     page.click('#setOv [data-lang="en"]'); page.wait_for_timeout(200)
     # briefings reset
+    page.click('.settabs [data-stab="tut"]'); page.wait_for_timeout(100)
     page.click('#setCoach'); check('briefings reset note', 'show again' in page.inner_text('#setCoachNote'))
     # back to menu, resume restores speed
     page.click('#setBack'); check('back to menu', page.is_visible('#moreOv'))
