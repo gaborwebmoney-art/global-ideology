@@ -74,7 +74,8 @@ with sync_playwright() as p:
     check('board cleared', page.evaluate("window.__gi.S === null"))
     page.click('#resumeGo'); page.wait_for_timeout(500)
     check('continue restores same week', page.evaluate("window.__gi.S && window.__gi.S.week") == wk, (wk, page.evaluate("window.__gi.S && window.__gi.S.week")))
-    # new game uses default speed 2
+    # new game uses default speed 2 (v10.35: early briefings off here, the week-2 briefing would pause it)
+    page.evaluate("localStorage.setItem('gi.tips', '0')")
     page.click('#moreBtn'); page.click('#quitGame'); page.click('#quitYes'); page.wait_for_timeout(300)
     page.evaluate("window.__gi.select('borealis')"); page.click('#startHere'); page.wait_for_timeout(300)
     check('new game starts at default speed 2', page.evaluate("document.querySelector('#sp2').getAttribute('aria-pressed')") == 'true')

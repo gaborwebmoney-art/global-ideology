@@ -16,7 +16,7 @@ with sync_playwright() as p:
     b=p.chromium.launch(executable_path='/opt/pw-browsers/chromium-1243/chrome-linux64/chrome',args=['--no-sandbox'])
     for view in ['fit','zoom']:
         ctx=b.new_context(viewport={'width':390,'height':844},has_touch=True,is_mobile=True,device_scale_factor=2); page=ctx.new_page()
-        page.add_init_script(f"try{{localStorage.setItem('gi.view','{view}')}}catch(e){{}}"); start(page)
+        page.add_init_script(f"try{{localStorage.setItem('gi.view','{view}');localStorage.setItem('gi.tips','0')}}catch(e){{}}"); start(page)
         ids=[i for i in page.evaluate("Object.keys(window.__gi.S.inf)") if i!='celestia']
         for n,oid in enumerate(ids[:8]):
             page.evaluate(f"window.__gi.S.bubbles.push({{key:{9001+n},id:'{oid}',value:2,until:9999}}); window.__gi.S.bubbleSeq={9001+n}")
