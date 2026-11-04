@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="gi-platform" content="web">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-jEVo21Ml8YDwZuVUz3pWOEYdWigdS5yUaOIYKWh2rW4=' 'sha256-eW0Mkm2KhVW1dIth0D4cFcyYoHjrFlUTuG+QxPGHVt0=' 'sha256-TsFAbk/k0hCMhlpgct5H7gb72eJZGA3qz/s+ENJ3UsA=' 'sha256-rCQBRgkMjjXh8aDu38ynW8Hrigx632ix7B9lmjkxPsE=' 'sha256-oZm0tx4jFJblP9ZCj/UPPucfw99BWVtXhvCoROdLHdg=' 'sha256-MOC9f44G+bUtq8yfVssGbW2wx93XgSaVRuoLRbyONDY=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; media-src 'self'; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-jEVo21Ml8YDwZuVUz3pWOEYdWigdS5yUaOIYKWh2rW4=' 'sha256-eW0Mkm2KhVW1dIth0D4cFcyYoHjrFlUTuG+QxPGHVt0=' 'sha256-TsFAbk/k0hCMhlpgct5H7gb72eJZGA3qz/s+ENJ3UsA=' 'sha256-7LdEnGVkabn6p42igwbXzaDkacWuFTBFb6GvsaNCfx4=' 'sha256-oZm0tx4jFJblP9ZCj/UPPucfw99BWVtXhvCoROdLHdg=' 'sha256-MOC9f44G+bUtq8yfVssGbW2wx93XgSaVRuoLRbyONDY=' https://challenges.cloudflare.com; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src https://zixjzbusaflgvkcjektw.supabase.co; frame-src https://challenges.cloudflare.com; media-src 'self'; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#0d1820">
 <meta name="mobile-web-app-capable" content="yes">
@@ -392,6 +392,7 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--you); 
 .specials .sn { font-weight: 600; }
 .specials .sw { grid-column: 1 / -1; font-size: 11.5px; color: var(--muted); }
 .pickbar .pick-facts, .pickbar .pick-level { flex-basis: 100%; font-size: 13px; line-height: 1.4; }
+@media (min-width: 701px) { .pickbar .pick-facts { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 14px; } }
 .pickbar .pick-level { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .pickbar .pick-level .btn { padding: 4px 12px; }
 .pickbar .pick-level .btn.on { background: var(--you); border-color: var(--you); color: var(--ink); }
@@ -6168,7 +6169,7 @@ window.GIAccounts = (() => {
       const c = byId(id);
       $('pickbar').hidden = false;
       const R = GI_V10 && RULES[id], T = TRAITS[id];
-      $('pickbar').innerHTML = (SHEET() ? `<div class="pick-facts">${R ? `<div><b>Start bonus:</b> ${R.base[1]}</div>` : ''}${T ? `<div><b>Perk at ${CONTROL}%:</b> ${T.perkName}: ${T.perk}</div>` : ''}</div>` : '')
+      $('pickbar').innerHTML = (/* v10.37: start bonus + perk on every screen size */ true ? `<div class="pick-facts">${R ? `<div><b>Start bonus:</b> ${R.base[1]}</div>` : ''}${T ? `<div><b>Perk at ${CONTROL}%:</b> ${T.perkName}: ${T.perk}</div>` : ''}</div>` : '')
         + (GI_V10 ? `<div class="pick-level" role="group" aria-label="Difficulty">${LEVEL_IDS.map(k => `<button class="btn${k === pickLevel ? ' on' : ''}" data-level="${k}" aria-pressed="${k === pickLevel}">${LEVEL_UI[k][0]}</button>`).join('')}<div class="pick-level-text">${LEVEL_UI[pickLevel][1]}</div></div>` : '')
         + (GI_V10 ? `<div class="pick-best">${bestLine(id, pickLevel)}</div>` : '')
         + `<span>Start in <b>${c.name}</b>?</span>${SHEET() ? '<button class="btn" id="pickInfo">Info</button>' : ''}<button class="btn" id="pickRank" type="button">Ranking</button><button class="btn primary" id="startHere">Start here</button>`;
