@@ -1,4 +1,4 @@
-"""v10.36 UI test: guided walkthrough (9 steps, real clicks only, blocked clicks elsewhere, skip, Military path, HU) and action animations.
+"""v10.37 UI test: guided walkthrough (10 steps, target lock on step 6, meters step 9, real clicks only, blocked clicks elsewhere, skip, Military path, HU) and action animations.
 Usage: python3 tools/walkthrough-ui-test.py http://localhost:8765 <shots dir>"""
 import sys
 from playwright.sync_api import sync_playwright
@@ -59,6 +59,12 @@ def run(b, tag, vw, vh, branch, base='celestia', lang='en'):
     check(f'{T} step 6 after buying, Upgrades closed', at(page, 6) and page.is_hidden('#treeOv'))
     tgt = page.evaluate("window.__gi.wt.target")
     page.wait_for_timeout(500); page.screenshot(path=f'{OUT}/{tag}-{branch}-6.png')
+    other = page.evaluate(f"(()=>{{const t=byId('{tgt}');return COUNTRIES.filter(c=>c.id!=='{tgt}'&&c.id!==baseOf(window.__gi.S)&&c.pop>=1).map(c=>[c.id,Math.hypot(c.x-t.x,c.y-t.y)]).sort((a,b)=>a[1]-b[1]).map(a=>a[0]).find(id=>{{const r=window.__gi.nodeBox(id),k=document.querySelector('#wtCard').getBoundingClientRect(),x=r.x+r.width/2,y=r.y+r.height/2;return x>8&&y>8&&x<innerWidth-8&&y<innerHeight-160&&!(x>k.left&&x<k.right&&y>k.top&&y<k.bottom)}})}})()")
+    if other:
+      ox, oy = country_xy(page, other); tap_xy(page, ox, oy, tag)
+      check(f'{T} step 6: another country ({other}) cannot be selected, hint shown', at(page, 6) and page.evaluate("window.__gi.S && document.querySelector('#wtToast') && !document.querySelector('#wtToast').hidden") and page.evaluate(f"!document.querySelector('.node.sel[aria-label=\"'+byId('{other}').name+'\"]')"))
+      page.screenshot(path=f'{OUT}/{tag}-{branch}-6lock.png')
+    else: print('  (no other country visible beside the card: lock check skipped)')
     x, y = country_xy(page, tgt); tap_xy(page, x, y, tag)
     check(f'{T} step 7 after tapping target {tgt}', at(page, 7))
     page.wait_for_timeout(800); page.screenshot(path=f'{OUT}/{tag}-{branch}-7.png')
@@ -78,6 +84,10 @@ def run(b, tag, vw, vh, branch, base='celestia', lang='en'):
         page.wait_for_timeout(500); page.screenshot(path=f'{OUT}/{tag}-{branch}-anim2.png')
     check(f'{T} step 9', at(page, 9) if branch == 'mil' else wait(page, f"!document.querySelector('#wtLayer').hidden && {STEP}===9", 5000))
     page.wait_for_timeout(1800); page.screenshot(path=f'{OUT}/{tag}-{branch}-9.png')
+    check(f'{T} step 9 spotlights the meters and has Next', page.is_visible('#wtNext') and 'Notoriety' in (page.text_content('#wtCard') if lang == 'en' else 'Notoriety'))
+    page.click('#wtNext'); page.wait_for_timeout(300)
+    check(f'{T} step 10', at(page, 10))
+    page.wait_for_timeout(400); page.screenshot(path=f'{OUT}/{tag}-{branch}-10.png')
     if lang == 'hu':
         txt = page.text_content('#wtCard')
         check(f'{T} card in Hungarian', 'Step' not in txt and 'Loud' not in txt and 'Skip' not in txt, txt[:160])

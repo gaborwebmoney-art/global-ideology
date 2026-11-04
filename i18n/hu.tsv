@@ -1862,3 +1862,90 @@ Loud moves raise Notoriety.	A zajos lépések növelik a Hírhedtséget.
 At 8 the World Order wakes up and fights back.	8-nál felébred a Világrend, és visszavág.
 Briefings explain each new threat; Settings, Tutorial keeps them all.	Az eligazítások minden új veszélyt elmagyaráznak; a Beállítások, Oktatás oldal mindet megőrzi.
 ▸ Pick a speed to begin	▸ Válassz sebességet az induláshoz
+# v10.37 compact upgrade frame (option C), Rebrand frame, ⓘ pop-ups, dossier strip, Notoriety and income pop-ups, walkthrough steps 6/9/10
+About {}	Tudnivalók: {1}
+About this branch	Erről az ágról
+About the branch	Az ágról
+your doctrine	a te doktrínád
+Switch your doctrine from {} to {}. Once per game.	Doktrínaváltás: {1} helyett {2}. Játékonként egyszer.
+Switch your doctrine from {} to {}.	Doktrínaváltás: {1} helyett {2}.
+You lose	Elveszted
+Refund	Visszatérítés
+Price	Ár
+Opens	Megnyílik
+{} tiers 2–4 you own ({})	A birtokolt {1} 2–4. szintű fejlesztések ({2})
+No {} upgrades past tier 1	Nincs 1. szint feletti {1}-fejlesztésed
+Half their price: +{} Clout	Áruk fele: +{1} befolyás
+{} Clout and +{} Notoriety	{1} befolyás és +{2} Hírhedtség
+{} upgrades past tier 1	{1}-fejlesztések az 1. szint felett
+Cost {} Clout, refund +{}. You will have {} Clout.	Ár: {1} befolyás, visszatérítés: +{2}. Utána {3} befolyásod lesz.
+Confirm rebrand · {} Clout	Átmárkázás megerősítése · {1} befolyás
+Rebrand to {} ›	Átmárkázás: {1} ›
+A second upgrade here commits you: {} closes.	Egy második fejlesztés itt elkötelez: a(z) {1} bezárul.
+Internal growth	Belső növekedés
+Border spread	Határ menti terjedés
+Notoriety growth	A Hírhedtség növekedése
+Treaty drafting	A szerződés megfogalmazása
+{} resistance	{1} ellenállás
+{}/wk	{1}/hét
++{}/wk	+{1}/hét
+With {}:	{1} mellett:
+Revolutionary Guard.	Forradalmi gárda.
+Soft Power.	Puha hatalom.
+Dollar Diplomacy.	Dollárdiplomácia.
+War Economy.	Hadigazdaság.
+{} works well	{1} jól működik
+{} misfires	{1} balul sül el
+ECO	GAZD
+MIL	KAT
+DIP	DIPL
+IDEO	IDEO
+⚠ {}	⚠ {1}
+dossier	dosszié
+small population	kis népesség
+What it does now	Mit okoz most
+Notoriety {}	Hírhedtség {1}
+What Notoriety does	Mit okoz a Hírhedtség
+World Order courtship speed	A Világrend győzködési sebessége
+Courtships at the same time	Egyszerre futó győzködések
+Treaty drafting speed	A szerződés megfogalmazásának sebessége
+World Order plans a move every	A Világrend ennyi hetente lép
+World Order wakes up	A Világrend felébred
+at 8	8-nál
+broken up	felbomlott
+Unrest in countries you hold, from Notoriety	Nyugtalanság a birtokolt országokban a Hírhedtség miatt
+Chance a random event is bad	Esély, hogy egy véletlen esemény rossz
+Neighbours grow wary (alliances)	A szomszédok gyanakodnak (szövetségek)
+fast	gyorsan
+steady	egyenletesen
+slow	lassan
+Next at {}: {}.	{1}-nál jön: {2}.
+the World Order wakes up	felébred a Világrend
+foreign ministers name you	a külügyminiszterek néven neveznek
+the World Order courts two countries at once	a Világrend egyszerre két országot győzköd
+you lead every news channel	minden hírcsatornán te vagy a vezető hír
+Loud actions, rebrands and some events raise it.	A zajos akciók, az átmárkázás és egyes események növelik.
+Spin and Diplomacy upgrades slow it.	A Spin- és Diplomácia-fejlesztések lassítják.
+Loud actions, rebrands and some events raise it. Spin and Diplomacy upgrades slow it.	A zajos akciók, az átmárkázás és egyes események növelik. A Spin- és Diplomácia-fejlesztések lassítják.
++{} per week	+{1} hetente
+Clout income per week	Heti befolyás-bevétel
+Base (upgrades and perks)	Alap (fejlesztések és előnyök)
+World aligned {}%	Összehangolt világ {1}%
+Economy power {}%	Gazdasági erő {1}%
+War Economy: Military power {}%	Hadigazdaság: katonai erő {1}%
+Overextension upkeep	Túlterjeszkedés fenntartása
+Event	Esemény
+Economy power is your share of the world’s economic strength: countries with high Economic resistance count most, and more support counts more. Amber bubbles on the map add extra Clout.	A gazdasági erő a világ gazdasági erejéből rád eső rész: a magas gazdasági ellenállású országok számítanak a legtöbbet, és a nagyobb támogatás többet ér. A térkép borostyánszínű buborékai plusz befolyást adnak.
+Economy power is your share of the world’s economic strength: countries with high Economic resistance count most, and more support counts more.	A gazdasági erő a világ gazdasági erejéből rád eső rész: a magas gazdasági ellenállású országok számítanak a legtöbbet, és a nagyobb támogatás többet ér.
+Amber bubbles on the map add extra Clout.	A térkép borostyánszínű buborékai plusz befolyást adnak.
+Its ★ weak spot and ✕ wall are in the dossier, with its four resistances.	A ★ gyenge pontja és a ✕ fala a dossziéban látható, a négy ellenállásával együtt.
+▸ Tap the upgrade	▸ Koppints a fejlesztésre
+Tap {} for now. The other countries open after the tutorial.	Most erre koppints: {1}. A többi ország az oktatás után nyílik meg.
+Keep an eye on these	Ezeket figyeld
+World aligned: your progress toward the win.	Összehangolt világ: így haladsz a győzelem felé.
+Notoriety: loud moves raise it. At 8 the World Order wakes up and starts courting countries against you.	Hírhedtség: a zajos lépések növelik. 8-nál felébred a Világrend, és elkezdi ellened győzködni az országokat.
+Legitimacy: how firmly your base backs you. At 0, a coup.	Legitimitás: mennyire áll mögötted a bázisod. 0-nál puccs jön.
+Treaty signatures: if 8 countries sign, you lose.	Szerződéses aláírások: ha 8 ország aláír, veszítesz.
+Tap ? next to Notoriety or the Clout income under Clout any time to see what they do now.	Koppints bármikor a Hírhedtség melletti ?-re vagy a Befolyás alatti bevételre, és látod, mit okoznak most.
+Enforcement	Végrehajtás
+{} ›	{1} ›

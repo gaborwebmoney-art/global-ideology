@@ -89,9 +89,10 @@ def walk(browser, base, device, lang):
     shot('03b-gc-briefing')
     close_coach(page); page.wait_for_timeout(150)
     page.evaluate("() => { __gi.select('juche'); __GI.render(); }"); page.wait_for_timeout(200)
-    if page.query_selector('#side [data-sec="status"]'):
-        page.click('#side [data-sec="status"]'); page.wait_for_timeout(200)
-    txt = page.evaluate("document.getElementById('side').innerText")
+    if page.query_selector('#side [data-cinfo="status"]'):   # v10.37: status lives in the ⓘ pop-up; the strip links to it
+        page.click('#side [data-cinfo="status"]'); page.wait_for_timeout(200)
+    txt = page.evaluate("document.getElementById('side').innerText + ' ' + (document.getElementById('infoOv').hidden ? '' : document.getElementById('infoBody').innerText)")
+    page.evaluate("document.getElementById('xInfo').click()"); page.wait_for_timeout(100)
     check(f'{tag}: member dossier shows the coalition block', ('Member of the Grand Coalition' in txt or 'Leader of the Grand Coalition' in txt) or ('A Nagykoalíció' in txt), txt[:300])
     shot('03c-gc-member-dossier')
     page.evaluate("() => { __GI.S.acd = {}; __GI.S.clout = 200; __gi.select('koryn'); __GI.render(); __gi.select('juche'); __GI.render(); }"); page.wait_for_timeout(200)
@@ -112,9 +113,10 @@ def walk(browser, base, device, lang):
     # dossier line on an eligible country
     page.evaluate("() => { const S = __GI.S; S.inf.kestria = 45; S.wary.kestria = 0; S.al = { list: [], next: 1 }; __gi.select('kestria'); __GI.render(); }")
     page.wait_for_timeout(200)
-    if page.query_selector('#side [data-sec="status"]'):
-        page.click('#side [data-sec="status"]'); page.wait_for_timeout(200)
-    txt = page.evaluate("document.getElementById('side').innerText")
+    if page.query_selector('#side [data-cinfo="status"]'):   # v10.37: status lives in the ⓘ pop-up; the strip links to it
+        page.click('#side [data-cinfo="status"]'); page.wait_for_timeout(200)
+    txt = page.evaluate("document.getElementById('side').innerText + ' ' + (document.getElementById('infoOv').hidden ? '' : document.getElementById('infoBody').innerText)")
+    page.evaluate("document.getElementById('xInfo').click()"); page.wait_for_timeout(100)
     check(f'{tag}: dossier shows "Capitulates in N wk"', ('Capitulates in' in txt) or ('Kapitulál' in txt and 'hét' in txt), txt[:300])
     shot('04-dossier-capitulates-in')
     # 6 weeks later it capitulates by itself

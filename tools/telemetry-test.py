@@ -3,6 +3,7 @@ Starts a local web server, drives index.html in Chromium (Playwright), and inter
 usage:  python3 tools/telemetry-test.py            (exit code 0 = all passed)
 Needs Playwright for Python and Chromium; the browser path below is the one used in the handover."""
 import json, os, re, subprocess, sys, time, socket, uuid
+VERSION_STR = open(__import__('os').path.join(__import__('os').path.dirname(__import__('os').path.abspath(__file__)), '..', 'VERSION')).read().strip()
 from playwright.sync_api import sync_playwright
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
@@ -95,6 +96,7 @@ def open_game(browser, mock, base, query='?debug', ctx=None, keep_intro=False):
     errors, consoles = [], []
     page.on('pageerror', lambda e: errors.append(str(e)))
     page.on('console', lambda m: consoles.append((m.type, m.text, (m.location or {}).get('url', ''))))
+    page.add_init_script("localStorage.setItem('gi.tips', '0')")   # v10.35: the week-2 briefing would cover the board
     page.goto(base + '/index.html' + query)
     wait(page, "window.__GI && window.GITele && !document.getElementById('authOv').hidden", 20000)
     page.click('#authGuest')
@@ -158,7 +160,7 @@ def t_errors(browser, base):
     rows = mock.of('gi_errors')
     check('forced error: exactly one POST to gi_errors', mock.count('gi_errors') == 1 and len(rows) == 1, (mock.count('gi_errors'), len(rows)))
     r = rows[0] if rows else {}
-    check('error row: message, src, version, channel', r.get('message') == 'boom-test' and r.get('src') == 'onerror' and r.get('version') == '10.33' and r.get('channel') == 'dev', r)
+    check('error row: message, src, version, channel', r.get('message') == 'boom-test' and r.get('src') == 'onerror' and r.get('version') == VERSION_STR and r.get('channel') == 'dev', r)
     check('error row: stack, ua, screen, lang', bool(r.get('stack')) and 'Mozilla' in (r.get('ua') or '') and re.match(r'^\d+x\d+$', r.get('screen') or '') and r.get('lang') == 'en', r)
     check('error row: anon_id and id are uuids, user_id null', UUID_RE.match(r.get('anon_id', '')) and UUID_RE.match(r.get('id', '')) and r.get('user_id') is None, r)
     check('error row: no game yet -> level/start/week null', r.get('level') is None and r.get('start_country') is None and r.get('week') is None, r)
@@ -202,7 +204,7 @@ def t_runs(browser, base):
     st = mock.of('gi_runs', 'run_start')
     check('run_start posted when a game starts', len(st) == 1 and st[0]['start_country'] == 'isolde' and st[0]['level'] and st[0]['lang'] == 'en' and st[0]['seed'] is not None, st)
     rid = st[0]['run_id'] if st else None
-    check('run_start: run_id uuid, version, channel, no outcome', st and UUID_RE.match(rid) and st[0]['version'] == '10.33' and st[0]['outcome'] is None and st[0]['weeks'] == 0, st)
+    check('run_start: run_id uuid, version, channel, no outcome', st and UUID_RE.match(rid) and st[0]['version'] == VERSION_STR and st[0]['outcome'] is None and st[0]['weeks'] == 0, st)
     force_win(page)
     flush(page)
     en = mock.of('gi_runs', 'run_end')

@@ -169,7 +169,8 @@ const V10 = { edEff: 1.5, edTrade: 1.5, offCost: 1.5, offNoto: 3, courtWeeks: 13
   upkeepMul: 1 };
 // Difficulty levels (v10.9). Each level is a set of V10 knob overrides; cfg.v10t (bot experiments) still wins.
 const LEVELS = {
-  casual: { v10t: { woPerks: 1, unrestMul: .85, legitMul: .7, relocWeeks: 6, upkeepMul: .6 } },
+  // v10.37: Casual courtships (join and sign) 20% slower: 13 -> 16 weeks
+  casual: { v10t: { woPerks: 1, unrestMul: .85, legitMul: .7, relocWeeks: 6, upkeepMul: .6, courtWeeks: 16 } },
   // v10.19: Normal crackAmt 5 -> 8, Brutal 12 -> 14. v10.21 (Step 9.2 adds the endgame threat): Normal 8 -> 6. After Step 9.1 the Breakup almost always leads to a win, so Normal's difficulty lives before it (bot 81% -> 66%).
   normal: { v10t: { woPerks: 1, legitMul: 1, crackAmt: 6, crackGap: 8, crackN: 2 } },
   brutal: { v10t: { woPerks: 1, unrestMul: 1.15, legitMul: 1.15, relocWeeks: 10, upkeepMul: 1.2, crackAmt: 14, crackGap: 7, crackN: 2, courtWeeks: 8, planBase: 3 } }
@@ -679,7 +680,7 @@ function step0(s) {
   const share = alignedShare(s); s.peakShare = Math.max(s.peakShare, share);
   trackRun(s);
   // 4. Clout income + opportunity bubbles
-  s.clout += (1 - upkeepOf(s).frac) * (s.cfg.v10 ? v10t(s, 'income') : TUNE.income) * Math.max(0.05, 0.12 + 0.06 * (st.income + pk.income)) * (1 + TUNE.shareIncome * share) * (s.week < s.utopiaUntil ? 2 : 1) * (fxOn(s, 'incomeMul') || 1) * (s.cfg.v10 ? (1 + domainPower(s, 'eco')) * (pairOn(s, 'ecomil') ? 1 + .5 * domainPower(s, 'mil') : 1) * (ratified(s) ? v10t(s, 'enfIncome') : 1) : 1);
+  s.clout += cloutIncome(s);
   s.bubbles = s.bubbles.filter(b => b.until > s.week);
   const held = COUNTRIES.filter(c => s.inf[c.id] > 0 || (own(s, 'e1') && tradeLinks(s, c.id).some(h => s.inf[h] >= 25 && !isBlocked(s, c.id, h))));
   if (held.length && rng(s) < 0.16 + 0.1 * share + pk.bubble) {
@@ -1074,12 +1075,23 @@ function seed(s, id, amount, src) {
     spawnBubble(s, id, 2);
   }
 }
-function spawnBubble(s, id, value) { s.bubbles.push({ key: ++s.bubbleSeq, id, value, until: s.week + 7 }); }
+// v10.37: Clout earned per week (shown in the HUD; the Upgrades screen compares it before and after a purchase)
+function cloutIncome(s) {
+  const st = s.stats, pk = perk(s), share = alignedShare(s);
+  return (1 - upkeepOf(s).frac) * (s.cfg.v10 ? v10t(s, 'income') : TUNE.income) * Math.max(0.05, 0.12 + 0.06 * (st.income + pk.income)) * (1 + TUNE.shareIncome * share) * (s.week < s.utopiaUntil ? 2 : 1) * (fxOn(s, 'incomeMul') || 1) * (s.cfg.v10 ? (1 + domainPower(s, 'eco')) * (pairOn(s, 'ecomil') ? 1 + .5 * domainPower(s, 'mil') : 1) * (ratified(s) ? v10t(s, 'enfIncome') : 1) : 1);
+}
+// v10.37: one bubble per country. A new one adds its Clout to the bubble already there (n counts them for Contractor Network)
+// and restarts its 7 weeks. The walkthrough bubble (until 1e9) stays on its own.
+function spawnBubble(s, id, value) {
+  const b = id && s.bubbles.find(x => x.id === id && x.until < 1e8);
+  if (b) { b.value += value; b.n = (b.n || 1) + 1; b.until = s.week + 7; return; }
+  s.bubbles.push({ key: ++s.bubbleSeq, id, value, until: s.week + 7 });
+}
 function collectBubble(s, key) { const r = collectBubble0(s, key); armyGate(s); return r; }
 function collectBubble0(s, key) {
   const i = s.bubbles.findIndex(b => b.key === key); if (i < 0) return 0;
-  const v = s.bubbles[i].value, bid = s.bubbles[i].id; s.bubbles.splice(i, 1); s.clout += v;
-  if (s.cfg.v10 && own(s, 'e1') && bid) { if (s.inf[bid] <= 0) seed(s, bid, 1, null); else s.inf[bid] = Math.min(100, s.inf[bid] + 1); }
+  const v = s.bubbles[i].value, bid = s.bubbles[i].id, n = s.bubbles[i].n || 1; s.bubbles.splice(i, 1); s.clout += v;
+  if (s.cfg.v10 && own(s, 'e1') && bid) { if (s.inf[bid] <= 0) seed(s, bid, n, null); else s.inf[bid] = Math.min(100, s.inf[bid] + n); }
   return v;
 }
 

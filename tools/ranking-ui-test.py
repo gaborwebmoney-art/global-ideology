@@ -2,6 +2,7 @@
 ranking overlay (tabs, me row), More entry, leave. Phone + desktop, EN + HU. Supabase is mocked in memory (same rules as
 tools/supabase-ranking.sql). usage: python3 tools/ranking-ui-test.py [shots_dir]   (exit code 0 = all passed)"""
 import json, os, re, socket, subprocess, sys, time, uuid
+VERSION_STR = open(__import__('os').path.join(__import__('os').path.dirname(__import__('os').path.abspath(__file__)), '..', 'VERSION')).read().strip()
 from datetime import datetime, timedelta, timezone
 from playwright.sync_api import sync_playwright
 
@@ -161,7 +162,7 @@ def walk(browser, base, device, lang):
     check(f'{tag}: logged-in win', w == 'win', page.evaluate("JSON.stringify({ over: __GI.S && __GI.S.over, week: __GI.S && __GI.S.week, sess: !!GIAccounts.session(), ov: ['authOv','resumeOv','introOv','endOv'].filter(k => !document.getElementById(k).hidden) })") if w != 'win' else '')
     wait(page, "!document.getElementById('endRank').hidden")
     sub = [c for c in srv.calls if c[0] == 'gi_submit_score']
-    check(f'{tag}: win submitted with plausible values', len(sub) == 1 and sub[0][2] and sub[0][1]['p_level'] in ('casual', 'normal', 'brutal') and sub[0][1]['p_weeks'] >= 60 and sub[0][1]['p_version'] == '10.33', sub)
+    check(f'{tag}: win submitted with plausible values', len(sub) == 1 and sub[0][2] and sub[0][1]['p_level'] in ('casual', 'normal', 'brutal') and sub[0][1]['p_weeks'] >= 60 and sub[0][1]['p_version'] == VERSION_STR, sub)
     check(f'{tag}: server accepted it', any(s['user'] == srv.uid for s in srv.scores), sub)
     t = page.evaluate("document.getElementById('endRank').innerText")
     check(f'{tag}: end screen offers Join', page.evaluate("!!document.querySelector('#endRank [data-rjoin]')"), t)
