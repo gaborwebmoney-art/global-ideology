@@ -46,7 +46,7 @@ const BRANCHES = [
   { id: 'faith', name: 'Wanderers', blurb: 'Nomads carry your name across seas and ice, on their own.', partner: 'covert' },
   { id: 'covert', name: 'Mischief', blurb: 'Spoils every defence. Very loud.', partner: 'faith' },
   { id: 'under', name: 'Back of the Cave', blurb: 'Quiet swaps and dirty tricks. Unsettles everyone. Loud, and smoky.' },
-  { id: 'spin', name: 'Sore spot Paint', blurb: 'Keeps the Council busy arguing over pictures.' }
+  { id: 'spin', name: 'Wall Paint', blurb: 'Keeps the Council busy arguing over pictures.' }
 ];
 const UPGRADES = [
   { id: 'i1', b: 'ideo', name: 'Big Voice', cost: 5, fx: { growth: .025 }, boost: { growth: .01 }, text: 'Internal growth +25%. Tall Tales give +1 trust', btext: 'another +10%' },
@@ -434,18 +434,18 @@ const TRAITS = {
   aethelgard: { quirk: 'Loud opinions: random trust swings of 4–10 points.', q: { swing: .015 }, perkName: 'Totem', perk: 'Council nags hit 30% softer', fx: { fc: .3 }, woPerk: 'Council nags hit you 30% harder' },
   laplata:    { quirk: 'Restless: frequent trust swings, up or down.', q: { swing: .02 }, perkName: 'Wheel', perk: 'Barter spread +15%', fx: { trade: 1.15 }, woPerk: 'your barter spread −15%' },
   isolde:     { quirk: 'Population one: only Muscle deeds win trust here. The Council never recruits it.', q: { noRecruit: true, armyOnly: true }, perkName: 'Hermit\'s Secret', perk: 'Meat income up a little', fx: { income: .2 }, woPerk: 'your Meat income down a little' },
-  guldor:     { quirk: 'Old shells: ideas travel out of Guldor 50% faster.', q: { outMul: 1.5 }, perkName: 'Shells', perk: 'Meat income up', fx: { income: 1 }, woPerk: 'your Meat income down' },
-  celestia:   { quirk: 'Artists: ideas travel out of Celestia 40% faster.', q: { outMul: 1.4 }, perkName: 'A Mate joins your tribe', perk: 'Smoke grows 10% slower', fx: { vis: -.1 }, woPerk: 'Smoke grows 10% faster' },
+  guldor:     { quirk: 'Old shells: ideas travel out of the Fog Islanders 50% faster.', q: { outMul: 1.5 }, perkName: 'Shells', perk: 'Meat income up', fx: { income: 1 }, woPerk: 'your Meat income down' },
+  celestia:   { quirk: 'Artists: ideas travel out of the Painted Cave Folk 40% faster.', q: { outMul: 1.4 }, perkName: 'A Mate joins your tribe', perk: 'Smoke grows 10% slower', fx: { vis: -.1 }, woPerk: 'Smoke grows 10% faster' },
   helvetia:   { quirk: 'Neutral: The Council cannot run nags here.', q: { immuneAt: 1 }, perkName: 'Tally Sticks', perk: 'Deeds cost 1 Meat less', fx: { opDisc: 1 }, woPerk: 'your deeds cost 1 Meat more' },
   pannonia:   { quirk: 'Unpredictable: 40% of Council moves here fall through.', q: { woFail: .4 }, perkName: 'Snowshoes', perk: 'Next-door spread +10%', fx: { border: 1.1 }, woPerk: 'your next-door spread −10%' },
   koryn:      { quirk: 'Stubborn: slow to convert (−15% growth), but immune to nags once you hold 50%.', q: { gMul: .85, immuneAt: 50 }, perkName: 'Mammoth Tusks', perk: 'Meat income up a little', fx: { income: .5 }, woPerk: 'your Meat income down a little' },
-  tavaro:     { quirk: 'Crossroads: spread through Tavaro is 40% faster out, 20% faster in.', q: { outMul: 1.4, inMul: 1.2 }, perkName: 'Salt', perk: 'Meat income up', fx: { income: 1 }, woPerk: 'your Meat income down' },
+  tavaro:     { quirk: 'Crossroads: spread through the Oasis Folk is 40% faster out, 20% faster in.', q: { outMul: 1.4, inMul: 1.2 }, perkName: 'Salt', perk: 'Meat income up', fx: { income: 1 }, woPerk: 'your Meat income down' },
   kestria:    { quirk: 'Young: +25% internal growth.', q: {}, perkName: 'Drum', perk: 'More meat drops', fx: { bubble: .06 }, woPerk: 'fewer meat drops' },
   bharat:     { quirk: 'Huge: slow to convert (−15% growth), and needs 10 points less trust to refuse a signing.', q: { gMul: .85, signDelta: -10 }, perkName: 'Fire', perk: 'Internal growth +10% everywhere', fx: { growth: 1.1 }, woPerk: 'your internal growth −10% everywhere' },
-  sinopeia:   { quirk: 'Paperwork: spread into Biyoco is halved, but out of it +30%.', q: { inMul: .5, outMul: 1.3 }, perkName: 'Pottery', perk: 'Meat income up', fx: { income: 1 }, woPerk: 'your Meat income down' },
+  sinopeia:   { quirk: 'Paperwork: spread into the Clay Tablet Clan is halved, but out of it +30%.', q: { inMul: .5, outMul: 1.3 }, perkName: 'Pottery', perk: 'Meat income up', fx: { income: 1 }, woPerk: 'your Meat income down' },
   juche:      { quirk: 'Closed: no barter spread in, next-door spread halved, but Embarrassing Cave Drawings break every defence.', q: { inMul: .5, tradeInMul: 0, dossierAll: true }, perkName: 'Calendar Stone', perk: 'Tablet drafting 5% slower', fx: { treatySlow: .05 }, woPerk: 'Tablet drafting 5% faster' },
   nippon:     { quirk: 'Connected: +15% internal growth.', q: { gMul: 1.15 }, perkName: 'Smoke Signals', perk: 'Every cooldown 6 weeks shorter', fx: { opCd: 6 }, woPerk: 'your cooldowns 6 weeks longer' },
-  pinguinia:  { quirk: 'Remote: spread into Koalia is 20% slower.', q: { inMul: .8 }, perkName: 'Boomerang', perk: 'Meat income up a little', fx: { income: .5 }, woPerk: 'your Meat income down a little' }
+  pinguinia:  { quirk: 'Remote: spread into the Far-Shore Folk is 20% slower.', q: { inMul: .8 }, perkName: 'Boomerang', perk: 'Meat income up a little', fx: { income: .5 }, woPerk: 'your Meat income down a little' }
 };
 // Two of these are drawn for every game.
 const CONDITIONS = [
@@ -491,7 +491,7 @@ const RULES = {
   tavaro:     { weak: ['mil', 'refund', 'Strongman contest', 'Muscle deeds here refund half their Meat cost.'],
                 wall: ['eco', 'loud', 'Salt council', 'Barter deeds here cost +4 Smoke.'],
                 base: ['perk', 'Salt is active from the start: Meat income up.'] },
-  kestria:    { weak: ['ideo', 'bubble', 'Catchy', 'Legend deeds here drop a 2-Clout meat drop.'],
+  kestria:    { weak: ['ideo', 'bubble', 'Catchy', 'Legend deeds here drop a 2-Meat meat drop.'],
                 wall: ['mil', 'reverse', 'Kids hate bullies', 'Muscle deeds here cost you 5 trust instead of adding it.'],
                 base: ['start8', 'You start with 8% trust instead of 3%.'] },
   bharat:     { weak: ['dip', 'knock2', 'Big councils', 'Feasting deeds here knock Council woos back twice as hard.'],
@@ -506,7 +506,7 @@ const RULES = {
   nippon:     { weak: ['ideo', 'echo', 'Trendsetters', 'Legend deeds here also spread half their gain to neighbours and trade partners.'],
                 wall: ['mil', 'reverse', 'Peaceful oath', 'Muscle deeds here cost you 5 trust instead of adding it.'],
                 base: ['perk', 'Smoke Signals is active from the start: every deed recharges 6 weeks faster.'] },
-  pinguinia:  { weak: ['eco', 'bubble', 'Lucky finds', 'Barter deeds here drop a 2-Clout meat drop.'],
+  pinguinia:  { weak: ['eco', 'bubble', 'Lucky finds', 'Barter deeds here drop a 2-Meat meat drop.'],
                 wall: ['mil', 'ban', 'Very far away', 'No Muscle deeds here.'],
                 base: ['free', 'Your first Barter skill is free.', 'eco'] }
 };
@@ -591,14 +591,14 @@ function createState(startId, seed, opts) {
 }
 function applyBase(s) {
   const b = baseRule(s); if (!b) return;
-  const id = s.startId, src = 'Base: ' + byId(id).name;
+  const id = s.startId, src = 'Home cave: ' + byId(id).name;
   if (b[0] === 'free') s.freeUp = b[2];
   if (b[0] === 'clout') s.clout = 15;
   if (b[0] === 'quiet') { s.base.vis -= .2; s.stats.vis -= .2; }
   if (b[0] === 'start8') s.inf[id] = 8;
   if (b[0] === 'seedNb') neighbours(id).forEach(n => { s.inf[n] = 2; s.flags['seed_' + n] = true; });
   if (b[0] === 'noCourt' || b[0] === 'noCampaign') s.mods.push({ id, kind: b[0], until: 1e9, src });
-  addNews(s, `Base bonus, ${byId(id).name}: ${b[1]}`, 'you');
+  addNews(s, `Home cave bonus, ${byId(id).name}: ${b[1]}`, 'you');
 }
 function rng(s) { const r = mulberry32(s.seed + s.rngCalls * 7919)(); s.rngCalls++; return r; }
 function byId(id) { return COUNTRIES.find(c => c.id === id); }
@@ -810,7 +810,7 @@ const LEGIT = { start: 60, settled: 85, home: .15, eco: .2, wo: .1, sig: .03, he
   warnAt: 30, coachAt: 50, actBelow: 70, gain: { eco1: 8, eco3: 15, ideo1: 8, ideo2: 12, dip1: 6, dip2: 10 },
   martialWeeks: 20, martialAfter: 10, martialNoto: 3, shieldWeeks: 40, summitWeeks: 25,
   guardCost: 25, guardTo: 30, guardNoto: 10, estAt: 60, riskAt: 45, lostAt: 35, lostWeeks: 10 };
-const LEGIT_WHY = { held: 'Victory', share: 'Milestone', uprising: 'Walk-out', lost: 'Lost tribe', mil: 'Casualties abroad', regime: 'Regime change',
+const LEGIT_WHY = { held: 'Victory', share: 'Milestone', uprising: 'Walk-out', lost: 'Lost tribe', mil: 'Bruises abroad', regime: 'Regime change',
   fizzle: 'Failed deed', reverse: 'Backfire', scandal: 'Scandal at home', event: 'Bad news at home', martialEnd: 'Martial law ends', act: 'Your deed', guard: 'Big Cousins', reloc: 'New home cave' };
 function legitOn(s) { return !!(s.cfg && s.cfg.v10 && s.cfg.legit !== false); }
 function legitOf(s) { return s.legit === undefined ? LEGIT.start : s.legit; }
@@ -853,10 +853,10 @@ function legitTick(s) {
   s.legit = Math.max(0, Math.min(100, s.legit + p.net)); if (s.legit <= 0) s.coupDue = true; legitWarn(s, v0);
   if (s.martialEnd && s.week >= s.martialEnd) { s.martialEnd = 0; addLegit(s, -LEGIT.martialAfter / v10t(s, 'legitMul'), 'martialEnd'); addNews(s, `${byId(baseOf(s)).name}: martial law ends. The curfew is lifted; the grudges are not. Respect −${LEGIT.martialAfter}.`, 'wo'); }
   const v = s.inf[baseOf(s)];
-  if (baseEstablished(s) && v < LEGIT.riskAt && !s.baseRisk && !s.reloc) { s.baseRisk = true; addNews(s, `Your home cave ${byId(baseOf(s)).name} is slipping: ${Math.round(v)}% trust. Below ${LEGIT.lostAt}% the tribe loses its home and the game.`, 'wo'); flag(s, 'critical', baseOf(s), 'Base at risk'); s.news[0].legit = 2; }
+  if (baseEstablished(s) && v < LEGIT.riskAt && !s.baseRisk && !s.reloc) { s.baseRisk = true; addNews(s, `Your home cave ${byId(baseOf(s)).name} is slipping: ${Math.round(v)}% trust. Below ${LEGIT.lostAt}% the tribe loses its home and the game.`, 'wo'); flag(s, 'critical', baseOf(s), 'Home cave at risk'); s.news[0].legit = 2; }
   if (v >= LEGIT.riskAt + 5) s.baseRisk = false;
   if (baseEstablished(s) && v < LEGIT.lostAt && !s.reloc) {
-    if (!s.baseLowSince) { s.baseLowSince = s.week; addNews(s, `${byId(baseOf(s)).name} is falling: your home cave is under ${LEGIT.lostAt}% trust. Get it back above ${LEGIT.lostAt}% within ${LEGIT.lostWeeks} weeks or lose the game.`, 'wo'); flag(s, 'critical', baseOf(s), 'Base falling'); s.news[0].legit = 2; }
+    if (!s.baseLowSince) { s.baseLowSince = s.week; addNews(s, `${byId(baseOf(s)).name} is falling: your home cave is under ${LEGIT.lostAt}% trust. Get it back above ${LEGIT.lostAt}% within ${LEGIT.lostWeeks} weeks or lose the game.`, 'wo'); flag(s, 'critical', baseOf(s), 'Home cave falling'); s.news[0].legit = 2; }
   } else s.baseLowSince = 0;
 }
 function baseLostIn(s) { return s.baseLowSince ? Math.max(0, s.baseLowSince + LEGIT.lostWeeks - s.week) : null; }
@@ -1015,7 +1015,7 @@ function relocTick(s) {
   const R = s.reloc; if (!R) return;
   if (s.inf[R.to] < RELOC.abortBelow) {
     s.reloc = null; s.relocUsed = false;
-    addNews(s, `The move to ${byId(R.to).name} collapses: trust there fell below ${RELOC.abortBelow}%. The van turns around. The Meat is gone, the old base stays.`, 'wo');
+    addNews(s, `The move to ${byId(R.to).name} collapses: trust there fell below ${RELOC.abortBelow}%. The van turns around. The Meat is gone, the old home cave stays.`, 'wo');
     flag(s, 'critical', R.to, 'Move aborted'); s.news[0].reloc = 2; return;
   }
   if (s.week >= R.end) completeReloc(s);
@@ -1024,10 +1024,10 @@ function completeReloc(s) {
   const R = s.reloc, from = R.from, to = R.to;
   // base rules: continuous ones follow the base, one-shot ones do not re-fire
   const oldB = (rulesOn(s) && RULES[from] ? RULES[from].base : null) || [], newB = (rulesOn(s) && RULES[to] ? RULES[to].base : null) || [];
-  s.mods = s.mods.filter(m => !(m.src && m.src.indexOf('Base: ') === 0) && !(m.id === from && (m.kind === 'martial' || m.kind === 'legitShield')));
+  s.mods = s.mods.filter(m => !(m.src && m.src.indexOf('Home cave: ') === 0) && !(m.id === from && (m.kind === 'martial' || m.kind === 'legitShield')));
   if (oldB[0] === 'quiet') s.base.vis += .2;
   if (newB[0] === 'quiet') s.base.vis -= .2;
-  if (newB[0] === 'noCourt' || newB[0] === 'noCampaign') s.mods.push({ id: to, kind: newB[0], until: 1e9, src: 'Base: ' + byId(to).name });
+  if (newB[0] === 'noCourt' || newB[0] === 'noCampaign') s.mods.push({ id: to, kind: newB[0], until: 1e9, src: 'Home cave: ' + byId(to).name });
   s.baseId = to; s.reloc = null; s.martialEnd = 0;
   s.legit = RELOC.newLegit; s.coupDue = false; s.baseLowSince = 0; s.baseRisk = false;
   s.legitLog = [{ week: s.week, n: RELOC.newLegit, why: 'reloc' }].concat(s.legitLog || []).slice(0, 6);
@@ -1036,7 +1036,7 @@ function completeReloc(s) {
   if (s.unrest) { delete s.unrest[to]; if (unrestOn(s) && s.inf[from] >= UNREST.min) s.unrest[from] = RELOC.abandonUnrest; }
   recomputeStats(s);
   addNews(s, `${byId(to).name} is now the home of the tribe. ${byId(from).name} is told the headquarters "will be back in a minute". Respect ${RELOC.newLegit}.`, 'you');
-  flag(s, 'critical', to, 'Base moved'); s.news[0].reloc = 3;
+  flag(s, 'critical', to, 'Home cave moved'); s.news[0].reloc = 3;
 }
 // Score + stars (v10.10). A country counts as lost once you held it (>= CONTROL) and it later fell below CONTROL - LOST_MARGIN.
 // Notoriety in the score is the run average: peak notoriety hits 100 in most Normal/Brutal wins, so it would not tell runs apart.
@@ -1182,7 +1182,7 @@ function woExecute(s, q) {
     else { addNews(s, `${c.name} refuses to sign. Your fans there hid the pens.`, 'you'); flag(s, 'important', q.target, 'Refused to sign'); }
   }
   if (q.kind === 'invite') {
-    if (v < TUNE.joinBelow - s.stats.shield + (Q(s, q.target).recruitDelta || 0)) { W.members[q.target] = true; addNews(s, `${c.name} joins the Council. Membership includes a lanyard.`, 'wo'); flag(s, 'critical', q.target, 'Joined Council'); }
+    if (v < TUNE.joinBelow - s.stats.shield + (Q(s, q.target).recruitDelta || 0)) { W.members[q.target] = true; addNews(s, `${c.name} joins the Council. Membership includes a feather.`, 'wo'); flag(s, 'critical', q.target, 'Joined Council'); }
     else { addNews(s, `${c.name} declines the Council\u2019s invitation. Too many of its people agree with you.`, 'you'); flag(s, 'important', q.target, 'Declined invitation'); }
   }
   if ((q.kind === 'sanction' || q.kind === 'campaign') && s.stats.sabotage && rng(s) < s.stats.sabotage) { addNews(s, `The Council\u2019s ${q.kind === 'sanction' ? 'sanctions' : 'campaign'} in ${c.name} collapses amid mysterious scheduling conflicts.`, 'you'); return; }
@@ -1781,7 +1781,7 @@ function breakup(s) {
   s.treaty = 0; s.coalition = false;
   s.mods = s.mods.filter(m => m.kind !== 'noSign');
   s.notoriety = Math.max(0, s.notoriety - egk(s, 'breakNoto'));
-  addNews(s, `The Council breaks up. ${sgName(s)} hands in his lanyard; the Tablet goes to a museum of good intentions. Members freed: ${freed.length}. Smoke −${egk(s, 'breakNoto')}. Now win the rest: hold every tribe at once, or align ${Math.round(winShareOf(s) * 100)}% of the world.`, 'you');
+  addNews(s, `The Council breaks up. ${sgName(s)} hands in his feather; the Tablet goes to a museum of good intentions. Members freed: ${freed.length}. Smoke −${egk(s, 'breakNoto')}. Now win the rest: hold every tribe at once, or align ${Math.round(winShareOf(s) * 100)}% of the world.`, 'you');
   flag(s, 'critical', null, 'Split'); s.news[0].endgame = 1;
   gcForm(s);
 }

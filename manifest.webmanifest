@@ -1,7 +1,7 @@
 {
-  "name": "Global Ideology",
-  "short_name": "Ideology",
-  "description": "Spread an idea across the world before the World Order signs its Containment Treaty.",
+  "name": "Ug Goes Marry",
+  "short_name": "Ug",
+  "description": "Stone Age strategy: Ug starts alone and needs every tribe on the map before the Council of Elders carves its Tablet.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "fullscreen",
