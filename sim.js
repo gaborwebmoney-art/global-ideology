@@ -1,27 +1,27 @@
 // SIM-START
 // ---------- Global Ideology: simulation core (pure, UI-free) ----------
 const TYPES = ['eco', 'mil', 'dip', 'ideo'];
-const TYPE_LABEL = { eco: 'Economic', mil: 'Military', dip: 'Diplomatic', ideo: 'Ideological' };
+const TYPE_LABEL = { eco: 'Barter', mil: 'Muscle', dip: 'Feast', ideo: 'Legend' };
 
 // Countries from Pavel's countries.docx (Sep 2025). Resistances map 100 -> .15, 200 -> .35, 300 -> .55, 400 -> .75.
 // Celestia, Tavaro, Kestria and Pinguinia fill map gaps (Western Europe, Middle East, Africa, Australasia).
 const COUNTRIES = [
-  { id: 'borealis',   name: 'Borealis',   pop: 38,   x: 170, y: 144,  res: { mil: .55, eco: .55, dip: .55, ideo: .55 }, traits: ['Federal', 'Resource-rich'], desc: 'A sprawling northern dominion of vast wilderness. Tolerant, decentralised and hard to influence as a single entity.', lore: 'After the Great Snow Compromise of 1731, every province may secede, provided it apologises first. None has finished the paperwork.' },
-  { id: 'aethelgard', name: 'Aethelgard', pop: 330,  x: 186, y: 231, res: { mil: .75, eco: .75, dip: .75, ideo: .15 }, traits: ['Superpower', 'Divided politics'], desc: 'A sprawling federation with a powerful, sometimes divided, government. Strong on every front except ideas: it will try any of them once.', lore: 'Founded in a hurry over a dispute about a tax on leaves. Has held 58 constitutional conventions since, each declared a triumph, and tries every idea once.' },
-  { id: 'laplata',    name: 'La Plata',   pop: 46,   x: 321, y: 434, res: { mil: .55, eco: .15, dip: .15, ideo: .15 }, traits: ['Agricultural wealth', 'Unstable'], desc: 'Great natural beauty, vast farmland and a long history of political turmoil. Very open to a good economic offer.', lore: 'The currency has been reinvented nine times since the Beef Boom of 1888. Each reissue came with a new slogan and a new dance.' },
-  { id: 'isolde',     name: 'Isolde',     pop: 0.000001, x: 433, y: 109,  res: { mil: 0, eco: 1, dip: 1, ideo: 1 }, traits: ['Island', 'Close-knit'], desc: 'A remote island of fire and ice, population: one. Fully self-sufficient: no trade, no talks, no slogans get through. Only an army can take it.', lore: 'Settled by Northmen who were lost and decided that was fine. Occupied by a Northman, who enjoys solitude and minds strictly his own business.' },
-  { id: 'guldor',     name: 'Guldor',     pop: 68,   x: 480, y: 173, res: { mil: .35, eco: .35, dip: .75, ideo: .35 }, traits: ['Island', 'Old money'], desc: 'An ancient kingdom of trade and exploration. Its power rests on centuries of relationships and very old treaties.', lore: 'In 1701 the royal surveyors read the wrong units and the realm briefly appeared four times larger. It maintains that the treaties still apply.' },
-  { id: 'celestia',   name: 'Celestia',   pop: 67,   x: 472, y: 236, res: { mil: .30, eco: .40, dip: .60, ideo: .60 }, traits: ['Cultural power'], desc: 'Philosophers, painters and strikes. Soft power, soft army.', lore: 'Since the Great Debate of 1642, every issue is settled by a manifesto, a strike, or lunch. Insists the northern fjords were never on the menu.' },
-  { id: 'helvetia',   name: 'Helvetia',   pop: 9,    x: 538, y: 95, res: { mil: .15, eco: .75, dip: .55, ideo: .35 }, traits: ['Neutral', 'Financial centre'], desc: 'A neutral, prosperous republic of banks, fjords and a surprising number of ledgers. Its opinions, officially, nowhere.', lore: 'At the end of the 9th century the Northmen left the north entirely. The Helvetians, unused to wasting resources, moved in the following week, with a ledger. Neutral on arrival, and billed neutrally.' },
-  { id: 'pannonia',   name: 'Pannonia',   pop: 10,   x: 552, y: 205, res: { mil: .15, eco: .15, dip: .35, ideo: .35 }, traits: ['Sprawling', 'Unpredictable'], desc: 'A sprawling state with a proud history and a distinct identity, often at odds with its own alliances.', lore: 'Following the events of 1567 the country expanded north until its borders reached the Baltic, mostly because nobody objected loudly enough. Later got the Alps in a clerical-error swap with Helvetia.' },
-  { id: 'koryn',      name: 'Frostia-47',      pop: 145,  x: 684, y: 159,  res: { mil: .55, eco: .35, dip: .35, ideo: .55 }, traits: ['Authoritarian', 'Resource-rich'], desc: 'A vast, resource-rich nation with a centralised government and a proud military history.', lore: 'Expanded eastward for three centuries looking for a warmer border. Then realised it had left the iron on and turned back home. Still has eleven time zones to show for it.' },
-  { id: 'tavaro',     name: 'Tavaro',     pop: 90,   x: 614, y: 255, res: { mil: .60, eco: .70, dip: .40, ideo: .60 }, traits: ['Crossroads', 'Oil'], desc: 'A desert crossroads sitting on the world’s favourite resource.', lore: 'The Caravan Road Compact of 1210 requires every road in the region to pass through Tavaro. Pipelines were later added under the same clause.' },
-  { id: 'kestria',    name: 'Kestria',    pop: 220,  x: 541, y: 324, res: { mil: .30, eco: .30, dip: .30, ideo: .40 }, traits: ['Young population'], desc: 'The youngest population on the map. Ideas spread here fast.', lore: 'Median age 19. Skipped several centuries of technology by mutual agreement and now argues about the rest on video.', growthMul: 1.25 },
-  { id: 'bharat',     name: 'Hastia',     pop: 900,  x: 718, y: 295, res: { mil: .55, eco: .35, dip: .35, ideo: .55 }, traits: ['Colossal democracy', 'Tech boom'], desc: 'A colossal democracy of vibrant cultures and a booming tech sector. Its diversity is both a strength and a way in.', lore: 'Holds the largest election on the map and the largest argument about it the day after. The committee on a national word for "yes" has been in session since 1952. It never forgets, so the minutes are perfect and nothing is decided.' },
-  { id: 'sinopeia',   name: 'Biyoco',   pop: 900,  x: 776, y: 232, res: { mil: .55, eco: .75, dip: .55, ideo: .55 }, traits: ['Authoritarian', 'Manufacturing giant'], desc: 'A vast, ancient empire with a disciplined, centrally run society. Nothing enters without paperwork.', lore: 'Invented paper, then bureaucracy, then the form for requesting paper. Builds everything, including, every spring, the country.' },
-  { id: 'juche',      name: 'Tadam',      pop: 26,   x: 846, y: 212, res: { mil: .15, eco: .15, dip: .15, ideo: .75 }, traits: ['Isolated', 'Closed borders'], desc: 'A fiercely isolated nation with one official opinion. Unmoved by any idea but that one.', lore: 'Closed its borders "for the weekend" long ago, drawn with a generous ruler, which is how it got the north-east plains. The weekend is renewed every year by unanimous vote by a single voter.' },
-  { id: 'nippon',     name: 'Kawaland',     pop: 125,  x: 886, y: 250, res: { mil: .55, eco: .75, dip: .75, ideo: .55 }, traits: ['Island', 'Hyper-advanced'], desc: 'An island nation with a hyper-advanced economy and a disciplined, ageing society.', lore: 'Began a brief period of tidying in the 17th century and never stopped. Apologises for train delays of under twenty seconds.' },
-  { id: 'pinguinia',  name: 'Koalia',  pop: 27, x: 864, y: 471, res: { mil: .35, eco: .55, dip: .55, ideo: .35 }, traits: ['Island continent', 'Mining boom'], desc: 'A sunburnt island continent of mines, beaches and very large distances. Relaxed, friendly, and a long way from everything.', lore: 'Surveyors stopped at the coast and declared the interior "a job for later". Everything in it is venomous, so diplomacy is done from a respectful distance, over a barbecue. The koala holds the casting vote, but sleeps twenty hours a day.' }
+  { id: 'borealis',   name: 'Moose Folk',   pop: 38,   x: 170, y: 144,  res: { mil: .55, eco: .55, dip: .55, ideo: .55 }, traits: ['Spread-out', 'Furs'], desc: 'Live so far apart they meet once a year, to argue about the year.', lore: 'Every winter the Moose Folk agree to meet. Every spring they agree on where. By summer it is time to argue about next winter.' },
+  { id: 'aethelgard', name: 'Big Sky Tribe', pop: 330,  x: 186, y: 231, res: { mil: .75, eco: .75, dip: .75, ideo: .15 }, traits: ['Loud opinions', 'Totem'], desc: 'Strong at everything except saying no to a new idea.', lore: 'Founded in a hurry over a dispute about who owns the sky. Has held 58 great councils since, each declared a triumph, and tries every idea once.' },
+  { id: 'laplata',    name: 'Grass Sea Riders',   pop: 46,   x: 321, y: 434, res: { mil: .55, eco: .15, dip: .15, ideo: .15 }, traits: ['Restless', 'Wheel'], desc: 'Invented the wheel, then a dance to celebrate the wheel.', lore: 'Endless grass, endless sky, a new chief every other moon. The wheel was an accident; the dance was not.' },
+  { id: 'isolde',     name: 'The Hermit',     pop: 0.000001, x: 433, y: 109,  res: { mil: 0, eco: 1, dip: 1, ideo: 1 }, traits: ['Population one', 'Hermit\'s Secret'], desc: 'Lives alone on the ice, population: one. No barter, no feasts, no stories get through. Respects one thing: a good wrestle.', lore: 'Nobody knows how long the Hermit has lived on the ice. The Hermit says "long enough" and goes back inside.' },
+  { id: 'guldor',     name: 'Fog Islanders',     pop: 68,   x: 480, y: 173, res: { mil: .35, eco: .35, dip: .75, ideo: .35 }, traits: ['Old shells', 'Shells'], desc: 'Have kept every promise ever made. In a very big pile.', lore: 'The Fog Islanders keep every promise carved on a stone. The pile is now the island’s highest point.' },
+  { id: 'celestia',   name: 'Painted Cave Folk',   pop: 67,   x: 472, y: 236, res: { mil: .30, eco: .40, dip: .60, ideo: .60 }, traits: ['Artists', 'A Mate joins your tribe'], desc: 'Paint everything. Strike over the colour of ochre. Home of Ama.', lore: 'Since the Great Argument About Red, every sore spot in the valley is painted twice: once by the artist, once by the critic.' },
+  { id: 'helvetia',   name: 'Fjord Counters',   pop: 9,    x: 538, y: 95, res: { mil: .15, eco: .75, dip: .55, ideo: .35 }, traits: ['Neutral', 'Tally Sticks'], desc: 'Count everything twice. Opinions: officially, none.', lore: 'The Fjord Counters keep a tally of every fish, fur and favour in the north. Ask them what they think and they will count to ten.' },
+  { id: 'pannonia',   name: 'Peak Goat Clan',   pop: 10,   x: 552, y: 205, res: { mil: .15, eco: .15, dip: .35, ideo: .35 }, traits: ['Unpredictable', 'Snowshoes'], desc: 'Will agree with you, then climb a mountain to disagree.', lore: 'The Peak Goat Clan lives where the paths run out. Anything they agree to at the bottom they reconsider at the top.' },
+  { id: 'koryn',      name: 'Frostia-47',      pop: 145,  x: 684, y: 159,  res: { mil: .55, eco: .35, dip: .35, ideo: .55 }, traits: ['Stubborn', 'Mammoth Tusks'], desc: '47 winters in a row. Someone left the fire on.', lore: 'Frostia-47 has had 47 winters in a row and is proud of every one. The fire in the big cave has not gone out since winter 3.' },
+  { id: 'tavaro',     name: 'Oasis Folk',     pop: 90,   x: 614, y: 255, res: { mil: .60, eco: .70, dip: .40, ideo: .60 }, traits: ['Crossroads', 'Salt'], desc: 'Everyone’s trail passes their well, and they know it.', lore: 'Every trail in the dry lands bends towards the Oasis Folk’s well. They charge in salt, and they never run out of salt.' },
+  { id: 'kestria',    name: 'First Folk',    pop: 220,  x: 541, y: 324, res: { mil: .30, eco: .30, dip: .30, ideo: .40 }, traits: ['Young', 'Drum'], desc: 'The youngest tribe on the map. Also, somehow, the oldest. Ideas spread here fast.', lore: 'Median age 12 summers. They were here first, and they will tell you about it, loudly, with drums.', growthMul: 1.25 },
+  { id: 'bharat',     name: 'River Many',     pop: 900,  x: 718, y: 295, res: { mil: .55, eco: .35, dip: .35, ideo: .55 }, traits: ['Huge', 'Fire'], desc: 'Kept the first hearth burning. Need a meeting to add a log.', lore: 'So many people live along the great river that every decision needs a drum, a feast and a second feast. The first hearth has never gone out.' },
+  { id: 'sinopeia',   name: 'Clay Tablet Clan',   pop: 900,  x: 776, y: 232, res: { mil: .55, eco: .75, dip: .55, ideo: .55 }, traits: ['Paperwork', 'Pottery'], desc: 'Nothing enters without a stamped clay tablet. In triplicate.', lore: 'The Clay Tablet Clan invented writing to keep track of permits, then a permit to write. Their archive is a mountain with doors.' },
+  { id: 'juche',      name: 'One Opinion Tribe',      pop: 26,   x: 846, y: 212, res: { mil: .15, eco: .15, dip: .15, ideo: .75 }, traits: ['Closed', 'Calendar Stone'], desc: 'Have one opinion. It is about the weather. It is wrong.', lore: 'The One Opinion Tribe settled on its opinion long ago and closed the valley to keep it fresh. Unmoved by any idea but that one.' },
+  { id: 'nippon',     name: 'Early Risers',     pop: 125,  x: 886, y: 250, res: { mil: .55, eco: .75, dip: .75, ideo: .55 }, traits: ['Connected', 'Smoke Signals'], desc: 'Up before the sun, already finished your plan.', lore: 'The Early Risers send smoke signals faster than anyone can read them. They are polite about it.' },
+  { id: 'pinguinia',  name: 'Far-Shore Folk',  pop: 27, x: 864, y: 471, res: { mil: .35, eco: .55, dip: .55, ideo: .35 }, traits: ['Remote', 'Boomerang'], desc: 'Everything here wants to bite you, except the people.', lore: 'A sunburnt land of beaches and very large distances. Relaxed, friendly, and a very long walk from everything.' }
 ];
 const BORDERS = [
   ['borealis', 'aethelgard'], ['celestia', 'helvetia'], ['helvetia', 'koryn'], ['celestia', 'pannonia'],
@@ -39,55 +39,55 @@ const TRADE = [
 // Each branch is boosted by the tier-3 upgrade of its partner, and its tier-4 capstone needs it:
 // Ideology <- Diplomacy, Diplomacy <- Ideology, Military <- Economy, Economy <- Military, Grassroots <-> Covert Ops.
 const BRANCHES = [
-  { id: 'ideo', name: 'Ideology', blurb: 'Grows support inside countries.', partner: 'dip' },
-  { id: 'eco', name: 'Economy', blurb: 'Spreads along trade routes. Earns Clout.', partner: 'mil' },
-  { id: 'mil', name: 'Military', blurb: 'Breaks resistance and makes countries refuse the World Order. Loud.', partner: 'eco' },
-  { id: 'dip', name: 'Diplomacy', blurb: 'Spreads across land borders. Blunts the World Order.', partner: 'ideo' },
-  { id: 'faith', name: 'Grassroots', blurb: 'Crosses oceans and borders on its own.', partner: 'covert' },
-  { id: 'covert', name: 'Covert Ops', blurb: 'Weakens every defence. Very loud.', partner: 'faith' },
-  { id: 'under', name: 'Back Channels', blurb: 'Quiet deals and dirty tricks. Destabilises everyone. Loud, and notorious.' },
-  { id: 'spin', name: 'Spin', blurb: 'Keeps the World Order busy.' }
+  { id: 'ideo', name: 'Legend', blurb: 'Your story grows inside each tribe.', partner: 'dip' },
+  { id: 'eco', name: 'Barter', blurb: 'Travels along barter trails. Earns Meat.', partner: 'mil' },
+  { id: 'mil', name: 'Muscle', blurb: 'Breaks resistance and makes tribes snub the Council. Loud.', partner: 'eco' },
+  { id: 'dip', name: 'Feasting', blurb: 'Spreads to next-door tribes. Blunts the Council.', partner: 'ideo' },
+  { id: 'faith', name: 'Wanderers', blurb: 'Nomads carry your name across seas and ice, on their own.', partner: 'covert' },
+  { id: 'covert', name: 'Mischief', blurb: 'Spoils every defence. Very loud.', partner: 'faith' },
+  { id: 'under', name: 'Back of the Cave', blurb: 'Quiet swaps and dirty tricks. Unsettles everyone. Loud, and smoky.' },
+  { id: 'spin', name: 'Sore spot Paint', blurb: 'Keeps the Council busy arguing over pictures.' }
 ];
 const UPGRADES = [
-  { id: 'i1', b: 'ideo', name: 'Charismatic Leadership', cost: 5, fx: { growth: .025 }, boost: { growth: .01 }, text: 'Internal growth +25%. Pamphlets give +1 support', btext: 'another +10%' },
-  { id: 'i2', b: 'ideo', name: 'Doctrinal Purity', cost: 9, fx: { growth: .025, pen: { ideo: .15 } }, boost: { pen: { ideo: .05 } }, text: 'Internal growth +25%. Ideological resistance −15%. Youth Movement lasts 35 weeks', btext: 'another −5% ideological' },
-  { id: 'i3', b: 'ideo', name: 'Social Engineering', cost: 15, fx: { growth: .035, income: 1 }, boost: { growth: .025, income: .5 }, text: 'Internal growth +35%. Clout income up. Martyr Narrative recharges 15 weeks faster', btext: 'more growth and income' },
-  { id: 'i4', b: 'ideo', name: 'Popular Uprising', cost: 16, special: 'utopia', text: 'Unlocks Popular Uprising, the Ideology tier-4 action' },
+  { id: 'i1', b: 'ideo', name: 'Big Voice', cost: 5, fx: { growth: .025 }, boost: { growth: .01 }, text: 'Internal growth +25%. Tall Tales give +1 trust', btext: 'another +10%' },
+  { id: 'i2', b: 'ideo', name: 'One True Story', cost: 9, fx: { growth: .025, pen: { ideo: .15 } }, boost: { pen: { ideo: .05 } }, text: 'Internal growth +25%. Legend resistance −15%. Kids Copy Ug lasts 35 weeks', btext: 'another −5% legend' },
+  { id: 'i3', b: 'ideo', name: 'Legend Grows in the Telling', cost: 15, fx: { growth: .035, income: 1 }, boost: { growth: .025, income: .5 }, text: 'Internal growth +35%. Meat income up. Sad Song recharges 15 weeks faster', btext: 'more growth and income' },
+  { id: 'i4', b: 'ideo', name: 'Everyone Sings', cost: 16, special: 'utopia', text: 'Unlocks Everyone Sings, the Legend tier-4 deed' },
 
-  { id: 'e1', b: 'eco', name: 'Trade Deals', cost: 5, fx: { income: .7, trade: .02 }, boost: { trade: .015 }, text: 'Clout income up a lot. Market Access: Clout bubbles also appear in countries that trade with one you hold 25%+, and collecting a bubble gives +1 support there. Foreign Investment costs 1 Clout less', btext: 'trade spread up more' },
-  { id: 'e2', b: 'eco', name: 'Resource Leverage', cost: 9, fx: { trade: .01, pen: { eco: .2 } }, boost: { pen: { eco: .1 }, trade: .01 }, text: 'Economic resistance −20%. Sanction-proof contracts: routes opened by Trade Deal can no longer be closed by sanctions or strikes. Trade Deal recharges 10 weeks faster', btext: 'another −10% economic, more trade spread' },
-  { id: 'e3', b: 'eco', name: 'Monopolization', cost: 14, fx: { income: .4, pen: { eco: .2, dip: .1 } }, boost: { income: .6 }, text: 'Economic resistance −20%, diplomatic −10%. Dependency: World Order members that trade with a country you hold 50%+ cannot sign the treaty. Buyout also gives +3 support in the target’s trade partners', btext: 'more income' },
-  { id: 'e4', b: 'eco', name: 'Run on the Bank', cost: 16, special: 'bribe', text: 'Unlocks Run on the Bank, the Economy tier-4 action' },
+  { id: 'e1', b: 'eco', name: 'Swap Meet', cost: 5, fx: { income: .7, trade: .02 }, boost: { trade: .015 }, text: 'Meat income up a lot. Market Access: Meat meat drops also appear in tribes that trade with one you hold 25%+, and collecting a meat drop gives +1 trust there. Gift Basket costs 1 Meat less', btext: 'barter spread up more' },
+  { id: 'e2', b: 'eco', name: 'Only Flint in Town', cost: 9, fx: { trade: .01, pen: { eco: .2 } }, boost: { pen: { eco: .1 }, trade: .01 }, text: 'Barter resistance −20%. Sanction-proof contracts: routes opened by Barter Trail can no longer be closed by trade bans or strikes. Barter Trail recharges 10 weeks faster', btext: 'another −10% barter, more barter spread' },
+  { id: 'e3', b: 'eco', name: 'The Smokehouse', cost: 14, fx: { income: .4, pen: { eco: .2, dip: .1 } }, boost: { income: .6 }, text: 'Barter resistance −20%, feast −10%. Dependency: Council members that trade with a tribe you hold 50%+ cannot sign the Tablet. Buy Their Flint also gives +3 trust in the target’s trade partners', btext: 'more income' },
+  { id: 'e4', b: 'eco', name: 'Meat Panic', cost: 16, special: 'bribe', text: 'Unlocks Meat Panic, the Barter tier-4 deed' },
 
-  { id: 'm1', b: 'mil', name: 'Military Parade', cost: 5, fx: { pen: { mil: .2, ideo: .05 }, border: .01, loud: .01 }, boost: { pen: { mil: .1 }, border: .01 }, text: 'Military resistance −20%, ideological −5%. Louder. Show of Force needs only a 10% neighbour', btext: 'another −10% military, more border spread' },
-  { id: 'm2', b: 'mil', name: 'Cyber Operations', cost: 9, fx: { pen: { dip: .1 }, growth: .03, border: .02, sabotage: .2 }, boost: { sabotage: .1 }, text: 'Diplomatic resistance −10%. Growth and border spread up. 20% of World Order campaigns and sanctions fail. Snap Exercise knocks courtships back 50% harder', btext: 'another 10% fail' },
-  { id: 'm3', b: 'mil', name: 'Sovereign Intervention', cost: 14, fx: { border: .03, pen: { mil: .2 }, shield: 15, loud: .01 }, boost: { shield: 10 }, text: 'Border spread up. Countries need 15 points less of your support to refuse the World Order. Louder. Proxy Garrison blocks courtship for 25 weeks', btext: '10 points more' },
-  { id: 'm4', b: 'mil', name: 'Regime Change', cost: 16, special: 'stoppage', text: 'Unlocks Regime Change, the Military tier-4 action' },
+  { id: 'm1', b: 'mil', name: 'Flex', cost: 5, fx: { pen: { mil: .2, ideo: .05 }, border: .01, loud: .01 }, boost: { pen: { mil: .1 }, border: .01 }, text: 'Muscle resistance −20%, legend −5%. Louder. Flex at the Border needs only a 10% neighbour', btext: 'another −10% muscle, more next-door spread' },
+  { id: 'm2', b: 'mil', name: 'Drums at Night', cost: 9, fx: { pen: { dip: .1 }, growth: .03, border: .02, sabotage: .2 }, boost: { sabotage: .1 }, text: 'Feast resistance −10%. Growth and next-door spread up. 20% of Council nags and trade bans fail. Mammoth Hunt Display knocks woos back 50% harder', btext: 'another 10% fail' },
+  { id: 'm3', b: 'mil', name: 'Shoulder to Shoulder', cost: 14, fx: { border: .03, pen: { mil: .2 }, shield: 15, loud: .01 }, boost: { shield: 10 }, text: 'Next-door spread up. Tribes need 15 points less of your trust to refuse the Council. Louder. Camp on Their Doorstep blocks wooing for 25 weeks', btext: '10 points more' },
+  { id: 'm4', b: 'mil', name: 'Wrestle the Chief', cost: 16, special: 'stoppage', text: 'Unlocks Wrestle the Chief, the Muscle tier-4 deed' },
 
-  { id: 'd1', b: 'dip', name: 'Consulates', cost: 4, fx: { border: .02 }, boost: { border: .015 }, text: 'Border spread up. Your Embassy action now makes a country resist 15% less for good (instead of 10%)', btext: 'more border spread' },
-  { id: 'd2', b: 'dip', name: 'Summit Circuit', cost: 9, fx: { border: .03, pen: { dip: .15 } }, boost: { pen: { dip: .1 } }, text: 'Border spread up. Diplomatic resistance −15%. Summit lasts 35 weeks', btext: 'another −10% diplomatic' },
-  { id: 'd3', b: 'dip', name: 'Sanctions Hammer', cost: 14, fx: { border: .02, vis: -.1, fcRed: .3 }, boost: { fcRed: .2, border: .01 }, text: 'Border spread up. Notoriety grows 10% slower. World Order campaigns hit 30% softer. Non-Aligned Pact blocks courtship for 30 weeks', btext: '20% softer again' },
-  { id: 'd4', b: 'dip', name: 'Endless Negotiations', cost: 16, special: 'breaker', text: 'Unlocks Endless Negotiations, the Diplomacy tier-4 action' },
+  { id: 'd1', b: 'dip', name: 'Spare Furs', cost: 4, fx: { border: .02 }, boost: { border: .015 }, text: 'Next-door spread up. Your Guest Hut deed now makes a tribe resist 15% less for good (instead of 10%)', btext: 'more next-door spread' },
+  { id: 'd2', b: 'dip', name: 'Feast Season', cost: 9, fx: { border: .03, pen: { dip: .15 } }, boost: { pen: { dip: .1 } }, text: 'Next-door spread up. Feast resistance −15%. Feast lasts 35 weeks', btext: 'another −10% feast' },
+  { id: 'd3', b: 'dip', name: 'No Meat for You', cost: 14, fx: { border: .02, vis: -.1, fcRed: .3 }, boost: { fcRed: .2, border: .01 }, text: 'Next-door spread up. Smoke grows 10% slower. Council nags hit 30% softer. Stay-Out Pact blocks wooing for 30 weeks', btext: '20% softer again' },
+  { id: 'd4', b: 'dip', name: 'Endless Feast', cost: 16, special: 'breaker', text: 'Unlocks Endless Feast, the Feasting tier-4 deed' },
 
-  { id: 'f1', b: 'faith', name: 'Word of Mouth', cost: 6, fx: { reach: .007, pen: { ideo: .1 } }, boost: { reach: .002 }, text: 'Can take root in distant countries. Ideological resistance −10%', btext: 'further reach' },
-  { id: 'f2', b: 'faith', name: 'Local Chapters', cost: 10, fx: { reach: .008, growth: .01, trade: .02, income: 1 }, boost: { income: .5 }, text: 'Distant reach up. Growth, trade spread and Clout income up a little', btext: 'more income' },
-  { id: 'f3', b: 'faith', name: 'Travelling Speakers', cost: 15, fx: { growth: .03, pen: { ideo: .15 }, opDiscount: 1 }, boost: { opDiscount: 1 }, text: 'Internal growth +30%. Ideological resistance −15%. Operations cost 1 Clout less', btext: '1 Clout less again' },
-  { id: 'f4', b: 'faith', name: 'Rally Cry', cost: 16, special: 'believe', text: 'Special action: the World Order HQ loses confidence in the treaty. It quits, a new HQ takes over, and the draft drops 15%' },
+  { id: 'f1', b: 'faith', name: 'Gossip Trail', cost: 6, fx: { reach: .007, pen: { ideo: .1 } }, boost: { reach: .002 }, text: 'Can take root in distant tribes. Legend resistance −10%', btext: 'further reach' },
+  { id: 'f2', b: 'faith', name: 'Camps Everywhere', cost: 10, fx: { reach: .008, growth: .01, trade: .02, income: 1 }, boost: { income: .5 }, text: 'Distant reach up. Growth, barter spread and Meat income up a little', btext: 'more income' },
+  { id: 'f3', b: 'faith', name: 'Travelling Storytellers', cost: 15, fx: { growth: .03, pen: { ideo: .15 }, opDiscount: 1 }, boost: { opDiscount: 1 }, text: 'Internal growth +30%. Legend resistance −15%. Deeds cost 1 Meat less', btext: '1 Meat less again' },
+  { id: 'f4', b: 'faith', name: 'Great Howl', cost: 16, special: 'believe', text: 'Special deed: The Council cave loses confidence in the Tablet. It quits, a new Council cave takes over, and the draft drops 15%' },
 
-  { id: 'c1', b: 'covert', name: 'Sleeper Agents', cost: 6, fx: { pen: { eco: .05, mil: .05, dip: .05, ideo: .05 }, loud: .02 }, once: { seed: 2 }, boost: { pen: { eco: .03, mil: .03, dip: .03, ideo: .03 } }, text: 'Plants support in 2 random countries. All resistances −5%', btext: 'another −3% everywhere' },
-  { id: 'c2', b: 'covert', name: 'Asset Degradation', cost: 10, fx: { hiCut: .1, loud: .03, dossierDiscount: 4 }, boost: { hiCut: .05 }, text: 'Every country’s strongest resistance drops by 10 points. Leaked Dossiers cost less', btext: '5 points more' },
-  { id: 'c3', b: 'covert', name: 'Orchestrated Unrest', cost: 16, fx: { pen: { eco: .08, mil: .08, dip: .08, ideo: .08 }, sabotage: .4, loud: .07 }, boost: { sabotage: .15 }, text: 'All resistances −8%. 40% of World Order campaigns and sanctions fall apart. Much louder', btext: '15% more fall apart' },
-  { id: 'c4', b: 'covert', name: 'Hybrid Threat', cost: 16, special: 'hybrid', text: 'Special action: every sanction is lifted, every planned World Order move is cancelled, and it cannot sanction you for 40 weeks' },
+  { id: 'c1', b: 'covert', name: 'Cousins Everywhere', cost: 6, fx: { pen: { eco: .05, mil: .05, dip: .05, ideo: .05 }, loud: .02 }, once: { seed: 2 }, boost: { pen: { eco: .03, mil: .03, dip: .03, ideo: .03 } }, text: 'Plants trust in 2 random tribes. All resistances −5%', btext: 'another −3% everywhere' },
+  { id: 'c2', b: 'covert', name: 'Blunt Their Spears', cost: 10, fx: { hiCut: .1, loud: .03, dossierDiscount: 4 }, boost: { hiCut: .05 }, text: 'Every tribe’s strongest resistance drops by 10 points. Embarrassing Cave Drawings cost less', btext: '5 points more' },
+  { id: 'c3', b: 'covert', name: 'Stir the Pot', cost: 16, fx: { pen: { eco: .08, mil: .08, dip: .08, ideo: .08 }, sabotage: .4, loud: .07 }, boost: { sabotage: .15 }, text: 'All resistances −8%. 40% of Council nags and trade bans fall apart. Much louder', btext: '15% more fall apart' },
+  { id: 'c4', b: 'covert', name: 'Total Confusion', cost: 16, special: 'hybrid', text: 'Special deed: every trade ban is lifted, every planned Council move is cancelled, and it cannot trade ban you for 40 weeks' },
 
-  { id: 'u1', b: 'under', name: 'Contractor Network', cost: 6, fx: { pen: { mil: .15, ideo: .05 }, border: .015, loud: .02 }, text: 'Military resistance −15%, ideological −5%. Border spread up. Louder' },
-  { id: 'u2', b: 'under', name: 'Offshore Accounts', cost: 10, fx: { income: 1, pen: { dip: .15 }, growth: .02, loud: .03 }, text: 'Clout income up. Diplomatic resistance −15%. Internal growth up a little. Louder' },
-  { id: 'u3', b: 'under', name: 'Shadow Logistics', cost: 15, fx: { border: .035, pen: { eco: .15, mil: .05, dip: .05, ideo: .05 }, loud: .04, vis: .15 }, text: 'Border spread up. Economic resistance −15%, all others −5%. Notoriety grows 15% faster' },
-  { id: 'u4', b: 'under', name: 'Engineered Collapse', cost: 18, special: 'collapse', text: 'Special action: for 20 weeks every country\u2019s resistance falls by 40%. Adds 8 Notoriety' },
+  { id: 'u1', b: 'under', name: 'Hired Muscle', cost: 6, fx: { pen: { mil: .15, ideo: .05 }, border: .015, loud: .02 }, text: 'Muscle resistance −15%, legend −5%. Next-door spread up. Louder' },
+  { id: 'u2', b: 'under', name: 'Buried Bones', cost: 10, fx: { income: 1, pen: { dip: .15 }, growth: .02, loud: .03 }, text: 'Meat income up. Feast resistance −15%. Internal growth up a little. Louder' },
+  { id: 'u3', b: 'under', name: 'Night Trails', cost: 15, fx: { border: .035, pen: { eco: .15, mil: .05, dip: .05, ideo: .05 }, loud: .04, vis: .15 }, text: 'Next-door spread up. Barter resistance −15%, all others −5%. Smoke grows 15% faster' },
+  { id: 'u4', b: 'under', name: 'The Great Rumour', cost: 18, special: 'collapse', text: 'Special deed: for 20 weeks every tribe\u2019s resistance falls by 40%. Adds 8 Smoke' },
 
-  { id: 's1', b: 'spin', name: 'Plausible Deniability', cost: 5, fx: { vis: -.15 }, text: 'Notoriety grows 15% slower' },
-  { id: 's2', b: 'spin', name: 'Friendly Fact-Checkers', cost: 9, fx: { fcRed: .5 }, text: 'World Order counter-campaigns hit half as hard' },
-  { id: 's3', b: 'spin', name: 'Subcommittee on Subcommittees', cost: 14, fx: { treatySlow: .25 }, text: 'Treaty drafting 25% slower' },
-  { id: 's4', b: 'spin', name: 'Lobbyist Weekend Retreat', cost: 20, fx: { treatySlow: .15 }, once: { treaty: -20 }, text: 'Treaty progress −20 points. Drafting 15% slower' }
+  { id: 's1', b: 'spin', name: 'It Was the Wind', cost: 5, fx: { vis: -.15 }, text: 'Smoke grows 15% slower' },
+  { id: 's2', b: 'spin', name: 'Friendly Shamans', cost: 9, fx: { fcRed: .5 }, text: 'Council nags hit half as hard' },
+  { id: 's3', b: 'spin', name: 'Circle on Circles', cost: 14, fx: { treatySlow: .25 }, text: 'Tablet drafting 25% slower' },
+  { id: 's4', b: 'spin', name: 'Elders\' Hot-Spring Weekend', cost: 20, fx: { treatySlow: .15 }, once: { treaty: -20 }, text: 'Tablet progress −20 points. Drafting 15% slower' }
 ];
 UPGRADES.forEach((u, i) => { const prev = UPGRADES[i - 1]; u.req = prev && prev.b === u.b ? prev.id : null; u.tier = UPGRADES.slice(0, i).filter(x => x.b === u.b).length; });
 const OPPOSITE = { ideo: 'eco', eco: 'ideo', mil: 'dip', dip: 'mil' };
@@ -100,10 +100,10 @@ const CAPSTONE_NEEDS = { i4: 'd3', d4: 'i3', m4: 'e3', e4: 'm3' };
 // upgrades past tier 1 cost +50% and add Notoriety).
 const CORE = ['ideo', 'eco', 'mil', 'dip'];
 const PAIRS = [
-  { id: 'ecodip', a: 'eco', b: 'dip', name: 'Dollar Diplomacy', text: 'Trade routes also carry border spread. Clout income strengthens Diplomacy actions' },
-  { id: 'ideomil', a: 'ideo', b: 'mil', name: 'Revolutionary Guard', text: 'Military actions also lift internal growth in the target for 20 weeks, and are half as loud' },
-  { id: 'ideodip', a: 'ideo', b: 'dip', name: 'Soft Power', text: 'Diplomacy actions also lift internal growth in the target for 20 weeks. Diplomatic strength adds to Ideology actions' },
-  { id: 'ecomil', a: 'eco', b: 'mil', name: 'War Economy', text: 'Military actions cost 25% less. Military strength adds to Clout income' }
+  { id: 'ecodip', a: 'eco', b: 'dip', name: 'Potluck Feasting', text: 'Barter trails also carry next-door spread. Meat income strengthens Feasting deeds' },
+  { id: 'ideomil', a: 'ideo', b: 'mil', name: 'Hero Tales', text: 'Muscle deeds also lift internal growth in the target for 20 weeks, and are half as loud' },
+  { id: 'ideodip', a: 'ideo', b: 'dip', name: 'Campfire Charm', text: 'Feasting deeds also lift internal growth in the target for 20 weeks. Feast strength adds to Legend deeds' },
+  { id: 'ecomil', a: 'eco', b: 'mil', name: 'Club & Trade', text: 'Muscle deeds cost 25% less. Muscle strength adds to Meat income' }
 ];
 const upg = id => UPGRADES.find(x => x.id === id);
 function v10Pairs(s) { return !!(s.cfg && s.cfg.v10 && s.cfg.pairs !== false); }
@@ -122,21 +122,21 @@ function pairOn(s, pid) {
   return doc(p.a) && doc(p.b);
 }
 const SPECIALS = {
-  utopia: { name: 'Utopia', target: false },
-  bribe: { name: 'Government Bribe', target: true },
-  stoppage: { name: 'Stoppage Order', target: false },
-  breaker: { name: 'Alliance Breaker', target: true },
-  believe: { name: 'Rally Cry', target: false },
-  hybrid: { name: 'Hybrid Threat', target: false },
-  collapse: { name: 'Engineered Collapse', target: false }
+  utopia: { name: 'Golden Age', target: false },
+  bribe: { name: 'Chief\'s Present', target: true },
+  stoppage: { name: 'Everybody Sit Down', target: false },
+  breaker: { name: 'Walk-Out', target: true },
+  believe: { name: 'Great Howl', target: false },
+  hybrid: { name: 'Total Confusion', target: false },
+  collapse: { name: 'The Great Rumour', target: false }
 };
 const REBRAND_COST = 10, REBRAND_NOTORIETY = 15;
 
 const OPS = [
-  { id: 'summit', name: 'Summit', branch: 'Diplomacy', cost: 6, cd: 30, text: 'All resistances here −40% for 25 weeks, and derails any World Order move planned here. Quiet.' },
-  { id: 'trade', name: 'Trade Deal', branch: 'Economy', cost: 8, cd: 40, text: 'Opens a trade route from your strongest country.' },
-  { id: 'snap', name: 'Snap Exercise', branch: 'Military', cost: 8, cd: 30, text: 'Pushes +10% support next to a country you hold 25%+ of, and cancels any World Order move planned there. Loud.' },
-  { id: 'dossier', name: 'Leaked Dossiers', branch: 'Covert Ops', cost: 10, cd: 45, text: 'Diplomatic and ideological resistance here drop to 0 for 20 weeks. A World Order member walks out and tears up its signature. Very loud.' }
+  { id: 'summit', name: 'Feast', branch: 'Feasting', cost: 6, cd: 30, text: 'All resistances here −40% for 25 weeks, and derails any Council move planned here. Quiet.' },
+  { id: 'trade', name: 'Barter Trail', branch: 'Barter', cost: 8, cd: 40, text: 'Opens a barter trail from your strongest tribe.' },
+  { id: 'snap', name: 'Mammoth Hunt Display', branch: 'Muscle', cost: 8, cd: 30, text: 'Pushes +10% trust next to a tribe you hold 25%+ of, and cancels any Council move planned there. Loud.' },
+  { id: 'dossier', name: 'Embarrassing Cave Drawings', branch: 'Mischief', cost: 10, cd: 45, text: 'Feast and legend resistance here drop to 0 for 20 weeks. A Council member walks out and tears up its notch. Very loud.' }
 ];
 
 
@@ -187,30 +187,30 @@ function domainPower(s, t) {
 }
 // Tier frame: T1 poke, T2 timed rule change, T3 protect/deny, T4 turn the tide (needs the branch's tier-4 upgrade).
 const ACTIONS = [
-  { id: 'eco1', dom: 'eco', tier: 1, name: 'Foreign Investment', text: '+support (can seed). Slight courtship knock-back' },
-  { id: 'eco2', dom: 'eco', tier: 2, name: 'Trade Deal', text: 'Opens a trade route into the target from your strongest country' },
-  { id: 'eco3', dom: 'eco', tier: 3, name: 'Buyout', text: 'Economic resistance halved 30 wk, +support, courtship −45' },
-  { id: 'eco4', dom: 'eco', tier: 4, name: 'Run on the Bank', text: 'Treaty −15, every courtship at half speed for 25 wk. Your income −30% for 15 wk', global: true },
-  { id: 'mil1', dom: 'mil', tier: 1, name: 'Show of Force', text: '+support next to a 15%+ country. Slight courtship knock-back' },
-  { id: 'mil2', dom: 'mil', tier: 2, name: 'Snap Exercise', text: '+support, courtship −25. Loud' },
-  { id: 'mil3', dom: 'mil', tier: 3, name: 'Proxy Garrison', text: 'Courtship −50 and half speed 15 wk; no new courtship 15 wk; +support. Loud' },
-  { id: 'mil4', dom: 'mil', tier: 4, name: 'Regime Change', text: 'Support to at least 50%, leaves the WO, signature void. +10 Notoriety, neighbours resist +20% for 30 wk' },
-  { id: 'dip1', dom: 'dip', tier: 1, name: 'Embassy', text: '+support (can seed); this country resists 10% less for good (once per country). Slight courtship knock-back' },
-  { id: 'dip2', dom: 'dip', tier: 2, name: 'Summit', text: 'All resistance down a lot 25 wk, courtship −30. Quiet' },
-  { id: 'dip3', dom: 'dip', tier: 3, name: 'Non-Aligned Pact', text: 'Target and neighbours: courtship −40, no new courtship 20 wk' },
-  { id: 'dip4', dom: 'dip', tier: 4, name: 'Endless Negotiations', text: 'Courtship here at 1/3 speed, and no new courtships anywhere, for 30 wk' },
-  { id: 'ideo1', dom: 'ideo', tier: 1, name: 'Pamphlets', text: '+support (can seed). Slight courtship knock-back' },
-  { id: 'ideo2', dom: 'ideo', tier: 2, name: 'Youth Movement', text: 'Growth here x(1+effect) 25 wk, courtship −10' },
-  { id: 'ideo3', dom: 'ideo', tier: 3, name: 'Martyr Narrative', text: 'Growth up and immune to campaigns 40 wk, courtship −30' },
-  { id: 'ideo4', dom: 'ideo', tier: 4, name: 'Popular Uprising', text: 'Courtship wiped, country cannot be courted 40 wk, +15 support' }
+  { id: 'eco1', dom: 'eco', tier: 1, name: 'Gift Basket', text: '+trust (can seed). Slight wooing knock-back' },
+  { id: 'eco2', dom: 'eco', tier: 2, name: 'Barter Trail', text: 'Opens a barter trail into the target from your strongest tribe' },
+  { id: 'eco3', dom: 'eco', tier: 3, name: 'Buy Their Flint', text: 'Barter resistance halved 30 wk, +trust, wooing −45' },
+  { id: 'eco4', dom: 'eco', tier: 4, name: 'Meat Panic', text: 'Tablet −15, every wooing at half speed for 25 wk. Your income −30% for 15 wk', global: true },
+  { id: 'mil1', dom: 'mil', tier: 1, name: 'Flex at the Border', text: '+trust next to a 15%+ tribe. Slight wooing knock-back' },
+  { id: 'mil2', dom: 'mil', tier: 2, name: 'Mammoth Hunt Display', text: '+trust, wooing −25. Loud' },
+  { id: 'mil3', dom: 'mil', tier: 3, name: 'Camp on Their Doorstep', text: 'Wooing −50 and half speed 15 wk; no new wooing 15 wk; +trust. Loud' },
+  { id: 'mil4', dom: 'mil', tier: 4, name: 'Wrestle the Chief', text: 'Trust to at least 50%, leaves the WO, notch void. +10 Smoke, neighbours resist +20% for 30 wk' },
+  { id: 'dip1', dom: 'dip', tier: 1, name: 'Guest Hut', text: '+trust (can seed); this tribe resists 10% less for good (once per tribe). Slight wooing knock-back' },
+  { id: 'dip2', dom: 'dip', tier: 2, name: 'Feast', text: 'All resistance down a lot 25 wk, wooing −30. Quiet' },
+  { id: 'dip3', dom: 'dip', tier: 3, name: 'Stay-Out Pact', text: 'Target and neighbours: wooing −40, no new wooing 20 wk' },
+  { id: 'dip4', dom: 'dip', tier: 4, name: 'Endless Feast', text: 'Wooing here at 1/3 speed, and no new woos anywhere, for 30 wk' },
+  { id: 'ideo1', dom: 'ideo', tier: 1, name: 'Tall Tales', text: '+trust (can seed). Slight wooing knock-back' },
+  { id: 'ideo2', dom: 'ideo', tier: 2, name: 'Kids Copy Ug', text: 'Growth here x(1+effect) 25 wk, wooing −10' },
+  { id: 'ideo3', dom: 'ideo', tier: 3, name: 'Sad Song', text: 'Growth up and immune to nags 40 wk, wooing −30' },
+  { id: 'ideo4', dom: 'ideo', tier: 4, name: 'Everyone Sings', text: 'Wooing wiped, tribe cannot be wooed 40 wk, +15 trust' }
 ];
 ACTIONS.forEach(a => { a.cost = V10.costs[a.tier - 1]; a.cd = V10.cds[a.tier - 1]; });
 const own = (s, id) => s.owned.includes(id);
 // upgrade -> action hooks, listed on the action detail screen when owned
-const HOOKS = { e1: ['eco1', 'costs 1 Clout less'], e2: ['eco2', 'recharges 10 weeks faster'], e3: ['eco3', '+3 support in the target\u2019s trade partners'],
-  m1: ['mil1', 'needs only a 10% neighbour'], m2: ['mil2', 'knocks courtships back 50% harder'], m3: ['mil3', 'blocks courtship for 25 weeks'],
-  d1: ['dip1', 'resistance \u221215% for good'], d2: ['dip2', 'lasts 35 weeks'], d3: ['dip3', 'blocks courtship for 30 weeks'],
-  i1: ['ideo1', '+1 support'], i2: ['ideo2', 'lasts 35 weeks'], i3: ['ideo3', 'recharges 15 weeks faster'] };
+const HOOKS = { e1: ['eco1', 'costs 1 Meat less'], e2: ['eco2', 'recharges 10 weeks faster'], e3: ['eco3', '+3 trust in the target\u2019s trade partners'],
+  m1: ['mil1', 'needs only a 10% neighbour'], m2: ['mil2', 'knocks woos back 50% harder'], m3: ['mil3', 'blocks wooing for 25 weeks'],
+  d1: ['dip1', 'resistance \u221215% for good'], d2: ['dip2', 'lasts 35 weeks'], d3: ['dip3', 'blocks wooing for 30 weeks'],
+  i1: ['ideo1', '+1 trust'], i2: ['ideo2', 'lasts 35 weeks'], i3: ['ideo3', 'recharges 15 weeks faster'] };
 function hooksFor(s, aid) { return Object.entries(HOOKS).filter(([u, [a]]) => a === aid && own(s, u)).map(([u, [, t]]) => ({ up: upg(u).name, text: t })); }
 function actCost(s, a) { const c = v10t(s, 'costs')[a.tier - 1] - (a.id === 'eco1' && own(s, 'e1') ? 1 : 0); return Math.max(1, (a.dom === 'mil' && pairOn(s, 'ecomil') ? Math.max(1, Math.round(c * .75)) : c) - (rulesOn(s) ? perk(s).opDisc : 0)); }
 function actCd(s, a) { return Math.max(5, v10t(s, 'cds')[a.tier - 1] - (a.id === 'eco2' && own(s, 'e2') ? 10 : 0) - (a.id === 'ideo3' && own(s, 'i3') ? 15 : 0) - (rulesOn(s) ? perk(s).opCd : 0)); }
@@ -229,18 +229,18 @@ function knock(s, id, pts, a) { const k = ruleKind(s, id, a.dom); if (k === 'noK
 function canAct(s, aid, target) {
   const a = ACTIONS.find(x => x.id === aid);
   if (s.over) return { ok: false, why: 'Game over' };
-  if (!target && !a.global) return { ok: false, why: 'Pick a country' };
+  if (!target && !a.global) return { ok: false, why: 'Pick a tribe' };
   const k = cdKey(s, a, target); s.acd = s.acd || {};
   if ((s.acd[k] || 0) > s.week) return { ok: false, why: `Ready in ${s.acd[k] - s.week} wk` };
   if (s.cfg.cdMode === 'hybrid' && (s.acd['g:' + a.id] || 0) > s.week) return { ok: false, why: `Ready in ${s.acd['g:' + a.id] - s.week} wk` };
-  if (s.clout < actCost(s, a)) return { ok: false, why: 'Not enough Clout' };
-  if (s.week < s.utopiaUntil) return { ok: false, why: 'Utopia: no operations' };
+  if (s.clout < actCost(s, a)) return { ok: false, why: 'Not enough Meat' };
+  if (s.week < s.utopiaUntil) return { ok: false, why: 'Golden Age: no deeds' };
   const nOwned = s.owned.filter(id => UPGRADES.find(u => u.id === id).b === a.dom).length;
-  if (a.tier === 4 && !s.owned.includes(a.dom[0] + '4') && !(a.dom === 'ideo' && s.owned.includes('i4'))) return { ok: false, why: `Needs the tier-4 ${TYPE_LABEL[a.dom]} upgrade` };
-  if (s.cfg.gate !== false && a.tier < 4 && nOwned < a.tier) return { ok: false, why: `Needs ${a.tier} ${TYPE_LABEL[a.dom]} upgrade${a.tier > 1 ? 's' : ''}` };
+  if (a.tier === 4 && !s.owned.includes(a.dom[0] + '4') && !(a.dom === 'ideo' && s.owned.includes('i4'))) return { ok: false, why: `Needs the tier-4 ${TYPE_LABEL[a.dom]} skill` };
+  if (s.cfg.gate !== false && a.tier < 4 && nOwned < a.tier) return { ok: false, why: `Needs ${a.tier} ${TYPE_LABEL[a.dom]} skill${a.tier > 1 ? 's' : ''}` };
   if (a.global) return { ok: true };
   const rl = ruleAt(s, target, a.dom);
-  if (rl && rl.kind === 'ban') return { ok: false, why: `${rl.name}: no ${TYPE_LABEL[a.dom]} actions here` };
+  if (rl && rl.kind === 'ban') return { ok: false, why: `${rl.name}: no ${TYPE_LABEL[a.dom]} deeds here` };
   const v = s.inf[target], W = s.wo, ct = courtOn(s, target) || (rl && rl.kind === 'anyNb') || (a.dom === 'mil' && Q(s, target).armyOnly);   // v10.30: Isolde has no neighbours; the army lands from the sea
   const gar = unrestOn(s) && a.dom === 'mil' && a.tier < 4 && v >= CONTROL, calm = unrestOn(s) && aid === 'ideo1' && v >= UNREST.min;
   const bAct = baseActOk(s, a, target);
@@ -253,10 +253,10 @@ function canAct(s, aid, target) {
   if (aid === 'mil1' && nbMax(s, target) < (own(s, 'm1') ? 10 : 15) && !ct && !gar && !bAct) return { ok: false, why: `Needs a neighbour at ${own(s, 'm1') ? 10 : 15}%+` };
   if ((aid === 'mil2' || aid === 'mil3') && nbMax(s, target) < 25 && !ct && !gar && !bAct) return { ok: false, why: 'Needs a neighbour at 25%+' };
   if (aid === 'mil4' && nbMax(s, target) < 50 && !Q(s, target).armyOnly && !(gcMember(s, target) && tradeLinks(s, target).some(n => s.inf[n] >= 50))) return { ok: false, why: 'Needs a neighbour at 50%+' };
-  if (aid === 'mil4' && v >= 50 && !W.members[target] && !W.signed[target] && !gcMember(s, target)) return { ok: false, why: 'Already 50%+ and outside the World Order' };
+  if (aid === 'mil4' && v >= 50 && !W.members[target] && !W.signed[target] && !gcMember(s, target)) return { ok: false, why: 'Already 50%+ and outside the Council' };
   if ((aid === 'ideo2' || aid === 'ideo3' || aid === 'eco3') && v <= 0) return { ok: false, why: 'No foothold here' };
-  if (aid === 'dip4' && !ct && !(ratified(s) && W.signed[target])) return { ok: false, why: 'Only where the World Order is courting, or a signed country during Enforcement' };
-  if (aid === 'ideo4' && !ct) return { ok: false, why: 'Only where the World Order is courting' };
+  if (aid === 'dip4' && !ct && !(ratified(s) && W.signed[target])) return { ok: false, why: 'Only where the Council is wooing, or a signed tribe during the Shunning' };
+  if (aid === 'ideo4' && !ct) return { ok: false, why: 'Only where the Council is wooing' };
   return { ok: true };
 }
 function pushSupport(s, id, amt) { amt *= v10t(s, 'pushMul'); if (amt <= 0) return; if (s.inf[id] <= 0) seed(s, id, 0.5, null); s.inf[id] = Math.min(100, s.inf[id] + amt); }
@@ -272,7 +272,7 @@ function doAct0(s, aid, target) {
   const noto = n => addNoto(s, a.dom === 'mil' && pairOn(s, 'ideomil') ? n / 2 : n);
   const block = (id, wk) => s.mods.push({ id, kind: 'noCourt', until: s.week + wk });
   const rl = target ? ruleAt(s, target, a.dom) : null, before = target ? s.inf[target] : 0, paid = cost0;
-  if (rl && rl.kind === 'fizzle' && rng(s) < .5) { addNews(s, `${a.name} in ${byId(target).name} fizzles. ${rl.name}: nobody turns up. The Clout is spent.`, 'wo'); flag(s, 'ping', target, rl.name); addLegit(s, -LEGIT.fizzle, 'fizzle'); tagMods(s, m0, a.name); return { ok: true, fizzled: true }; }
+  if (rl && rl.kind === 'fizzle' && rng(s) < .5) { addNews(s, `${a.name} in ${byId(target).name} fizzles. ${rl.name}: nobody turns up. The Meat is spent.`, 'wo'); flag(s, 'ping', target, rl.name); addLegit(s, -LEGIT.fizzle, 'fizzle'); tagMods(s, m0, a.name); return { ok: true, fizzled: true }; }
   if (target && ((a.dom === 'mil' && pairOn(s, 'ideomil')) || (a.dom === 'dip' && pairOn(s, 'ideodip')))) s.mods.push({ id: target, kind: 'growth', mul: 1.3, until: s.week + 20 });
   let terms = false;
   switch (aid) {
@@ -291,7 +291,7 @@ function doAct0(s, aid, target) {
     case 'dip2': if (target !== baseOf(s) && !capWhy(s, target)) { capitulate(s, target, 'terms'); terms = true; break; }   // Step 9.1 Terms
       resMod(s, target, Math.max(.3, 1 - .4 * e), own(s, 'd2') ? 35 : 25); knock(s, target, 30, a); noto(.5); break;
     case 'dip3': [target, ...neighbours(target)].forEach(id => { knock(s, id, 40, a); block(id, own(s, 'd3') ? 30 : 20); }); break;
-    case 'dip4': if (ratified(s) && W.signed[target] && !courtOn(s, target)) { delete W.signed[target]; block(target, 30); s.woNoNewUntil = s.week + 30; addNews(s, `${byId(target).name}'s signature goes back to committee. Nobody expects it back soon.`, 'you'); break; }
+    case 'dip4': if (ratified(s) && W.signed[target] && !courtOn(s, target)) { delete W.signed[target]; block(target, 30); s.woNoNewUntil = s.week + 30; addNews(s, `${byId(target).name}'s notch goes back to committee. Nobody expects it back soon.`, 'you'); break; }
       s.mods.push({ id: target, kind: 'courtSlow', mul: 1 / 3, until: s.week + 30 }); s.woNoNewUntil = s.week + 30; break;
     case 'ideo1': pushSupport(s, target, 2.5 * e); if (own(s, 'i1')) s.inf[target] = Math.min(100, s.inf[target] + 1); knock(s, target, 5, a); break;
     case 'ideo2': s.mods.push({ id: target, kind: 'growth', mul: 1 + e, until: s.week + (own(s, 'i2') ? 35 : 25) }); knock(s, target, 10, a); break;
@@ -299,7 +299,7 @@ function doAct0(s, aid, target) {
     case 'ideo4': W.court = W.court.filter(c => c.target !== target); block(target, 40); pushSupport(s, target, 15); noto(4); break;
   }
   const hl = actHeadline(s, aid, target, aid === 'eco2' && s.trade.length ? s.trade[s.trade.length - 1][0] : null);
-  if (terms) { /* the capitulation is the news */ } else if (hl) addNews(s, hl, 'you'); else addNews(s, `${a.name}${target ? ': ' + byId(target).name : ''}.${aid === 'eco4' ? ` Every courtship at half speed for ${v10t(s, 'eco4Weeks')} weeks, treaty draft \u2212${v10t(s, 'eco4Treaty')}.` : aid === 'dip4' ? ' No new World Order courtships anywhere for 30 weeks.' : ''}`, 'you');
+  if (terms) { /* the capitulation is the news */ } else if (hl) addNews(s, hl, 'you'); else addNews(s, `${a.name}${target ? ': ' + byId(target).name : ''}.${aid === 'eco4' ? ` Every wooing at half speed for ${v10t(s, 'eco4Weeks')} weeks, Tablet \u2212${v10t(s, 'eco4Treaty')}.` : aid === 'dip4' ? ' No new Council woos anywhere for 30 weeks.' : ''}`, 'you');
   if (rl && !terms && !(target === baseOf(s) && legitOn(s) && rl.kind === 'reverse')) applyRule(s, rl, a, target, before, paid);
   if (target && unrestOn(s) && !terms) unrestOnAct(s, a, target, before, rl);
   if (target && legitOn(s)) legitOnAct(s, a, target, rl);
@@ -320,13 +320,13 @@ function applyRule(s, rl, a, target, before, paid) {
   const c = byId(target), gain = s.inf[target] - before;
   switch (rl.kind) {
     case 'echo': if (gain > 0) { const ns = neighboursOrTrade(s, target); ns.forEach(id => { if (s.inf[id] <= 0) seed(s, id, gain * .5, target); else s.inf[id] = Math.min(100, s.inf[id] + gain * .5); }); if (ns.length) { addNews(s, `${rl.name}: ${a.name} in ${c.name} echoes into ${ns.length} more countr${ns.length === 1 ? 'y' : 'ies'}.`, 'you'); flag(s, 'ping', target, rl.name); } } break;
-    case 'lock': s.mods.push({ id: target, kind: 'noCourt', until: s.week + 20, src: rl.name }); addNews(s, `${rl.name}: the World Order cannot court ${c.name} for 20 weeks.`, 'you'); flag(s, 'ping', target, rl.name); break;
-    case 'refund': { const r = Math.max(1, Math.floor(paid / 2)); s.clout += r; addNews(s, `${rl.name}: ${a.name} in ${c.name} pays back ${r} Clout.`, 'you'); break; }
+    case 'lock': s.mods.push({ id: target, kind: 'noCourt', until: s.week + 20, src: rl.name }); addNews(s, `${rl.name}: The Council cannot woo ${c.name} for 20 weeks.`, 'you'); flag(s, 'ping', target, rl.name); break;
+    case 'refund': { const r = Math.max(1, Math.floor(paid / 2)); s.clout += r; addNews(s, `${rl.name}: ${a.name} in ${c.name} pays back ${r} Meat.`, 'you'); break; }
     case 'bubble': spawnBubble(s, target, 2); break;
-    case 'knock2': if (courtOn(s, target)) addNews(s, `${rl.name}: ${a.name} hits the World Order’s courtship of ${c.name} twice as hard.`, 'you'); break;
+    case 'knock2': if (courtOn(s, target)) addNews(s, `${rl.name}: ${a.name} hits the Council’s wooing of ${c.name} twice as hard.`, 'you'); break;
     case 'harden': resMod(s, target, 1.25, 20, [a.dom], { src: rl.name }); addNews(s, `${rl.name}: ${c.name} digs in. ${TYPE_LABEL[a.dom]} resistance +25% for 20 weeks.`, 'wo'); flag(s, 'ping', target, rl.name); break;
-    case 'loud': s.notoriety = Math.min(100, s.notoriety + 4); addNews(s, `${rl.name}: ${a.name} in ${c.name} makes headlines. +4 Notoriety.`, 'wo'); break;
-    case 'reverse': s.inf[target] = Math.max(0, Math.min(s.inf[target], before) - 5); addNews(s, `${rl.name}: ${a.name} backfires in ${c.name}. −5 support.`, 'wo'); flag(s, 'ping', target, rl.name); addLegit(s, -LEGIT.reverse, 'reverse'); break;
+    case 'loud': s.notoriety = Math.min(100, s.notoriety + 4); addNews(s, `${rl.name}: ${a.name} in ${c.name} makes headlines. +4 Smoke.`, 'wo'); break;
+    case 'reverse': s.inf[target] = Math.max(0, Math.min(s.inf[target], before) - 5); addNews(s, `${rl.name}: ${a.name} backfires in ${c.name}. −5 trust.`, 'wo'); flag(s, 'ping', target, rl.name); addLegit(s, -LEGIT.reverse, 'reverse'); break;
   }
 }
 function ratified(s) { return !!(s.cfg.v10 && s.wo.ratifiedAt && signedCount(s) >= SIGNATURES_TO_LOSE); }
@@ -335,8 +335,8 @@ function sigGrowthMul(s) { return s.cfg.v10 ? Math.max(0, 1 - v10t(s, 'sigGrowth
 function enforcementTick(s) {
   const W = s.wo, n = signedCount(s);
   if (n >= SIGNATURES_TO_LOSE) {
-    if (!W.ratifiedAt) { W.ratifiedAt = s.week; addNews(s, `Containment Treaty ratified by ${n} nations. Enforcement begins: your movement is squeezed everywhere the treaty reaches.`, 'wo'); flag(s, 'critical', null, 'Treaty ratified'); }
-    else if (W.suspended) { W.suspended = false; addNews(s, 'Enough signatures again. Enforcement resumes.', 'wo'); flag(s, 'critical', null, 'Enforcement resumes'); }
+    if (!W.ratifiedAt) { W.ratifiedAt = s.week; addNews(s, `Tablet ratified by ${n} tribes. The Shunning begins: your tribe is squeezed everywhere the Tablet reaches.`, 'wo'); flag(s, 'critical', null, 'Tablet ratified'); }
+    else if (W.suspended) { W.suspended = false; addNews(s, 'Enough notches again. The Shunning resumes.', 'wo'); flag(s, 'critical', null, 'The Shunning resumes'); }
     s.enfWeeks = (s.enfWeeks || 0) + 1;
     const ramp = 1 + v10t(s, 'enfRamp') * s.enfWeeks; // enforcement tightens the longer it runs (cumulative weeks)
     COUNTRIES.forEach(c => {
@@ -345,7 +345,7 @@ function enforcementTick(s) {
     });
   } else if (W.ratifiedAt && !W.suspended) {
     W.suspended = true; s.comebacks = (s.comebacks || 0) + 1;
-    addNews(s, `Signatures fall to ${n}. Enforcement is suspended while ${SG} recounts.`, 'you'); flag(s, 'important', null, 'Enforcement suspended');
+    addNews(s, `Notches fall to ${n}. The Shunning is suspended while ${sgName(s)} recounts.`, 'you'); flag(s, 'important', null, 'The Shunning suspended');
   }
 }
 function enforcementLost(s) {
@@ -365,10 +365,10 @@ function courtOpen(s) {
   const ok = id => !busy.has(id) && !hasMod(s, id, 'noCourt');
   if (signedCount(s) + W.court.filter(c => c.kind === 'sign').length < signCapacity(s)) {
     const c = Object.keys(W.members).filter(id => !W.signed[id] && ok(id) && !hasMod(s, id, 'noSign') && s.inf[id] < cSignLim(s, id) - 10).sort((a, b) => s.inf[a] - s.inf[b])[0];
-    if (c) { W.court.push({ target: c, kind: 'sign', prog: 0 }); addNews(s, `${SG} starts courting ${byId(c).name} to sign the treaty.`, 'wo'); flag(s, 'important', c, 'Courting: sign'); return true; }
+    if (c) { W.court.push({ target: c, kind: 'sign', prog: 0 }); addNews(s, `${sgName(s)} starts wooing ${byId(c).name} to sign the Tablet.`, 'wo'); flag(s, 'important', c, 'Courting: sign'); return true; }
   }
   const rec = COUNTRIES.filter(c => !W.members[c.id] && ok(c.id) && (ratified(s) || !Q(s, c.id).noRecruit) && s.inf[c.id] < cJoinLim(s, c.id) - 10 && c.pop >= 1).sort((a, b) => b.pop - a.pop);
-  if (rec.length) { const c = rec[Math.floor(rng(s) * Math.min(3, rec.length))]; W.court.push({ target: c.id, kind: 'invite', prog: 0 }); addNews(s, `${SG} starts courting ${c.name} to join the World Order.`, 'wo'); flag(s, 'important', c.id, 'Courting: join'); return true; }
+  if (rec.length) { const c = rec[Math.floor(rng(s) * Math.min(3, rec.length))]; W.court.push({ target: c.id, kind: 'invite', prog: 0 }); addNews(s, `${sgName(s)} starts wooing ${c.name} to join the Council.`, 'wo'); flag(s, 'important', c.id, 'Courting: join'); return true; }
   return false;
 }
 function courtTick(s) {
@@ -386,9 +386,9 @@ function courtTick(s) {
     const nm = byId(c.target).name;
     if (c.prog >= 100) {
       c.done = true;
-      if (c.kind === 'sign') { W.signed[c.target] = true; addNews(s, `${nm} signs the Containment Treaty. ${signedCount(s)} of ${SIGNATURES_TO_LOSE} signatures.`, 'wo'); flag(s, 'critical', c.target, 'Signed treaty'); }
-      else { W.members[c.target] = true; addNews(s, `${nm} joins the World Order.`, 'wo'); flag(s, 'critical', c.target, 'Joined World Order'); }
-    } else if (c.prog <= 0 && v >= lim) { c.done = true; addNews(s, `${nm} turns the World Order down. Too many of its people agree with you.`, 'you'); flag(s, 'important', c.target, 'Courtship failed'); }
+      if (c.kind === 'sign') { W.signed[c.target] = true; addNews(s, `${nm} signs the Tablet. ${signedCount(s)} of ${SIGNATURES_TO_LOSE} notches.`, 'wo'); flag(s, 'critical', c.target, 'Signed Tablet'); }
+      else { W.members[c.target] = true; addNews(s, `${nm} joins the Council.`, 'wo'); flag(s, 'critical', c.target, 'Joined Council'); }
+    } else if (c.prog <= 0 && v >= lim) { c.done = true; addNews(s, `${nm} turns the Council down. Too many of its people agree with you.`, 'you'); flag(s, 'important', c.target, 'Wooing failed'); }
     c.prog = Math.max(0, c.prog);
   });
   W.court = W.court.filter(c => !c.done);
@@ -415,7 +415,9 @@ const ENDGAME = { capAt: .75, capMin: 40, capWary: 30, capWeeks: 6, capTo: 90, b
 // Brutal World Unity 35 weeks (Pavel agreed 30; at 30 the bot wins 15% on Brutal, below the 20-30% target)
 const LEVEL_EG = { casual: { gcUnityWeeks: 50, gcAmt: 5, gcGap: 10 }, normal: {}, brutal: { gcUnityWeeks: 35, gcGap: 8, gcAmt: 10 } };
 const SIGNATURES_TO_LOSE = 8;
-const SG = 'Secretary-General Horatio Quorum';
+const SG = 'the Chief Elder';
+const SG_BY_LEVEL = { casual: 'Elder Mumble', normal: 'Grok the Handsome', brutal: 'Great Elder Quorum' };
+function sgName(s) { return (s && SG_BY_LEVEL[levelOf(s)]) || SG; }
 const TUNE = { evBad: .65, evGap: 12, milNoSummit: true, fxScale: 0.4, treaty: 2.6, memberRes: 0.15, signBelow: 60, joinBelow: 50, withdrawAt: 70, lead: 6, planBase: 6, founders: 2, noto: 1.5, reachNoto: 0.12, pressure: 6, coalitionAt: 8, costGrow: 0.03, income: 3, shareIncome: 1.5 };
 const CONTROL = 60; // % support at which a country counts as "held"
 
@@ -428,85 +430,85 @@ const CONTROL = 60; // % support at which a country counts as "held"
 // fx keys: income (+Clout points), growth/trade/border (multipliers), vis (notoriety growth, added), fc (campaign softening),
 // opDisc (Clout off each operation), opCd (weeks off each cooldown), bubble (+bubble chance), treatySlow, memberRes (World Order member resistance reduction).
 const TRAITS = {
-  borealis:   { quirk: 'Federal: the World Order can only recruit it below 20% support.', q: { recruitDelta: -20 }, perkName: 'Resource-rich', perk: 'Clout income up a little', fx: { income: .5 }, woPerk: 'your Clout income down a little' },
-  aethelgard: { quirk: 'Divided politics: random support swings of 4–10 points.', q: { swing: .015 }, perkName: 'Superpower ally', perk: 'World Order campaigns hit 30% softer', fx: { fc: .3 }, woPerk: 'World Order campaigns hit you 30% harder' },
-  laplata:    { quirk: 'Unstable: frequent support swings, up or down.', q: { swing: .02 }, perkName: 'Breadbasket', perk: 'Trade spread +15%', fx: { trade: 1.15 }, woPerk: 'your trade spread −15%' },
-  isolde:     { quirk: 'Population one: only Military actions win support here. The World Order never recruits it.', q: { noRecruit: true, armyOnly: true }, perkName: 'Hideout', perk: 'Clout income up a little', fx: { income: .2 }, woPerk: 'your Clout income down a little' },
-  guldor:     { quirk: 'Old money: ideas travel out of Guldor 50% faster.', q: { outMul: 1.5 }, perkName: 'Financier', perk: 'Clout income up', fx: { income: 1 }, woPerk: 'your Clout income down' },
-  celestia:   { quirk: 'Cultural power: ideas travel out of Celestia 40% faster.', q: { outMul: 1.4 }, perkName: 'Soft power', perk: 'Notoriety grows 10% slower', fx: { vis: -.1 }, woPerk: 'Notoriety grows 10% faster' },
-  helvetia:   { quirk: 'Neutral: the World Order cannot run campaigns here.', q: { immuneAt: 1 }, perkName: 'Discreet banking', perk: 'Operations cost 1 Clout less', fx: { opDisc: 1 }, woPerk: 'your actions cost 1 Clout more' },
-  pannonia:   { quirk: 'Unpredictable: 40% of World Order moves here fall through.', q: { woFail: .4 }, perkName: 'Crossroads hub', perk: 'Border spread +10%', fx: { border: 1.1 }, woPerk: 'your border spread −10%' },
-  koryn:      { quirk: 'Authoritarian: slow to convert (−15% growth), but immune to campaigns once you hold 50%.', q: { gMul: .85, immuneAt: 50 }, perkName: 'Resource-rich', perk: 'Clout income up a little', fx: { income: .5 }, woPerk: 'your Clout income down a little' },
-  tavaro:     { quirk: 'Crossroads: spread through Tavaro is 40% faster out, 20% faster in.', q: { outMul: 1.4, inMul: 1.2 }, perkName: 'Oil', perk: 'Clout income up', fx: { income: 1 }, woPerk: 'your Clout income down' },
-  kestria:    { quirk: 'Young population: +25% internal growth.', q: {}, perkName: 'Youth movement', perk: 'More opportunity bubbles', fx: { bubble: .06 }, woPerk: 'fewer opportunity bubbles' },
-  bharat:     { quirk: 'Colossal democracy: slow to convert (−15% growth), and needs 10 points less support to refuse a signing.', q: { gMul: .85, signDelta: -10 }, perkName: 'Digital reach', perk: 'Internal growth +10% everywhere', fx: { growth: 1.1 }, woPerk: 'your internal growth −10% everywhere' },
-  sinopeia:   { quirk: 'Paperwork: spread into Biyoco is halved, but out of it +30%.', q: { inMul: .5, outMul: 1.3 }, perkName: 'Manufacturing giant', perk: 'Clout income up', fx: { income: 1 }, woPerk: 'your Clout income down' },
-  juche:      { quirk: 'Isolated: no trade spread in, border spread halved, but Leaked Dossiers break every defence.', q: { inMul: .5, tradeInMul: 0, dossierAll: true }, perkName: 'True believers', perk: 'Treaty drafting 5% slower', fx: { treatySlow: .05 }, woPerk: 'treaty drafting 5% faster' },
-  nippon:     { quirk: 'Hyper-connected: +15% internal growth.', q: { gMul: 1.15 }, perkName: 'Hyper-advanced', perk: 'Every cooldown 6 weeks shorter', fx: { opCd: 6 }, woPerk: 'your cooldowns 6 weeks longer' },
-  pinguinia:  { quirk: 'Remote: spread into Koalia is 20% slower.', q: { inMul: .8 }, perkName: 'Mining royalties', perk: 'Clout income up a little', fx: { income: .5 }, woPerk: 'your Clout income down a little' }
+  borealis:   { quirk: 'Spread-out: The Council can only recruit it below 20% trust.', q: { recruitDelta: -20 }, perkName: 'Furs', perk: 'Meat income up a little', fx: { income: .5 }, woPerk: 'your Meat income down a little' },
+  aethelgard: { quirk: 'Loud opinions: random trust swings of 4–10 points.', q: { swing: .015 }, perkName: 'Totem', perk: 'Council nags hit 30% softer', fx: { fc: .3 }, woPerk: 'Council nags hit you 30% harder' },
+  laplata:    { quirk: 'Restless: frequent trust swings, up or down.', q: { swing: .02 }, perkName: 'Wheel', perk: 'Barter spread +15%', fx: { trade: 1.15 }, woPerk: 'your barter spread −15%' },
+  isolde:     { quirk: 'Population one: only Muscle deeds win trust here. The Council never recruits it.', q: { noRecruit: true, armyOnly: true }, perkName: 'Hermit\'s Secret', perk: 'Meat income up a little', fx: { income: .2 }, woPerk: 'your Meat income down a little' },
+  guldor:     { quirk: 'Old shells: ideas travel out of Guldor 50% faster.', q: { outMul: 1.5 }, perkName: 'Shells', perk: 'Meat income up', fx: { income: 1 }, woPerk: 'your Meat income down' },
+  celestia:   { quirk: 'Artists: ideas travel out of Celestia 40% faster.', q: { outMul: 1.4 }, perkName: 'A Mate joins your tribe', perk: 'Smoke grows 10% slower', fx: { vis: -.1 }, woPerk: 'Smoke grows 10% faster' },
+  helvetia:   { quirk: 'Neutral: The Council cannot run nags here.', q: { immuneAt: 1 }, perkName: 'Tally Sticks', perk: 'Deeds cost 1 Meat less', fx: { opDisc: 1 }, woPerk: 'your deeds cost 1 Meat more' },
+  pannonia:   { quirk: 'Unpredictable: 40% of Council moves here fall through.', q: { woFail: .4 }, perkName: 'Snowshoes', perk: 'Next-door spread +10%', fx: { border: 1.1 }, woPerk: 'your next-door spread −10%' },
+  koryn:      { quirk: 'Stubborn: slow to convert (−15% growth), but immune to nags once you hold 50%.', q: { gMul: .85, immuneAt: 50 }, perkName: 'Mammoth Tusks', perk: 'Meat income up a little', fx: { income: .5 }, woPerk: 'your Meat income down a little' },
+  tavaro:     { quirk: 'Crossroads: spread through Tavaro is 40% faster out, 20% faster in.', q: { outMul: 1.4, inMul: 1.2 }, perkName: 'Salt', perk: 'Meat income up', fx: { income: 1 }, woPerk: 'your Meat income down' },
+  kestria:    { quirk: 'Young: +25% internal growth.', q: {}, perkName: 'Drum', perk: 'More meat drops', fx: { bubble: .06 }, woPerk: 'fewer meat drops' },
+  bharat:     { quirk: 'Huge: slow to convert (−15% growth), and needs 10 points less trust to refuse a signing.', q: { gMul: .85, signDelta: -10 }, perkName: 'Fire', perk: 'Internal growth +10% everywhere', fx: { growth: 1.1 }, woPerk: 'your internal growth −10% everywhere' },
+  sinopeia:   { quirk: 'Paperwork: spread into Biyoco is halved, but out of it +30%.', q: { inMul: .5, outMul: 1.3 }, perkName: 'Pottery', perk: 'Meat income up', fx: { income: 1 }, woPerk: 'your Meat income down' },
+  juche:      { quirk: 'Closed: no barter spread in, next-door spread halved, but Embarrassing Cave Drawings break every defence.', q: { inMul: .5, tradeInMul: 0, dossierAll: true }, perkName: 'Calendar Stone', perk: 'Tablet drafting 5% slower', fx: { treatySlow: .05 }, woPerk: 'Tablet drafting 5% faster' },
+  nippon:     { quirk: 'Connected: +15% internal growth.', q: { gMul: 1.15 }, perkName: 'Smoke Signals', perk: 'Every cooldown 6 weeks shorter', fx: { opCd: 6 }, woPerk: 'your cooldowns 6 weeks longer' },
+  pinguinia:  { quirk: 'Remote: spread into Koalia is 20% slower.', q: { inMul: .8 }, perkName: 'Boomerang', perk: 'Meat income up a little', fx: { income: .5 }, woPerk: 'your Meat income down a little' }
 };
 // Two of these are drawn for every game.
 const CONDITIONS = [
-  { id: 'tradeboom', name: 'Trade boom', text: 'Trade spread +30%', fx: { trade: 1.3 } },
-  { id: 'closed', name: 'Closed borders', text: 'Border spread −25%', fx: { border: .75 } },
-  { id: 'media', name: 'Media storm', text: 'More bubbles, Notoriety grows 20% faster', fx: { bubble: .08, vis: .2 } },
-  { id: 'hawk', name: 'Hawkish world', text: 'The World Order plans a week faster', fx: { plan: 1 } },
-  { id: 'fragmented', name: 'Fragmented diplomacy', text: 'Treaty drafting 15% slower', fx: { treatySlow: .15 } },
-  { id: 'austerity', name: 'Austerity', text: 'Clout income −30%', fx: { income: -.5 } }
+  { id: 'tradeboom', name: 'Mammoth Glut', text: 'Barter spread +30%', fx: { trade: 1.3 } },
+  { id: 'closed', name: 'Deep Snow', text: 'Next-door spread −25%', fx: { border: .75 } },
+  { id: 'media', name: 'Smoky Season', text: 'More meat drops, Smoke grows 20% faster', fx: { bubble: .08, vis: .2 } },
+  { id: 'hawk', name: 'Grumpy Elders', text: 'The Council plans a week faster', fx: { plan: 1 } },
+  { id: 'fragmented', name: 'Elders Can\'t Agree', text: 'Tablet drafting 15% slower', fx: { treatySlow: .15 } },
+  { id: 'austerity', name: 'Lean Winter', text: 'Meat income −30%', fx: { income: -.5 } }
 ];
 // ---- v10.8 (Step 7): country asymmetry. Every country has a weak spot (one domain whose actions get an extra rule there),
 // a wall (one domain whose actions misfire there) and a base bonus (when you start there). Applies to v10 games (cfg.rules !== false).
 // weak kinds: echo, knock2, lock, refund, anyNb, bubble.  wall kinds: harden, loud, fizzle, noKnock, ban, reverse.
 // base kinds: free (first upgrade of a branch free), clout, upSwings, quiet, perk (held-perk active from week 0), seedNb, start8, noCourt, noCampaign.
 const RULES = {
-  borealis:   { weak: ['ideo', 'echo', 'Provincial politics', 'Ideology actions here also spread half their gain to neighbours and trade partners.'],
-                wall: ['eco', 'harden', 'Resource nationalism', 'Economy actions here raise its economic resistance by 25% for 20 weeks.'],
-                base: ['free', 'Your first Ideology upgrade is free.', 'ideo'] },
-  aethelgard: { weak: ['ideo', 'knock2', 'Culture wars', 'Ideology actions here knock World Order courtships back twice as hard.'],
-                wall: ['mil', 'loud', 'Superpower pride', 'Military actions here cost +4 Notoriety.'],
-                base: ['clout', 'You start with 15 Clout instead of 5.'] },
-  laplata:    { weak: ['eco', 'refund', 'Commodity boom', 'Economy actions here refund half their Clout cost.'],
-                wall: ['dip', 'fizzle', 'Revolving governments', 'Diplomacy actions here fail half the time. The Clout is spent anyway.'],
-                base: ['upSwings', 'Support swings in your base only go up.'] },
-  isolde:     { weak: ['dip', 'lock', 'Close-knit', 'Diplomacy actions here also stop World Order courtship for 20 weeks.'],
-                wall: ['ideo', 'harden', 'Proud heritage', 'Ideology actions here raise its ideological resistance by 25% for 20 weeks.'],
-                base: ['quiet', 'Notoriety grows 20% slower.'] },
-  guldor:     { weak: ['eco', 'echo', 'Old money', 'Economy actions here also spread half their gain to neighbours and trade partners.'],
-                wall: ['dip', 'noKnock', 'Ancient treaties', 'Diplomacy actions here do not slow World Order courtships.'],
-                base: ['perk', 'Financier is active from the start: Clout income up.'] },
-  celestia:   { weak: ['mil', 'anyNb', 'Soft army', 'Military actions here need no neighbour support.'],
-                wall: ['ideo', 'harden', 'Philosophers', 'Ideology actions here raise its ideological resistance by 25% for 20 weeks. Someone always writes a rebuttal.'],
-                base: ['free', 'Your first Diplomacy upgrade is free.', 'dip'] },
-  helvetia:   { weak: ['dip', 'refund', 'Neutral venue', 'Diplomacy actions here refund half their Clout cost.'],
-                wall: ['mil', 'ban', 'Armed neutrality', 'No Military actions here.'],
-                base: ['perk', 'Discreet banking is active from the start: every action costs 1 Clout less.'] },
-  pannonia:   { weak: ['eco', 'knock2', 'Pragmatists', 'Economy actions here knock World Order courtships back twice as hard.'],
-                wall: ['dip', 'fizzle', 'Contrarian', 'Diplomacy actions here fail half the time. The Clout is spent anyway.'],
-                base: ['seedNb', 'You start with 2% support in every neighbour.'] },
-  koryn:      { weak: ['mil', 'lock', 'Respects strength', 'Military actions here also stop World Order courtship for 20 weeks.'],
-                wall: ['eco', 'harden', 'Self-reliant', 'Economy actions here raise its economic resistance by 25% for 20 weeks.'],
-                base: ['free', 'Your first Military upgrade is free.', 'mil'] },
-  tavaro:     { weak: ['mil', 'refund', 'Defence expo', 'Military actions here refund half their Clout cost.'],
-                wall: ['eco', 'loud', 'Oil consortium', 'Economy actions here cost +4 Notoriety.'],
-                base: ['perk', 'Oil is active from the start: Clout income up.'] },
-  kestria:    { weak: ['ideo', 'bubble', 'Viral', 'Ideology actions here drop a 2-Clout bubble.'],
-                wall: ['mil', 'reverse', 'Youth protests', 'Military actions here cost you 5 support instead of adding it.'],
-                base: ['start8', 'You start with 8% support instead of 3%.'] },
-  bharat:     { weak: ['dip', 'knock2', 'Coalition politics', 'Diplomacy actions here knock World Order courtships back twice as hard.'],
-                wall: ['eco', 'fizzle', 'Red tape', 'Economy actions here fail half the time. The Clout is spent anyway.'],
-                base: ['perk', 'Digital reach is active from the start: internal growth +10% everywhere.'] },
-  sinopeia:   { weak: ['dip', 'echo', 'Face', 'Diplomacy actions here also spread half their gain to neighbours and trade partners.'],
-                wall: ['ideo', 'ban', 'Great Filing Cabinet', 'No Ideology actions here.'],
-                base: ['noCourt', 'The World Order can never court your base.'] },
-  juche:      { weak: ['mil', 'anyNb', 'Brittle regime', 'Military actions here need no neighbour support.'],
-                wall: ['ideo', 'reverse', 'Official-line backlash', 'Ideology actions here cost you 5 support instead of adding it.'],
-                base: ['noCampaign', 'The World Order cannot run campaigns in your base.'] },
-  nippon:     { weak: ['ideo', 'echo', 'Trendsetters', 'Ideology actions here also spread half their gain to neighbours and trade partners.'],
-                wall: ['mil', 'reverse', 'Pacifist constitution', 'Military actions here cost you 5 support instead of adding it.'],
-                base: ['perk', 'Hyper-advanced is active from the start: every action recharges 6 weeks faster.'] },
-  pinguinia:  { weak: ['eco', 'bubble', 'Mining royalties', 'Economy actions here drop a 2-Clout bubble.'],
-                wall: ['mil', 'ban', 'Tyranny of distance', 'No Military actions here.'],
-                base: ['free', 'Your first Economy upgrade is free.', 'eco'] }
+  borealis:   { weak: ['ideo', 'echo', 'Fireside gossip', 'Legend deeds here also spread half their gain to neighbours and trade partners.'],
+                wall: ['eco', 'harden', 'Proud trappers', 'Barter deeds here raise its barter resistance by 25% for 20 weeks.'],
+                base: ['free', 'Your first Legend skill is free.', 'ideo'] },
+  aethelgard: { weak: ['ideo', 'knock2', 'Feuds', 'Legend deeds here knock Council woos back twice as hard.'],
+                wall: ['mil', 'loud', 'Biggest-club pride', 'Muscle deeds here cost +4 Smoke.'],
+                base: ['clout', 'You start with 15 Meat instead of 5.'] },
+  laplata:    { weak: ['eco', 'refund', 'Bumper harvest', 'Barter deeds here refund half their Meat cost.'],
+                wall: ['dip', 'fizzle', 'New chief every moon', 'Feasting deeds here fail half the time. The Meat is spent anyway.'],
+                base: ['upSwings', 'Trust swings in your home cave only go up.'] },
+  isolde:     { weak: ['dip', 'lock', 'Lonely', 'Feasting deeds here also stop Council wooing for 20 weeks.'],
+                wall: ['ideo', 'harden', 'Proud hermit', 'Legend deeds here raise its legend resistance by 25% for 20 weeks.'],
+                base: ['quiet', 'Smoke grows 20% slower.'] },
+  guldor:     { weak: ['eco', 'echo', 'Old shells', 'Barter deeds here also spread half their gain to neighbours and trade partners.'],
+                wall: ['dip', 'noKnock', 'Ancient promises', 'Feasting deeds here do not slow Council woos.'],
+                base: ['perk', 'Shells is active from the start: Meat income up.'] },
+  celestia:   { weak: ['mil', 'anyNb', 'Soft arms', 'Muscle deeds here need no neighbour trust.'],
+                wall: ['ideo', 'harden', 'Critics', 'Legend deeds here raise its legend resistance by 25% for 20 weeks. Someone always writes a rebuttal.'],
+                base: ['free', 'Your first Feasting skill is free.', 'dip'] },
+  helvetia:   { weak: ['dip', 'refund', 'Neutral fire', 'Feasting deeds here refund half their Meat cost.'],
+                wall: ['mil', 'ban', 'No clubs allowed', 'No Muscle deeds here.'],
+                base: ['perk', 'Tally Sticks is active from the start: every deed costs 1 Meat less.'] },
+  pannonia:   { weak: ['eco', 'knock2', 'Practical', 'Barter deeds here knock Council woos back twice as hard.'],
+                wall: ['dip', 'fizzle', 'Contrarian', 'Feasting deeds here fail half the time. The Meat is spent anyway.'],
+                base: ['seedNb', 'You start with 2% trust in every neighbour.'] },
+  koryn:      { weak: ['mil', 'lock', 'Respects strength', 'Muscle deeds here also stop Council wooing for 20 weeks.'],
+                wall: ['eco', 'harden', 'Self-reliant', 'Barter deeds here raise its barter resistance by 25% for 20 weeks.'],
+                base: ['free', 'Your first Muscle skill is free.', 'mil'] },
+  tavaro:     { weak: ['mil', 'refund', 'Strongman contest', 'Muscle deeds here refund half their Meat cost.'],
+                wall: ['eco', 'loud', 'Salt council', 'Barter deeds here cost +4 Smoke.'],
+                base: ['perk', 'Salt is active from the start: Meat income up.'] },
+  kestria:    { weak: ['ideo', 'bubble', 'Catchy', 'Legend deeds here drop a 2-Clout meat drop.'],
+                wall: ['mil', 'reverse', 'Kids hate bullies', 'Muscle deeds here cost you 5 trust instead of adding it.'],
+                base: ['start8', 'You start with 8% trust instead of 3%.'] },
+  bharat:     { weak: ['dip', 'knock2', 'Big councils', 'Feasting deeds here knock Council woos back twice as hard.'],
+                wall: ['eco', 'fizzle', 'Too many rules', 'Barter deeds here fail half the time. The Meat is spent anyway.'],
+                base: ['perk', 'Fire is active from the start: internal growth +10% everywhere.'] },
+  sinopeia:   { weak: ['dip', 'echo', 'Face', 'Feasting deeds here also spread half their gain to neighbours and trade partners.'],
+                wall: ['ideo', 'ban', 'The Great Clay Archive', 'No Legend deeds here.'],
+                base: ['noCourt', 'The Council can never woo your home cave.'] },
+  juche:      { weak: ['mil', 'anyNb', 'Brittle chief', 'Muscle deeds here need no neighbour trust.'],
+                wall: ['ideo', 'reverse', 'Backlash', 'Legend deeds here cost you 5 trust instead of adding it.'],
+                base: ['noCampaign', 'The Council cannot run nags in your home cave.'] },
+  nippon:     { weak: ['ideo', 'echo', 'Trendsetters', 'Legend deeds here also spread half their gain to neighbours and trade partners.'],
+                wall: ['mil', 'reverse', 'Peaceful oath', 'Muscle deeds here cost you 5 trust instead of adding it.'],
+                base: ['perk', 'Smoke Signals is active from the start: every deed recharges 6 weeks faster.'] },
+  pinguinia:  { weak: ['eco', 'bubble', 'Lucky finds', 'Barter deeds here drop a 2-Clout meat drop.'],
+                wall: ['mil', 'ban', 'Very far away', 'No Muscle deeds here.'],
+                base: ['free', 'Your first Barter skill is free.', 'eco'] }
 };
 function rulesOn(s) { return !!(s && s.cfg && s.cfg.v10 && s.cfg.rules !== false); }
 // the rule a domain meets in a country: { side: 'weak'|'wall', kind, name, text } or null
@@ -566,7 +568,7 @@ function createState(startId, seed, opts) {
   COUNTRIES.forEach(c => { s.inf[c.id] = 0; });
   s.inf[startId] = 3;
   s.flags['seed_' + startId] = true;
-  addNews(s, `Unknown movement stirs in ${byId(startId).name}. Local officials call it “a phase”.`, 'you');
+  addNews(s, `Unknown tribe stirs in ${byId(startId).name}. Local officials call it “a phase”.`, 'you');
   if (cfg.random) {
     // per-run variation: every country's defences shift by up to +/-15%, and two world conditions apply.
     // Sinopeia and Bharat (the two giants you need to win) can never end up much harder than their base values.
@@ -652,7 +654,7 @@ function step0(s) {
       const delta = (rng(s) < .5 && !(c.id === baseOf(s) && (baseRule(s) || [])[0] === 'upSwings') ? -1 : 1) * (4 + 6 * rng(s));
       d[c.id] += delta;
       if (delta < 0 && c.id === baseOf(s)) addLegit(s, -LEGIT.scandal, 'scandal');
-      if (s.inf[c.id] >= 5) { addNews(s, delta > 0 ? `A populist wave in ${c.name} lifts your movement.` : `A scandal in ${c.name} knocks your movement back.`, delta > 0 ? 'you' : 'wo'); flag(s, 'ping', c.id, delta > 0 ? 'Swing up' : 'Swing down'); }
+      if (s.inf[c.id] >= 5) { addNews(s, delta > 0 ? `A populist wave in ${c.name} lifts your tribe.` : `A scandal in ${c.name} knocks your tribe back.`, delta > 0 ? 'you' : 'wo'); flag(s, 'ping', c.id, delta > 0 ? 'Swing up' : 'Swing down'); }
     }
   });
   // 2. Spread over borders and trade routes
@@ -712,16 +714,16 @@ function step0(s) {
   s.mods = s.mods.filter(m => m.until > s.week);
   s.blocked = s.blocked.filter(b => b.until > s.week);
   // 6. End conditions
-  if (s.cont && share >= PERFECT_SHARE) { s.over = 'perfect'; addNews(s, 'Not a single country disagrees. A committee is formed to find out how this happened.', 'you'); }
+  if (s.cont && share >= PERFECT_SHARE) { s.over = 'perfect'; addNews(s, 'Not a single tribe disagrees. A committee is formed to find out how this happened.', 'you'); }
   else if (!s.cont && (allHeld(s) || share >= winShareOf(s))) {
     s.over = 'win'; s.winType = allHeld(s) ? 'held' : 'share';
-    addNews(s, s.winType === 'held' ? `All ${COUNTRIES.length} countries are yours at once. The world wakes up aligned. Nobody remembers agreeing to it.` : 'The world wakes up aligned. Nobody remembers agreeing to it.', 'you');
+    addNews(s, s.winType === 'held' ? `All ${COUNTRIES.length} tribes are yours at once. Every tribe is with Ug. Nobody remembers agreeing to it.` : 'Every tribe is with Ug. Nobody remembers agreeing to it.', 'you');
   }
   // the treaty / Enforcement loss exists only while the World Order does (before the Breakup)
-  else if (!s.broken && (s.cfg.v10 ? enforcementLost(s) : signedCount(s) >= SIGNATURES_TO_LOSE)) { s.over = 'treaty'; addNews(s, `Containment Treaty ratified by ${SIGNATURES_TO_LOSE} nations. ${SG} weeps with joy into a fountain pen.`, 'wo'); }
-  else if (gcOn(s) && s.gc.unityWk >= egk(s, 'gcUnityWeeks')) { s.over = 'unity'; addNews(s, 'World Unity: the Grand Coalition stays together long enough to write a constitution. Your movement becomes a footnote in it.', 'wo'); }
+  else if (!s.broken && (s.cfg.v10 ? enforcementLost(s) : signedCount(s) >= SIGNATURES_TO_LOSE)) { s.over = 'treaty'; addNews(s, `Tablet ratified by ${SIGNATURES_TO_LOSE} tribes. ${sgName(s)} weeps with joy into a fountain pen.`, 'wo'); }
+  else if (gcOn(s) && s.gc.unityWk >= egk(s, 'gcUnityWeeks')) { s.over = 'unity'; addNews(s, 'Stubborn Clan Wins: the Stubborn Clan stays together long enough to write a constitution. Your tribe becomes a footnote in it.', 'wo'); }
   else if (legitOn(s) && legitEnd(s)) { /* s.over set by legitEnd */ }
-  else if (COUNTRIES.every(c => s.inf[c.id] <= 0)) { s.over = 'extinct'; addNews(s, 'Your movement has vanished. Historians shrug.', 'wo'); }
+  else if (COUNTRIES.every(c => s.inf[c.id] <= 0)) { s.over = 'extinct'; addNews(s, 'Ug is forgotten. Even the cave paintings fade.', 'wo'); }
 }
 
 // ---- Step 8.1 (v10.12): unrest + uprisings. Countries you have a stake in (>= UNREST.min) but have not settled
@@ -767,8 +769,8 @@ function unrestTick(s) {
     s.unrest[id] = u;
     if (u0 < UNREST.warnAt && u >= UNREST.warnAt) {
       const eta = unrestEta(s, id);
-      addNews(s, `Unrest in ${c.name}${eta ? `: uprising in about ${eta} weeks` : ''}. Garrison it (any Military action) or calm it (Pamphlets).`, 'wo');
-      flag(s, 'important', id, 'Unrest'); s.news[0].unrest = id;
+      addNews(s, `Grumbling in ${c.name}${eta ? `: walk-out in about ${eta} weeks` : ''}. Garrison it (any Muscle deed) or calm it (Tall Tales).`, 'wo');
+      flag(s, 'important', id, 'Grumbling'); s.news[0].unrest = id;
     }
     if (u >= 100) uprising(s, id);
   });
@@ -782,18 +784,18 @@ function uprising(s, id) {
   const lost = before >= CONTROL - LOST_MARGIN && s.inf[id] < CONTROL - LOST_MARGIN && s.held && s.held[id];
   s.uprisings.push({ id, week: s.week, from: Math.round(before), lost: !!lost });
   addLegit(s, -LEGIT.uprising, 'uprising');
-  addNews(s, `Uprising in ${c.name}. Your local office is now a souvenir shop. Support −${Math.round(before - s.inf[id])}${ns.length ? `, ${ns.length === 1 ? 'a neighbour grows' : 'neighbours grow'} restless` : ''}.${lost ? ' It counts as a lost country.' : ''}`, 'wo');
-  flag(s, 'critical', id, 'Uprising'); s.news[0].unrest = id;
+  addNews(s, `Walk-out in ${c.name}. Your local office is now a souvenir shop. Trust −${Math.round(before - s.inf[id])}${ns.length ? `, ${ns.length === 1 ? 'a neighbour grows' : 'neighbours grow'} restless` : ''}.${lost ? ' It counts as a lost tribe.' : ''}`, 'wo');
+  flag(s, 'critical', id, 'Walk-out'); s.news[0].unrest = id;
 }
 // after one of your actions: Military on a held country = Garrison; elsewhere Military breeds resentment; Pamphlets calm
 function unrestOnAct(s, a, target, before, rl) {
   const c = byId(target);
   if (a.dom === 'mil' && a.tier < 4 && before >= CONTROL && target !== baseOf(s)) {
-    if (rl && rl.kind === 'reverse') { addUnrest(s, target, UNREST.reverseHit); addNews(s, `${rl.name}: soldiers in ${c.name} make things worse. Unrest +${UNREST.reverseHit}.`, 'wo'); return; }
+    if (rl && rl.kind === 'reverse') { addUnrest(s, target, UNREST.reverseHit); addNews(s, `${rl.name}: soldiers in ${c.name} make things worse. Grumbling +${UNREST.reverseHit}.`, 'wo'); return; }
     s.unrest = s.unrest || {}; if (s.unrest[target]) s.unrest[target] = Math.max(0, s.unrest[target] - UNREST.garrison);
     s.mods.push({ id: target, kind: 'garrison', until: s.week + UNREST.garrisonWeeks });
     addNoto(s, UNREST.garrisonNoto);
-    addNews(s, `Garrison in ${c.name}: unrest −${UNREST.garrison}, no new unrest for ${UNREST.garrisonWeeks} weeks. The tanks are mostly decorative.`, 'you');
+    addNews(s, `Garrison in ${c.name}: grumbling −${UNREST.garrison}, no new grumbling for ${UNREST.garrisonWeeks} weeks. The tanks are mostly decorative.`, 'you');
     s.calmed = (s.calmed || 0) + 1;
   } else if (a.dom === 'mil' && target !== baseOf(s)) addUnrest(s, target, UNREST.milHit);
   if (a.id === 'ideo1' && unrestOf(s, target) > 0) { s.unrest[target] = Math.max(0, s.unrest[target] - UNREST.calm); s.calmed = (s.calmed || 0) + 1; }
@@ -808,8 +810,8 @@ const LEGIT = { start: 60, settled: 85, home: .15, eco: .2, wo: .1, sig: .03, he
   warnAt: 30, coachAt: 50, actBelow: 70, gain: { eco1: 8, eco3: 15, ideo1: 8, ideo2: 12, dip1: 6, dip2: 10 },
   martialWeeks: 20, martialAfter: 10, martialNoto: 3, shieldWeeks: 40, summitWeeks: 25,
   guardCost: 25, guardTo: 30, guardNoto: 10, estAt: 60, riskAt: 45, lostAt: 35, lostWeeks: 10 };
-const LEGIT_WHY = { held: 'Victory', share: 'Milestone', uprising: 'Uprising', lost: 'Lost country', mil: 'Casualties abroad', regime: 'Regime change',
-  fizzle: 'Failed action', reverse: 'Backfire', scandal: 'Scandal at home', event: 'Bad news at home', martialEnd: 'Martial law ends', act: 'Your action', guard: 'Loyal Guard', reloc: 'New base' };
+const LEGIT_WHY = { held: 'Victory', share: 'Milestone', uprising: 'Walk-out', lost: 'Lost tribe', mil: 'Casualties abroad', regime: 'Regime change',
+  fizzle: 'Failed deed', reverse: 'Backfire', scandal: 'Scandal at home', event: 'Bad news at home', martialEnd: 'Martial law ends', act: 'Your deed', guard: 'Big Cousins', reloc: 'New home cave' };
 function legitOn(s) { return !!(s.cfg && s.cfg.v10 && s.cfg.legit !== false); }
 function legitOf(s) { return s.legit === undefined ? LEGIT.start : s.legit; }
 function legitFrozen(s) { return !!s.reloc || hasMod(s, baseOf(s), 'martial') || hasMod(s, baseOf(s), 'legitShield'); }
@@ -839,8 +841,8 @@ function legitWarn(s, v0) {
   const v = legitOf(s), c = byId(baseOf(s));
   if (v0 >= LEGIT.warnAt && v < LEGIT.warnAt) {
     const eta = legitEta(s);
-    addNews(s, `Coup plot in ${c.name}: generals were seen measuring the palace curtains${eta && eta <= 100 ? `. Coup in about ${eta} weeks at this rate` : ''}. Raise legitimacy with an action on your base.`, 'wo');
-    flag(s, 'critical', baseOf(s), 'Coup plot'); s.news[0].legit = 1;
+    addNews(s, `Kick-out plot in ${c.name}: generals were seen measuring the palace curtains${eta && eta <= 100 ? `. Coup in about ${eta} weeks at this rate` : ''}. Raise respect with a deed on your home cave.`, 'wo');
+    flag(s, 'critical', baseOf(s), 'Kick-out plot'); s.news[0].legit = 1;
   }
 }
 function legitTick(s) {
@@ -849,12 +851,12 @@ function legitTick(s) {
   relocTick(s);
   const p = legitParts(s), v0 = s.legit;
   s.legit = Math.max(0, Math.min(100, s.legit + p.net)); if (s.legit <= 0) s.coupDue = true; legitWarn(s, v0);
-  if (s.martialEnd && s.week >= s.martialEnd) { s.martialEnd = 0; addLegit(s, -LEGIT.martialAfter / v10t(s, 'legitMul'), 'martialEnd'); addNews(s, `${byId(baseOf(s)).name}: martial law ends. The curfew is lifted; the grudges are not. Legitimacy −${LEGIT.martialAfter}.`, 'wo'); }
+  if (s.martialEnd && s.week >= s.martialEnd) { s.martialEnd = 0; addLegit(s, -LEGIT.martialAfter / v10t(s, 'legitMul'), 'martialEnd'); addNews(s, `${byId(baseOf(s)).name}: martial law ends. The curfew is lifted; the grudges are not. Respect −${LEGIT.martialAfter}.`, 'wo'); }
   const v = s.inf[baseOf(s)];
-  if (baseEstablished(s) && v < LEGIT.riskAt && !s.baseRisk && !s.reloc) { s.baseRisk = true; addNews(s, `Your base ${byId(baseOf(s)).name} is slipping: ${Math.round(v)}% support. Below ${LEGIT.lostAt}% the movement loses its home and the game.`, 'wo'); flag(s, 'critical', baseOf(s), 'Base at risk'); s.news[0].legit = 2; }
+  if (baseEstablished(s) && v < LEGIT.riskAt && !s.baseRisk && !s.reloc) { s.baseRisk = true; addNews(s, `Your home cave ${byId(baseOf(s)).name} is slipping: ${Math.round(v)}% trust. Below ${LEGIT.lostAt}% the tribe loses its home and the game.`, 'wo'); flag(s, 'critical', baseOf(s), 'Base at risk'); s.news[0].legit = 2; }
   if (v >= LEGIT.riskAt + 5) s.baseRisk = false;
   if (baseEstablished(s) && v < LEGIT.lostAt && !s.reloc) {
-    if (!s.baseLowSince) { s.baseLowSince = s.week; addNews(s, `${byId(baseOf(s)).name} is falling: your base is under ${LEGIT.lostAt}% support. Get it back above ${LEGIT.lostAt}% within ${LEGIT.lostWeeks} weeks or lose the game.`, 'wo'); flag(s, 'critical', baseOf(s), 'Base falling'); s.news[0].legit = 2; }
+    if (!s.baseLowSince) { s.baseLowSince = s.week; addNews(s, `${byId(baseOf(s)).name} is falling: your home cave is under ${LEGIT.lostAt}% trust. Get it back above ${LEGIT.lostAt}% within ${LEGIT.lostWeeks} weeks or lose the game.`, 'wo'); flag(s, 'critical', baseOf(s), 'Base falling'); s.news[0].legit = 2; }
   } else s.baseLowSince = 0;
 }
 function baseLostIn(s) { return s.baseLowSince ? Math.max(0, s.baseLowSince + LEGIT.lostWeeks - s.week) : null; }
@@ -866,13 +868,13 @@ function legitEnd(s) {
     if (s.guard && !s.guardUsed) {
       s.guardUsed = true; s.legit = LEGIT.guardTo; addNoto(s, LEGIT.guardNoto);
       s.legitLog = [{ week: s.week, n: LEGIT.guardTo, why: 'guard' }].concat(s.legitLog || []).slice(0, 6);
-      addNews(s, `${byId(baseOf(s)).name} sees a coup attempt! The Loyal Guard holds the palace and the plotters are reassigned to stamp counting. Legitimacy ${LEGIT.guardTo}, +${LEGIT.guardNoto} Notoriety.`, 'you');
-      flag(s, 'critical', baseOf(s), 'Coup crushed'); s.news[0].legit = 1;
+      addNews(s, `${byId(baseOf(s)).name} sees a kick-out attempt! The Big Cousins block the cave entrance and the plotters are sent to count pebbles. Respect ${LEGIT.guardTo}, +${LEGIT.guardNoto} Smoke.`, 'you');
+      flag(s, 'critical', baseOf(s), 'Kick-out crushed'); s.news[0].legit = 1;
       return false;
     }
-    s.over = 'coup'; addNews(s, `${byId(baseOf(s)).name} falls to a coup. The new junta promises stability, elections and a slightly larger flag.`, 'wo'); return true;
+    s.over = 'coup'; addNews(s, `${byId(baseOf(s)).name} falls to a kick-out. The new junta promises stability, elections and a slightly larger flag.`, 'wo'); return true;
   }
-  if (baseEstablished(s) && s.baseLowSince && s.week - s.baseLowSince >= LEGIT.lostWeeks) { s.over = 'baseLost'; addNews(s, `${byId(baseOf(s)).name} is lost: your movement has no home. The headquarters is now a co-working space.`, 'wo'); return true; }
+  if (baseEstablished(s) && s.baseLowSince && s.week - s.baseLowSince >= LEGIT.lostWeeks) { s.over = 'baseLost'; addNews(s, `${byId(baseOf(s)).name} is lost: your tribe has no home. The headquarters is now a co-working space.`, 'wo'); return true; }
   return false;
 }
 // is this action on your base a legitimacy action? (lifts "Already yours" and neighbour checks)
@@ -882,10 +884,10 @@ function baseActOk(s, a, target) {
 function legitActLine(s, aid, target) {
   if (!legitOn(s) || target !== baseOf(s)) return null;
   const a = ACTIONS.find(x => x.id === aid), rl = ruleAt(s, target, a.dom);
-  if (rl && rl.kind === 'reverse' && (LEGIT.gain[aid] !== undefined || a.dom === 'mil')) return `${rl.name}: legitimacy −${LEGIT.reverseBase}`;
-  if (LEGIT.gain[aid] !== undefined) return `${({ eco: 'Prosperity', ideo: 'Rally', dip: 'Recognition' })[a.dom]}: legitimacy +${LEGIT.gain[aid]}${aid === 'dip2' ? `, no World Order drain ${LEGIT.summitWeeks} wk` : ''}`;
-  if (aid === 'ideo3') return `Legitimacy cannot fall for ${LEGIT.shieldWeeks} wk`;
-  if (a.dom === 'mil' && a.tier < 4) return `Martial law: legitimacy frozen ${LEGIT.martialWeeks} wk, then −${LEGIT.martialAfter}. +${LEGIT.martialNoto} Notoriety`;
+  if (rl && rl.kind === 'reverse' && (LEGIT.gain[aid] !== undefined || a.dom === 'mil')) return `${rl.name}: respect −${LEGIT.reverseBase}`;
+  if (LEGIT.gain[aid] !== undefined) return `${({ eco: 'Prosperity', ideo: 'Rally', dip: 'Recognition' })[a.dom]}: respect +${LEGIT.gain[aid]}${aid === 'dip2' ? `, no Council drain ${LEGIT.summitWeeks} wk` : ''}`;
+  if (aid === 'ideo3') return `Respect cannot fall for ${LEGIT.shieldWeeks} wk`;
+  if (a.dom === 'mil' && a.tier < 4) return `Martial law: respect frozen ${LEGIT.martialWeeks} wk, then −${LEGIT.martialAfter}. +${LEGIT.martialNoto} Smoke`;
   return null;
 }
 function legitOnAct(s, a, target, rl) {
@@ -898,21 +900,21 @@ function legitOnAct(s, a, target, rl) {
   if (rl && rl.kind === 'reverse' && (g !== undefined || isMil)) {
     s.inf[target] = Math.max(0, s.inf[target] - 5);
     addLegit(s, -LEGIT.reverseBase / v10t(s, 'legitMul'), 'reverse');
-    addNews(s, `${a.name} at home backfires on you (${rl.name}). Legitimacy −${LEGIT.reverseBase}, support −5.`, 'wo'); flag(s, 'ping', target, rl.name); return;
+    addNews(s, `${a.name} at home backfires on you (${rl.name}). Respect −${LEGIT.reverseBase}, trust −5.`, 'wo'); flag(s, 'ping', target, rl.name); return;
   }
   if (g !== undefined) {
     const v0 = legitOf(s); s.legit = Math.min(100, v0 + g);
     s.legitLog = [{ week: s.week, n: Math.round(s.legit - v0), why: 'act' }].concat(s.legitLog || []).slice(0, 6);
     if (a.id === 'dip2') s.mods.push({ id: target, kind: 'noWoDrift', until: s.week + LEGIT.summitWeeks });
-    addNews(s, `${({ eco: 'Prosperity', ideo: 'Rally', dip: 'Recognition' })[a.dom]} in ${c.name}: legitimacy +${Math.round(s.legit - v0)}.`, 'you');
+    addNews(s, `${({ eco: 'Prosperity', ideo: 'Rally', dip: 'Recognition' })[a.dom]} in ${c.name}: respect +${Math.round(s.legit - v0)}.`, 'you');
     s.legitActs = (s.legitActs || 0) + 1;
   } else if (a.id === 'ideo3') {
     s.mods.push({ id: target, kind: 'legitShield', until: s.week + LEGIT.shieldWeeks });
-    addNews(s, `Martyr Narrative at home: legitimacy cannot fall for ${LEGIT.shieldWeeks} weeks.`, 'you'); s.legitActs = (s.legitActs || 0) + 1;
+    addNews(s, `Sad Song at home: respect cannot fall for ${LEGIT.shieldWeeks} weeks.`, 'you'); s.legitActs = (s.legitActs || 0) + 1;
   } else if (isMil) {
     s.mods.push({ id: target, kind: 'martial', until: s.week + LEGIT.martialWeeks }); s.martialEnd = s.week + LEGIT.martialWeeks;
     addNoto(s, LEGIT.martialNoto);
-    addNews(s, `Martial law in ${c.name}: legitimacy frozen for ${LEGIT.martialWeeks} weeks, −${LEGIT.martialAfter} when it ends. The anthem now plays every hour.`, 'you');
+    addNews(s, `Martial law in ${c.name}: respect frozen for ${LEGIT.martialWeeks} weeks, −${LEGIT.martialAfter} when it ends. The anthem now plays every hour.`, 'you');
     s.legitActs = (s.legitActs || 0) + 1;
   }
 }
@@ -922,13 +924,13 @@ function canGuard(s) {
   if (!legitOn(s)) return { ok: false, why: 'Off' };
   if (s.guard) return { ok: false, why: s.guardUsed ? 'Used' : 'Owned' };
   if (s.over) return { ok: false, why: 'Game over' };
-  if (s.clout < guardCost(s)) return { ok: false, why: 'Not enough Clout' };
+  if (s.clout < guardCost(s)) return { ok: false, why: 'Not enough Meat' };
   return { ok: true };
 }
 function buyGuard(s) {
   const chk = canGuard(s); if (!chk.ok) return chk;
   s.clout -= guardCost(s); s.guard = true;
-  addNews(s, `${byId(baseOf(s)).name} swears in a Loyal Guard. Their oath fits on a business card.`, 'you');
+  addNews(s, `${byId(baseOf(s)).name} welcomes the Big Cousins. Their oath fits on a pebble.`, 'you');
   return { ok: true };
 }
 // ---- Overextension (v10.15, Step 8.4): holding many countries costs Clout income. Counterplay: Economy power, settled countries,
@@ -953,7 +955,7 @@ function overOnAct(s, a, target, before) {
   s.mods.push({ id: target, kind: 'aid', until: s.week + OVER.aidWeeks });
   const u = unrestOf(s, target); if (s.unrest && u > 0) s.unrest[target] = Math.max(0, u - OVER.aidUnrest);
   s.aids = (s.aids || 0) + 1;
-  addNews(s, `Development aid in ${byId(target).name}: unrest −${OVER.aidUnrest}, upkeep waived for ${OVER.aidWeeks} weeks. The roads are almost finished.`, 'you');
+  addNews(s, `Development aid in ${byId(target).name}: grumbling −${OVER.aidUnrest}, upkeep waived for ${OVER.aidWeeks} weeks. The roads are almost finished.`, 'you');
 }
 function overTick(s) {
   if (!overOn(s)) return;
@@ -961,11 +963,11 @@ function overTick(s) {
   if (n < OVER.warnAt - 1) s.overLvl = 0;
   else if (n >= OVER.critAt && lvl < 2) {
     s.overLvl = 2; const u = upkeepOf(s);
-    addNews(s, `Overstretched: ${n} countries held and the paperwork is eating the movement. Upkeep takes ${Math.round(u.frac * 100)}% of your Clout income. Development aid waives it per country.`, 'wo');
+    addNews(s, `Overstretched: ${n} tribes held and the paperwork is eating the tribe. Upkeep takes ${Math.round(u.frac * 100)}% of your Meat income. Development aid waives it per tribe.`, 'wo');
     flag(s, 'critical', null, 'Overstretched'); s.news[0].over = 1;
   } else if (n >= OVER.warnAt && lvl < 1) {
     s.overLvl = 1; const u = upkeepOf(s);
-    addNews(s, `Your administration is stretched: ${n} countries held, ${OVER.free} are free. Upkeep takes ${Math.round(u.frac * 100)}% of your Clout income. Economy power, settled countries and Development aid cut it.`, 'wo');
+    addNews(s, `Your administration is stretched: ${n} tribes held, ${OVER.free} are free. Upkeep takes ${Math.round(u.frac * 100)}% of your Meat income. Barter power, settled tribes and Development aid cut it.`, 'wo');
     flag(s, 'important', null, 'Stretched'); s.news[0].over = 1;
   }
 }
@@ -978,25 +980,25 @@ function canPlan(s) {
   if (s.plan) return { ok: false, why: 'Owned' };
   if (s.over) return { ok: false, why: 'Game over' };
   if (!s.owned.includes(RELOC.needs)) return { ok: false, why: 'Needs ' + upg(RELOC.needs).name };
-  if (s.clout < planCost(s)) return { ok: false, why: 'Not enough Clout' };
+  if (s.clout < planCost(s)) return { ok: false, why: 'Not enough Meat' };
   return { ok: true };
 }
 function buyPlan(s) {
   const chk = canPlan(s); if (!chk.ok) return chk;
   s.clout -= planCost(s); s.plan = true;
-  addNews(s, 'Your movement drafts a Contingency Plan. Page one: a second headquarters. Page two: a van.', 'you');
+  addNews(s, 'Ug finds a Spare Cave. Page one: a second cave. Page two: a sled.', 'you');
   return { ok: true };
 }
 // can the base move to country id right now?
 function canReloc(s, id) {
-  if (!legitOn(s) || !s.plan) return { ok: false, why: 'Needs Contingency Plan' };
+  if (!legitOn(s) || !s.plan) return { ok: false, why: 'Needs Spare Cave' };
   if (s.over) return { ok: false, why: 'Game over' };
   if (s.reloc) return { ok: false, why: 'Already relocating' };
   if (s.relocUsed) return { ok: false, why: 'Used' };
-  if (id === baseOf(s)) return { ok: false, why: 'Already your base' };
-  if (s.inf[id] < RELOC.minSupport) return { ok: false, why: `Needs ${RELOC.minSupport}% support` };
-  if (unrestOn(s) && unrestOf(s, id) >= RELOC.maxUnrest) return { ok: false, why: 'Too much unrest' };
-  if (s.clout < relocCost(s)) return { ok: false, why: 'Not enough Clout' };
+  if (id === baseOf(s)) return { ok: false, why: 'Already your home cave' };
+  if (s.inf[id] < RELOC.minSupport) return { ok: false, why: `Needs ${RELOC.minSupport}% trust` };
+  if (unrestOn(s) && unrestOf(s, id) >= RELOC.maxUnrest) return { ok: false, why: 'Too much grumbling' };
+  if (s.clout < relocCost(s)) return { ok: false, why: 'Not enough Meat' };
   return { ok: true };
 }
 function relocEta(s) { return s.reloc ? Math.max(0, s.reloc.end - s.week) : null; }
@@ -1013,7 +1015,7 @@ function relocTick(s) {
   const R = s.reloc; if (!R) return;
   if (s.inf[R.to] < RELOC.abortBelow) {
     s.reloc = null; s.relocUsed = false;
-    addNews(s, `The move to ${byId(R.to).name} collapses: support there fell below ${RELOC.abortBelow}%. The van turns around. The Clout is gone, the old base stays.`, 'wo');
+    addNews(s, `The move to ${byId(R.to).name} collapses: trust there fell below ${RELOC.abortBelow}%. The van turns around. The Meat is gone, the old base stays.`, 'wo');
     flag(s, 'critical', R.to, 'Move aborted'); s.news[0].reloc = 2; return;
   }
   if (s.week >= R.end) completeReloc(s);
@@ -1033,7 +1035,7 @@ function completeReloc(s) {
   s.relocLog = (s.relocLog || []).concat([{ week: s.week, from, to }]);
   if (s.unrest) { delete s.unrest[to]; if (unrestOn(s) && s.inf[from] >= UNREST.min) s.unrest[from] = RELOC.abandonUnrest; }
   recomputeStats(s);
-  addNews(s, `${byId(to).name} is now the home of the movement. ${byId(from).name} is told the headquarters "will be back in a minute". Legitimacy ${RELOC.newLegit}.`, 'you');
+  addNews(s, `${byId(to).name} is now the home of the tribe. ${byId(from).name} is told the headquarters "will be back in a minute". Respect ${RELOC.newLegit}.`, 'you');
   flag(s, 'critical', to, 'Base moved'); s.news[0].reloc = 3;
 }
 // Score + stars (v10.10). A country counts as lost once you held it (>= CONTROL) and it later fell below CONTROL - LOST_MARGIN.
@@ -1099,16 +1101,16 @@ function counterCampaign(s, target, amt, by) {   // by 'gc': a Grand Coalition c
   const fc = Math.min(.9, s.stats.fcRed + perk(s).fc);
   const t = byId(target);
   s.inf[t.id] = Math.max(0, s.inf[t.id] - (amt || 10) * (1 - fc));
-  s.mods.push({ id: t.id, kind: 'counter', src: by === 'gc' ? 'Grand Coalition crackdown' : 'World Order campaign', until: s.week + Math.round(25 * (1 - fc / 2)) });
+  s.mods.push({ id: t.id, kind: 'counter', src: by === 'gc' ? 'Stubborn Clan crackdown' : 'Council nag', until: s.week + Math.round(25 * (1 - fc / 2)) });
   const lines = by === 'gc' ? [
-    `Grand Coalition crackdown in ${t.name}. Leaflets feature a stern owl and several flags.`,
+    `Stubborn Clan crackdown in ${t.name}. Leaflets feature a stern owl and several flags.`,
     `Fact-checkers descend on ${t.name}. Your slogans rated \u201cmostly vibes\u201d.`,
-    `The Grand Coalition funds ${t.name} civics classes. Attendance: mandatory, enthusiasm: optional.`,
+    `The Stubborn Clan funds ${t.name} civics classes. Attendance: mandatory, enthusiasm: optional.`,
     `${t.name} bans your pamphlets, then prints more to explain the ban.`
   ] : [
-    `World Order launches awareness campaign in ${t.name}. Leaflets feature a stern owl.`,
+    `Council launches awareness nag in ${t.name}. Leaflets feature a stern owl.`,
     `Fact-checkers descend on ${t.name}. Your slogans rated \u201cmostly vibes\u201d.`,
-    `World Order funds ${t.name} civics classes. Attendance: mandatory, enthusiasm: optional.`,
+    `Council funds ${t.name} civics classes. Attendance: mandatory, enthusiasm: optional.`,
     `${t.name} bans your pamphlets, then prints more to explain the ban.`
   ];
   addNews(s, lines[Math.floor(rng(s) * lines.length)], 'wo');
@@ -1132,7 +1134,7 @@ function woActivate(s) {
   // founding members: the HQ's neighbours and trade partners that resist you most
   const near = [...new Set([...neighbours(hq.id), ...tradeLinks(s, hq.id)])].filter(id => s.inf[id] < TUNE.joinBelow && byId(id).pop >= 1).sort((a, b) => s.inf[a] - s.inf[b]).slice(0, TUNE.founders);
   near.forEach(id => { s.wo.members[id] = true; });
-  addNews(s, `The World Order convenes in ${hq.name}${near.length ? ' with ' + near.map(id => byId(id).name).join(' and ') : ''}. ${SG}: \u201cWe are deeply concerned, and have formed a committee to be concerned more efficiently.\u201d`, 'wo'); flag(s, 'critical', hq.id, 'World Order HQ');
+  addNews(s, `The Council convenes in ${hq.name}${near.length ? ' with ' + near.map(id => byId(id).name).join(' and ') : ''}. ${sgName(s)}: \u201cWe are deeply concerned, and have formed a committee to be concerned more efficiently.\u201d`, 'wo'); flag(s, 'critical', hq.id, 'Council cave');
 }
 function woPlan(s) {
   const W = s.wo; const lead = TUNE.lead;
@@ -1145,14 +1147,14 @@ function woPlan(s) {
   // 1. Signatures, as far as the draft allows
   if (signedCount(s) + pendingSigns < signCapacity(s)) {
     const c = members.filter(id => !W.signed[id] && !busy.has(id) && !hasMod(s, id, 'noSign') && s.inf[id] < signLimit(s, id)).sort((a, b) => s.inf[a] - s.inf[b])[0];
-    if (c) { push('sign', c); addNews(s, `${SG} schedules a signing ceremony in ${byId(c).name} in ${lead} weeks. Commemorative pens ordered.`, 'wo'); flag(s, 'important', c, `Signing in ${lead} wk`); return; }
+    if (c) { push('sign', c); addNews(s, `${sgName(s)} schedules a notch carving in ${byId(c).name} in ${lead} weeks. Commemorative pens ordered.`, 'wo'); flag(s, 'important', c, `Signing in ${lead} wk`); return; }
   }
   // 2. Recruit members: biggest country that still resists you
   r = rng(s);
   const recruits = COUNTRIES.filter(c => !W.members[c.id] && !busy.has(c.id) && !hasMod(s, c.id, 'noInvite') && !Q(s, c.id).noRecruit && s.inf[c.id] < TUNE.joinBelow - s.stats.shield - 10 + (Q(s, c.id).recruitDelta || 0) && c.pop >= 1).sort((a, b) => b.pop - a.pop);
   if (recruits.length && (r < 0.55 || memberCount(s) < SIGNATURES_TO_LOSE)) {
     const c = recruits[Math.floor(rng(s) * Math.min(3, recruits.length))];
-    push('invite', c.id); addNews(s, `World Order invites ${c.name} to join. RSVP in ${lead} weeks.`, 'wo'); flag(s, 'important', c.id, `Invitation in ${lead} wk`); return;
+    push('invite', c.id); addNews(s, `Council invites ${c.name} to join. RSVP in ${lead} weeks.`, 'wo'); flag(s, 'important', c.id, `Invitation in ${lead} wk`); return;
   }
   }
   // 3. Sanctions: cut a trade route you are using
@@ -1160,32 +1162,32 @@ function woPlan(s) {
   if (routes.length && r < 0.75 && s.week >= s.noSanctionUntil) {
     const [a, b] = routes[Math.floor(rng(s) * routes.length)];
     const target = s.inf[a] < s.inf[b] ? a : b;
-    if (!busy.has(target)) { push('sanction', target, { route: [a, b] }); addNews(s, `World Order drafts sanctions on the ${byId(a).name}\u2013${byId(b).name} trade route. Effective in ${lead} weeks.`, 'wo'); flag(s, 'important', a, `Sanctions in ${lead} wk`); return; }
+    if (!busy.has(target)) { push('sanction', target, { route: [a, b] }); addNews(s, `Council drafts trade bans on the ${byId(a).name}\u2013${byId(b).name} barter trail. Effective in ${lead} weeks.`, 'wo'); flag(s, 'important', a, `Trade bans in ${lead} wk`); return; }
   }
   // 4. Awareness campaign on your biggest foothold
   W.lastCampaign = W.lastCampaign || {};
   const cc = COUNTRIES.filter(c => s.inf[c.id] >= 5 && s.inf[c.id] < 97 && !busy.has(c.id) && !hasMod(s, c.id, 'noCampaign') && !(W.lastCampaign[c.id] > s.week - 20) && !(Q(s, c.id).immuneAt && s.inf[c.id] >= Q(s, c.id).immuneAt));
   if (cc.length) {
     const t = cc.reduce((a, c) => (c.pop * s.inf[c.id] > a.pop * s.inf[a.id] ? c : a));
-    push('campaign', t.id); addNews(s, `World Order announces an awareness campaign for ${t.name} in ${lead} weeks.`, 'wo'); flag(s, 'important', t.id, `Campaign in ${lead} wk`);
+    push('campaign', t.id); addNews(s, `Council announces an awareness nag for ${t.name} in ${lead} weeks.`, 'wo'); flag(s, 'important', t.id, `Nag in ${lead} wk`);
   }
 }
 function woExecute(s, q) {
   const W = s.wo; const c = byId(q.target); const v = s.inf[q.target];
   const wf = Q(s, q.target).woFail;
-  if (wf && q.kind !== 'sanction' && rng(s) < wf) { addNews(s, `The World Order’s ${q.kind === 'sign' ? 'signing ceremony' : q.kind === 'invite' ? 'invitation' : 'campaign'} in ${c.name} falls through. Nobody can say who was meant to book the room.`, 'you'); flag(s, 'important', q.target, 'Fell through'); return; }
+  if (wf && q.kind !== 'sanction' && rng(s) < wf) { addNews(s, `The Council’s ${q.kind === 'sign' ? 'notch carving' : q.kind === 'invite' ? 'invitation' : 'campaign'} in ${c.name} falls through. Nobody can say who was meant to book the room.`, 'you'); flag(s, 'important', q.target, 'Fell through'); return; }
   if (q.kind === 'sign') {
-    if (hasMod(s, q.target, 'noSign')) { addNews(s, `${c.name} cannot risk its trade with you and skips the signing ceremony.`, 'you'); flag(s, 'important', q.target, 'Refused to sign'); }
-    else if (W.members[q.target] && v < signLimit(s, q.target)) { W.signed[q.target] = true; addNews(s, `${c.name} signs the Containment Treaty. ${signedCount(s)} of ${SIGNATURES_TO_LOSE} signatures.`, 'wo'); flag(s, 'critical', q.target, 'Signed treaty'); }
-    else { addNews(s, `${c.name} refuses to sign. Your supporters there hid the pens.`, 'you'); flag(s, 'important', q.target, 'Refused to sign'); }
+    if (hasMod(s, q.target, 'noSign')) { addNews(s, `${c.name} cannot risk its trade with you and skips the notch carving.`, 'you'); flag(s, 'important', q.target, 'Refused to sign'); }
+    else if (W.members[q.target] && v < signLimit(s, q.target)) { W.signed[q.target] = true; addNews(s, `${c.name} signs the Tablet. ${signedCount(s)} of ${SIGNATURES_TO_LOSE} notches.`, 'wo'); flag(s, 'critical', q.target, 'Signed Tablet'); }
+    else { addNews(s, `${c.name} refuses to sign. Your fans there hid the pens.`, 'you'); flag(s, 'important', q.target, 'Refused to sign'); }
   }
   if (q.kind === 'invite') {
-    if (v < TUNE.joinBelow - s.stats.shield + (Q(s, q.target).recruitDelta || 0)) { W.members[q.target] = true; addNews(s, `${c.name} joins the World Order. Membership includes a lanyard.`, 'wo'); flag(s, 'critical', q.target, 'Joined World Order'); }
-    else { addNews(s, `${c.name} declines the World Order\u2019s invitation. Too many of its people agree with you.`, 'you'); flag(s, 'important', q.target, 'Declined invitation'); }
+    if (v < TUNE.joinBelow - s.stats.shield + (Q(s, q.target).recruitDelta || 0)) { W.members[q.target] = true; addNews(s, `${c.name} joins the Council. Membership includes a lanyard.`, 'wo'); flag(s, 'critical', q.target, 'Joined Council'); }
+    else { addNews(s, `${c.name} declines the Council\u2019s invitation. Too many of its people agree with you.`, 'you'); flag(s, 'important', q.target, 'Declined invitation'); }
   }
-  if ((q.kind === 'sanction' || q.kind === 'campaign') && s.stats.sabotage && rng(s) < s.stats.sabotage) { addNews(s, `The World Order\u2019s ${q.kind === 'sanction' ? 'sanctions' : 'campaign'} in ${c.name} collapses amid mysterious scheduling conflicts.`, 'you'); return; }
-  if (q.kind === 'sanction' && immuneRoute(s, q.route[0], q.route[1])) { s.bounced = (s.bounced || []).concat([q.route[0] + '|' + q.route[1]]); addNews(s, `Sanctions on the ${byId(q.route[0]).name}\u2013${byId(q.route[1]).name} route bounce off your contracts. The lawyers send their regards.`, 'you'); flag(s, 'important', q.route[1], 'Sanctions bounced'); return; }
-  if (q.kind === 'sanction') { s.blocked.push({ a: q.route[0], b: q.route[1], until: s.week + 30 }); addNews(s, `Sanctions close the ${byId(q.route[0]).name}\u2013${byId(q.route[1]).name} trade route for 30 weeks.`, 'wo'); flag(s, 'critical', q.route[0], 'Route closed'); }
+  if ((q.kind === 'sanction' || q.kind === 'campaign') && s.stats.sabotage && rng(s) < s.stats.sabotage) { addNews(s, `The Council\u2019s ${q.kind === 'sanction' ? 'sanctions' : 'campaign'} in ${c.name} collapses amid mysterious scheduling conflicts.`, 'you'); return; }
+  if (q.kind === 'sanction' && immuneRoute(s, q.route[0], q.route[1])) { s.bounced = (s.bounced || []).concat([q.route[0] + '|' + q.route[1]]); addNews(s, `Trade bans on the ${byId(q.route[0]).name}\u2013${byId(q.route[1]).name} route bounce off your contracts. The lawyers send their regards.`, 'you'); flag(s, 'important', q.route[1], 'Trade bans bounced'); return; }
+  if (q.kind === 'sanction') { s.blocked.push({ a: q.route[0], b: q.route[1], until: s.week + 30 }); addNews(s, `Trade bans close the ${byId(q.route[0]).name}\u2013${byId(q.route[1]).name} barter trail for 30 weeks.`, 'wo'); flag(s, 'critical', q.route[0], 'Route closed'); }
   if (q.kind === 'campaign') { counterCampaign(s, q.target, q.amt); if (q.crack) addUnrest(s, q.target, UNREST.crack); W.lastCampaign = W.lastCampaign || {}; W.lastCampaign[q.target] = s.week; }
 }
 function possibleSignatures(s) { return signedCount(s) + COUNTRIES.filter(c => !s.wo.signed[c.id] && s.inf[c.id] < signLimit(s, c.id)).length; }
@@ -1195,10 +1197,10 @@ function woTick(s) {
   // v10: the treaty can only collapse while you hold at least collapseFloor of the world (no idle collapse wins)
   if (!(s.cfg.v10 && W.ratifiedAt) && possibleSignatures(s) < SIGNATURES_TO_LOSE && !(s.cfg.v10 && alignedShare(s) < v10t(s, 'collapseFloor'))) {
     W.hopeless = (W.hopeless || 0) + 1;
-    if (W.hopeless === 1) addNews(s, `${SG} counts the remaining undecided nations and asks for a glass of water. Unless 8 signatures become possible within 26 weeks, the World Order breaks up.`, 'you'); flag(s, 'important', null, 'Treaty failing');
-  } else if (W.hopeless) { W.hopeless = 0; addNews(s, 'The World Order finds enough undecided nations to keep the treaty alive.', 'wo'); flag(s, 'important'); }
+    if (W.hopeless === 1) addNews(s, `${sgName(s)} counts the remaining undecided tribes and asks for a glass of water. Unless 8 notches become possible within 26 weeks, the Council breaks up.`, 'you'); flag(s, 'important', null, 'Tablet failing');
+  } else if (W.hopeless) { W.hopeless = 0; addNews(s, 'The Council finds enough undecided tribes to keep the Tablet going.', 'wo'); flag(s, 'important'); }
   // withdrawals: signed countries that turned to you
-  Object.keys(W.signed).forEach(id => { if (s.inf[id] >= TUNE.withdrawAt) { delete W.signed[id]; addNews(s, `${byId(id).name} withdraws its treaty signature. ${SG} is \u201cdisappointed, procedurally\u201d.`, 'you'); flag(s, 'important', id, 'Signature withdrawn'); } });
+  Object.keys(W.signed).forEach(id => { if (s.inf[id] >= TUNE.withdrawAt) { delete W.signed[id]; addNews(s, `${byId(id).name} withdraws its Tablet notch. ${sgName(s)} is \u201cdisappointed, procedurally\u201d.`, 'you'); flag(s, 'important', id, 'Notch withdrawn'); } });
   if (s.cfg.v10) courtTick(s);
   if (s.cfg.v10) { woCrackdown(s); woPerkNews(s); }
   W.queue.filter(q => q.at <= s.week).forEach(q => woExecute(s, q));
@@ -1217,36 +1219,36 @@ function woCrackdown(s) {
   cand.forEach(c => {
     const amt = Math.round(v10t(s, 'crackAmt') * (1 - .5 * domainPower(s, 'ideo')));
     W.queue.push({ key: ++W.seq, kind: 'campaign', target: c.id, at: s.week + TUNE.lead, planned: s.week, amt, crack: true });
-    addNews(s, `World Order schedules a crackdown in ${c.name} in ${TUNE.lead} weeks: up to −${amt} support. Volunteers are being volunteered.`, 'wo'); flag(s, 'important', c.id, `Crackdown in ${TUNE.lead} wk`);
+    addNews(s, `Council schedules a crackdown in ${c.name} in ${TUNE.lead} weeks: up to −${amt} trust. Volunteers are being volunteered.`, 'wo'); flag(s, 'important', c.id, `Crackdown in ${TUNE.lead} wk`);
   });
 }
 // News when the World Order starts or stops using a country's perk against you.
 function woPerkNews(s) {
   const now = woPerkIds(s), prev = s.wo.perks || [];
-  now.filter(id => !prev.includes(id)).forEach(id => { addNews(s, `The World Order now uses ${byId(id).name}’s ${TRAITS[id].perkName} against you: ${TRAITS[id].woPerk}.`, 'wo'); flag(s, 'important', id, 'WO perk'); });
-  prev.filter(id => !now.includes(id)).forEach(id => { addNews(s, `The World Order loses ${byId(id).name}’s ${TRAITS[id].perkName}. Its staff are reassigned to a working group.`, 'you'); flag(s, 'important', id, 'WO perk lost'); });
+  now.filter(id => !prev.includes(id)).forEach(id => { addNews(s, `The Council now uses ${byId(id).name}’s ${TRAITS[id].perkName} against you: ${TRAITS[id].woPerk}.`, 'wo'); flag(s, 'important', id, 'WO gift'); });
+  prev.filter(id => !now.includes(id)).forEach(id => { addNews(s, `The Council loses ${byId(id).name}’s ${TRAITS[id].perkName}. Its staff are reassigned to a working group.`, 'you'); flag(s, 'important', id, 'WO gift lost'); });
   s.wo.perks = now;
 }
 function treatyNews(s) {
   const steps = [
-    [10, 'Treaty working group forms a subcommittee to agree the name of the working group.'],
-    [25, 'Containment Treaty draft reaches 400 pages. Font size under negotiation.'],
-    [50, 'Treaty halfway done. Delegates agree on the coffee; the verbs are next.'],
-    [75, 'Treaty enters final reading. Pens are being ceremonially polished.'],
-    [90, 'Signing ceremony booked. Venue: extremely neutral.']
+    [10, 'The Tablet circle forms a smaller circle to agree the name of the circle.'],
+    [25, 'The Tablet now needs two people to lift. Letter size under discussion.'],
+    [50, 'The Tablet is half carved. The Elders agree on the snacks; the words are next.'],
+    [75, 'The Tablet enters its final carving. Chisels are being ceremonially sharpened.'],
+    [90, 'Notch-carving day set. Venue: a very neutral rock.']
   ];
   steps.forEach(([v, t]) => { if (s.treaty >= v && !s.flags['t' + v]) { s.flags['t' + v] = true; addNews(s, t, 'wo'); flag(s, 'important'); } });
 }
 function milestoneNews(s, share) {
   const steps = [
-    [0.05, 'Pollsters notice your movement. Pollsters also notice lunch.'],
-    [0.15, 'Your slogan is now a popular ringtone in several capitals.'],
-    [0.30, 'Think tanks publish 11 reports on your rise. They disagree on everything but the fonts.'],
-    [0.50, 'Half the world now agrees with you. The other half is typing.'],
-    [0.62, 'Your leader’s face appears on a stamp. Philatelists divided.']
+    [0.05, 'The shamans notice Ug. The shamans also notice lunch.'],
+    [0.15, 'Ug’s grunt is now a popular greeting in several caves.'],
+    [0.30, 'Eleven storytellers tell Ug’s story eleven ways. They agree only on the mammoth.'],
+    [0.50, 'Half the world likes Ug. The other half is still chewing.'],
+    [0.62, 'Ug’s face appears on a cave sore spot. Critics divided.']
   ];
   steps.forEach(([v, t]) => { if (share >= v && !s.flags['m' + v]) { s.flags['m' + v] = true; addNews(s, t, 'you'); flag(s, 'important'); } });
-  const nsteps = [[40, 'Notoriety high: foreign ministers now mention you by name.'], [70, 'Notoriety critical: you are the lead story on every channel.']];
+  const nsteps = [[40, 'Smoke high: chiefs now mention Ug by name.'], [70, 'Smoke critical: Ug is the story at every fire.']];
   nsteps.forEach(([v, t]) => { if (s.notoriety >= v && !s.flags['n' + v]) { s.flags['n' + v] = true; addNews(s, t, 'wo'); flag(s, 'important'); } });
 }
 
@@ -1256,15 +1258,15 @@ function canBuy(s, u) {
   if (s.owned.includes(u.id)) return { ok: false, why: 'Owned' };
   if (u.req && !s.owned.includes(u.req)) return { ok: false, why: 'Needs ' + UPGRADES.find(x => x.id === u.req).name };
   const opp = OPPOSITE[u.b], cf = closedFrom(s, u.b);
-  if (cf !== null && u.tier >= cf) return { ok: false, why: cf === 2 ? 'Minor branch: tiers 1\u20132 only' : 'Closed: you chose ' + BRANCHES.find(b => b.id === opp).name };
+  if (cf !== null && u.tier >= cf) return { ok: false, why: cf === 2 ? 'Minor path: tiers 1\u20132 only' : 'Closed: you chose ' + BRANCHES.find(b => b.id === opp).name };
   const lock = branchLock(s, u.b); if (lock) return { ok: false, why: lock };
   if (CAPSTONE_NEEDS[u.id] && !(s.cfg.v10 && s.cfg.capNeeds !== true) && !s.owned.includes(CAPSTONE_NEEDS[u.id])) return { ok: false, why: 'Needs ' + UPGRADES.find(x => x.id === CAPSTONE_NEEDS[u.id]).name };
-  if (s.clout < upCost(s, u)) return { ok: false, why: 'Not enough Clout' };
+  if (s.clout < upCost(s, u)) return { ok: false, why: 'Not enough Meat' };
   return { ok: true };
 }
 // v10.31 premium branches: a new game lists the extra branches whose unlock goal is not reached yet in cfg.locked (UI side).
 // Fixed for the whole game; older saves and the bots have no list, so everything stays open there.
-const PREMIUM_GOAL = { covert: 'Ghost', spin: 'Headliner', faith: 'Wayfarer', under: 'Puppetmaster' };
+const PREMIUM_GOAL = { covert: 'Quiet Feet', spin: 'Big Painter', faith: 'Long Walker', under: 'Cave Boss' };
 function premiumLocked(s, b) { return !!(s.cfg && Array.isArray(s.cfg.locked) && s.cfg.locked.includes(b)); }
 // v10.32: the old in-game gates (Grassroots at 4 countries, Covert Ops when the World Order convenes) are gone; the goal lock is the only one
 function branchLock(s, b) {
@@ -1284,9 +1286,9 @@ function recomputeStats(s) {
 function committed(s, b) { return s.cfg && s.cfg.softLock ? hasT2(s, b) : doctrineOf(s, b) === b; }
 function doctrines(s) { return Object.keys(OPPOSITE).filter(b => committed(s, b)); }
 function canRebrand(s, b) {
-  if (!committed(s, b)) return { ok: false, why: 'Not your doctrine' };
+  if (!committed(s, b)) return { ok: false, why: 'Not your Way' };
   if (s.rebranded) return { ok: false, why: 'You can only rebrand once' };
-  if (s.clout < REBRAND_COST) return { ok: false, why: 'Not enough Clout' };
+  if (s.clout < REBRAND_COST) return { ok: false, why: 'Not enough Meat' };
   return { ok: true };
 }
 function rebrand(s, b) {
@@ -1299,7 +1301,7 @@ function rebrand(s, b) {
   s.clout += refund - REBRAND_COST; s.rebranded = true;
   s.notoriety = Math.min(100, s.notoriety + REBRAND_NOTORIETY);
   const nb = BRANCHES.find(x => x.id === b).name, ob = BRANCHES.find(x => x.id === OPPOSITE[b]).name;
-  addNews(s, `Your movement announces it has always stood for ${ob}, never ${nb}. Archives are being updated.`, 'you');
+  addNews(s, `Your tribe announces it has always stood for ${ob}, never ${nb}. Archives are being updated.`, 'you');
   return { ok: true, refund };
 }
 function buyUpgrade(s, id) { const r = buyUpgrade0(s, id); armyGate(s); return r; }
@@ -1310,14 +1312,14 @@ function buyUpgrade0(s, id) {
   if (off && s.cfg.softLock) addNoto(s, v10t(s, 'offNoto'));
   if (u.once && u.once.treaty) s.treaty = Math.max(0, s.treaty + u.once.treaty);
   if (u.once && u.once.seed) { const zeros = COUNTRIES.filter(c => s.inf[c.id] <= 0); for (let i = 0; i < u.once.seed && zeros.length; i++) seed(s, zeros.splice(Math.floor(rng(s) * zeros.length), 1)[0].id, 2, null); }
-  if (u.special && s.cfg.v10 && TYPES.includes(u.b)) { const a = ACTIONS.find(x => x.dom === u.b && x.tier === 4); addNews(s, `${a.name} is ready: a tier-4 action. Find it under Actions.`, 'you'); }
+  if (u.special && s.cfg.v10 && TYPES.includes(u.b)) { const a = ACTIONS.find(x => x.dom === u.b && x.tier === 4); addNews(s, `${a.name} is ready: a tier-4 deed. Find it under Deeds.`, 'you'); }
   else if (u.special) { s.specials[u.special] = 'ready'; addNews(s, `${u.name} is ready. Use it when the moment is right: it works once.`, 'you'); }
   recomputeStats(s);
   const bn = b => BRANCHES.find(x => x.id === b).name;
-  BRANCHES.filter(b => b.id !== u.b && synergyOf(s, b.id).includes(id) && s.owned.some(x => upg(x).b === b.id)).forEach(b => addNews(s, `${u.name} strengthens your ${b.name} upgrades.`, 'you'));
+  BRANCHES.filter(b => b.id !== u.b && synergyOf(s, b.id).includes(id) && s.owned.some(x => upg(x).b === b.id)).forEach(b => addNews(s, `${u.name} strengthens your ${b.name} skills.`, 'you'));
   if (u.tier === 1 && OPPOSITE[u.b] && !off) {
     const o = bn(OPPOSITE[u.b]);
-    addNews(s, `You commit to ${bn(u.b)}. ` + (s.cfg.softLock ? `${o} upgrades past tier 1 now cost 50% more and draw attention.` : s.cfg.minor ? `${o} stays open as a minor branch, tiers 1\u20132 at 50% more.` : `${o} is off the table.`), 'you');
+    addNews(s, `You commit to ${bn(u.b)}. ` + (s.cfg.softLock ? `${o} skills past tier 1 now cost 50% more and draw attention.` : s.cfg.minor ? `${o} stays open as a minor path, tiers 1\u20132 at 50% more.` : `${o} is off the table.`), 'you');
   }
   PAIRS.filter(p => pairOn(s, p.id) && !pairsBefore.includes(p.id)).forEach(p => addNews(s, `${bn(p.a)} and ${bn(p.b)} combine: ${p.name}. ${p.text}.`, 'you'));
   return { ok: true };
@@ -1331,20 +1333,20 @@ function canOp(s, opId, target) {
   const op = OPS.find(o => o.id === opId);
   if (s.over) return { ok: false, why: 'Game over' };
   if ((s.ready[opId] || 0) > s.week) return { ok: false, why: `Ready in ${s.ready[opId] - s.week} wk` };
-  if (s.clout < opCost(s, op)) return { ok: false, why: 'Not enough Clout' };
+  if (s.clout < opCost(s, op)) return { ok: false, why: 'Not enough Meat' };
   if (opId === 'trade') {
     const src = strongest(s, target);
     if (s.inf[src.id] < 10) return { ok: false, why: 'Need 10%+ somewhere else first' };
     if (tradeLinks(s, target).includes(src.id)) return { ok: false, why: 'Already trades with ' + src.name };
   }
-  if (s.week < s.utopiaUntil) return { ok: false, why: `Utopia: no operations for ${s.utopiaUntil - s.week} wk` };
-  if (opId === 'snap' && committed(s, 'dip')) return { ok: false, why: 'Closed by your Diplomacy doctrine' };
-  if (opId === 'summit' && committed(s, 'mil') && TUNE.milNoSummit) return { ok: false, why: 'Closed by your Military doctrine' };
+  if (s.week < s.utopiaUntil) return { ok: false, why: `Golden Age: no deeds for ${s.utopiaUntil - s.week} wk` };
+  if (opId === 'snap' && committed(s, 'dip')) return { ok: false, why: 'Closed by your Feasting Way' };
+  if (opId === 'summit' && committed(s, 'mil') && TUNE.milNoSummit) return { ok: false, why: 'Closed by your Muscle Way' };
   if (opId === 'snap' && !pendingOn(s, target).length) {
-    if (!neighbours(target).some(n => s.inf[n] >= 25)) return { ok: false, why: 'Needs a neighbour at 25%+, or a World Order move planned here' };
+    if (!neighbours(target).some(n => s.inf[n] >= 25)) return { ok: false, why: 'Needs a neighbour at 25%+, or a Council move planned here' };
     if (s.inf[target] >= 90) return { ok: false, why: 'Already yours' };
   }
-  if (opId === 'summit' && s.mods.some(m => m.id === target && m.kind === 'summit' && m.until > s.week)) return { ok: false, why: 'Summit already running' };
+  if (opId === 'summit' && s.mods.some(m => m.id === target && m.kind === 'summit' && m.until > s.week)) return { ok: false, why: 'Feast already running' };
   return { ok: true };
 }
 function doOp(s, opId, target) {
@@ -1355,16 +1357,16 @@ function doOp(s, opId, target) {
   if (opId === 'summit') {
     s.mods.push({ id: target, kind: 'summit', until: s.week + 25 }); s.notoriety += 1;
     const derailed = pendingOn(s, target);
-    if (derailed.length) { s.wo.queue = s.wo.queue.filter(q => q.target !== target); addNews(s, `Your summit in ${c.name} runs long. The World Order\u2019s plans there are postponed indefinitely.`, 'you'); }
-    else addNews(s, `Summit in ${c.name} ends with a handshake that lasts 11 seconds.`, 'you');
+    if (derailed.length) { s.wo.queue = s.wo.queue.filter(q => q.target !== target); addNews(s, `Your summit in ${c.name} runs long. The Council\u2019s plans there are postponed indefinitely.`, 'you'); }
+    else addNews(s, `Feast in ${c.name} ends with a handshake that lasts 11 seconds.`, 'you');
   }
   if (opId === 'trade') { const src = strongest(s, target); s.trade.push([src.id, target]); s.notoriety += 1; addNews(s, `${src.name} and ${c.name} sign a trade deal nobody has read.`, 'you'); }
   if (opId === 'snap' || opId === 'dossier') s.ev.loudOp = s.week;
   if (opId === 'snap') {
-    if (pendingOn(s, target).length) { s.wo.queue = s.wo.queue.filter(q => q.target !== target); addNews(s, `Snap exercise in ${c.name}: the World Order delegation cannot get past the tanks. Its plans there are cancelled.`, 'you'); }
+    if (pendingOn(s, target).length) { s.wo.queue = s.wo.queue.filter(q => q.target !== target); addNews(s, `Snap exercise in ${c.name}: The Council delegation cannot get past the tanks. Its plans there are cancelled.`, 'you'); }
     const push = 10 * (1 + 0.5 * s.stats.snapBoost); if (s.inf[target] <= 0) seed(s, target, 1, null); s.inf[target] = Math.min(100, s.inf[target] + push); s.notoriety += 3; addNews(s, `Snap exercise on the ${c.name} border. Tanks described as “just visiting”.`, 'you'); }
   if (opId === 'dossier') { s.mods.push({ id: target, kind: 'dossier', until: s.week + 20 }); s.notoriety += 8;
-    if (s.wo.members[target] && target !== s.wo.hq) { delete s.wo.members[target]; delete s.wo.signed[target]; s.wo.queue = s.wo.queue.filter(q => q.target !== target); addNews(s, `${c.name} storms out of the World Order after the leaks.`, 'you'); } addNews(s, `Leaked dossiers embarrass ${c.name}’s cabinet. The PDFs were suspiciously well formatted.`, 'wo'); }
+    if (s.wo.members[target] && target !== s.wo.hq) { delete s.wo.members[target]; delete s.wo.signed[target]; s.wo.queue = s.wo.queue.filter(q => q.target !== target); addNews(s, `${c.name} storms out of the Council after the leaks.`, 'you'); } addNews(s, `Leaked dossiers embarrass ${c.name}’s cabinet. The PDFs were suspiciously well formatted.`, 'wo'); }
   s.notoriety = Math.min(100, s.notoriety);
   tagMods(s, m0, OPS.find(o => o.id === opId).name);
   return { ok: true };
@@ -1373,13 +1375,13 @@ function canSpecial(s, key, target) {
   if (s.over) return { ok: false, why: 'Game over' };
   if (s.specials[key] !== 'ready') return { ok: false, why: s.specials[key] === 'used' ? 'Already used' : 'Not owned' };
   const needsWo = ['bribe', 'breaker', 'believe', 'stoppage', 'hybrid'].includes(key);
-  if (needsWo && !s.coalition) return { ok: false, why: s.broken ? 'The World Order has broken up' : 'The World Order has not convened yet' };
+  if (needsWo && !s.coalition) return { ok: false, why: s.broken ? 'The Council has broken up' : 'The Council has not convened yet' };
   if (SPECIALS[key].target) {
-    if (!target) return { ok: false, why: 'Pick a country' };
-    if (!s.wo.members[target]) return { ok: false, why: 'Only works on a World Order member' };
-    if (target === s.wo.hq) return { ok: false, why: 'Not on the HQ' };
+    if (!target) return { ok: false, why: 'Pick a tribe' };
+    if (!s.wo.members[target]) return { ok: false, why: 'Only works on a Council member' };
+    if (target === s.wo.hq) return { ok: false, why: 'Not on the Council cave' };
   }
-  if (key === 'believe' && memberCount(s) < 2) return { ok: false, why: 'Needs another member to take over as HQ' };
+  if (key === 'believe' && memberCount(s) < 2) return { ok: false, why: 'Needs another member to take over as Council cave' };
   return { ok: true };
 }
 function useSpecial(s, key, target) {
@@ -1387,20 +1389,20 @@ function useSpecial(s, key, target) {
   const chk = canSpecial(s, key, target); if (!chk.ok) return chk;
   s.specials[key] = 'used'; const W = s.wo; const c = target ? byId(target) : null;
   const leave = id => { delete W.members[id]; delete W.signed[id]; W.queue = W.queue.filter(q => q.target !== id); };
-  if (key === 'utopia') { s.utopiaUntil = s.week + 26; addNews(s, 'Utopia declared. Everyone is happy, by law. Growth and income double for 26 weeks.', 'you'); }
-  if (key === 'stoppage') { s.frozenUntil = s.week + 10; addNews(s, `Stoppage Order: ${SG}\u2019s office is surrounded by very polite soldiers. The World Order is frozen for 10 weeks.`, 'you'); s.notoriety = Math.min(100, s.notoriety + 5); }
-  if (key === 'bribe') { leave(target); s.inf[target] = Math.min(100, s.inf[target] + 25); addNews(s, `${c.name}\u2019s cabinet discovers a generous consultancy contract and quits the World Order.`, 'you'); }
-  if (key === 'breaker') { leave(target); ['eco', 'mil', 'dip', 'ideo'].forEach(t => { s.base.pen[t] += .08; }); recomputeStats(s); addNews(s, `${c.name} walks out of the World Order, and the whole alliance system wobbles. Resistance falls everywhere.`, 'you'); }
+  if (key === 'utopia') { s.utopiaUntil = s.week + 26; addNews(s, 'Golden Age declared. Everyone is happy, by order of the drum. Growth and income double for 26 weeks.', 'you'); }
+  if (key === 'stoppage') { s.frozenUntil = s.week + 10; addNews(s, `Everybody Sit Down: ${sgName(s)}’s cave is surrounded by very polite big cousins. The Council is frozen for 10 weeks.`, 'you'); s.notoriety = Math.min(100, s.notoriety + 5); }
+  if (key === 'bribe') { leave(target); s.inf[target] = Math.min(100, s.inf[target] + 25); addNews(s, `${c.name}’s chief finds a very generous present and leaves the Council.`, 'you'); }
+  if (key === 'breaker') { leave(target); ['eco', 'mil', 'dip', 'ideo'].forEach(t => { s.base.pen[t] += .08; }); recomputeStats(s); addNews(s, `${c.name} walks out of the Council, and the whole huddle system wobbles. Resistance falls everywhere.`, 'you'); }
   if (key === 'believe') {
     const old = W.hq; leave(old);
     const next = Object.keys(W.members).sort((a, b) => s.inf[a] - s.inf[b])[0];
     W.hq = next; s.treaty = Math.max(0, s.treaty - 15);
     if (s.owned.includes('c3')) s.clout += 15;
-    addNews(s, `${byId(old).name} loses confidence in the treaty and leaves. The World Order moves its HQ to ${byId(next).name}, losing 15% of the draft in the removal van.`, 'you');
+    addNews(s, `${byId(old).name} loses confidence in the Tablet and leaves. The Council moves its Council cave to ${byId(next).name}, dropping 15% of the Tablet on the way.`, 'you');
   }
-  if (key === 'collapse') { COUNTRIES.forEach(c => resMod(s, c.id, .6, 20)); s.notoriety = Math.min(100, s.notoriety + 8); addNews(s, 'Engineered Collapse: every government wakes to rumours, shortages and unmarked vans. Resistance falls everywhere for 20 weeks.', 'you'); }
-  if (key === 'hybrid') { s.blocked = []; W.queue = []; s.noSanctionUntil = s.week + 40; if (s.owned.includes('f3')) s.treaty = Math.max(0, s.treaty - 10); addNews(s, 'Hybrid Threat: nobody at the World Order can agree who is threatening whom. Every plan is shelved and sanctions are lifted.', 'you'); s.notoriety = Math.min(100, s.notoriety + 6); }
-  tagMods(s, m0, key === 'collapse' ? 'Engineered Collapse' : key);
+  if (key === 'collapse') { COUNTRIES.forEach(c => resMod(s, c.id, .6, 20)); s.notoriety = Math.min(100, s.notoriety + 8); addNews(s, 'The Great Rumour: every tribe wakes to whispers, empty larders and strange footprints. Resistance falls everywhere for 20 weeks.', 'you'); }
+  if (key === 'hybrid') { s.blocked = []; W.queue = []; s.noSanctionUntil = s.week + 40; if (s.owned.includes('f3')) s.treaty = Math.max(0, s.treaty - 10); addNews(s, 'Total Confusion: nobody at the Council can agree who is nagging whom. Every plan is shelved and trade bans are lifted.', 'you'); s.notoriety = Math.min(100, s.notoriety + 6); }
+  tagMods(s, m0, key === 'collapse' ? 'The Great Rumour' : key);
   return { ok: true };
 }
 // ---- v5: random world events (background) and decision events ----
@@ -1415,7 +1417,7 @@ const membersNotHq = s => Object.keys(s.wo.members).filter(id => id !== s.wo.hq)
 // label every timed effect added since index `from` with its source (shown on the map and in the dossier)
 function tagMods(s, from, src) { for (let i = from; i < s.mods.length; i++) if (!s.mods[i].src) s.mods[i].src = src; }
 function resMod(s, id, mul, weeks, types, extra) { s.mods.push(Object.assign({ id, kind: 'res', mul, types: types || null, until: s.week + weeks }, extra || {})); }
-function notoTxt(s, n, pre) { return s.coalition ? `${pre || ' '}+${n} Notoriety.` : ''; }
+function notoTxt(s, n, pre) { return s.coalition ? `${pre || ' '}+${n} Smoke.` : ''; }
 function addNoto(s, n) { if (s.coalition) s.notoriety = Math.min(100, s.notoriety + n); }
 function timed(s, key, weeks, value) { s.ev.fx[key] = { until: s.week + weeks, value: value === undefined ? true : value }; }
 function fxOn(s, key) { const f = s.ev && s.ev.fx[key]; return f && f.until > s.week ? f.value : null; }
@@ -1424,112 +1426,112 @@ function neighboursOrTrade(s, id) { return [...new Set([...neighbours(id), ...tr
 
 const EVENTS = [
   // ---- good for you ----
-  { id: 'viral', good: true, name: 'Viral Moment', ok: s => s.inf[strongestId(s)] >= 20,
-    fire: s => { const src = strongestId(s); neighboursOrTrade(s, src).forEach(n => { if (s.inf[n] <= 0) seed(s, n, 1, src); s.inf[n] = Math.min(100, s.inf[n] + 4); }); return `Your slogan becomes a dance craze in ${nm(src)}. Nobody knows the steps; its neighbours all know the words.`; } },
-  { id: 'boom', good: true, name: 'Economic Boom', ok: s => true,
-    fire: s => { const id = pick(s, COUNTRIES).id; resMod(s, id, .75, 20, ['eco']); return `Markets soar in ${nm(id)}. Analysts credit “vibes”. Economic resistance there falls for 20 weeks.`; } },
-  { id: 'aid', good: true, name: 'Foreign Aid', ok: s => true,
-    fire: s => { s.clout += 10; return 'An anonymous donor sends you 10 Clout and a very long letter.'; } },
-  { id: 'gridlock', good: true, name: 'Government Gridlock', ok: s => nonMembers(s).length > 0,
-    fire: s => { const id = pick(s, nonMembers(s)); resMod(s, id, .8, 20); return `${nm(id)}’s parliament fails to agree on lunch, then on everything else. Its resistance drops for 20 weeks.`; } },
-  { id: 'celebrity', good: true, name: 'Celebrity Endorsement', ok: s => yours(s, 5).length > 0,
-    fire: s => { const id = pick(s, yours(s, 5)); s.inf[id] = Math.min(100, s.inf[id] + 8); addNoto(s, 2); s.ev.endorsed = id; return `A pop star in ${nm(id)} wears your badge at an awards show. Support there jumps.`; } },
-  { id: 'typo', good: true, name: 'Treaty Typo', ok: s => s.coalition && s.treaty >= 10,
-    fire: s => { s.treaty = Math.max(0, s.treaty - 8); return 'Translators render “containment” as “container”. Page 212 now regulates shipping. The treaty draft slips back.'; } },
-  { id: 'audit', good: true, name: 'Audit Season', ok: s => s.coalition,
-    fire: s => { timed(s, 'woPause', 6); return 'World Order HQ closes for its annual audit of audits. No new moves for 6 weeks.'; } },
-  { id: 'tourism', good: true, name: 'Tourism Boom', ok: s => yours(s, 20).length >= 2,
-    fire: s => { const ys = yours(s, 20); const a = pick(s, ys); const others = ys.filter(x => x !== a && !tradeLinks(s, a).includes(x)); if (!others.length) { s.clout += 5; return `Tourists flock to ${nm(a)}. The souvenir shops pay you 5 Clout.`; } const b = pick(s, others); s.trade.push([a, b]); s.ev.temp.push({ a, b, until: s.week + 30 }); return `Cheap flights link ${nm(a)} and ${nm(b)} for 30 weeks. So do your pamphlets.`; } },
-  { id: 'upset', good: true, name: 'Snap Election Upset', ok: s => COUNTRIES.some(c => s.inf[c.id] >= 40 && s.inf[c.id] < 60),
-    fire: s => { const id = pick(s, COUNTRIES.filter(c => s.inf[c.id] >= 40 && s.inf[c.id] < 60)).id; s.inf[id] = Math.min(100, s.inf[id] + 15); return `Your candidate wins in ${nm(id)} after the rivals forget the date. Support +15.`; } },
-  { id: 'whistle', good: true, name: 'Whistleblower', ok: s => s.coalition && membersNotHq(s).length > 0,
-    fire: s => { const id = pick(s, membersNotHq(s)); delete s.wo.members[id]; delete s.wo.signed[id]; s.wo.queue = s.wo.queue.filter(q => q.target !== id); return `Leaked minutes show the World Order spent more on lanyards than on ${nm(id)}. ${nm(id)} quits.`; } },
-  { id: 'tech', good: true, name: 'Tech Breakthrough', ok: s => true,
-    fire: s => { timed(s, 'incomeMul', 20, 1.5); return 'Your supporters invent an app. It mostly sends reminders about you. Clout income +50% for 20 weeks.'; } },
-  { id: 'sabbatical', good: true, name: 'Sec-Gen on Sabbatical', ok: s => s.coalition,
-    fire: s => { timed(s, 'woSlow', 15); return `${SG} takes a sabbatical to write his memoirs, in committee. The World Order moves at half speed for 15 weeks.`; } },
+  { id: 'viral', good: true, name: 'Catchy Grunt', ok: s => s.inf[strongestId(s)] >= 20,
+    fire: s => { const src = strongestId(s); neighboursOrTrade(s, src).forEach(n => { if (s.inf[n] <= 0) seed(s, n, 1, src); s.inf[n] = Math.min(100, s.inf[n] + 4); }); return `Ug’s grunt becomes a dance in ${nm(src)}. Nobody knows the steps; its neighbours all know the grunt.`; } },
+  { id: 'boom', good: true, name: 'Mammoth Season', ok: s => true,
+    fire: s => { const id = pick(s, COUNTRIES).id; resMod(s, id, .75, 20, ['eco']); return `Mammoths everywhere in ${nm(id)}. Shamans credit “vibes”. Barter resistance there falls for 20 weeks.`; } },
+  { id: 'aid', good: true, name: 'Mystery Gift', ok: s => true,
+    fire: s => { s.clout += 10; return 'A stranger leaves 10 Meat and a very long cave drawing.'; } },
+  { id: 'gridlock', good: true, name: 'Council Can\'t Agree', ok: s => nonMembers(s).length > 0,
+    fire: s => { const id = pick(s, nonMembers(s)); resMod(s, id, .8, 20); return `${nm(id)}’s elders fail to agree on lunch, then on everything else. Its resistance drops for 20 weeks.`; } },
+  { id: 'celebrity', good: true, name: 'Famous Hunter Approves', ok: s => yours(s, 5).length > 0,
+    fire: s => { const id = pick(s, yours(s, 5)); s.inf[id] = Math.min(100, s.inf[id] + 8); addNoto(s, 2); s.ev.endorsed = id; return `The best hunter in ${nm(id)} wears Ug’s necklace to the big feast. Trust there jumps.`; } },
+  { id: 'typo', good: true, name: 'Chisel Slip', ok: s => s.coalition && s.treaty >= 10,
+    fire: s => { s.treaty = Math.max(0, s.treaty - 8); return 'The carver chisels “ban Ug” as “bun Ug”. The Tablet now regulates bread. It slips back.'; } },
+  { id: 'audit', good: true, name: 'Counting the Pebbles', ok: s => s.coalition,
+    fire: s => { timed(s, 'woPause', 6); return 'The Council closes to count its pebbles, then to count the counting. No new moves for 6 weeks.'; } },
+  { id: 'tourism', good: true, name: 'Visitors!', ok: s => yours(s, 20).length >= 2,
+    fire: s => { const ys = yours(s, 20); const a = pick(s, ys); const others = ys.filter(x => x !== a && !tradeLinks(s, a).includes(x)); if (!others.length) { s.clout += 5; return `Visitors flock to ${nm(a)}. The trinket sellers pay you 5 Meat.`; } const b = pick(s, others); s.trade.push([a, b]); s.ev.temp.push({ a, b, until: s.week + 30 }); return `Cheap flights link ${nm(a)} and ${nm(b)} for 30 weeks. So do your pamphlets.`; } },
+  { id: 'upset', good: true, name: 'Chief Vote Surprise', ok: s => COUNTRIES.some(c => s.inf[c.id] >= 40 && s.inf[c.id] < 60),
+    fire: s => { const id = pick(s, COUNTRIES.filter(c => s.inf[c.id] >= 40 && s.inf[c.id] < 60)).id; s.inf[id] = Math.min(100, s.inf[id] + 15); return `Ug’s friend becomes chief in ${nm(id)} after the rivals forget the day. Trust +15.`; } },
+  { id: 'whistle', good: true, name: 'Loose Lips', ok: s => s.coalition && membersNotHq(s).length > 0,
+    fire: s => { const id = pick(s, membersNotHq(s)); delete s.wo.members[id]; delete s.wo.signed[id]; s.wo.queue = s.wo.queue.filter(q => q.target !== id); return `Loose lips reveal the Council spent more on feathers than on ${nm(id)}. ${nm(id)} quits.`; } },
+  { id: 'tech', good: true, name: 'Big Idea', ok: s => true,
+    fire: s => { timed(s, 'incomeMul', 20, 1.5); return 'Ug’s fans invent a thing. It mostly reminds people of Ug. Meat income +50% for 20 weeks.'; } },
+  { id: 'sabbatical', good: true, name: 'The Chief Elder Goes Fishing', ok: s => s.coalition,
+    fire: s => { timed(s, 'woSlow', 15); return `${sgName(s)} goes fishing to carve their memoirs, in committee. The Council moves at half speed for 15 weeks.`; } },
 
   // ---- bad for you ----
-  { id: 'strike', good: false, name: 'General Strike', ok: s => yours(s, 10).length > 0,
-    fire: s => { const id = pick(s, yours(s, 10)); s.inf[id] *= .75; return `Strikes in ${nm(id)}. Everyone blames everyone, including you. Support there falls by a quarter.`; } },
-  { id: 'disaster', good: false, name: 'Natural Disaster', ok: s => true,
-    fire: s => { const id = pick(s, COUNTRIES.filter(c => c.pop >= 1)).id; resMod(s, id, 1.2, 20, null, { inward: true }); return `Floods in ${nm(id)}. Politics postponed: it resists and stops passing ideas on for 20 weeks.`; } },
-  { id: 'crisis', good: false, name: 'Diplomatic Crisis', ok: s => yours(s, 10).length > 0,
-    fire: s => { const id = pick(s, yours(s, 10)); resMod(s, id, 1.2, 20); return `${nm(id)} recalls its ambassadors over a seating plan. Resistance there rises for 20 weeks.`; } },
-  { id: 'alliance', good: false, name: 'Defensive Alliance', ok: s => s.coalition && COUNTRIES.some(c => allyFree(s, c.id) && (s.wary && s.wary[c.id] || 0) >= 25 && COUNTRIES.some(o => o.id !== c.id && allyFree(s, o.id) && isNear(s, c.id, o.id) && (s.wary[o.id] || 0) >= 15)),
+  { id: 'strike', good: false, name: 'Everyone Sits Down', ok: s => yours(s, 10).length > 0,
+    fire: s => { const id = pick(s, yours(s, 10)); s.inf[id] *= .75; return `Nobody in ${nm(id)} will hunt. Everyone blames everyone, including Ug. Trust there falls by a quarter.`; } },
+  { id: 'disaster', good: false, name: 'Flood', ok: s => true,
+    fire: s => { const id = pick(s, COUNTRIES.filter(c => c.pop >= 1)).id; resMod(s, id, 1.2, 20, null, { inward: true }); return `Floods in ${nm(id)}. Everything postponed: it resists and stops passing stories on for 20 weeks.`; } },
+  { id: 'crisis', good: false, name: 'Seating Row', ok: s => yours(s, 10).length > 0,
+    fire: s => { const id = pick(s, yours(s, 10)); resMod(s, id, 1.2, 20); return `${nm(id)} storms out of a feast over who sits nearest the fire. Resistance there rises for 20 weeks.`; } },
+  { id: 'alliance', good: false, name: 'Huddle Forms', ok: s => s.coalition && COUNTRIES.some(c => allyFree(s, c.id) && (s.wary && s.wary[c.id] || 0) >= 25 && COUNTRIES.some(o => o.id !== c.id && allyFree(s, o.id) && isNear(s, c.id, o.id) && (s.wary[o.id] || 0) >= 15)),
     fire: s => { const f = COUNTRIES.filter(c => allyFree(s, c.id) && (s.wary[c.id] || 0) >= 25).sort((a, b) => s.wary[b.id] - s.wary[a.id])[0].id;
       COUNTRIES.forEach(o => { if (o.id !== f && allyFree(s, o.id) && isNear(s, f, o.id)) s.wary[o.id] = Math.max(s.wary[o.id] || 0, ALLY.thr[stanceOf(o.id)] * ALLY.partner); });
-      const al = formAlliance(s, f); return al ? `${nm(f)} rallies its neighbours into a mutual-concern pact. Concern is mutual.` : `${nm(f)} calls its neighbours about you. Nobody picks up.`; } },
-  { id: 'emergency', good: false, name: 'State of Emergency', ok: s => yours(s, 20).length > 0,
-    fire: s => { const id = pick(s, yours(s, 20)); s.inf[id] *= .5; resMod(s, id, 1.25, 30, ['mil']); return `${nm(id)} declares a state of emergency. Your posters are declared “non-essential”. Support there halves.`; } },
-  { id: 'posts', good: false, name: 'Old Posts Resurface', ok: s => s.coalition,
-    fire: s => { addNoto(s, 8); return 'Your spokesperson’s 2009 posts resurface. Several involve fonts. Notoriety +8.'; } },
-  { id: 'factcheck', good: false, name: 'Fact-Check Goes Viral', ok: s => yours(s, 10).length > 0,
-    fire: s => { const id = biggest(s); s.inf[id] = Math.max(0, s.inf[id] - 8); return `A fact-check about you gets more views in ${nm(id)} than you do. Support there −8.`; } },
-  { id: 'crash', good: false, name: 'Market Crash', ok: s => true,
-    fire: s => { timed(s, 'incomeMul', 15, .5); timed(s, 'tradeMul', 15, .5); return 'Markets fall. Analysts blame “vibes”. Clout income and trade spread halve for 15 weeks.'; } },
-  { id: 'customs', good: false, name: 'Customs Strike', ok: s => yours(s, 10).some(id => routesOf(s, id).length),
-    fire: s => { const id = pick(s, yours(s, 10).filter(id => routesOf(s, id).length)); routesOf(s, id).filter(([a, b]) => !immuneRoute(s, a, b)).forEach(([a, b]) => s.blocked.push({ a, b, until: s.week + 20 })); return `Customs officers in ${nm(id)} strike over the colour of their stamps. Its trade routes close for 20 weeks.`; } },
-  { id: 'fasttrack', good: false, name: 'Treaty Fast-Track', ok: s => s.coalition,
-    fire: s => { s.treaty = Math.min(100, s.treaty + 8); return `${SG} discovers the “reply all” button. The treaty draft jumps 8 points.`; } },
-  { id: 'splinter', good: false, name: 'Splinter Faction', ok: s => yours(s, 60).length > 0,
-    fire: s => { const id = pick(s, yours(s, 60)); s.inf[id] = Math.max(0, s.inf[id] - 15); return `Your supporters in ${nm(id)} split into the People’s Front and the Front of the People. Support −15.`; } },
-  { id: 'backlash', good: false, name: 'Influencer Backlash', ok: s => yours(s, 10).length > 0,
-    fire: s => { const id = s.ev.endorsed && s.inf[s.ev.endorsed] > 0 ? s.ev.endorsed : pick(s, yours(s, 10)); s.ev.endorsed = null; s.inf[id] = Math.max(0, s.inf[id] - 10); return `The celebrity in ${nm(id)} who wore your badge now says it was “ironic”. Support −10.`; } }
+      const al = formAlliance(s, f); return al ? `${nm(f)} gathers its neighbours to worry about Ug, together. The worry is mutual.` : `${nm(f)} sends smoke to its neighbours about you. Nobody looks up.`; } },
+  { id: 'emergency', good: false, name: 'Everybody Inside', ok: s => yours(s, 20).length > 0,
+    fire: s => { const id = pick(s, yours(s, 20)); s.inf[id] *= .5; resMod(s, id, 1.25, 30, ['mil']); return `${nm(id)} rolls the boulder shut. Ug’s paintings are declared “non-essential”. Trust there halves.`; } },
+  { id: 'posts', good: false, name: 'Old Paintings Found', ok: s => s.coalition,
+    fire: s => { addNoto(s, 8); return 'Someone finds Ug’s teenage cave drawings. Several involve stick horses. Smoke +8.'; } },
+  { id: 'factcheck', good: false, name: 'The Shaman Says No', ok: s => yours(s, 10).length > 0,
+    fire: s => { const id = biggest(s); s.inf[id] = Math.max(0, s.inf[id] - 8); return `The shaman in ${nm(id)} checks Ug’s story. It was a small mammoth. Trust there −8.`; } },
+  { id: 'crash', good: false, name: 'Meat Goes Off', ok: s => true,
+    fire: s => { timed(s, 'incomeMul', 15, .5); timed(s, 'tradeMul', 15, .5); return 'Too much meat, not enough snow. Meat income and barter spread halve for 15 weeks.'; } },
+  { id: 'customs', good: false, name: 'Trail Keepers Strike', ok: s => yours(s, 10).some(id => routesOf(s, id).length),
+    fire: s => { const id = pick(s, yours(s, 10).filter(id => routesOf(s, id).length)); routesOf(s, id).filter(([a, b]) => !immuneRoute(s, a, b)).forEach(([a, b]) => s.blocked.push({ a, b, until: s.week + 20 })); return `The trail keepers of ${nm(id)} strike over the colour of their stamps. Its trails close for 20 weeks.`; } },
+  { id: 'fasttrack', good: false, name: 'A Bigger Chisel', ok: s => s.coalition,
+    fire: s => { s.treaty = Math.min(100, s.treaty + 8); return `${sgName(s)} finds a bigger chisel. The Tablet jumps 8 points.`; } },
+  { id: 'splinter', good: false, name: 'Fan Split', ok: s => yours(s, 60).length > 0,
+    fire: s => { const id = pick(s, yours(s, 60)); s.inf[id] = Math.max(0, s.inf[id] - 15); return `Ug’s fans in ${nm(id)} split into the Ug People and the People of Ug. Trust −15.`; } },
+  { id: 'backlash', good: false, name: 'Hunter Changes Mind', ok: s => yours(s, 10).length > 0,
+    fire: s => { const id = s.ev.endorsed && s.inf[s.ev.endorsed] > 0 ? s.ev.endorsed : pick(s, yours(s, 10)); s.ev.endorsed = null; s.inf[id] = Math.max(0, s.inf[id] - 10); return `The hunter in ${nm(id)} who wore Ug’s necklace now says it was “ironic”. Trust −10.`; } }
 ];
 
 // Decision events: the game pauses; the player picks option A or B.
 const DECISIONS = [
-  { id: 'peace', name: 'Peace Talks', ok: s => s.coalition && s.treaty >= 40,
-    setup: s => ({ text: `${SG} proposes peace talks. Sitting down would slow the treaty, but also you.`,
-      a: ['Accept the talks', 'Treaty draft −8. Your growth −25% for 25 weeks.'], b: ['Stall for advantage', '+8 Clout, +6 Notoriety.'] }),
-    a: s => { s.treaty = Math.max(0, s.treaty - 8); timed(s, 'growthMul', 25, .75); return 'Peace talks begin. Everyone agrees to meet again to agree on the next meeting.'; },
-    b: s => { s.clout += 8; addNoto(s, 6); return 'You stall the talks with a 90-minute opening statement.'; } },
-  { id: 'summit', name: 'Global Summit', ok: s => s.coalition && s.ev.loudOp && s.week - s.ev.loudOp <= 10,
-    setup: s => ({ text: 'Your recent operation has triggered an emergency global summit about you.',
-      a: ['Disrupt the summit', 'Pay 10 Clout. The summit collapses.'], b: ['Ignore it', 'The World Order sanctions 2 of your trade routes for 30 weeks.'], cost: 10 }),
-    a: s => { s.clout -= 10; return 'The summit’s interpreters all call in sick. The summit collapses.'; },
-    b: s => { const routes = s.trade.filter(([a, b]) => Math.max(s.inf[a], s.inf[b]) >= 10 && !isBlocked(s, a, b) && !immuneRoute(s, a, b)).slice(0, 2); routes.forEach(([a, b]) => s.blocked.push({ a, b, until: s.week + 30 })); return `The summit ends in sanctions: ${routes.map(([a, b]) => nm(a) + '–' + nm(b)).join(' and ') || 'nothing left to sanction'}.`; } },
-  { id: 'scandal', name: 'Corruption Scandal', ok: s => s.coalition && membersNotHq(s).length > 0,
-    setup: s => { const id = pick(s, membersNotHq(s)); return { target: id, text: `A senior official of World Order member ${nm(id)} is caught expensing a yacht as “stationery”.`,
-      a: ['Amplify the scandal', `Pay 12 Clout. ${nm(id)} quits the World Order. +4 Notoriety.`], b: ['Stay quiet', '+3 Clout.'], cost: 12 }; },
-    a: (s, d) => { s.clout -= 12; delete s.wo.members[d.target]; delete s.wo.signed[d.target]; s.wo.queue = s.wo.queue.filter(q => q.target !== d.target); addNoto(s, 4); return `The yacht story trends for a week. ${nm(d.target)} leaves the World Order.`; },
-    b: s => { s.clout += 3; return 'You keep the file for a rainy day.'; } },
-  { id: 'election', name: 'Snap Election', ok: s => COUNTRIES.some(c => s.inf[c.id] >= 30 && s.inf[c.id] <= 60),
-    setup: s => { const id = pick(s, COUNTRIES.filter(c => s.inf[c.id] >= 30 && s.inf[c.id] <= 60)).id; return { target: id, text: `${nm(id)} calls a snap election. One candidate quietly shares your views.`,
-      a: ['Back the candidate', `Pay 10 Clout. 55% chance: +12 support. 45% chance: −6 support${s.coalition ? ' and +6 Notoriety' : ''}.`], b: ['Stay out', 'Nothing happens.'], cost: 10 }; },
-    a: (s, d) => { s.clout -= 10; if (rng(s) < .55) { s.inf[d.target] = Math.min(100, s.inf[d.target] + 12); return `Your candidate wins in ${nm(d.target)}. Support +12.`; } s.inf[d.target] = Math.max(0, s.inf[d.target] - 6); addNoto(s, 6); return `Your candidate loses in ${nm(d.target)}, loudly. Support −6.${notoTxt(s, 6)}`; },
-    b: (s, d) => `You watch the ${nm(d.target)} election from a safe distance.` },
-  { id: 'viralcamp', name: 'Viral Campaign', ok: s => s.inf[strongestId(s)] >= 80,
-    setup: s => { const id = strongestId(s); return { target: id, text: `Your campaign in ${nm(id)} is going viral. You can ride the wave or keep it quiet.`,
-      a: ['Ride the wave', `+3 support in every neighbour and trade partner of ${nm(id)}.${notoTxt(s, 5)}`], b: ['Keep it quiet', '+6 Clout.'] }; },
-    a: (s, d) => { neighboursOrTrade(s, d.target).forEach(n => { if (s.inf[n] <= 0) seed(s, n, 1, d.target); s.inf[n] = Math.min(100, s.inf[n] + 3); }); addNoto(s, 5); return 'The wave crosses borders. So does the attention.'; },
-    b: s => { s.clout += 6; return 'You sell the merchandise instead. +6 Clout.'; } },
-  { id: 'defpact', name: 'Defensive Alliance', ok: s => s.coalition && BORDERS.some(([a, b]) => !s.wo.members[a] && !s.wo.members[b] && s.inf[a] < 30 && s.inf[b] < 30 && byId(a).pop >= 1 && byId(b).pop >= 1),
-    setup: s => { const [a, b] = pick(s, BORDERS.filter(([a, b]) => !s.wo.members[a] && !s.wo.members[b] && s.inf[a] < 30 && s.inf[b] < 30 && byId(a).pop >= 1 && byId(b).pop >= 1)); return { pair: [a, b], text: `${nm(a)} and ${nm(b)} are negotiating a defensive pact with the World Order.`,
-      a: ['Counter-offer', 'Pay 12 Clout. They stay out.'], b: ['Let it happen', `${nm(a)} and ${nm(b)} both join the World Order.`], cost: 12 }; },
-    a: (s, d) => { s.clout -= 12; return `Your counter-offer includes better snacks. ${d.pair.map(nm).join(' and ')} stay out.`; },
-    b: (s, d) => { d.pair.forEach(id => { s.wo.members[id] = true; }); return `${d.pair.map(nm).join(' and ')} join the World Order.`; } },
-  { id: 'ultimatum', name: 'Sanctions Ultimatum', ok: s => s.coalition && memberCount(s) >= 4 && yours(s, 15).length > 0,
-    setup: s => { const id = biggest(s); return { target: id, text: `The World Order demands you scale back in ${nm(id)}, or face sanctions.`,
-      a: ['Concede', `−10 support in ${nm(id)}.`], b: ['Defy', 'Half of your trade routes close for 20 weeks.'] }; },
-    a: (s, d) => { s.inf[d.target] = Math.max(0, s.inf[d.target] - 10); return `You scale back in ${nm(d.target)}. ${SG} calls it “a constructive retreat”.`; },
-    b: s => { const mine = s.trade.filter(([a, b]) => Math.max(s.inf[a], s.inf[b]) >= 10 && !isBlocked(s, a, b) && !immuneRoute(s, a, b)); mine.slice(0, Math.ceil(mine.length / 2)).forEach(([a, b]) => s.blocked.push({ a, b, until: s.week + 20 })); return 'You defy the ultimatum. Sanctions close half your trade routes for 20 weeks.'; } },
-  { id: 'defector', name: 'World Order Defector', ok: s => s.coalition && s.treaty >= 12,
-    setup: s => ({ text: 'A junior World Order clerk offers you the treaty’s working drafts, for a price.',
-      a: ['Pay for the secrets', 'Pay 14 Clout. Treaty draft −8.'], b: ['Hand him back', '−5 Notoriety. You look very responsible.'], cost: 14 }),
-    a: s => { s.clout -= 14; s.treaty = Math.max(0, s.treaty - 8); return 'The drafts mysteriously go missing. So does the clerk’s stapler.'; },
-    b: s => { s.notoriety = Math.max(0, s.notoriety - 5); return 'You return the clerk with a thank-you card. Notoriety −5.'; } },
-  { id: 'talkshow', name: 'Talk Show Invitation', ok: s => s.coalition && yours(s, 1).length >= 3,
-    setup: s => ({ text: 'A late-night talk show invites your leader. The host has a reputation.',
-      a: ['Go on air', '+3 support in 3 countries where you are active. +4 Notoriety.'], b: ['Decline', '−2 Notoriety.'] }),
-    a: s => { const ids = yours(s, 1).sort(() => rng(s) - .5).slice(0, 3); ids.forEach(id => { s.inf[id] = Math.min(100, s.inf[id] + 3); }); addNoto(s, 4); return `Your leader’s joke about committees lands in ${ids.map(nm).join(', ')}.`; },
-    b: s => { s.notoriety = Math.max(0, s.notoriety - 2); return 'You decline. Mystery suits you.'; } },
-  { id: 'consultant', name: 'Rebrand Consultant', ok: s => s.notoriety > 50,
-    setup: s => ({ text: 'A consultant offers to make your movement look harmless. She has slides.',
-      a: ['Hire her', 'Pay 15 Clout. −10 Notoriety.'], b: ['Decline', 'Nothing happens.'], cost: 15 }),
-    a: s => { s.clout -= 15; s.notoriety = Math.max(0, s.notoriety - 10); return 'New logo, same ideas. Notoriety −10.'; },
-    b: s => 'You keep your old logo. It has character.' }
+  { id: 'peace', name: 'Peace Pipe', ok: s => s.coalition && s.treaty >= 40,
+    setup: s => ({ text: `${sgName(s)} offers to sit by the fire and talk. It would slow the Tablet, but also you.`,
+      a: ['Sit down', 'Tablet draft −8. Your growth −25% for 25 weeks.'], b: ['Stall', '+8 Meat, +6 Smoke.'] }),
+    a: s => { s.treaty = Math.max(0, s.treaty - 8); timed(s, 'growthMul', 25, .75); return 'Everyone sits by the fire. Everyone agrees to meet again to agree on the next fire.'; },
+    b: s => { s.clout += 8; addNoto(s, 6); return 'Ug stalls the talks with a very long story about a mammoth.'; } },
+  { id: 'summit', name: 'Emergency Gathering', ok: s => s.coalition && s.ev.loudOp && s.week - s.ev.loudOp <= 10,
+    setup: s => ({ text: 'Ug’s last loud deed has every tribe gathering to talk about Ug.',
+      a: ['Spoil the gathering', 'Pay 10 Meat. The gathering falls apart.'], b: ['Ignore it', 'The Council bans 2 of your trails for 30 weeks.'], cost: 10 }),
+    a: s => { s.clout -= 10; return 'Somebody lets the goats in. The gathering falls apart.'; },
+    b: s => { const routes = s.trade.filter(([a, b]) => Math.max(s.inf[a], s.inf[b]) >= 10 && !isBlocked(s, a, b) && !immuneRoute(s, a, b)).slice(0, 2); routes.forEach(([a, b]) => s.blocked.push({ a, b, until: s.week + 30 })); return `The gathering ends in trade bans: ${routes.map(([a, b]) => nm(a) + '–' + nm(b)).join(' and ') || 'nothing left to trade ban'}.`; } },
+  { id: 'scandal', name: 'Elder Caught', ok: s => s.coalition && membersNotHq(s).length > 0,
+    setup: s => { const id = pick(s, membersNotHq(s)); return { target: id, text: `A senior official of Council member ${nm(id)} is caught swapping Tablet stone for ribs.`,
+      a: ['Tell everyone', `Pay 12 Meat. ${nm(id)} quits the Council. +4 Smoke.`], b: ['Keep quiet', '+3 Meat.'], cost: 12 }; },
+    a: (s, d) => { s.clout -= 12; delete s.wo.members[d.target]; delete s.wo.signed[d.target]; s.wo.queue = s.wo.queue.filter(q => q.target !== d.target); addNoto(s, 4); return `The rib story goes round every fire for a week. ${nm(d.target)} leaves the Council.`; },
+    b: s => { s.clout += 3; return 'Ug keeps the story for a rainy day.'; } },
+  { id: 'election', name: 'Chief Vote', ok: s => COUNTRIES.some(c => s.inf[c.id] >= 30 && s.inf[c.id] <= 60),
+    setup: s => { const id = pick(s, COUNTRIES.filter(c => s.inf[c.id] >= 30 && s.inf[c.id] <= 60)).id; return { target: id, text: `${nm(id)} picks a new chief. One candidate quite likes Ug.`,
+      a: ['Back them', `Pay 10 Meat. 55% chance: +12 trust. 45% chance: −6 trust${s.coalition ? ' and +6 Smoke' : ''}.`], b: ['Stay out', 'Nothing happens.'], cost: 10 }; },
+    a: (s, d) => { s.clout -= 10; if (rng(s) < .55) { s.inf[d.target] = Math.min(100, s.inf[d.target] + 12); return `Ug’s candidate becomes chief in ${nm(d.target)}. Trust +12.`; } s.inf[d.target] = Math.max(0, s.inf[d.target] - 6); addNoto(s, 6); return `Ug’s candidate loses in ${nm(d.target)}, loudly. Trust −6.${notoTxt(s, 6)}`; },
+    b: (s, d) => `Ug watches the ${nm(d.target)} chief vote from a safe rock.` },
+  { id: 'viralcamp', name: 'Story on Fire', ok: s => s.inf[strongestId(s)] >= 80,
+    setup: s => { const id = strongestId(s); return { target: id, text: `Ug’s story in ${nm(id)} is spreading by itself. Ride it or keep it quiet.`,
+      a: ['Ride it', `+3 trust in every neighbour and trade partner of ${nm(id)}.${notoTxt(s, 5)}`], b: ['Keep it quiet', '+6 Meat.'] }; },
+    a: (s, d) => { neighboursOrTrade(s, d.target).forEach(n => { if (s.inf[n] <= 0) seed(s, n, 1, d.target); s.inf[n] = Math.min(100, s.inf[n] + 3); }); addNoto(s, 5); return 'The story crosses the hills. So does the attention.'; },
+    b: s => { s.clout += 6; return 'Ug sells the necklaces instead. +6 Meat.'; } },
+  { id: 'defpact', name: 'Council Huddle', ok: s => s.coalition && BORDERS.some(([a, b]) => !s.wo.members[a] && !s.wo.members[b] && s.inf[a] < 30 && s.inf[b] < 30 && byId(a).pop >= 1 && byId(b).pop >= 1),
+    setup: s => { const [a, b] = pick(s, BORDERS.filter(([a, b]) => !s.wo.members[a] && !s.wo.members[b] && s.inf[a] < 30 && s.inf[b] < 30 && byId(a).pop >= 1 && byId(b).pop >= 1)); return { pair: [a, b], text: `${nm(a)} and ${nm(b)} plan to join the Council together.`,
+      a: ['Counter-offer', 'Pay 12 Meat. They stay out.'], b: ['Let it happen', `${nm(a)} and ${nm(b)} both join the Council.`], cost: 12 }; },
+    a: (s, d) => { s.clout -= 12; return `Ug’s counter-offer includes better snacks. ${d.pair.map(nm).join(' and ')} stay out.`; },
+    b: (s, d) => { d.pair.forEach(id => { s.wo.members[id] = true; }); return `${d.pair.map(nm).join(' and ')} join the Council.`; } },
+  { id: 'ultimatum', name: 'Back Off, Ug', ok: s => s.coalition && memberCount(s) >= 4 && yours(s, 15).length > 0,
+    setup: s => { const id = biggest(s); return { target: id, text: `The Council tells Ug to back off in ${nm(id)}, or face trade bans.`,
+      a: ['Back off', `−10 trust in ${nm(id)}.`], b: ['Refuse', 'Half of your barter trails close for 20 weeks.'] }; },
+    a: (s, d) => { s.inf[d.target] = Math.max(0, s.inf[d.target] - 10); return `Ug backs off in ${nm(d.target)}. ${sgName(s)} calls it “a very wise step backwards”.`; },
+    b: s => { const mine = s.trade.filter(([a, b]) => Math.max(s.inf[a], s.inf[b]) >= 10 && !isBlocked(s, a, b) && !immuneRoute(s, a, b)); mine.slice(0, Math.ceil(mine.length / 2)).forEach(([a, b]) => s.blocked.push({ a, b, until: s.week + 20 })); return 'Ug refuses. Trade bans close half your trails for 20 weeks.'; } },
+  { id: 'defector', name: 'Chatty Apprentice', ok: s => s.coalition && s.treaty >= 12,
+    setup: s => ({ text: 'A Council apprentice offers Ug the Tablet’s practice stones, for meat.',
+      a: ['Pay', 'Pay 14 Meat. Tablet draft −8.'], b: ['Send them back', '−5 Smoke. You look very responsible.'], cost: 14 }),
+    a: s => { s.clout -= 14; s.treaty = Math.max(0, s.treaty - 8); return 'The practice stones go missing. So does the apprentice’s chisel.'; },
+    b: s => { s.notoriety = Math.max(0, s.notoriety - 5); return 'Ug returns the apprentice with a thank-you pebble. Smoke −5.'; } },
+  { id: 'talkshow', name: 'Fireside Storytelling', ok: s => s.coalition && yours(s, 1).length >= 3,
+    setup: s => ({ text: 'The best storyteller invites Ug to the big fire. They are known for awkward questions.',
+      a: ['Go', '+3 trust in 3 tribes where you are active. +4 Smoke.'], b: ['Decline', '−2 Smoke.'] }),
+    a: s => { const ids = yours(s, 1).sort(() => rng(s) - .5).slice(0, 3); ids.forEach(id => { s.inf[id] = Math.min(100, s.inf[id] + 3); }); addNoto(s, 4); return `Ug’s joke about the Council lands in ${ids.map(nm).join(', ')}.`; },
+    b: s => { s.notoriety = Math.max(0, s.notoriety - 2); return 'Ug declines. Mystery suits Ug.'; } },
+  { id: 'consultant', name: 'Face-Paint Expert', ok: s => s.notoriety > 50,
+    setup: s => ({ text: 'A face-paint expert offers to make Ug look harmless. She brought samples.',
+      a: ['Hire her', 'Pay 15 Meat. −10 Smoke.'], b: ['Decline', 'Nothing happens.'], cost: 15 }),
+    a: s => { s.clout -= 15; s.notoriety = Math.max(0, s.notoriety - 10); return 'New stripes, same Ug. Smoke −10.'; },
+    b: s => 'Ug keeps the old stripes. They have character.' }
 ];
 
 function eventsTick(s) {
@@ -1556,7 +1558,7 @@ function eventsTick(s) {
 }
 function canChoose(s, choice) {
   const p = s.pending; if (!p) return { ok: false, why: 'Nothing to decide' };
-  if (choice === 'a' && p.cost && s.clout < p.cost) return { ok: false, why: `Needs ${p.cost} Clout` };
+  if (choice === 'a' && p.cost && s.clout < p.cost) return { ok: false, why: `Needs ${p.cost} Meat` };
   return { ok: true };
 }
 function resolveDecision(s, choice) { const r = resolveDecision0(s, choice); armyGate(s); return r; }
@@ -1579,8 +1581,7 @@ const STANCE = { aethelgard: 'aligned', guldor: 'aligned', borealis: 'aligned', 
 const ALLY = { wk: 2.2, decay: .985, thr: { aligned: 45, neutral: 60 }, mult: { aligned: 1.3, neutral: 1, isolationist: .6 },
   partner: .6, maxMembers: 4, freeBelow: 40, leaveAt: 60, cohBase: .25, cohSize: .1, cohConvert: .5, split: 20,
   dipHit: 14, ideoHit: 9, retRes: 1.12, retWeeks: 12, retGap: 8, retNoto: 2, milWary: 100, milSpill: 30, nearDist: 320 };
-const ALLIANCE_NAMES = ['League of Mild Alarm', 'Pact of Concerned Neighbours', 'Coalition of the Wary', 'Axis of Caution',
-  'Mutual Unease Treaty', 'Committee for Continued Concern', 'Alliance of Raised Eyebrows', 'Union of Second Thoughts'];
+const ALLIANCE_NAMES = ['Huddle of Mild Alarm', 'Circle of Concerned Neighbours', 'Clan of the Wary', 'Spear-Line of Caution', 'Pact of Mutual Grunting', 'Fireside Committee for Continued Concern', 'Huddle of Raised Eyebrows', 'Union of Second Thoughts'];
 const stanceOf = id => STANCE[id] || 'neutral';
 function alInit(s) { if (!s.al) s.al = { list: [], next: 1 }; if (!s.wary) s.wary = {}; return s.al; }
 function allianceOf(s, id) { return s.al ? s.al.list.find(a => a.members.includes(id)) : null; }
@@ -1607,19 +1608,19 @@ function formAlliance(s, founder, reason) {
   const al = { id: 'a' + A.next++, name, leaderId: leader, members, cohesion: 100, formed: s.week, retUntil: 0 };
   A.list.push(al);
   members.forEach(m => { s.wary[m] = Math.max(s.wary[m] || 0, thr); });
-  addNews(s, `New alliance: ${name} (${members.map(nm).join(', ')}). Their stated goal: keeping an eye on you.`, 'wo');
-  flag(s, 'critical', leader, 'Alliance formed');
+  addNews(s, `New huddle: ${name} (${members.map(nm).join(', ')}). Their stated goal: keeping an eye on you.`, 'wo');
+  flag(s, 'critical', leader, 'Huddle formed');
   return al;
 }
 function leaveAlliance(s, al, id, text) {
   al.members = al.members.filter(m => m !== id);
-  if (text) { addNews(s, text, 'you'); flag(s, 'important', id, 'Left alliance'); }
+  if (text) { addNews(s, text, 'you'); flag(s, 'important', id, 'Left huddle'); }
   if (al.members.length < 2) dissolveAlliance(s, al, null);
 }
 function dissolveAlliance(s, al, text) {
   s.al.list = s.al.list.filter(a => a !== al);
   addNews(s, text || `The ${al.name} quietly dissolves. Nobody can find the minutes.`, 'you');
-  flag(s, 'important', al.leaderId, 'Alliance dissolved');
+  flag(s, 'important', al.leaderId, 'Huddle dissolved');
 }
 function allianceTick(s) {
   const A = alInit(s);
@@ -1633,7 +1634,7 @@ function allianceTick(s) {
   A.list.slice().forEach(al => {
     al.members.slice().forEach(m => {
       if (!A.list.includes(al)) return;
-      if (s.wo.members[m]) leaveAlliance(s, al, m, `${nm(m)} trades the ${al.name} for the World Order.`);
+      if (s.wo.members[m]) leaveAlliance(s, al, m, `${nm(m)} trades the ${al.name} for the Council.`);
       else if (s.inf[m] >= ALLY.leaveAt) leaveAlliance(s, al, m, `${nm(m)} now mostly agrees with you and walks out of the ${al.name}.`);
     });
   });
@@ -1666,7 +1667,7 @@ function allianceOnAct(s, a, target) {
     al.retUntil = s.week + ALLY.retGap;
     al.members.forEach(m => resMod(s, m, ALLY.retRes, ALLY.retWeeks, null, { src: al.name }));
     addNoto(s, ALLY.retNoto);
-    addNews(s, `The ${al.name} closes ranks behind ${nm(target)}. Resistance rises in every member country for ${ALLY.retWeeks} weeks.`, 'wo');
+    addNews(s, `The ${al.name} closes ranks behind ${nm(target)}. Resistance rises in every member tribe for ${ALLY.retWeeks} weeks.`, 'wo');
     flag(s, 'important', target, 'Retaliation');
   }
 }
@@ -1686,9 +1687,9 @@ function dependencyTick(s) {
 }
 // headline variants for Economy actions: picked from week and target, so no extra random draws
 const ACT_NEWS = {
-  eco1: ['Foreign Investment: a consortium nobody has heard of buys a stadium in {c}.', 'Foreign Investment: {c} gets a shiny new bridge. The plaque mentions you.', 'Foreign Investment: your venture fund opens an office in {c}. The coffee is free; the ideas are not.'],
-  eco2: ['Trade Deal: {src} and {c} sign a deal nobody has read.', 'Trade Deal: container ships from {src} reach {c}, packed with goods and pamphlets.', 'Trade Deal: {c} discovers it cannot live without exports from {src}.'],
-  eco3: ['Buyout: you quietly buy the largest newspaper in {c}. Editorials improve overnight.', 'Buyout: the national airline of {c} is now yours. The in-flight magazine is very on-message.', 'Buyout: half the banks in {c} change hands over a long weekend.']
+  eco1: ['Gift Basket: a consortium nobody has heard of buys a stadium in {c}.', 'Gift Basket: {c} gets a shiny new bridge. The plaque mentions you.', 'Gift Basket: your venture fund opens an office in {c}. The coffee is free; the ideas are not.'],
+  eco2: ['Barter Trail: {src} and {c} sign a deal nobody has read.', 'Barter Trail: container ships from {src} reach {c}, packed with goods and pamphlets.', 'Barter Trail: {c} discovers it cannot live without exports from {src}.'],
+  eco3: ['Buy Their Flint: you quietly buy the largest newspaper in {c}. Editorials improve overnight.', 'Buy Their Flint: the national airline of {c} is now yours. The in-flight magazine is very on-message.', 'Buy Their Flint: half the banks in {c} change hands over a long weekend.']
 };
 function actHeadline(s, aid, target, src) {
   const v = ACT_NEWS[aid]; if (!v || !target) return null;
@@ -1703,7 +1704,7 @@ function endEarly(s) {
   if (!s || s.over) return { ok: false, why: 'Game over' };
   // After "Continue playing" the win is already earned: ending early finishes it as that win, with its frozen score.
   if (s.cont) { s.over = s.cont.over; addNews(s, 'You call it here. The world is yours and nobody argues.', 'you'); return { ok: true }; }
-  s.over = 'retired'; addNews(s, 'You step down. The movement carries on without you, mostly out of habit.', 'you');
+  s.over = 'retired'; addNews(s, 'You step down. The tribe carries on without you, mostly out of habit.', 'you');
   return { ok: true };
 }
 // After a win (every country held or WIN_SHARE aligned; legacy saves: the treaty collapsing) the player may keep going for the whole world. The win and its
@@ -1753,14 +1754,14 @@ function capitulate(s, id, how) {
   s.capit = s.capit || { auto: 0, terms: 0, ultimatum: 0 }; s.capit[how] = (s.capit[how] || 0) + 1;
   s.capLog = (s.capLog || []).concat([{ id, week: s.week, how }]);
   addNews(s, how === 'terms'
-    ? `${c.name} accepts your terms at the summit and capitulates. Support ${to}%, no unrest. The flags are swapped before lunch.`
-    : how === 'ultimatum' ? `${c.name} reads your ultimatum, counts the tanks and capitulates. Support ${to}%. Its neighbours grow restless and wary.`
-    : `${c.name} capitulates. It stopped resisting weeks ago; now it is official. Support ${to}%, no unrest.`, 'you');
+    ? `${c.name} accepts your terms at the summit and capitulates. Trust ${to}%, no grumbling. The flags are swapped before lunch.`
+    : how === 'ultimatum' ? `${c.name} reads your ultimatum, counts the tanks and capitulates. Trust ${to}%. Its neighbours grow restless and wary.`
+    : `${c.name} capitulates. It stopped resisting weeks ago; now it is official. Trust ${to}%, no grumbling.`, 'you');
   flag(s, 'important', id, 'Capitulated'); s.news[0].endgame = 1;
 }
 function capTick(s) {
   if (!capActive(s)) { if (s.capWk) s.capWk = {}; return; }
-  if (!s.broken && !s.capOn) { s.capOn = s.week; addNews(s, `Three quarters of the world agrees with you. Holdouts start to capitulate: support ${egk(s, 'capMin')}%+, not allied, not wary.`, 'you'); flag(s, 'important', null, 'Capitulation'); s.news[0].endgame = 1; }
+  if (!s.broken && !s.capOn) { s.capOn = s.week; addNews(s, `Three quarters of the world agrees with you. Holdouts start to capitulate: trust ${egk(s, 'capMin')}%+, not allied, not wary.`, 'you'); flag(s, 'important', null, 'Capitulation'); s.news[0].endgame = 1; }
   s.capWk = s.capWk || {};
   COUNTRIES.forEach(c => {
     if (capWhy(s, c.id)) { delete s.capWk[c.id]; return; }
@@ -1780,8 +1781,8 @@ function breakup(s) {
   s.treaty = 0; s.coalition = false;
   s.mods = s.mods.filter(m => m.kind !== 'noSign');
   s.notoriety = Math.max(0, s.notoriety - egk(s, 'breakNoto'));
-  addNews(s, `The World Order breaks up. ${SG} hands in his lanyard; the treaty goes to a museum of good intentions. Members freed: ${freed.length}. Notoriety −${egk(s, 'breakNoto')}. Now win the rest: hold every country at once, or align ${Math.round(winShareOf(s) * 100)}% of the world.`, 'you');
-  flag(s, 'critical', null, 'Breakup'); s.news[0].endgame = 1;
+  addNews(s, `The Council breaks up. ${sgName(s)} hands in his lanyard; the Tablet goes to a museum of good intentions. Members freed: ${freed.length}. Smoke −${egk(s, 'breakNoto')}. Now win the rest: hold every tribe at once, or align ${Math.round(winShareOf(s) * 100)}% of the world.`, 'you');
+  flag(s, 'critical', null, 'Split'); s.news[0].endgame = 1;
   gcForm(s);
 }
 // ---- v10.21 Step 9.2: the Grand Coalition
@@ -1792,8 +1793,8 @@ function gcForm(s) {
   if (hold.length < egk(s, 'gcMin')) return;
   const leader = hold.slice().sort((a, b) => byId(b).pop - byId(a).pop)[0];
   s.gc = { members: hold, leader, cohesion: 100, formed: s.week, unityWk: 0, nextCrack: s.week + egk(s, 'gcGap'), queue: [], hits: 0, size: hold.length };
-  addNews(s, `The holdouts close ranks: ${hold.map(nm).join(', ')} form the Grand Coalition, led by ${nm(leader)}. If they stay united (cohesion ${egk(s, 'gcUnityAt')}+) for ${egk(s, 'gcUnityWeeks')} weeks, World Unity ends your movement.`, 'wo');
-  flag(s, 'critical', leader, 'Grand Coalition'); s.news[0].gc = 1;
+  addNews(s, `The holdouts close ranks: ${hold.map(nm).join(', ')} form the Stubborn Clan, led by ${nm(leader)}. If they stay united (cohesion ${egk(s, 'gcUnityAt')}+) for ${egk(s, 'gcUnityWeeks')} weeks, Stubborn Clan Wins ends your tribe.`, 'wo');
+  flag(s, 'critical', leader, 'Stubborn Clan'); s.news[0].gc = 1;
 }
 function gcLeave(s, id, text) {
   const G = s.gc; G.members = G.members.filter(m => m !== id);
@@ -1813,7 +1814,7 @@ function gcBreak(s, empty) {
   G.broke = s.week; G.queue = [];
   const freed = G.members.slice();
   s.wary = s.wary || {}; freed.forEach(id => { s.wary[id] = 0; });
-  addNews(s, empty ? 'The Grand Coalition runs out of members and quietly folds.' : `The Grand Coalition breaks apart. ${freed.length ? freed.map(nm).join(', ') + ' stop resisting together: they can capitulate now.' : ''}`, 'you');
+  addNews(s, empty ? 'The Stubborn Clan runs out of members and quietly folds.' : `The Stubborn Clan breaks apart. ${freed.length ? freed.map(nm).join(', ') + ' stop resisting together: they can capitulate now.' : ''}`, 'you');
   flag(s, 'critical', null, 'Coalition broken'); s.news[0].gc = 1; s.news[0].endgame = 1;
 }
 // countries you hold (CONTROL%+) that border or trade with a member: Military there intimidates the coalition (option A)
@@ -1834,7 +1835,7 @@ function gcOnAct(s, a, target, before) {
   if (!target || !gcOn(s)) return;
   const n = gcActEffect(s, a, target, before), c = byId(target);
   if (gcMember(s, target) && a.id === 'mil4') {
-    gcLeave(s, target, `Regime Change in ${c.name}: the new government quits the Grand Coalition. Cohesion −${egk(s, 'gcRegime')}.`);
+    gcLeave(s, target, `Wrestle the Chief in ${c.name}: the new chief quits the Stubborn Clan. Cohesion −${egk(s, 'gcRegime')}.`);
     if (s.wary) s.wary[target] = 0;
     gcCohesion(s, n, 'regime'); return 'split';
   }
@@ -1842,19 +1843,19 @@ function gcOnAct(s, a, target, before) {
   gcCohesion(s, n, n < 0 ? a.dom : null);
   if (!gcOn(s)) return;
   const coh = Math.round(s.gc.cohesion);
-  addNews(s, n > 0 ? `${a.name} in ${c.name} rallies the Grand Coalition. Cohesion ${coh} (+${n}).`
-    : gcMember(s, target) ? `${a.name} in ${c.name} sows doubt inside the Grand Coalition. Cohesion ${coh} (${n}).`
-    : `Tanks on parade in ${c.name}, right on the Grand Coalition's doorstep. Cohesion ${coh} (${n}).`, n > 0 ? 'wo' : 'you');
+  addNews(s, n > 0 ? `${a.name} in ${c.name} rallies the Stubborn Clan. Cohesion ${coh} (+${n}).`
+    : gcMember(s, target) ? `${a.name} in ${c.name} sows doubt inside the Stubborn Clan. Cohesion ${coh} (${n}).`
+    : `Tanks on parade in ${c.name}, right on the Stubborn Clan's doorstep. Cohesion ${coh} (${n}).`, n > 0 ? 'wo' : 'you');
   flag(s, 'ping', target, n > 0 ? 'Coalition rallies' : 'Cohesion down');
 }
 function gcTick(s) {
   const G = s.gc; if (!gcOn(s)) return;
   // members you win over (CONTROL%+) leave; held countries that fall below gcRejoin join
-  G.members.slice().forEach(id => { if (s.inf[id] >= CONTROL) gcLeave(s, id, `${nm(id)} now mostly agrees with you and leaves the Grand Coalition.`); });
+  G.members.slice().forEach(id => { if (s.inf[id] >= CONTROL) gcLeave(s, id, `${nm(id)} now mostly agrees with you and leaves the Stubborn Clan.`); });
   if (!gcOn(s)) return;
   COUNTRIES.forEach(c => {
     if (c.id === baseOf(s) || G.members.includes(c.id) || !(s.held && s.held[c.id]) || s.inf[c.id] >= egk(s, 'gcRejoin')) return;
-    G.members.push(c.id); addNews(s, `${c.name} slips away from you and joins the Grand Coalition.`, 'wo'); flag(s, 'important', c.id, 'Joined coalition'); s.news[0].gc = 1;
+    G.members.push(c.id); addNews(s, `${c.name} slips away from you and joins the Stubborn Clan.`, 'wo'); flag(s, 'important', c.id, 'Joined coalition'); s.news[0].gc = 1;
   });
   // cohesion drift
   const winning = G.members.filter(id => s.inf[id] >= egk(s, 'gcWinAt')).length;
@@ -1864,11 +1865,11 @@ function gcTick(s) {
   const need = egk(s, 'gcUnityWeeks');
   if (G.cohesion >= egk(s, 'gcUnityAt')) {
     G.unityWk = (G.unityWk || 0) + 1;
-    if (G.unityWk === Math.round(need / 2) || G.unityWk === need - 10) { addNews(s, `World Unity in ${need - G.unityWk} weeks: the Grand Coalition holds at cohesion ${Math.round(G.cohesion)}. Push it below ${egk(s, 'gcUnityAt')} to stop the clock.`, 'wo'); flag(s, 'critical', G.leader, 'World Unity'); s.news[0].gc = 1; }
-  } else if (G.unityWk) { G.unityWk = 0; addNews(s, `The Grand Coalition squabbles: cohesion ${Math.round(G.cohesion)}. The World Unity clock stops.`, 'you'); flag(s, 'important', G.leader, 'Unity clock stopped'); s.news[0].gc = 1; }
+    if (G.unityWk === Math.round(need / 2) || G.unityWk === need - 10) { addNews(s, `Stubborn Clan Wins in ${need - G.unityWk} weeks: the Stubborn Clan holds at cohesion ${Math.round(G.cohesion)}. Push it below ${egk(s, 'gcUnityAt')} to stop the clock.`, 'wo'); flag(s, 'critical', G.leader, 'Stubborn Clan Wins'); s.news[0].gc = 1; }
+  } else if (G.unityWk) { G.unityWk = 0; addNews(s, `The Stubborn Clan squabbles: cohesion ${Math.round(G.cohesion)}. The Stubborn Clan Wins clock stops.`, 'you'); flag(s, 'important', G.leader, 'Unity clock stopped'); s.news[0].gc = 1; }
   // crackdowns: announced gcLead weeks ahead; Martyr Narrative / campaign immunity stop them
   G.queue.filter(q => q.at <= s.week).forEach(q => {
-    if (hasMod(s, q.target, 'noCampaign')) { addNews(s, `The Grand Coalition's crackdown in ${nm(q.target)} finds only martyrs and cameras. Called off.`, 'you'); return; }
+    if (hasMod(s, q.target, 'noCampaign')) { addNews(s, `The Stubborn Clan's crackdown in ${nm(q.target)} finds only martyrs and cameras. Called off.`, 'you'); return; }
     counterCampaign(s, q.target, q.amt, 'gc'); addUnrest(s, q.target, UNREST.crack);
   });
   G.queue = G.queue.filter(q => q.at > s.week);
@@ -1879,7 +1880,7 @@ function gcTick(s) {
     COUNTRIES.filter(c => c.id !== baseOf(s) && c.pop >= 1 && s.inf[c.id] >= 15 && s.inf[c.id] < 95 && !busy.has(c.id) && !G.members.includes(c.id) && !hasMod(s, c.id, 'noCampaign') && !(Q(s, c.id).immuneAt && s.inf[c.id] >= Q(s, c.id).immuneAt))
       .sort((a, b) => b.pop * s.inf[b.id] - a.pop * s.inf[a.id]).slice(0, 2).forEach(c => {
         G.queue.push({ target: c.id, at: s.week + egk(s, 'gcLead'), amt });
-        addNews(s, `The Grand Coalition schedules a crackdown in ${c.name} in ${egk(s, 'gcLead')} weeks: up to −${amt} support.`, 'wo'); flag(s, 'important', c.id, `Crackdown in ${egk(s, 'gcLead')} wk`);
+        addNews(s, `The Stubborn Clan schedules a crackdown in ${c.name} in ${egk(s, 'gcLead')} weeks: up to −${amt} trust.`, 'wo'); flag(s, 'important', c.id, `Crackdown in ${egk(s, 'gcLead')} wk`);
       });
   }
 }

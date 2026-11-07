@@ -78,7 +78,7 @@ def run(p, url):
     check('guest: dialog names the same week', f'week {wk}' in txt, txt)
     check('guest: Continue is visible', page.is_visible('#resumeGo'))
     page.click('#resumeGo')
-    check('guest: resumed at the same week, same country, seed and run id', poll(page, f"window.__GI.S && window.__GI.S.week === {wk}") and page.evaluate("window.__GI.S.startId") == start and page.evaluate("window.__GI.S.seed") == seed and page.evaluate("window.__GI.S.tele && window.__GI.S.tele.id") == run_id)
+    check('guest: resumed at the same week, same tribe, seed and run id', poll(page, f"window.__GI.S && window.__GI.S.week === {wk}") and page.evaluate("window.__GI.S.startId") == start and page.evaluate("window.__GI.S.seed") == seed and page.evaluate("window.__GI.S.tele && window.__GI.S.tele.id") == run_id)
     page.evaluate("window.__GI.setSpeed(3)")
     check('guest: the resumed game keeps ticking', poll(page, f"window.__GI.S.week > {wk}", 15))
     page.evaluate("window.__GI.setSpeed(0)")

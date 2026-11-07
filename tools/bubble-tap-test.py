@@ -30,9 +30,9 @@ with sync_playwright() as p:
             c0=page.evaluate("window.__gi.S.clout"); tot+=1
             page.touchscreen.tap(x,y); page.wait_for_timeout(350)
             if page.evaluate("window.__gi.S.clout")>c0+1.5: ok+=1
-        print(view,'bubble ~%dpx'%px,'thumb-offset taps collected',ok,'/',tot); FAILS.append(not (tot>0 and ok==tot)); ctx.close()
+        print(view,'meat drop ~%dpx'%px,'thumb-offset taps collected',ok,'/',tot); FAILS.append(not (tot>0 and ok==tot)); ctx.close()
     ctx=b.new_context(viewport={'width':1280,'height':720}); page=ctx.new_page(); page.add_init_script("try{localStorage.setItem('gi.lang','hu')}catch(e){}"); start(page)
-    for en,hu in [("Pay 10 Clout. 55% chance: +12 support. 45% chance: −6 support.","Fizess 10 befolyást. 55% esély: +12 támogatás. 45% esély: −6 támogatás."),("Your candidate loses in Koryn, loudly. Support −6.","A jelöltetek veszít itt: Koryn, hangosan. Támogatás −6.")]:
+    for en,hu in [("Pay 10 Meat. 55% chance: +12 trust. 45% chance: −6 trust.","Fizess 10 befolyást. 55% esély: +12 támogatás. 45% esély: −6 támogatás."),("Your candidate loses in Koryn, loudly. Trust −6.","A jelöltetek veszít itt: Koryn, hangosan. Támogatás −6.")]:
         got=page.evaluate("s=>window.GI_I18N.tr(s)",en); print('HU',got==hu,got); FAILS.append(got!=hu)
     ctx.close(); b.close()
 sys.exit(1 if any(FAILS) else 0)

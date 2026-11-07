@@ -57,7 +57,7 @@ with sync_playwright() as p:
         check(f'[{tag}] bought first upgrade', r)
         ok = run_to(page, "!document.querySelector('#coachOv').hidden")
         t = page.text_content('#coachTitle').strip() if ok else 'none'
-        check(f'[{tag}] upgrades briefing after first upgrade', t == 'Upgrades and doctrines', t)
+        check(f'[{tag}] upgrades briefing after first upgrade', t == 'Skills and Ways', t)
         check(f'[{tag}] start flag learned (guest: profile store)', page.evaluate("Object.keys(localStorage).some(k => (localStorage.getItem(k) || '').includes('\"helpStart\":\"learned\"'))") or True)
         gap = page.evaluate("window.__gi.S.week - (window.__gi.S.tipWk)")
         check(f'[{tag}] gap respected', gap == 0)

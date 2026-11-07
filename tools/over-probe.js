@@ -10,5 +10,5 @@ for (const level of LV) for (const mode of MODES) {
   for (const b of Object.keys(BUILDS)) S.COUNTRIES.forEach(c => { for (let k = 1; k <= N; k++) r.push(play(c.id, k * 101 + 7, Object.assign({ rush: true, level, v10t: extra }, cfgs[mode]), b, true)); });
   const w = r.filter(x => x.res.win), pc = f => Math.round(100 * r.filter(f).length / r.length);
   const st = [1, 2, 3].map(n => w.filter(x => x.res.stars === n).length);
-  console.log(`${level.padEnd(7)} ${mode.padEnd(8)} n ${r.length} win ${pc(x => x.res.win)}% medWk ${med(w.map(x => x.week))} aids/run ${(r.reduce((a, x) => a + x.aids, 0) / r.length).toFixed(1)} clout@end ${Math.round(med(r.map(x => x.clout)))} stars ${st.join('/')}`);
+  console.log(`${level.padEnd(7)} ${mode.padEnd(8)} n ${r.length} win ${pc(x => x.res.win)}% medWk ${med(w.map(x => x.week))} aids/run ${(r.reduce((a, x) => a + x.aids, 0) / r.length).toFixed(1)} meat@end ${Math.round(med(r.map(x => x.clout)))} stars ${st.join('/')}`);
 }

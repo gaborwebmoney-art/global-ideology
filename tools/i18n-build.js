@@ -15,7 +15,7 @@ const add = (en, hu) => {
 for (const [en, hu] of rows) {
   if (!en || hu === undefined) { errs.push('bad row: ' + en); continue; }
   add(en, hu);
-  const sa = 'Special action: ', hsa = 'Különleges akció: ';   // the UI strips this prefix before display
+  const sa = 'Special deed: ', hsa = 'Különleges akció: ';   // the UI strips this prefix before display
   if (en.startsWith(sa) && hu.startsWith(hsa)) add(en.slice(sa.length), hu.slice(hsa.length));
 }
 if (errs.length) { console.error(errs.join('\n')); process.exit(1); }

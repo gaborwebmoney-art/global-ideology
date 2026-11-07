@@ -211,9 +211,9 @@ def t_runs(browser, base):
     check('win: run_end posted once', len(en) == 1, len(en))
     e = en[0] if en else {}
     check('win: same run_id, outcome win/collapse/perfect', e.get('run_id') == rid and e.get('outcome') in ('win', 'collapse', 'perfect'), e)
-    check('win: weeks, stars, score, held, peak share, notoriety fields', e.get('weeks', 0) >= 1 and e.get('stars') >= 1 and e.get('score') is not None and e.get('held') >= 1 and 0 < e.get('peak_share', 0) <= 1 and e.get('avg_noto') is not None and e.get('peak_noto') is not None, e)
+    check('win: weeks, stars, score, held, peak share, smoke fields', e.get('weeks', 0) >= 1 and e.get('stars') >= 1 and e.get('score') is not None and e.get('held') >= 1 and 0 < e.get('peak_share', 0) <= 1 and e.get('avg_noto') is not None and e.get('peak_noto') is not None, e)
     check('win: uprisings/coups/relocations/used_continue/session_min present', all(k in e for k in ('uprisings', 'coups', 'relocations', 'used_continue', 'session_min')) and e['used_continue'] is False, e)
-    check('win: upgrades in the order bought', e.get('upgrades') == got, (e.get('upgrades'), got))
+    check('win: skills in the order bought', e.get('upgrades') == got, (e.get('upgrades'), got))
     check('v10.19: breakup_week / cap_auto / cap_terms / win_type on run_end', all(k in e for k in ('breakup_week', 'cap_auto', 'cap_terms', 'win_type', 'cap_ultimatum', 'gc_size', 'gc_broke_week')) and e.get('win_type') in ('held', 'share'), e)
     check('v10.19: run_start sends the new fields as null', all(k in st[0] and st[0][k] is None for k in ('breakup_week', 'cap_auto', 'cap_terms', 'win_type', 'cap_ultimatum', 'gc_size', 'gc_broke_week')), st)
     # continue playing -> run_continue, then the run ends again with run_final
@@ -324,7 +324,7 @@ def t_report(browser, base):
     check('state size is far below the 200 KB table limit', orig['size'] < 120000, orig['size'])
     page.click('#moreBtn'); page.click('#reportOpen')
     check('Report a bug opens from More', page.is_visible('#reportOv') and page.is_disabled('#reportSend'))
-    page.fill('#reportText', 'The map froze after I bought Pamphlets. ' + 'x' * 10)
+    page.fill('#reportText', 'The map froze after I bought Tall Tales. ' + 'x' * 10)
     page.fill('#reportContact', 'discord: tester#1234')
     page.click('#reportSend'); page.wait_for_timeout(500)
     check('report: success message shown', 'was sent' in page.inner_text('#reportMsg'), page.inner_text('#reportMsg'))
