@@ -1,4 +1,4 @@
-"""v10.35 UI test: Codex (Menu, How it works), early-game briefings (Casual/Normal only, learned, Settings toggle), HU coverage.
+"""v10.35 UI test: Codex (Menu, How it works), early-game briefings (Casual/Normal only, learned, Settings toggle).
 Usage: python3 tools/tutorial-ui-test.py http://localhost:8765 <shots dir>"""
 import sys
 from playwright.sync_api import sync_playwright
@@ -98,24 +98,5 @@ with sync_playwright() as p:
         shown = not page.is_hidden('#coachOv')
         check(f'{level} tips={tips or "on"}: early briefing {"shown" if want else "not shown"}', shown == want)
         ctx.close()
-    # 6) Hungarian: every codex page fully translated
-    ctx = b.new_context(viewport={'width': 1280, 'height': 800}); page = ctx.new_page()
-    page.add_init_script("localStorage.setItem('gi.lang', 'hu')")
-    start(page, 'normal'); page.evaluate("document.querySelector('#sp0').click()")
-    page.click('#moreBtn'); page.wait_for_timeout(200); page.click('#tutOpen'); page.wait_for_timeout(200)
-    import re
-    eng = []
-    for k in TOPICS:
-        page.click(f'#codexList [data-codex="{k}"]'); page.wait_for_timeout(150)
-        txt = page.text_content('#rulesTitle') + ' ' + ' '.join(pages_text(page, '#rulesSheet'))
-        if re.search(r'\b(the|and|your|you|with|countries)\b', txt): eng.append(k)
-        page.evaluate("document.querySelector('#rulesClose').click()"); page.wait_for_timeout(100)
-    check('HU: every codex topic fully Hungarian', not eng, eng)
-    page.screenshot(path=f'{OUT}/settings-hu.png', full_page=True)
-    st = page.text_content('#setOv')
-    check('HU: settings toggle translated', 'Kezdő eligazítások' in st and 'Early-game' not in st)
-    page.click('#setClose'); page.wait_for_timeout(150)
-    page.click('#moreBtn'); page.wait_for_timeout(150); page.click('#tutOpen'); page.wait_for_timeout(150); page.click('#codexList [data-codex="wo"]'); page.wait_for_timeout(150)
-    page.screenshot(path=f'{OUT}/codex-wo-hu.png')
-    ctx.close(); b.close()
+    b.close()
 print(f'\n{ok_n} ok, {bad_n} failed'); sys.exit(1 if bad_n else 0)

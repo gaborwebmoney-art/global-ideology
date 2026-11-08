@@ -1,4 +1,4 @@
-"""v10.37 UI test: guided walkthrough (10 steps, target lock on step 6, meters step 9, real clicks only, blocked clicks elsewhere, skip, Military path, HU) and action animations.
+"""v10.37 UI test: guided walkthrough (10 steps, target lock on step 6, meters step 9, real clicks only, blocked clicks elsewhere, skip, Military path) and action animations.
 Usage: python3 tools/walkthrough-ui-test.py http://localhost:8765 <shots dir>"""
 import sys
 from playwright.sync_api import sync_playwright
@@ -88,9 +88,6 @@ def run(b, tag, vw, vh, branch, base='celestia', lang='en'):
     page.click('#wtNext'); page.wait_for_timeout(300)
     check(f'{T} step 10', at(page, 10))
     page.wait_for_timeout(400); page.screenshot(path=f'{OUT}/{tag}-{branch}-10.png')
-    if lang == 'hu':
-        txt = page.text_content('#wtCard')
-        check(f'{T} card in Hungarian', 'Step' not in txt and 'Loud' not in txt and 'Skip' not in txt, txt[:160])
     tap(page, '#sp1', tag)
     check(f'{T} done: layer hidden, game running, remembered', wait(page, "document.querySelector('#wtLayer').hidden") and page.evaluate("localStorage.getItem('gi.wt')") == 'done' and page.evaluate("document.querySelector('#sp1').getAttribute('aria-pressed')") == 'true')
     check(f'{T} no page errors', not errs, errs[:3])
@@ -100,7 +97,7 @@ with sync_playwright() as p:
     run(b, 'desk', 1280, 800, 'ideo')
     run(b, 'phone', 390, 844, 'eco', base='laplata')
     run(b, 'desk', 1280, 800, 'mil', base='borealis')
-    run(b, 'phone', 390, 844, 'dip', base='celestia', lang='hu')
+    run(b, 'phone', 390, 844, 'dip', base='celestia')
     # skip, then Settings, Tutorial, Replay
     ctx = b.new_context(viewport={'width': 1280, 'height': 800}); page = ctx.new_page()
     page.add_init_script("if(!sessionStorage.getItem('x')){localStorage.setItem('gi.wt','replay');sessionStorage.setItem('x','1')}")

@@ -54,12 +54,8 @@ with sync_playwright() as p:
     page.click('#setMusic')
     page.fill('#setMusicVol', '30') if False else page.evaluate("const r=document.querySelector('#setMusicVol'); r.value=30; r.dispatchEvent(new Event('input',{bubbles:true}))")
     check('music volume stored', page.evaluate("localStorage.getItem('gi.musicVol')") == '30')
-    # language HU from settings
-    page.click('#setOv [data-lang="hu"]'); page.wait_for_timeout(300)
-    check('HU: settings title', page.inner_text('#setTitle').strip().lower() == 'beállítások', page.inner_text('#setTitle'))
-    check('HU: sound section', 'Hang' in page.inner_text('#setOv'))
-    page.screenshot(path=OUT + '/settings-hu.png', full_page=True)
-    page.click('#setOv [data-lang="en"]'); page.wait_for_timeout(200)
+    # English only: the language switch must stay hidden
+    check('language switch hidden', not page.is_visible('#setOv [data-lang="hu"]'))
     # briefings reset
     page.click('.settabs [data-stab="tut"]'); page.wait_for_timeout(100)
     page.click('#setCoach'); check('briefings reset note', 'show again' in page.inner_text('#setCoachNote'))

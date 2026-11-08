@@ -1,4 +1,4 @@
-"""Step 9.1 browser walkthrough (v10.19): phone + desktop, EN + HU. Forces a game through __GI to just before the Breakup, then
+"""Step 9.1 browser walkthrough (v10.19): phone + desktop, EN only. Forces a game through __GI to just before the Breakup, then
 Breakup alert + briefing -> a country capitulates by itself -> Terms on another -> win popup -> Continue -> End game.
 usage: python3 tools/endgame-ui-test.py [shots_dir]     (exit code 0 = all passed; screenshots per step)"""
 import os, re, sys, subprocess, socket, time
@@ -144,11 +144,8 @@ def walk(browser, base, device, lang):
     page.wait_for_timeout(500)
     w = page.evaluate("() => ({ over: __GI.S.over, type: __GI.S.winType, end: !document.getElementById('endOv').hidden, title: document.getElementById('endTitle').textContent, text: document.getElementById('endText').textContent, cont: !document.getElementById('contPlay').hidden })")
     check(f'{tag}: win popup (all held)', w['over'] == 'win' and w['type'] == 'held' and w['end'] and w['cont'], w)
-    if lang == 'hu':
-        t = page.evaluate("document.getElementById('endText').textContent")
-        check(f'{tag}: HU win text fully translated, in order', t.startswith('A(z)') and 'Smoke' not in t and 'upgrades' not in t and 'Világrend' in t, t)
     sc = page.evaluate("document.getElementById('endScore').innerText")
-    check(f'{tag}: score notoriety counted until the Breakup', ('until the Split' in sc) or ('a Felbomlásig' in sc), sc[:300])
+    check(f'{tag}: score notoriety counted until the Breakup', 'until the Split' in sc, sc[:300])
     shot('08-win-popup')
     page.click('#contPlay'); page.wait_for_timeout(400)
     c = page.evaluate("() => ({ over: __GI.S.over, cont: !!__GI.S.cont, note: document.getElementById('shareNote').textContent })")
@@ -183,13 +180,8 @@ def walk(browser, base, device, lang):
         page.evaluate("__GI.render()"); page.wait_for_timeout(120); close_coach(page)
     page.evaluate("() => { const S = __GI.S; S.gc.unityWk = egk(S, 'gcUnityWeeks') - 1; S.gc.cohesion = 100; S.legit = 90; step(S); __GI.render(); }"); page.wait_for_timeout(500)
     u = page.evaluate("() => ({ over: __GI.S.over, end: !document.getElementById('endOv').hidden, title: document.getElementById('endTitle').textContent, text: document.getElementById('endText').textContent })")
-    check(f'{tag}: World Unity loss end screen', u['over'] == 'unity' and u['end'] and u['title'] in ('Stubborn Clan Wins', 'Világegység'), u)
-    if lang == 'hu':
-        check(f'{tag}: HU World Unity text translated', u['text'].startswith('A Nagykoalíció'), u['text'][:120])
+    check(f'{tag}: World Unity loss end screen', u['over'] == 'unity' and u['end'] and u['title'] == 'Stubborn Clan Wins', u)
     shot('13-world-unity')
-    if lang == 'hu':
-        miss = page.evaluate("[...GI_I18N.misses || []].filter(m => /capitul|Capitul|Split|Terms|Held|endgame|broke up|breaks up|Coalition|coalition|Unity|cohesion/.test(m))")
-        check(f'{tag}: no untranslated endgame strings', not miss, miss)
     check(f'{tag}: no page errors', not errs, errs)
     ctx.close()
 
@@ -202,7 +194,7 @@ def main():
         with sync_playwright() as p:
             browser = p.chromium.launch(executable_path=CHROME, args=['--no-sandbox'])
             for device in ('phone', 'desktop'):
-                for lang in ('en', 'hu'):
+                for lang in ('en',):
                     try:
                         walk(browser, f'http://127.0.0.1:{port}', device, lang)
                     except Exception as ex:
